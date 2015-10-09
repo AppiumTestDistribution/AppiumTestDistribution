@@ -1,20 +1,12 @@
-<suite name="Suite1" verbose="1" parallel="tests" thread-count="5">
-
-	<test name="Generic test">
-		<parameter name="browser" value="FF"></parameter>
-
-		<classes>
-			<class name="com.test.site.HomePageTest"/>
-			<class name="com.test.site.DetailsPageTest"/>
-		</classes>
-	</test>
-
-	<test name="Generic test_chrome">
-		<parameter name="browser" value="IE"></parameter>
-		<classes>
-			<class name="com.test.site.HomePageTest"/>
-			<class name="com.test.site.DetailsPageTest"/>
-		</classes>
-	</test>
+<suite name="Test-class Suite" parallel="classes" thread-count="2" >
+  <test name="Test-class test" >
+    <classes>
+      <class name="com.test.site.HomePageTest" />
+     <class name="com.test.site.HomePageTest1" />
+      <class name="com.test.site.HomePageTest2" />
+    </classes>
+  </test>
+  
+  
 </suite>
 

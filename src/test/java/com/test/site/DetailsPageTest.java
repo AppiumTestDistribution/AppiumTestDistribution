@@ -8,7 +8,7 @@ public class DetailsPageTest extends BaseTest{
 	
 	@Test
 	public void testApp_1(){
-		driver.get("http://www.facebook.com");
+		
 	}
 
 }
