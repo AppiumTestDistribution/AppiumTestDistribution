@@ -1,5 +1,6 @@
 package com.test.base;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ public class AndroidDeviceConfiguration {
 
 	CommandPrompt cmd = new CommandPrompt();
 	Map<String, String> devices = new HashMap<String, String>();
+	ArrayList<String> deviceSerail= new ArrayList<String>();
 
 	/**
 	 * This method start adb server
@@ -86,10 +88,48 @@ public class AndroidDeviceConfiguration {
 		return devices;
 	}
 	
+	
+	
+	public ArrayList<String> getDeviceSerail() throws Exception {
+
+		startADB(); // start adb service
+		String output = cmd.runCommand("/usr/bin/adb devices");
+		String[] lines = output.split("\n");
+
+		if (lines.length <= 1) {
+			System.out.println("No Device Connected");
+			stopADB();
+			System.exit(0); // exit if no connected devices found
+		}
+
+		for (int i = 1; i < lines.length; i++) {
+			lines[i] = lines[i].replaceAll("\\s+", "");
+
+			if (lines[i].contains("device")) {
+				lines[i] = lines[i].replaceAll("device", "");
+				String deviceID = lines[i];
+				deviceSerail.add(deviceID);
+			} else if (lines[i].contains("unauthorized")) {
+				lines[i] = lines[i].replaceAll("unauthorized", "");
+				String deviceID = lines[i];
+
+				System.out.println("Following device is unauthorized");
+				System.out.println(deviceID + "\n");
+			} else if (lines[i].contains("offline")) {
+				lines[i] = lines[i].replaceAll("offline", "");
+				String deviceID = lines[i];
+
+				System.out.println("Following device is offline");
+				System.out.println(deviceID + "\n");
+			}
+		}
+		return deviceSerail;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		AndroidDeviceConfiguration gd = new AndroidDeviceConfiguration();
 		gd.startADB();
-		gd.getDevices();
+		gd.getDeviceSerail();
 		gd.stopADB();
 	}
 

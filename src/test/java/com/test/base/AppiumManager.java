@@ -2,6 +2,8 @@ package com.test.base;
 
 /**
  * Appium Manager - this class contains method to start and stops appium server
+ * To execute the tests from eclipse, you need to set PATH as
+ * /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin in run configuration
  */
 public class AppiumManager {
 
@@ -17,8 +19,8 @@ public class AppiumManager {
 	}
 
 	/**
-	 * start appium with auto generated ports : appium port, chrome port, and
-	 * bootstap port
+	 * start appium with auto generated ports : appium port, chrome port,
+	 * bootstap port and device UDID
 	 */
 	public String startAppium(String devices) throws Exception {
 		// start appium server
@@ -30,7 +32,6 @@ public class AppiumManager {
 		System.out.println(command);
 
 		String output = cp.runCommand(command);
-		
 
 		if (output.contains("not")) {
 			System.out.println("\nAppium is not installed");
@@ -38,24 +39,4 @@ public class AppiumManager {
 		}
 		return port;
 	}
-
-	/**
-	 * start appium with modified arguments : appium port, chrome port, and
-	 * bootstap port as user pass port number
-	 * 
-	 * @param appium
-	 *            port
-	 * @param chrome
-	 *            port
-	 * @param bootstrap
-	 *            port
-	 */
-	public void startAppium(String port, String chromePort, String bootstrapPort) throws Exception {
-		String command = "appium --session-override -p " + port + " --chromedriver-port " + chromePort + " -bp "
-				+ bootstrapPort;
-		System.out.println(command);
-		String output = cp.runCommand(command);
-		System.out.println(output);
-	}
-
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -25,21 +26,30 @@ public class ParallelThread {
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
+		
+		
 		List<Class> testCases = new ArrayList<Class>();
 		testCases.add(HomePageTest1.class);
 		testCases.add(HomePageTest2.class);
 		testCases.add(HomePageTest3.class);
 		testCases.add(HomePageTest4.class);
+		testCases.add(HomePageTest5.class);
 
 		for (final Class testFile : testCases) {
 			executorService.execute(new Runnable() {
 				@Override
 				public void run() {
 					runTestCase(testFile);
+					System.out.println("test file: " + testFile.getName());
 				}
 			});
 		}
-
+		executorService.shutdown();
+		try {
+			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		System.out.println("ending");
 
 	}
@@ -51,5 +61,5 @@ public class ParallelThread {
 			System.out.println(failure.toString());
 		}
 	}
-	
+
 }
