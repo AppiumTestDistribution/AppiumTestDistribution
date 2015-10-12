@@ -1,7 +1,8 @@
 package com.test.site;
 
-import org.junit.Test;
+
 import org.openqa.selenium.By;
+import org.testng.annotations.Test;
 
 import com.test.base.BaseTest;
 

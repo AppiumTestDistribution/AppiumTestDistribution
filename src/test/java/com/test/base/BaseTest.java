@@ -2,14 +2,12 @@ package com.test.base;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
-
-import org.junit.After;
-import org.junit.Before;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -22,8 +20,8 @@ public class BaseTest extends AvailabelPorts {
 	AppiumManager appiumMan = new AppiumManager();
 	AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
 
-	@Before
-	public void openBroswer() throws Exception {
+	@BeforeClass
+	public void testopenBroswer() throws Exception {
 		ArrayList<String> devices=androidDevice.getDeviceSerail();
 		System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
 		int thread_device_count=Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
@@ -42,8 +40,8 @@ public class BaseTest extends AvailabelPorts {
 
 	}
 
-	@After
-	public void closeBrowser() throws Exception {
+	@AfterClass
+	public void testcloseBrowser() throws Exception {
 		driver.quit();
 		//androidDevice.stopADB();
 
