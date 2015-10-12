@@ -1,7 +1,17 @@
 package com.test.base;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONObject;
+import org.json.XML;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -51,5 +61,49 @@ public class BaseTest extends AvailabelPorts {
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable((id)));
 	}
+	
+	@SuppressWarnings("unused")
+	public void convertXmlToJSon() throws IOException{
+		String fileName = "report.json";
+		BufferedWriter bufferedWriter = null;
+		try {
+			
+			FileWriter fileWriter;
+			
+			List textFiles = new ArrayList();	
+			  File dir = new File(System.getProperty("user.dir") + "/test-output/junitreports");
+			  for (File file : dir.listFiles()) {
+				    if (file.getName().contains(("Test"))) {
+				      System.out.println(file);
+			
+				fileWriter = new FileWriter(fileName,true);
+				InputStream inputStream = new FileInputStream(file);
+				StringBuilder builder = new StringBuilder();
+				int ptr = 0;
+				while ((ptr = inputStream.read()) != -1) {
+					builder.append((char) ptr);
+				}
+				
+				String xml = builder.toString();
+				JSONObject jsonObj = XML.toJSONObject(xml);
+			
+				// Always wrap FileWriter in BufferedWriter.
+				bufferedWriter = new BufferedWriter(fileWriter);
+
+				// Always close files.
+				String jsonPrettyPrintString = jsonObj.toString(4);
+				//bufferedWriter.write(jsonPrettyPrintString);
+				bufferedWriter.append(jsonPrettyPrintString);
+				bufferedWriter.newLine();
+				bufferedWriter.close();
+			}
+			  }
+		} catch (IOException ex) {
+			System.out.println("Error writing to file '" + fileName + "'");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 }

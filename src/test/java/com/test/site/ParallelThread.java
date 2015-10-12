@@ -20,11 +20,13 @@ import org.testng.TestNG;
 import org.testng.annotations.Test;
 
 import com.test.base.AndroidDeviceConfiguration;
+import com.test.base.BaseTest;
 
 public class ParallelThread {
 	protected static int deviceCount;
 	static Map<String, String> devices = new HashMap<String, String>();
 	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
+	BaseTest baseTest = new BaseTest();
 
 	@SuppressWarnings({ "rawtypes" })
 	@Test
@@ -58,6 +60,7 @@ public class ParallelThread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		baseTest.convertXmlToJSon();
 		System.out.println("ending");
 
 	}
