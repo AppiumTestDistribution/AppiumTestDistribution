@@ -67,35 +67,49 @@ public class BaseTest extends AvailabelPorts {
 		String fileName = "report.json";
 		BufferedWriter bufferedWriter = null;
 		try {
-			
+			int i = 1;
 			FileWriter fileWriter;
+			int dir_1 = new File(System.getProperty("user.dir") + "/test-output/junitreports").listFiles().length;
 			
-			List textFiles = new ArrayList();	
-			  File dir = new File(System.getProperty("user.dir") + "/test-output/junitreports");
-			  for (File file : dir.listFiles()) {
-				    if (file.getName().contains(("Test"))) {
-				      System.out.println(file);
+			List textFiles = new ArrayList();
+			File dir = new File(System.getProperty("user.dir") + "/test-output/junitreports");
 			
-				fileWriter = new FileWriter(fileName,true);
-				InputStream inputStream = new FileInputStream(file);
-				StringBuilder builder = new StringBuilder();
-				int ptr = 0;
-				while ((ptr = inputStream.read()) != -1) {
-					builder.append((char) ptr);
-				}
-				
-				String xml = builder.toString();
-				JSONObject jsonObj = XML.toJSONObject(xml);
-			
-				// Always wrap FileWriter in BufferedWriter.
-				bufferedWriter = new BufferedWriter(fileWriter);
+			for (File file : dir.listFiles()) {
+				if (file.getName().contains(("Test"))) {
+					System.out.println(file);
 
-				// Always close files.
-				String jsonPrettyPrintString = jsonObj.toString(4);
-				//bufferedWriter.write(jsonPrettyPrintString);
-				bufferedWriter.append(jsonPrettyPrintString);
-				bufferedWriter.newLine();
-				bufferedWriter.close();
+					fileWriter = new FileWriter(fileName, true);
+					InputStream inputStream = new FileInputStream(file);
+					StringBuilder builder = new StringBuilder();
+					int ptr = 0;
+					while ((ptr = inputStream.read()) != -1) {
+						builder.append((char) ptr);
+					}
+
+					String xml = builder.toString();
+					JSONObject jsonObj = XML.toJSONObject(xml);
+
+					// Always wrap FileWriter in BufferedWriter.
+					bufferedWriter = new BufferedWriter(fileWriter);
+
+					// Always close files.
+					String jsonPrettyPrintString = jsonObj.toString(4);
+					// bufferedWriter.write(jsonPrettyPrintString);
+					if (i == 1) {
+						bufferedWriter.append("[");
+					}
+					bufferedWriter.append(jsonPrettyPrintString);
+					if (i != dir_1) {
+						bufferedWriter.append(",");
+					}
+			
+					if (i == dir_1) {
+						bufferedWriter.append("]");
+					}
+
+					bufferedWriter.newLine();
+					bufferedWriter.close();
+					i++;
 			}
 			  }
 		} catch (IOException ex) {
