@@ -1,3 +1,6 @@
 test-output/*
 target/*
 report.json
+*.xml
+*.json
+*.html
