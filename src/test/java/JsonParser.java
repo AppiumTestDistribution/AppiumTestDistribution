@@ -27,7 +27,7 @@ public class JsonParser {
 	    for (int i=0 ; i < jsonObj.length();i++ )
 	    {
 	    	JSONObject entierJson = (JSONObject) jsonObj.getJSONObject(i).get("testsuite");
-		    System.out.println(entierJson.get("testcase"));	
+		   // System.out.println(entierJson.get("testcase"));	
 		    Set keys = ((JSONObject) entierJson.get("testcase")).keySet();
 	        Iterator itr = keys.iterator();
 	 
@@ -36,7 +36,7 @@ public class JsonParser {
 	        while(itr.hasNext())
 	        {
 	            key = (String)itr.next();
-	            if(key.contains("name") ){
+	            if(key.equals("name") ){
 	                value = (String)((JSONObject) entierJson.get("testcase")).get(key).toString();
 	  	            System.out.println(key + " - "+ value.toString());
 	            }
