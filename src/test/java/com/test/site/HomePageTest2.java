@@ -9,7 +9,6 @@ import com.test.base.BaseTest;
 
 public class HomePageTest2 extends BaseTest {
 	@Test
-
     public void testMethodOne_2() throws Exception  {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());

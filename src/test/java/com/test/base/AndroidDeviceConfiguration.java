@@ -126,11 +126,11 @@ public class AndroidDeviceConfiguration {
 		return deviceSerail;
 	}
 	
-	public static void main(String[] args) throws Exception {
-		AndroidDeviceConfiguration gd = new AndroidDeviceConfiguration();
-		gd.startADB();
-		gd.getDeviceSerail();
-		gd.stopADB();
-	}
+//	public static void main(String[] args) throws Exception {
+//		AndroidDeviceConfiguration gd = new AndroidDeviceConfiguration();
+//		gd.startADB();
+//		gd.getDeviceSerail();
+//		gd.stopADB();
+//	}
 
 }

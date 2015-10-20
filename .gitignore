@@ -1,3 +1,4 @@
+allure-report/*
 test-output/*
 target/*
 report.json

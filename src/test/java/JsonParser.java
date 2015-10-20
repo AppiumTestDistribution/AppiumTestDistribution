@@ -36,7 +36,7 @@ public class JsonParser {
 	        while(itr.hasNext())
 	        {
 	            key = (String)itr.next();
-	            if(key.equals("name") ){
+	            if(key.equals("classname") ){
 	                value = (String)((JSONObject) entierJson.get("testcase")).get(key).toString();
 	  	            System.out.println(key + " - "+ value.toString());
 	            }

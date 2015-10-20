@@ -35,7 +35,7 @@ public class CommandPrompt {
 				break;
 			i++;
 		}
-		System.out.println(allLine);
+		//System.out.println(allLine);
 		return allLine;
 		
 	}

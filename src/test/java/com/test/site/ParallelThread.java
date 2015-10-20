@@ -29,15 +29,14 @@ public class ParallelThread {
 	BaseTest baseTest = new BaseTest();
 
 	@SuppressWarnings({ "rawtypes" })
-	@Test
-	public void testTrigger() throws Exception {
+	
+	public static void main(String[] args) throws Exception {
 		devices = deviceConf.getDevices();
 		deviceCount = devices.size() / 3;
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
-		
-		
+
 		List<Class> testCases = new ArrayList<Class>();
 		testCases.add(HomePageTest1.class);
 		testCases.add(HomePageTest2.class);
@@ -47,10 +46,10 @@ public class ParallelThread {
 
 		for (final Class testFile : testCases) {
 			executorService.submit(new Runnable() {
-				@Override
 				public void run() {
+					System.out.println("Running test file: " + testFile.getName());
 					testRunnerTestNg(testFile);
-					System.out.println("test file: " + testFile.getName());
+
 				}
 			});
 		}
@@ -60,7 +59,7 @@ public class ParallelThread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		baseTest.convertXmlToJSon();
+		// baseTest.convertXmlToJSon();
 		System.out.println("ending");
 
 	}
@@ -72,39 +71,11 @@ public class ParallelThread {
 			System.out.println(failure.toString());
 		}
 	}
-	
-	public static void getTest(String classTestFile){
-	    String pathToReports = "/Users/saikrisv/Documents/workspace/TestNGParallel";
-	    Project project = new Project();
 
-	    try {
-	        new File(pathToReports).mkdir();
-	        JUnitTask task = new JUnitTask();
-
-	        project.setProperty("java.io.tmpdir",pathToReports);
-	        task.setProject(project);
-
-	        FormatterElement.TypeAttribute type = new FormatterElement.TypeAttribute();
-	        type.setValue("xml");
-
-	        FormatterElement formater = new FormatterElement();   
-	        formater.setType(type);
-	        task.addFormatter(formater);
-            //HomePageTest1.class.getName()
-	        JUnitTest test = new JUnitTest(classTestFile);
-	        test.setTodir(new File(pathToReports));
-	        task.addTest(test);         
-	        task.execute(); 
-	    } catch (Exception e) {
-	    }
-
-	}
-	
-	
-	public void testRunnerTestNg(Class arg){
-		 TestNG test=new TestNG();
-	       test.setTestClasses(new Class[]{arg});
-	       test.run();
+	public static void testRunnerTestNg(Class arg) {
+		TestNG test = new TestNG();
+		test.setTestClasses(new Class[] { arg });
+		test.run();
 	}
 
 }
