@@ -1,6 +1,5 @@
 package com.test.site;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,15 +8,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.optional.junit.FormatterElement;
-import org.apache.tools.ant.taskdefs.optional.junit.JUnitTask;
-import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.testng.TestNG;
-import org.testng.annotations.Test;
 
 import com.test.base.AndroidDeviceConfiguration;
 import com.test.base.BaseTest;
