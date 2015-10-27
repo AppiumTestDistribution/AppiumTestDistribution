@@ -24,7 +24,7 @@ public class ParallelThread {
 
 	@SuppressWarnings({ "rawtypes" })
 	
-	public static void main(String[] args) throws Exception {
+	public void runner() throws Exception {
 		devices = deviceConf.getDevices();
 		deviceCount = devices.size() / 3;
 		System.out.println("Total Number of devices detected::" + deviceCount);
