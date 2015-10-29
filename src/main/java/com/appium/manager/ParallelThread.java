@@ -1,4 +1,4 @@
-package com.test.site;
+package com.appium.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,37 +8,34 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
 import org.testng.TestNG;
-
-import com.test.base.AndroidDeviceConfiguration;
-import com.test.base.BaseTest;
 
 public class ParallelThread {
 	protected static int deviceCount;
 	static Map<String, String> devices = new HashMap<String, String>();
 	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	BaseTest baseTest = new BaseTest();
+	List<Class> testcases;
 
 	@SuppressWarnings({ "rawtypes" })
-	
-	public void runner(List<Class> testCases) throws Exception {
+
+	public void runner(String pack) throws Exception {
 		devices = deviceConf.getDevices();
 		deviceCount = devices.size() / 3;
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
 
-//		List<Class> testCases = new ArrayList<Class>();
-//		testCases.add(HomePageTest1.class);
-//		testCases.add(HomePageTest2.class);
-//		testCases.add(HomePageTest3.class);
-//		testCases.add(HomePageTest4.class);
-//		testCases.add(HomePageTest5.class);
+		testcases = new ArrayList<Class>();
 
-		for (final Class testFile : testCases) {
+		// final String pack = "com.paralle.tests"; // Or any other package
+		PackageUtil.getClasses(pack).stream().forEach(s -> {
+			if (s.toString().contains("Test")) {
+				System.out.println("forEach: " + testcases.add((Class) s));
+			}
+		});
+
+		for (final Class testFile : testcases) {
 			executorService.submit(new Runnable() {
 				public void run() {
 					System.out.println("Running test file: " + testFile.getName());
@@ -58,13 +55,13 @@ public class ParallelThread {
 
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static void runTestCase(Class testFile) {
-		Result result = JUnitCore.runClasses(testFile);
-		for (Failure failure : result.getFailures()) {
-			System.out.println(failure.toString());
-		}
-	}
+	// @SuppressWarnings("rawtypes")
+	// private static void runTestCase(Class testFile) {
+	// Result result = JUnitCore.runClasses(testFile);
+	// for (Failure failure : result.getFailures()) {
+	// System.out.println(failure.toString());
+	// }
+	// }
 
 	public static void testRunnerTestNg(Class arg) {
 		TestNG test = new TestNG();
