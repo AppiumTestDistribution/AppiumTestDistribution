@@ -19,10 +19,9 @@ Add the below dependencies in your pom.xml
 		</repository>
 </repositories>
 ```
-
+<h2>Sample Tests</h2>
+ Clone the project (https://github.com/saikrishna321/AppiumTestDistributionExample)
 <h1>Configure tests</h1>
-
-Clone the project (https://github.com/saikrishna321/AppiumTestDistributionExample)
 
 Main class should look as below :: 
 
@@ -52,6 +51,12 @@ public class Runner {
 
    mvn -Dtest=Runner test
    
+<Allure report generation>
 
+Install the CLI (http://wiki.qatools.ru/display/AL/Allure+Commandline)
+
+Once the test is completed, run the command 
+	* allure generate target/allure-results
+	* allure report open
 
 
