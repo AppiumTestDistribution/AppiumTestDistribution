@@ -22,6 +22,7 @@ Add the below dependencies in your pom.xml
 
 <h1>Configure tests</h1>
 
+Clone the project (https://github.com/saikrishna321/AppiumTestDistributionExample)
 
 Main class should look as below :: 
 
