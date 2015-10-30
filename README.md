@@ -53,9 +53,9 @@ public class Runner {
    
 <Allure report generation>
 
-Install the CLI (http://wiki.qatools.ru/display/AL/Allure+Commandline)
+1. Install the CLI (http://wiki.qatools.ru/display/AL/Allure+Commandline)
 
-Once the test is completed, run the command 
+2. Once the test is completed, run the command 
 	* allure generate target/allure-results
 	* allure report open
 
