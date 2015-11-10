@@ -6,7 +6,7 @@ Add the below dependencies in your pom.xml
 <dependency>
 	<groupId>com.appium.android</groupId>
 	<artifactId>TestDistribution</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.6-SNAPSHOT</version>
 </dependency>
 ```
 
