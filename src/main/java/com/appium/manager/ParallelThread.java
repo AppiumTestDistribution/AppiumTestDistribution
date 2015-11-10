@@ -50,7 +50,8 @@ public class ParallelThread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		// baseTest.convertXmlToJSon();
+		System.out.println("Merging all junit xml and converting to JSON");
+		baseTest.convertXmlToJSon();
 		System.out.println("ending");
 
 	}
