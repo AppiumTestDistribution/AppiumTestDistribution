@@ -9,6 +9,7 @@ public class AndroidDeviceConfiguration {
 	CommandPrompt cmd = new CommandPrompt();
 	Map<String, String> devices = new HashMap<String, String>();
 	ArrayList<String> deviceSerail= new ArrayList<String>();
+	ArrayList<String> deviceModel= new ArrayList<String>();
 
 	/**
 	 * This method start adb server
@@ -125,6 +126,7 @@ public class AndroidDeviceConfiguration {
 		}
 		return deviceSerail;
 	}
+	
 	
 //	public static void main(String[] args) throws Exception {
 //		AndroidDeviceConfiguration gd = new AndroidDeviceConfiguration();

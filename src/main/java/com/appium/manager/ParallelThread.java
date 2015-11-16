@@ -10,11 +10,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.testng.TestNG;
 
+import com.appium.cucumber.report.HtmlReporter;
+
 public class ParallelThread {
 	protected static int deviceCount;
 	static Map<String, String> devices = new HashMap<String, String>();
 	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	BaseTest baseTest = new BaseTest();
+	HtmlReporter htmlReporter = new HtmlReporter();
 	List<Class> testcases;
 
 	@SuppressWarnings({ "rawtypes" })
@@ -52,6 +55,7 @@ public class ParallelThread {
 		}
 		System.out.println("Merging all junit xml and converting to JSON");
 		baseTest.convertXmlToJSon();
+		HtmlReporter.generateReports();
 		System.out.println("ending");
 
 	}
@@ -66,6 +70,7 @@ public class ParallelThread {
 
 	public static void testRunnerTestNg(Class arg) {
 		TestNG test = new TestNG();
+		test.setOutputDirectory(System.getProperty("user.dir")+"/"+BaseTest.device_udid+"/");
 		test.setTestClasses(new Class[] { arg });
 		test.run();
 	}

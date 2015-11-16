@@ -3,9 +3,10 @@ package com.test.site;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
-import com.test.base.BaseTest;
+import com.appium.manager.BaseTest;
 
-public class HomePageTest3{
+
+public class HomePageTest3 extends BaseTest{
 	@Test
 	public void testMethodOne_3() {
 		

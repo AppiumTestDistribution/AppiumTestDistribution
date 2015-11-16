@@ -47,6 +47,16 @@
 			<version>2.0.6</version>
 		</dependency>
 		<dependency>
+			<groupId>net.masterthought</groupId>
+			<artifactId>cucumber-reporting</artifactId>
+			<version>0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.relevantcodes</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>2.10</version>
+		</dependency>
+		<dependency>
 			<groupId>ru.yandex.qatools.allure</groupId>
 			<artifactId>allure-testng-adaptor</artifactId>
 			<version>${allure.version}</version>
@@ -72,7 +82,7 @@
 						-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar
 					</argLine>
 					<forkMode>once</forkMode>
-					<argLine>-Xms512m -Xmx512m -XX:-UseSplitVerifier</argLine>		
+					<argLine>-Xms512m -Xmx512m -XX:-UseSplitVerifier</argLine>
 				</configuration>
 				<dependencies>
 					<dependency>

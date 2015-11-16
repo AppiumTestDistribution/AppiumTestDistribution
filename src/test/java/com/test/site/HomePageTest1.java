@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 import com.test.base.BaseTest;
 
-public class HomePageTest1{
+public class HomePageTest1 extends com.appium.manager.BaseTest{
 
 	@Test
     public void testMethodOne_1() throws Exception  {

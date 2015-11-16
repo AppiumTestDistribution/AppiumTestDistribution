@@ -6,10 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.lang.reflect.Method;
 
 import org.json.JSONObject;
 import org.json.XML;
@@ -19,35 +22,44 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.ITestResult;
+import org.testng.TestListenerAdapter;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+
+import com.relevantcodes.extentreports.ExtentTest;
+import com.report.factory.ComplexReportFactory;
+import com.relevantcodes.extentreports.LogStatus;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import ru.yandex.qatools.allure.annotations.Attachment;
 
-public class BaseTest extends AvailabelPorts{
+public class BaseTest extends TestListenerAdapter{
 	protected String port;
 	public AppiumDriver<MobileElement> driver;
 	CommandPrompt cp = new CommandPrompt();
 	AppiumManager appiumMan = new AppiumManager();
 	AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
-	Properties prop = new Properties();
-	InputStream input = null;
+	public static Properties prop = new Properties();
+	public static InputStream input = null;
+	public static String device_udid;
+	public ExtentTest testReporter;
+	
 	@BeforeClass
 	public void testopenBroswer() throws Exception {
 		
 		input = new FileInputStream("config.properties");
-		prop.load(input);
-		
-		
-		ArrayList<String> devices = androidDevice.getDeviceSerail();
-		System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
+		prop.load(input);	
+		ArrayList<String> devices = androidDevice.getDeviceSerail();	
+	    System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
 		int thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
-		String device_udid = devices.get(thread_device_count);
-		port = appiumMan.startAppium(device_udid);
-		
+		device_udid = devices.get(thread_device_count);
+		port = appiumMan.startAppium(device_udid);	
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
@@ -68,6 +80,46 @@ public class BaseTest extends AvailabelPorts{
 
 	}
 	
+	@BeforeMethod
+	public void beforeMethod(Method caller) {
+		ComplexReportFactory.getTest(caller.getName(), "This is a simple test from complex factory");
+	}
+
+	@AfterMethod
+	public void afterMethod(Method caller) {
+		ComplexReportFactory.closeTest(caller.getName());
+
+	}
+
+	@AfterSuite
+	public void afterSuite() {
+		ComplexReportFactory.closeReport();
+	}
+	
+	
+	@Override
+	public void onTestSuccess(ITestResult tr) {
+		System.out.println(tr.getMethod().getMethodName() + "--Test method success\n");
+//		ExtentReports extent = createReport();
+//		ExtentTest test = extent.startTest(tr.getMethod().getMethodName(), "-");
+		testReporter = ComplexReportFactory.getTest();
+		testReporter.log(LogStatus.PASS, "-");
+		//flushReports(extent, test);
+	}
+
+	@Override
+	public void onTestFailure(ITestResult tr) {
+		System.out.println(tr.getMethod().getMethodName() + "--Test method failed\n");
+		//ExtentReports extent = createReport();
+		//ExtentTest test = extent.startTest(tr.getMethod().getMethodName(), "Test failed, click here for further details");
+		//ExtentTest testReporter = ComplexReportFactory.getTest();
+		// step log
+		testReporter =  ComplexReportFactory.getTest();
+		testReporter.log(LogStatus.FAIL, "Failure trace Selenium: " + tr.toString());
+		//testReporter.log(LogStatus.INFO, "Snapshot below: " + testReporter.addScreenCapture("/Users/saikrisv/Downloads/addtext_com_MjA1MjUxNDkyODA.png"));
+		//flushReports(extent, test);
+	
+	}
 
 	@Attachment
 	public byte[] makeScreenshot() {
