@@ -6,13 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.lang.reflect.Method;
 
 import org.json.JSONObject;
 import org.json.XML;
@@ -31,15 +31,16 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import com.relevantcodes.extentreports.ExtentTest;
-import com.report.factory.ComplexReportFactory;
 import com.relevantcodes.extentreports.LogStatus;
+import com.report.factory.ExtentManager;
+import com.report.factory.ExtentTestManager;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import ru.yandex.qatools.allure.annotations.Attachment;
 
-public class BaseTest extends TestListenerAdapter{
+public class BaseTest extends TestListenerAdapter {
 	protected String port;
 	public AppiumDriver<MobileElement> driver;
 	CommandPrompt cp = new CommandPrompt();
@@ -49,83 +50,71 @@ public class BaseTest extends TestListenerAdapter{
 	public static InputStream input = null;
 	public static String device_udid;
 	public ExtentTest testReporter;
-	
+
 	@BeforeClass
 	public void testopenBroswer() throws Exception {
-		
+
 		input = new FileInputStream("config.properties");
-		prop.load(input);	
-		ArrayList<String> devices = androidDevice.getDeviceSerail();	
-	    System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
+		prop.load(input);
+		ArrayList<String> devices = androidDevice.getDeviceSerail();
+		System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
 		int thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
 		device_udid = devices.get(thread_device_count);
-		port = appiumMan.startAppium(device_udid);	
+		port = appiumMan.startAppium(device_udid);
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
 		capabilities.setCapability("platformVersion", "5.X");
-		capabilities.setCapability("app", System.getProperty("user.dir") + "/build/"+prop.getProperty("appname"));
+		capabilities.setCapability("app", System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"));
 		capabilities.setCapability("package", prop.getProperty("package"));
 		capabilities.setCapability("appActivity", prop.getProperty("appActivity"));
-		System.out.println("http://127.0.0.1:" + port + "/wd/hub" + device_udid);
 		Thread.sleep(5000);
 		driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:" + port + "/wd/hub"), capabilities);
 
 	}
 
 	@AfterClass
-	public void testcloseBrowser() throws Exception {
+	public void closeApp() {
 		driver.quit();
-		// androidDevice.stopADB();
-
 	}
-	
+
 	@BeforeMethod
 	public void beforeMethod(Method caller) {
-		ComplexReportFactory.getTest(caller.getName(), "This is a simple test from complex factory");
+		ExtentTestManager.startTest(caller.getName(), "This is a simple test.");
 	}
 
 	@AfterMethod
-	public void afterMethod(Method caller) {
-		ComplexReportFactory.closeTest(caller.getName());
+	public void afterMethod(ITestResult result) {
+		if (result.isSuccess()) {
+			ExtentTestManager.getTest().log(LogStatus.PASS, "Test passed");
+		} else if (result.getStatus() == ITestResult.FAILURE) {
+			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
 
+		} else if (result.getStatus() == ITestResult.SKIP) {
+			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
+		}
+
+		ExtentTestManager.endTest();
+		ExtentManager.getInstance().flush();
+	}
+
+	protected String getStackTrace(Throwable t) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		t.printStackTrace(pw);
+		return sw.toString();
 	}
 
 	@AfterSuite
 	public void afterSuite() {
-		ComplexReportFactory.closeReport();
-	}
-	
-	
-	@Override
-	public void onTestSuccess(ITestResult tr) {
-		System.out.println(tr.getMethod().getMethodName() + "--Test method success\n");
-//		ExtentReports extent = createReport();
-//		ExtentTest test = extent.startTest(tr.getMethod().getMethodName(), "-");
-		testReporter = ComplexReportFactory.getTest();
-		testReporter.log(LogStatus.PASS, "-");
-		//flushReports(extent, test);
-	}
-
-	@Override
-	public void onTestFailure(ITestResult tr) {
-		System.out.println(tr.getMethod().getMethodName() + "--Test method failed\n");
-		//ExtentReports extent = createReport();
-		//ExtentTest test = extent.startTest(tr.getMethod().getMethodName(), "Test failed, click here for further details");
-		//ExtentTest testReporter = ComplexReportFactory.getTest();
-		// step log
-		testReporter =  ComplexReportFactory.getTest();
-		testReporter.log(LogStatus.FAIL, "Failure trace Selenium: " + tr.toString());
-		//testReporter.log(LogStatus.INFO, "Snapshot below: " + testReporter.addScreenCapture("/Users/saikrisv/Downloads/addtext_com_MjA1MjUxNDkyODA.png"));
-		//flushReports(extent, test);
-	
+		ExtentManager.getInstance().flush();
 	}
 
 	@Attachment
 	public byte[] makeScreenshot() {
 		return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 	}
-	
+
 	public void waitForElement(By id, int time) {
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable((id)));

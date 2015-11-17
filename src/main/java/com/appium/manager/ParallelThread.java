@@ -53,9 +53,6 @@ public class ParallelThread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Merging all junit xml and converting to JSON");
-		baseTest.convertXmlToJSon();
-		HtmlReporter.generateReports();
 		System.out.println("ending");
 
 	}
@@ -70,7 +67,6 @@ public class ParallelThread {
 
 	public static void testRunnerTestNg(Class arg) {
 		TestNG test = new TestNG();
-		test.setOutputDirectory(System.getProperty("user.dir")+"/"+BaseTest.device_udid+"/");
 		test.setTestClasses(new Class[] { arg });
 		test.run();
 	}

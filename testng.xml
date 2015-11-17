@@ -1,10 +1,14 @@
-<suite name="Test-class Suite" parallel="classes" thread-count="2" >
+<suite name="Test-class Suite" parallel="classes" thread-count="3" >
     <listeners>
 		<listener class-name="com.appium.manager.BaseTest" />
 	</listeners>
   <test name="Test-class test" >
     <classes>
-      <class name="com.test.site.sample" />
+      <class name="com.test.site.HomePageTest5" />
+        <class name="com.test.site.HomePageTest1" />
+          <class name="com.test.site.HomePageTest2" />
+            <class name="com.test.site.HomePageTest3" />
+              <class name="com.test.site.HomePageTest4" />
     </classes>
   </test>
   
