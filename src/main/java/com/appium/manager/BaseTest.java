@@ -51,9 +51,8 @@ public class BaseTest extends TestListenerAdapter {
 	public static String device_udid;
 	public ExtentTest testReporter;
 
-	@BeforeClass
+	//@BeforeClass
 	public void testopenBroswer() throws Exception {
-
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		ArrayList<String> devices = androidDevice.getDeviceSerail();
@@ -79,7 +78,8 @@ public class BaseTest extends TestListenerAdapter {
 	}
 
 	@BeforeMethod
-	public void beforeMethod(Method caller) {
+	public void beforeMethod(Method caller) throws Exception {
+		testopenBroswer();
 		ExtentTestManager.startTest(caller.getName(), "This is a simple test.");
 	}
 
@@ -96,6 +96,7 @@ public class BaseTest extends TestListenerAdapter {
 
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
+		driver.quit();
 	}
 
 	protected String getStackTrace(Throwable t) {
