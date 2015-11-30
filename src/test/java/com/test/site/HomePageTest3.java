@@ -7,6 +7,8 @@ import com.appium.manager.BaseTest;
 
 
 public class HomePageTest3 extends BaseTest{
+
+
 	@Test
 	public void testMethodOne_3() {
 		

@@ -8,9 +8,13 @@ import org.testng.annotations.Test;
 
 import com.appium.manager.BaseTest;
 
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
+
 
 
 public class HomePageTest1 extends BaseTest{
+	
 
 	@Test
     public void testMethodOne_1() throws Exception  {

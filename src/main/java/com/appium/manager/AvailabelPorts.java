@@ -4,11 +4,11 @@ import java.net.ServerSocket;
 
 public class AvailabelPorts {
 	
-	public String getPort() throws Exception
+	public int getPort() throws Exception
 	{
 		ServerSocket socket = new ServerSocket(0);
 		socket.setReuseAddress(true);
-		String port = Integer.toString(socket.getLocalPort()); 
+		int port = socket.getLocalPort(); 
 		socket.close();
 		return port;
 	}

@@ -3,6 +3,7 @@ package com.appium.manager;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,9 @@ import com.report.factory.ExtentTestManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import ru.yandex.qatools.allure.annotations.Attachment;
 
 public class BaseTest extends TestListenerAdapter {
@@ -50,36 +54,40 @@ public class BaseTest extends TestListenerAdapter {
 	public static InputStream input = null;
 	public static String device_udid;
 	public ExtentTest testReporter;
-
+	AppiumDriverLocalService appiumDriverLocalService;
+	
 	//@BeforeClass
-	public void testopenBroswer() throws Exception {
+	public void testopenBroswer() throws Exception {	
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		ArrayList<String> devices = androidDevice.getDeviceSerail();
 		System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
 		int thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
 		device_udid = devices.get(thread_device_count);
-		port = appiumMan.startAppium(device_udid);
+		appiumMan.appiumServer(device_udid);
+       //Replace the appium start programatically	
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
 		capabilities.setCapability("platformVersion", "5.X");
-		capabilities.setCapability("app", System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"));
+		//capabilities.setCapability("app", System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"));
 		capabilities.setCapability("package", prop.getProperty("package"));
 		capabilities.setCapability("appActivity", prop.getProperty("appActivity"));
 		Thread.sleep(5000);
-		driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:" + port + "/wd/hub"), capabilities);
+		//driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:" + port + "/wd/hub"), capabilities);
+		driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 
 	}
 
 	@AfterClass
 	public void closeApp() {
-		driver.quit();
+		driver.close();
+		//driver.quit();
 	}
 
 	@BeforeMethod
 	public void beforeMethod(Method caller) throws Exception {
-		testopenBroswer();
+	    testopenBroswer();
 		ExtentTestManager.startTest(caller.getName(), "This is a simple test.");
 	}
 
@@ -97,6 +105,8 @@ public class BaseTest extends TestListenerAdapter {
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
 		driver.quit();
+		appiumMan.destroyAppiumNode();
+		//driver.quit();
 	}
 
 	protected String getStackTrace(Throwable t) {
@@ -177,5 +187,6 @@ public class BaseTest extends TestListenerAdapter {
 			e.printStackTrace();
 		}
 	}
+	
 
 }

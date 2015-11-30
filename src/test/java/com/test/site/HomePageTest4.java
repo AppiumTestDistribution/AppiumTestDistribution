@@ -10,6 +10,7 @@ import com.appium.manager.BaseTest;
 
 public class HomePageTest4 extends BaseTest {
 
+
 	@Test
 
 	public void testMethodOne_4() throws Exception {

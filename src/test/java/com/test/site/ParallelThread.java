@@ -1,6 +1,5 @@
 package com.test.site;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +12,8 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.testng.TestNG;
 
-import com.test.base.AndroidDeviceConfiguration;
-import com.test.base.BaseTest;
+import com.appium.manager.AndroidDeviceConfiguration;
+import com.appium.manager.BaseTest;
 
 public class ParallelThread {
 	protected static int deviceCount;
