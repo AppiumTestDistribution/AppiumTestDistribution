@@ -1,5 +1,11 @@
 package com.appium.manager;
 
+/*
+ * This class picks the devices connected 
+ * and distributes across multiple thread.
+ * 
+ * Thanks to @Thote_Gowda
+ */
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,13 +63,6 @@ public class ParallelThread {
 
 	}
 
-	// @SuppressWarnings("rawtypes")
-	// private static void runTestCase(Class testFile) {
-	// Result result = JUnitCore.runClasses(testFile);
-	// for (Failure failure : result.getFailures()) {
-	// System.out.println(failure.toString());
-	// }
-	// }
 
 	public static void testRunnerTestNg(Class arg) {
 		TestNG test = new TestNG();

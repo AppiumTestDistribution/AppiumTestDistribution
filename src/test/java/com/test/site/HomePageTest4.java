@@ -17,8 +17,6 @@ public class HomePageTest4 extends BaseTest {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		//WebElement el= driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
-		//highlightElement(driver, el);
 		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		driver.findElement(By.id("com.android2.calculator3:id/digit5")).click();
 		driver.findElement(By.id("com.android2.calculator3:id/minus")).click();

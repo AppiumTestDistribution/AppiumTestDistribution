@@ -33,25 +33,8 @@ public class AppiumManager {
 
 	/**
 	 * start appium with auto generated ports : appium port, chrome port,
-	 * bootstap port and device UDID
+	 * bootstrap port and device UDID
 	 */
-//	public String startAppium(String devices) throws Exception {
-//		// start appium server
-//		String port = ap.getPort();
-//		String chromePort = ap.getPort();
-//		String bootstrapPort = ap.getPort();
-//		String command = "appium --session-override -p " + port + " --chromedriver-port " + chromePort + " -bp "
-//				+ bootstrapPort + " -U " + devices;
-//		System.out.println(command);
-//
-//		String output = cp.runCommand(command);
-//
-//		if (output.contains("not")) {
-//			System.out.println("\nAppium is not installed");
-//			System.exit(0);
-//		}
-//		return port;
-//	}
 
 	public AppiumServiceBuilder appiumServer(String deviceID) throws Exception {
 		input = new FileInputStream("config.properties");

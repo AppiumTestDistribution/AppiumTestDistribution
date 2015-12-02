@@ -20,13 +20,13 @@ public class ExtentTestManager {  // new
     }
 
     public static synchronized ExtentTest startTest(String testName) {
-        return startTest(testName, "");
+        return startTest(testName, "","");
     }
 
-    public static synchronized ExtentTest startTest(String testName, String desc) {
-        ExtentTest test = extent.startTest(testName, desc);
+    public static synchronized ExtentTest startTest(String testName, String desc,String deviceId) {
+        ExtentTest test = extent.startTest(testName, desc).assignCategory(deviceId);
         extentTestMap.put((int) (long) (Thread.currentThread().getId()), test);
-
+        
         return test;
     }
 }

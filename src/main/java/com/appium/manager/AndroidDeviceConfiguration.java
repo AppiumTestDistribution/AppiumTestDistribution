@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,12 +128,19 @@ public class AndroidDeviceConfiguration {
 		return deviceSerail;
 	}
 	
+	/*
+	 * This method gets the device model name 
+	 */
+	public String deviceModel(String deviceID){
+		String deviceModelName = null;
+		try {
+			deviceModelName = cmd.runCommand("/usr/bin/adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W", "");
+		} catch (InterruptedException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return deviceModelName;
+		
+	}
 	
-//	public static void main(String[] args) throws Exception {
-//		AndroidDeviceConfiguration gd = new AndroidDeviceConfiguration();
-//		gd.startADB();
-//		gd.getDeviceSerail();
-//		gd.stopADB();
-//	}
-
 }

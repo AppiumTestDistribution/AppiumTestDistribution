@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.testng.TestNG;
+
 public class CommandPrompt {
 
 	Process p;
@@ -27,16 +29,17 @@ public class CommandPrompt {
 		String allLine = "";
 		int i = 1;
 		while ((line = r.readLine()) != null) {
-			 if (line.isEmpty()){
-				 break;
-			 }
-			allLine = allLine + "" + line + "\n";	
+			if (line.isEmpty()) {
+				break;
+			}
+			allLine = allLine + "" + line + "\n";
 			if (line.contains("Console LogLevel: debug"))
 				break;
 			i++;
 		}
-		//System.out.println(allLine);
+		// System.out.println(allLine);
 		return allLine;
-		
+
 	}
+
 }

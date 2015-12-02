@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.json.XML;
 import org.openqa.selenium.By;
@@ -52,29 +53,26 @@ public class BaseTest extends TestListenerAdapter {
 	AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
 	public static Properties prop = new Properties();
 	public static InputStream input = null;
-	public static String device_udid;
+	public String device_udid;
 	public ExtentTest testReporter;
 	AppiumDriverLocalService appiumDriverLocalService;
+	int thread_device_count;
 	
-	//@BeforeClass
 	public void testopenBroswer() throws Exception {	
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		ArrayList<String> devices = androidDevice.getDeviceSerail();
 		System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
-		int thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
+		thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
 		device_udid = devices.get(thread_device_count);
-		appiumMan.appiumServer(device_udid);
-       //Replace the appium start programatically	
+		appiumMan.appiumServer(device_udid);	
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
 		capabilities.setCapability("platformVersion", "5.X");
-		//capabilities.setCapability("app", System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"));
 		capabilities.setCapability("package", prop.getProperty("package"));
 		capabilities.setCapability("appActivity", prop.getProperty("appActivity"));
 		Thread.sleep(5000);
-		//driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:" + port + "/wd/hub"), capabilities);
 		driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 
 	}
@@ -88,16 +86,26 @@ public class BaseTest extends TestListenerAdapter {
 	@BeforeMethod
 	public void beforeMethod(Method caller) throws Exception {
 	    testopenBroswer();
-		ExtentTestManager.startTest(caller.getName(), "This is a simple test.");
+	    System.out.println(device_udid);
+	    String category=androidDevice.deviceModel(device_udid);
+		ExtentTestManager.startTest(caller.getName(), "Mobile Appium Test",category+device_udid.replace(".","_").replace(":","_"));
 	}
 
 	@AfterMethod
-	public void afterMethod(ITestResult result) {
+	public void afterMethod(ITestResult result)  {
 		if (result.isSuccess()) {
 			ExtentTestManager.getTest().log(LogStatus.PASS, "Test passed");
 		} else if (result.getStatus() == ITestResult.FAILURE) {
 			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
-
+			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+			try {
+				FileUtils.copyFile(scrFile, new File(result.getMethod().getMethodName()+".png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ExtentTestManager.getTest().log(LogStatus.INFO, 
+					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(result.getMethod().getMethodName()+".png"));
 		} else if (result.getStatus() == ITestResult.SKIP) {
 			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
 		}
@@ -119,11 +127,6 @@ public class BaseTest extends TestListenerAdapter {
 	@AfterSuite
 	public void afterSuite() {
 		ExtentManager.getInstance().flush();
-	}
-
-	@Attachment
-	public byte[] makeScreenshot() {
-		return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 	}
 
 	public void waitForElement(By id, int time) {

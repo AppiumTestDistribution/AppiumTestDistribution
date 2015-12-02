@@ -30,13 +30,6 @@ public class ParallelThread {
 		System.out.println("starting running tests in threads");
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
 
-//		List<Class> testCases = new ArrayList<Class>();
-//		testCases.add(HomePageTest1.class);
-//		testCases.add(HomePageTest2.class);
-//		testCases.add(HomePageTest3.class);
-//		testCases.add(HomePageTest4.class);
-//		testCases.add(HomePageTest5.class);
-
 		for (final Class testFile : testCases) {
 			executorService.submit(new Runnable() {
 				public void run() {
