@@ -23,10 +23,16 @@ public class ExtentTestManager {  // new
         return startTest(testName, "","");
     }
 
-    public static synchronized ExtentTest startTest(String testName, String desc,String deviceId) {
+    @SuppressWarnings("unchecked")
+	public static synchronized ExtentTest startTest(String testName, String desc,String deviceId) {
         ExtentTest test = extent.startTest(testName, desc).assignCategory(deviceId);
         extentTestMap.put((int) (long) (Thread.currentThread().getId()), test);
-        
+		@SuppressWarnings("rawtypes")
+		Map sysInfo = new HashMap();
+		sysInfo.put("Selenium Version", "2.48");
+		sysInfo.put("Environment", "Prod");
+		sysInfo.put("AppiumVersion", "3.2.0");
+		extent.addSystemInfo(sysInfo);
         return test;
     }
 }

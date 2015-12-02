@@ -99,13 +99,13 @@ public class BaseTest extends TestListenerAdapter {
 			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
-				FileUtils.copyFile(scrFile, new File(result.getMethod().getMethodName()+".png"));
+				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")+"/target/"+result.getMethod().getMethodName()+".png"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			ExtentTestManager.getTest().log(LogStatus.INFO, 
-					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(result.getMethod().getMethodName()+".png"));
+					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")+"/target/"+result.getMethod().getMethodName()+".png"));
 		} else if (result.getStatus() == ITestResult.SKIP) {
 			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
 		}
