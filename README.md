@@ -6,7 +6,7 @@ Add the below dependencies in your pom.xml
 <dependency>
 	<groupId>com.appium.android</groupId>
 	<artifactId>TestDistribution</artifactId>
-	<version>0.0.6-SNAPSHOT</version>
+	<version>0.0.9-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -23,14 +23,16 @@ Add the below dependencies in your pom.xml
  Clone the project (https://github.com/saikrishna321/AppiumTestDistributionExample)
 <h1>Configure tests</h1>
 
-Main class should look as below :: 
+Main Runnerclass should look as below :: 
 
 ```
 public class Runner {
     
-	public static void main(String[] args) throws Exception {
+	@Test
+	public void testApp() throws Exception {
 		ParallelThread parallelThread = new ParallelThread();
-		parallelThread.runner("com.yourpackage.to.tests");
+		parallelThread.runner("com.paralle.tests");
+
 	}
 }
 
@@ -51,12 +53,8 @@ public class Runner {
 
    mvn -Dtest=Runner test
    
-<Allure report generation>
+<h3>Reports</h3>
 
-1. Install the CLI (http://wiki.qatools.ru/display/AL/Allure+Commandline)
-
-2. Once the test is completed, run the command 
-	* allure generate target/allure-results
-	* allure report open
+Your should see report file generated as ExtentReport.html
 
 
