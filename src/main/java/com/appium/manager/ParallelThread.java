@@ -1,5 +1,11 @@
 package com.appium.manager;
 
+/*
+ * This class picks the devices connected 
+ * and distributes across multiple thread.
+ * 
+ * Thanks to @Thote_Gowda
+ */
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +16,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.testng.TestNG;
 
+import com.appium.cucumber.report.HtmlReporter;
+
 public class ParallelThread {
 	protected static int deviceCount;
 	static Map<String, String> devices = new HashMap<String, String>();
 	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	BaseTest baseTest = new BaseTest();
+	HtmlReporter htmlReporter = new HtmlReporter();
 	List<Class> testcases;
 
 	@SuppressWarnings({ "rawtypes" })
@@ -50,19 +59,10 @@ public class ParallelThread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Merging all junit xml and converting to JSON");
-		baseTest.convertXmlToJSon();
 		System.out.println("ending");
 
 	}
 
-	// @SuppressWarnings("rawtypes")
-	// private static void runTestCase(Class testFile) {
-	// Result result = JUnitCore.runClasses(testFile);
-	// for (Failure failure : result.getFailures()) {
-	// System.out.println(failure.toString());
-	// }
-	// }
 
 	public static void testRunnerTestNg(Class arg) {
 		TestNG test = new TestNG();

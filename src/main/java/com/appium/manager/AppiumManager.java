@@ -1,5 +1,16 @@
 package com.appium.manager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
+
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.AndroidServerFlag;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
+
 /**
  * Appium Manager - this class contains method to start and stops appium server
  * To execute the tests from eclipse, you need to set PATH as
@@ -9,7 +20,9 @@ public class AppiumManager {
 
 	CommandPrompt cp = new CommandPrompt();
 	AvailabelPorts ap = new AvailabelPorts();
-
+	AppiumDriverLocalService appiumDriverLocalService;
+	public static Properties prop = new Properties();
+	public static InputStream input = null;
 	/**
 	 * start appium with default arguments
 	 */
@@ -20,23 +33,36 @@ public class AppiumManager {
 
 	/**
 	 * start appium with auto generated ports : appium port, chrome port,
-	 * bootstap port and device UDID
+	 * bootstrap port and device UDID
 	 */
-	public String startAppium(String devices) throws Exception {
-		// start appium server
-		String port = ap.getPort();
-		String chromePort = ap.getPort();
-		String bootstrapPort = ap.getPort();
-		String command = "appium --session-override -p " + port + " --chromedriver-port " + chromePort + " -bp "
-				+ bootstrapPort + " -U " + devices;
-		System.out.println(command);
 
-		String output = cp.runCommand(command);
+	public AppiumServiceBuilder appiumServer(String deviceID) throws Exception {
+		input = new FileInputStream("config.properties");
+		prop.load(input);
+		int port = ap.getPort();
+		int chromePort = ap.getPort();
+		int bootstrapPort = ap.getPort();
+		AppiumServiceBuilder builder = new AppiumServiceBuilder()
+				.withAppiumJS(new File("/usr/local/lib/node_modules/appium/bin/appium.js"))
+				.withArgument(GeneralServerFlag.APP, System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"))
+				.withArgument(GeneralServerFlag.LOG_LEVEL, "info").withArgument(GeneralServerFlag.UIID, deviceID)
+				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT,Integer.toString(chromePort))
+				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER,Integer.toString(bootstrapPort))
+				.withArgument(GeneralServerFlag.SESSION_OVERRIDE)
+				.usingPort(port);
+		/* and so on */;
+		appiumDriverLocalService = builder.build();
+		appiumDriverLocalService.start();
+		return builder;
 
-		if (output.contains("not")) {
-			System.out.println("\nAppium is not installed");
-			System.exit(0);
-		}
-		return port;
 	}
+
+	public URL getAppiumUrl() {
+		return appiumDriverLocalService.getUrl();
+	}
+
+	public void destroyAppiumNode() {
+		appiumDriverLocalService.stop();
+	}
+
 }

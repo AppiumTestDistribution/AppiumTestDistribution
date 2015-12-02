@@ -1,6 +1,5 @@
 package com.test.site;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +12,8 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.testng.TestNG;
 
-import com.test.base.AndroidDeviceConfiguration;
-import com.test.base.BaseTest;
+import com.appium.manager.AndroidDeviceConfiguration;
+import com.appium.manager.BaseTest;
 
 public class ParallelThread {
 	protected static int deviceCount;
@@ -30,13 +29,6 @@ public class ParallelThread {
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
-
-//		List<Class> testCases = new ArrayList<Class>();
-//		testCases.add(HomePageTest1.class);
-//		testCases.add(HomePageTest2.class);
-//		testCases.add(HomePageTest3.class);
-//		testCases.add(HomePageTest4.class);
-//		testCases.add(HomePageTest5.class);
 
 		for (final Class testFile : testCases) {
 			executorService.submit(new Runnable() {

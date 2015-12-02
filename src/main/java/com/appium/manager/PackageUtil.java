@@ -13,6 +13,10 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+/*
+ * This class gets all the classpath for the tests 
+ * under the package specified
+ */
 public class PackageUtil {
 	public static Collection<Object> getClasses(final String pack) throws Exception {
 		final StandardJavaFileManager fileManager = ToolProvider.getSystemJavaCompiler().getStandardFileManager(null,
