@@ -16,7 +16,7 @@ public class AndroidDeviceConfiguration {
 	 * This method start adb server
 	 */
 	public void startADB() throws Exception {
-		String output = cmd.runCommand("/usr/bin/adb start-server");
+		String output = cmd.runCommand("adb start-server");
 		String[] lines = output.split("\n");
 		if (lines.length == 1)
 			System.out.println("adb service already started");
@@ -32,7 +32,7 @@ public class AndroidDeviceConfiguration {
 	 * This method stop adb server
 	 */
 	public void stopADB() throws Exception {
-		cmd.runCommand("/usr/bin/adb kill-server");
+		cmd.runCommand("adb kill-server");
 	}
 	
 	/**
@@ -43,7 +43,7 @@ public class AndroidDeviceConfiguration {
 	public Map<String, String> getDevices() throws Exception {
 
 		startADB(); // start adb service
-		String output = cmd.runCommand("/usr/bin/adb devices");
+		String output = cmd.runCommand("adb devices");
 		String[] lines = output.split("\n");
 
 		if (lines.length <= 1) {
@@ -58,12 +58,12 @@ public class AndroidDeviceConfiguration {
 			if (lines[i].contains("device")) {
 				lines[i] = lines[i].replaceAll("device", "");
 				String deviceID = lines[i];
-				String model = cmd.runCommand("/usr/bin/adb -s " + deviceID + " shell getprop ro.product.model")
+				String model = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
 						.replaceAll("\\s+", "");
-				String brand = cmd.runCommand("/usr/bin/adb -s " + deviceID + " shell getprop ro.product.brand")
+				String brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
 						.replaceAll("\\s+", "");
 				String osVersion = cmd
-						.runCommand("/usr/bin/adb -s " + deviceID + " shell getprop ro.build.version.release")
+						.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release")
 						.replaceAll("\\s+", "");
 				String deviceName = brand + " " + model;
 
@@ -95,7 +95,7 @@ public class AndroidDeviceConfiguration {
 	public ArrayList<String> getDeviceSerail() throws Exception {
 
 		startADB(); // start adb service
-		String output = cmd.runCommand("/usr/bin/adb devices");
+		String output = cmd.runCommand("adb devices");
 		String[] lines = output.split("\n");
 
 		if (lines.length <= 1) {
@@ -134,7 +134,7 @@ public class AndroidDeviceConfiguration {
 	public String deviceModel(String deviceID){
 		String deviceModelName = null;
 		try {
-			deviceModelName = cmd.runCommand("/usr/bin/adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W", "");
+			deviceModelName = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W", "");
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
