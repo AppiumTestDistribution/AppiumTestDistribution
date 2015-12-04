@@ -4,7 +4,7 @@ package com.appium.manager;
  * This class picks the devices connected 
  * and distributes across multiple thread.
  * 
- * Thanks to @Thote_Gowda
+ * Thanks to @Thote_Gowda(thotegowda.gr@gmail.com)
  */
 import java.util.ArrayList;
 import java.util.HashMap;
