@@ -57,15 +57,27 @@ public class BaseTest extends TestListenerAdapter {
 	public ExtentTest testReporter;
 	AppiumDriverLocalService appiumDriverLocalService;
 	int thread_device_count;
-	
-	public void testopenBroswer() throws Exception {	
+
+	public void testopenBroswer() throws Exception {
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		ArrayList<String> devices = androidDevice.getDeviceSerail();
-		System.out.println("*************" + Thread.currentThread().getName().split("-")[3]);
-		thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
+
+		if (prop.getProperty("runner").equalsIgnoreCase("distribute")) {
+			System.out.println("*************" + Thread.currentThread().getName());
+			System.out.println("******Current Thread Running*******" + Thread.currentThread().getName().split("-")[3]);
+			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
+		} else if (prop.getProperty("runner").equalsIgnoreCase("parallel")) {
+			System.out.println("******Into Parallel BaseTest*******" + Thread.currentThread().getName().split("-")[1]);
+			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[1]);
+			System.out.println("Device received from array" + devices.get(thread_device_count));
+		}
+
+		// When tests are running in parallel then we get
+		// Thread.currentThread().getName().split("-")[1] to get the device
+		// array position
 		device_udid = devices.get(thread_device_count);
-		appiumMan.appiumServer(device_udid);	
+		appiumMan.appiumServer(device_udid);
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
@@ -80,32 +92,35 @@ public class BaseTest extends TestListenerAdapter {
 	@AfterClass
 	public void closeApp() {
 		driver.close();
-		//driver.quit();
+		// driver.quit();
 	}
 
 	@BeforeMethod
 	public void beforeMethod(Method caller) throws Exception {
-	    testopenBroswer();
-	    System.out.println(device_udid);
-	    String category=androidDevice.deviceModel(device_udid);
-		ExtentTestManager.startTest(caller.getName(), "Mobile Appium Test",category+device_udid.replace(".","_").replace(":","_"));
+		testopenBroswer();
+		System.out.println(device_udid);
+		String category = androidDevice.deviceModel(device_udid);
+		ExtentTestManager.startTest(caller.getName(), "Mobile Appium Test",
+				category + device_udid.replace(".", "_").replace(":", "_"));
 	}
 
 	@AfterMethod
-	public void afterMethod(ITestResult result)  {
+	public void afterMethod(ITestResult result) {
 		if (result.isSuccess()) {
 			ExtentTestManager.getTest().log(LogStatus.PASS, "Test passed");
 		} else if (result.getStatus() == ITestResult.FAILURE) {
 			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
-				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")+"/target/"+result.getMethod().getMethodName()+".png"));
+				FileUtils.copyFile(scrFile, new File(
+						System.getProperty("user.dir") + "/target/" + result.getMethod().getMethodName() + ".png"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ExtentTestManager.getTest().log(LogStatus.INFO, 
-					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")+"/target/"+result.getMethod().getMethodName()+".png"));
+			ExtentTestManager.getTest().log(LogStatus.INFO,
+					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
+							System.getProperty("user.dir") + "/target/" + result.getMethod().getMethodName() + ".png"));
 		} else if (result.getStatus() == ITestResult.SKIP) {
 			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
 		}
@@ -114,7 +129,7 @@ public class BaseTest extends TestListenerAdapter {
 		ExtentManager.getInstance().flush();
 		driver.quit();
 		appiumMan.destroyAppiumNode();
-		//driver.quit();
+		// driver.quit();
 	}
 
 	protected String getStackTrace(Throwable t) {
@@ -190,6 +205,5 @@ public class BaseTest extends TestListenerAdapter {
 			e.printStackTrace();
 		}
 	}
-	
 
 }

@@ -37,6 +37,8 @@ public class AppiumManager {
 	 */
 
 	public AppiumServiceBuilder appiumServer(String deviceID) throws Exception {
+		System.out.println("Starting Appium Server");
+		System.out.println(deviceID);
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		int port = ap.getPort();
@@ -53,6 +55,8 @@ public class AppiumManager {
 		/* and so on */;
 		appiumDriverLocalService = builder.build();
 		appiumDriverLocalService.start();
+		System.out.println(appiumDriverLocalService.isRunning());
+		System.out.println(builder);
 		return builder;
 
 	}
@@ -64,5 +68,7 @@ public class AppiumManager {
 	public void destroyAppiumNode() {
 		appiumDriverLocalService.stop();
 	}
-
 }
+
+
+
