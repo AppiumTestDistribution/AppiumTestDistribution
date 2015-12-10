@@ -4,20 +4,19 @@ Add the below dependencies in your pom.xml
 
 ```
 <dependency>
-	<groupId>com.appium.android</groupId>
-	<artifactId>TestDistribution</artifactId>
-	<version>1.0.0</version>
+	<groupId>com.github.saikrishna321</groupId>
+	<artifactId>AppiumTestDistribution</artifactId>
+	<version>v2.0.0</version>
 </dependency>
 ```
 
 ```
 <repositories>
 		<repository>
-			<id>saikrishna321</id>
-			<name>maven-repo</name>
-			<url>https://github.com/saikrishna321/maven-repo/tree/master/</url>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
-</repositories>
+	</repositories>
 ```
 <h2>Sample Tests</h2>
  Clone the project (https://github.com/saikrishna321/AppiumTestDistributionExample)
@@ -47,6 +46,7 @@ public class Runner {
     * appname=AndroidCalculator.apk(Android APK file name which is placed in build folder)
     * package=com.android2.calculator3(Application package)
     * appActivity=com.android2.calculator3.Calculator(Application Launch Activity)
+    * runner=parallel or distribute
     
     
 <h3>Run Test from CommandLine</h3>
