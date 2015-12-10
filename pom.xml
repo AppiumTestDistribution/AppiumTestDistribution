@@ -3,12 +3,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.appium.android</groupId>
 	<artifactId>TestDistribution</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<properties>
 		<aspectj.version>1.8.0</aspectj.version>
 		<allure.version>1.4.19</allure.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>jitpack</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>io.appium</groupId>
