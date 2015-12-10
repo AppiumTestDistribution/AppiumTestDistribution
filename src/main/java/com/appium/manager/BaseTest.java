@@ -113,7 +113,7 @@ public class BaseTest extends TestListenerAdapter {
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
 				FileUtils.copyFile(scrFile, new File(
-						System.getProperty("user.dir") + "/target/" + result.getMethod().getMethodName() + ".png"));
+						System.getProperty("user.dir") + "/target/" + device_udid+result.getMethod().getMethodName() + ".png"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
