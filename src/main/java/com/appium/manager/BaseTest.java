@@ -120,7 +120,7 @@ public class BaseTest extends TestListenerAdapter {
 			}
 			ExtentTestManager.getTest().log(LogStatus.INFO,
 					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-							System.getProperty("user.dir") + "/target/" + result.getMethod().getMethodName() + ".png"));
+							System.getProperty("user.dir") + "/target/" + device_udid+result.getMethod().getMethodName() + ".png"));
 		} else if (result.getStatus() == ITestResult.SKIP) {
 			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
 		}
