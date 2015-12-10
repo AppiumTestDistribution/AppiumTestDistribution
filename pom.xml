@@ -11,7 +11,7 @@
 	</properties>
 	<repositories>
 		<repository>
-			<id>jitpack</id>
+			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
