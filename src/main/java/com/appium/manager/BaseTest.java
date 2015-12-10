@@ -69,7 +69,7 @@ public class BaseTest extends TestListenerAdapter {
 			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
 		} else if (prop.getProperty("runner").equalsIgnoreCase("parallel")) {
 			System.out.println("******Into Parallel BaseTest*******" + Thread.currentThread().getName().split("-")[1]);
-			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[1]);
+			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[1]) - 1;
 			System.out.println("Device received from array" + devices.get(thread_device_count));
 		}
 

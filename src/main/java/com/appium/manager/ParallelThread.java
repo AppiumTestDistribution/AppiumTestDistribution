@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import org.testng.TestNG;
 
 import com.appium.cucumber.report.HtmlReporter;
+import com.appium.executor.Executor;
 
 public class ParallelThread {
 	protected static int deviceCount;
@@ -27,12 +28,12 @@ public class ParallelThread {
 	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	BaseTest baseTest = new BaseTest();
 	HtmlReporter htmlReporter = new HtmlReporter();
+	Executor executor = new Executor();
 	public static Properties prop = new Properties();
 	public static InputStream input = null;
 	List<Class> testcases;
 
 	@SuppressWarnings({ "rawtypes" })
-
 	public void runner(String pack) throws Exception {
 		input = new FileInputStream("config.properties");
 		prop.load(input);
@@ -40,7 +41,6 @@ public class ParallelThread {
 		deviceCount = devices.size() / 3;
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
-	
 
 		testcases = new ArrayList<Class>();
 
@@ -52,51 +52,12 @@ public class ParallelThread {
 		});
 
 		if (prop.getProperty("runner").equalsIgnoreCase("distribute")) {
-			ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
-			for (final Class testFile : testcases) {
-				executorService.submit(new Runnable() {
-					public void run() {
-						System.out.println("Running test file: " + testFile.getName());
-						testRunnerTestNg(testFile);
+			executor.distributeTests(deviceCount, testcases);
 
-					}
-				});
-			}
-			executorService.shutdown();
-			try {
-				executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			System.out.println("ending");
-		} else if(prop.getProperty("runner").equalsIgnoreCase("parallel")){
-			for (int i=0;i<deviceCount;i++){
-				final int x = i;
-				new Thread(new Runnable(){
-
-					public void run() {
-						// TODO Auto-generated method stub
-					     runTests(testcases);
-					}
-
-					private void runTests(List<Class> testCasesParallel) {
-						for (Class test : testCasesParallel) {
-							 System.out.println("***Into Parallel Runner**"+Thread.currentThread().getName()+test);
-							 testRunnerTestNg(test);
-						}
-					}
-					
-				}).start();
-			}
+		} else if (prop.getProperty("runner").equalsIgnoreCase("parallel")) {
+	       executor.parallelTests(deviceCount, testcases);
 		}
 
-	}
-
-	public static void testRunnerTestNg(Class arg) {
-		TestNG test = new TestNG();
-		test.setTestClasses(new Class[] { arg });
-		System.out.println("Into TestNGRunner");
-		test.run();
 	}
 
 }

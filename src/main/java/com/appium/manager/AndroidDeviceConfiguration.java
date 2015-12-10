@@ -23,7 +23,7 @@ public class AndroidDeviceConfiguration {
 		else if (lines[1].equalsIgnoreCase("* daemon started successfully *"))
 			System.out.println("adb service started");
 		else if (lines[0].contains("internal or external command")) {
-			System.out.println("adb path not set in system varibale");
+			System.out.println("Please set ANDROID_HOME in your system variables");
 			System.exit(0);
 		}
 	}
