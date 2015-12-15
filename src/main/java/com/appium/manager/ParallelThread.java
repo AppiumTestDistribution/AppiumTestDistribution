@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 /*
@@ -13,11 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import org.testng.TestNG;
 
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.Executor;
@@ -52,10 +48,11 @@ public class ParallelThread {
 		});
 
 		if (prop.getProperty("runner").equalsIgnoreCase("distribute")) {
-			executor.distributeTests(deviceCount, testcases);
+			//executor.distributeTests(deviceCount, testcases);
+			executor.runMethodParallelAppium(pack, deviceCount);
 
 		} else if (prop.getProperty("runner").equalsIgnoreCase("parallel")) {
-	       executor.parallelTests(deviceCount, testcases);
+			executor.parallelTests(deviceCount, testcases);
 		}
 
 	}

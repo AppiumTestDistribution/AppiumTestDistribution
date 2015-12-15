@@ -91,7 +91,7 @@ public class BaseTest extends TestListenerAdapter {
 
 	@AfterClass
 	public void closeApp() {
-		driver.close();
+		//driver.close();
 		// driver.quit();
 	}
 
@@ -127,7 +127,7 @@ public class BaseTest extends TestListenerAdapter {
 
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
-		driver.quit();
+        driver.closeApp();
 		appiumMan.destroyAppiumNode();
 		// driver.quit();
 	}

@@ -13,7 +13,7 @@ public class HomePageTest4 extends BaseTest {
 
 	@Test
 
-	public void testMethodOne_4() throws Exception {
+	public void testMethodFour_4() throws Exception {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
