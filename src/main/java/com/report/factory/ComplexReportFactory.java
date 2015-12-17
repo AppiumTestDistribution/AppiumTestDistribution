@@ -22,9 +22,9 @@ public class ComplexReportFactory {
 			reporter = new ExtentReports(filenameOfReport, true, DisplayOrder.NEWEST_FIRST);
 			@SuppressWarnings("rawtypes")
 			Map sysInfo = new HashMap();
-			sysInfo.put("Selenium Version", "2.48");
+			sysInfo.put("Selenium Java Version", "2.48.2");
 			sysInfo.put("Environment", "Prod");
-			sysInfo.put("AppiumVersion", "3.2.0");
+			sysInfo.put("AppiumVersion", "3.3.0");
 			reporter.addSystemInfo(sysInfo);
 		}
 		return reporter;

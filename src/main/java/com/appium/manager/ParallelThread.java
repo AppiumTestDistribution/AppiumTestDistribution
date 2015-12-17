@@ -31,6 +31,21 @@ public class ParallelThread {
 
 	@SuppressWarnings({ "rawtypes" })
 	public void runner(String pack) throws Exception {
+		File f = new File(System.getProperty("user.dir") + "/target/logs/");
+		if (!f.exists()) {
+			System.out.println("creating directory: " + "Logs");
+			boolean result = false;
+
+			try {
+				f.mkdir();
+				result = true;
+			} catch (SecurityException se) {
+				// handle it
+			}
+			if (result) {
+				System.out.println("DIR created");
+			}
+		}
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		devices = deviceConf.getDevices();

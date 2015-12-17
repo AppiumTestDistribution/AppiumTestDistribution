@@ -58,7 +58,7 @@ public class BaseTest extends TestListenerAdapter {
 	AppiumDriverLocalService appiumDriverLocalService;
 	int thread_device_count;
 
-	public void testopenBroswer() throws Exception {
+	public void testopenBroswer(String methodName) throws Exception {
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		ArrayList<String> devices = androidDevice.getDeviceSerail();
@@ -77,7 +77,7 @@ public class BaseTest extends TestListenerAdapter {
 		// Thread.currentThread().getName().split("-")[1] to get the device
 		// array position
 		device_udid = devices.get(thread_device_count);
-		appiumMan.appiumServer(device_udid);
+		appiumMan.appiumServer(device_udid, methodName);
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
@@ -91,13 +91,13 @@ public class BaseTest extends TestListenerAdapter {
 
 	@AfterClass
 	public void closeApp() {
-		//driver.close();
+		// driver.close();
 		// driver.quit();
 	}
 
 	@BeforeMethod
 	public void beforeMethod(Method caller) throws Exception {
-		testopenBroswer();
+		testopenBroswer(caller.getName());
 		System.out.println(device_udid);
 		String category = androidDevice.deviceModel(device_udid);
 		ExtentTestManager.startTest(caller.getName(), "Mobile Appium Test",
@@ -108,26 +108,30 @@ public class BaseTest extends TestListenerAdapter {
 	public void afterMethod(ITestResult result) {
 		if (result.isSuccess()) {
 			ExtentTestManager.getTest().log(LogStatus.PASS, "Test passed");
+			ExtentTestManager.getTest().log(LogStatus.INFO, "Logs:: <a href=" + System.getProperty("user.dir")
+					+ "/target/logs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
 		} else if (result.getStatus() == ITestResult.FAILURE) {
 			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
+			ExtentTestManager.getTest().log(LogStatus.INFO, "Logs::<a href=" + System.getProperty("user.dir")
+			+ "/target/logs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
-				FileUtils.copyFile(scrFile, new File(
-						System.getProperty("user.dir") + "/target/" + device_udid+result.getMethod().getMethodName() + ".png"));
+				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
+						+ result.getMethod().getMethodName() + ".png"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			ExtentTestManager.getTest().log(LogStatus.INFO,
-					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-							System.getProperty("user.dir") + "/target/" + device_udid+result.getMethod().getMethodName() + ".png"));
+					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")
+							+ "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
 		} else if (result.getStatus() == ITestResult.SKIP) {
 			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
 		}
 
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
-        driver.closeApp();
+		driver.closeApp();
 		appiumMan.destroyAppiumNode();
 		// driver.quit();
 	}
