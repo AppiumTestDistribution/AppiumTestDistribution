@@ -23,6 +23,7 @@ public class AppiumManager {
 	AppiumDriverLocalService appiumDriverLocalService;
 	public static Properties prop = new Properties();
 	public static InputStream input = null;
+
 	/**
 	 * start appium with default arguments
 	 */
@@ -36,7 +37,7 @@ public class AppiumManager {
 	 * bootstrap port and device UDID
 	 */
 
-	public AppiumServiceBuilder appiumServer(String deviceID) throws Exception {
+	public AppiumServiceBuilder appiumServer(String deviceID,String methodName) throws Exception {
 		System.out.println("Starting Appium Server");
 		System.out.println(deviceID);
 		input = new FileInputStream("config.properties");
@@ -46,12 +47,14 @@ public class AppiumManager {
 		int bootstrapPort = ap.getPort();
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
 				.withAppiumJS(new File("/usr/local/lib/node_modules/appium/bin/appium.js"))
-				.withArgument(GeneralServerFlag.APP, System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"))
-				.withArgument(GeneralServerFlag.LOG_LEVEL, "info").withArgument(GeneralServerFlag.UIID, deviceID)
-				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT,Integer.toString(chromePort))
-				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER,Integer.toString(bootstrapPort))
-				.withArgument(GeneralServerFlag.SESSION_OVERRIDE)
-				.usingPort(port);
+				.withArgument(GeneralServerFlag.APP,
+						System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"))
+				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
+				.withLogFile(new File(System.getProperty("user.dir") + "/target/logs/" + methodName + ".txt"))
+				.withArgument(GeneralServerFlag.UIID, deviceID)
+				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
+				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))
+				.withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
 		/* and so on */;
 		appiumDriverLocalService = builder.build();
 		appiumDriverLocalService.start();
@@ -69,6 +72,3 @@ public class AppiumManager {
 		appiumDriverLocalService.stop();
 	}
 }
-
-
-
