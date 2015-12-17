@@ -3,17 +3,16 @@ package com.appium.manager;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
@@ -21,6 +20,7 @@ import org.json.XML;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -29,7 +29,6 @@ import org.testng.TestListenerAdapter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import com.relevantcodes.extentreports.ExtentTest;
@@ -41,9 +40,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
-import io.appium.java_client.service.local.flags.GeneralServerFlag;
-import ru.yandex.qatools.allure.annotations.Attachment;
 
 public class BaseTest extends TestListenerAdapter {
 	protected String port;
@@ -57,6 +53,9 @@ public class BaseTest extends TestListenerAdapter {
 	public ExtentTest testReporter;
 	AppiumDriverLocalService appiumDriverLocalService;
 	int thread_device_count;
+	public List<LogEntry> logEntries;
+	public File logFile;
+	public PrintWriter log_file_writer;
 
 	public void testopenBroswer(String methodName) throws Exception {
 		input = new FileInputStream("config.properties");
@@ -82,8 +81,8 @@ public class BaseTest extends TestListenerAdapter {
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
 		capabilities.setCapability("platformVersion", "5.X");
-		capabilities.setCapability("package", prop.getProperty("package"));
-		capabilities.setCapability("appActivity", prop.getProperty("appActivity"));
+		capabilities.setCapability("package", System.getenv("APP_PACKAGE"));
+		capabilities.setCapability("appActivity", System.getenv("APP_ACTIVITY"));
 		Thread.sleep(5000);
 		driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 
@@ -98,6 +97,9 @@ public class BaseTest extends TestListenerAdapter {
 	@BeforeMethod
 	public void beforeMethod(Method caller) throws Exception {
 		testopenBroswer(caller.getName());
+		logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
+		logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + caller.getName() + ".txt");
+		log_file_writer = new PrintWriter(logFile);
 		System.out.println(device_udid);
 		String category = androidDevice.deviceModel(device_udid);
 		ExtentTestManager.startTest(caller.getName(), "Mobile Appium Test",
@@ -109,11 +111,16 @@ public class BaseTest extends TestListenerAdapter {
 		if (result.isSuccess()) {
 			ExtentTestManager.getTest().log(LogStatus.PASS, "Test passed");
 			ExtentTestManager.getTest().log(LogStatus.INFO, "Logs:: <a href=" + System.getProperty("user.dir")
-					+ "/target/logs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
+					+ "/target/appiumlogs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
+			log_file_writer.println(logEntries);
+			log_file_writer.flush();
+			ExtentTestManager.getTest().log(LogStatus.INFO, "ADBLogs:: <a href=" + System.getProperty("user.dir")
+					+ "/target/adblogs/" + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
+			System.out.println(driver.getSessionId() + ": Saving device log - Done.");
 		} else if (result.getStatus() == ITestResult.FAILURE) {
 			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
 			ExtentTestManager.getTest().log(LogStatus.INFO, "Logs::<a href=" + System.getProperty("user.dir")
-			+ "/target/logs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
+					+ "/target/appiumlogs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
 				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
@@ -125,6 +132,11 @@ public class BaseTest extends TestListenerAdapter {
 			ExtentTestManager.getTest().log(LogStatus.INFO,
 					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")
 							+ "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
+			log_file_writer.println(logEntries);
+			log_file_writer.flush();
+			ExtentTestManager.getTest().log(LogStatus.INFO, "ADBLogs:: <a href=" + System.getProperty("user.dir")
+					+ "/target/adblogs/" + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
+			System.out.println(driver.getSessionId() + ": Saving device log - Done.");
 		} else if (result.getStatus() == ITestResult.SKIP) {
 			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
 		}

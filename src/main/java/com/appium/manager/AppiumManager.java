@@ -48,9 +48,9 @@ public class AppiumManager {
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
 				.withAppiumJS(new File("/usr/local/lib/node_modules/appium/bin/appium.js"))
 				.withArgument(GeneralServerFlag.APP,
-						System.getProperty("user.dir") + "/build/" + prop.getProperty("appname"))
+						System.getenv("APP_PATH"))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
-				.withLogFile(new File(System.getProperty("user.dir") + "/target/logs/" + methodName + ".txt"))
+				.withLogFile(new File(System.getProperty("user.dir") + "/target/appiumlogs/" + methodName + ".txt"))
 				.withArgument(GeneralServerFlag.UIID, deviceID)
 				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
 				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))

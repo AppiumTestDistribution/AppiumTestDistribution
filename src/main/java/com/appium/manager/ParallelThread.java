@@ -31,13 +31,27 @@ public class ParallelThread {
 
 	@SuppressWarnings({ "rawtypes" })
 	public void runner(String pack) throws Exception {
-		File f = new File(System.getProperty("user.dir") + "/target/logs/");
+		File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
 		if (!f.exists()) {
 			System.out.println("creating directory: " + "Logs");
 			boolean result = false;
-
 			try {
 				f.mkdir();
+				result = true;
+			} catch (SecurityException se) {
+				// handle it
+			}
+			if (result) {
+				System.out.println("DIR created");
+			}
+		}
+
+		File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+		if (!adb_logs.exists()) {
+			System.out.println("creating directory: " + "ADBLogs");
+			boolean result = false;
+			try {
+				adb_logs.mkdir();
 				result = true;
 			} catch (SecurityException se) {
 				// handle it
@@ -62,11 +76,11 @@ public class ParallelThread {
 			}
 		});
 
-		if (prop.getProperty("runner").equalsIgnoreCase("distribute")) {
-			//executor.distributeTests(deviceCount, testcases);
+		if (System.getenv("RUNNER").equalsIgnoreCase("distribute")) {
+			// executor.distributeTests(deviceCount, testcases);
 			executor.runMethodParallelAppium(pack, deviceCount);
 
-		} else if (prop.getProperty("runner").equalsIgnoreCase("parallel")) {
+		} else if (System.getenv("RUNNER").equalsIgnoreCase("parallel")) {
 			executor.parallelTests(deviceCount, testcases);
 		}
 

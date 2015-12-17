@@ -31,7 +31,7 @@ public class ExtentTestManager {  // new
 		Map sysInfo = new HashMap();
 		sysInfo.put("Selenium Java Version", "2.48.2");
 		sysInfo.put("Environment", "Prod");
-		sysInfo.put("AppiumVersion", "3.2.0");
+		sysInfo.put("AppiumVersion", "3.3.0");
 		extent.addSystemInfo(sysInfo);
         return test;
     }

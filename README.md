@@ -39,19 +39,14 @@ public class Runner {
 
 1. Extend your tests to BaseTest which is part of the dependencies, which takes care of running the appium server session in parallel threads.
 
-2. Place your android.apk file into build folder.
-
-3. add the below variables to the config.properties
- 
-    * appname=AndroidCalculator.apk(Android APK file name which is placed in build folder)
-    * package=com.android2.calculator3(Application package)
-    * appActivity=com.android2.calculator3.Calculator(Application Launch Activity)
-    * runner=parallel or distribute
     
     
 <h3>Run Test from CommandLine</h3>
 
-   mvn -Dtest=Runner test
+RUNNER="distribute" APP_PATH="/Users/saikrisv/Documents/workspace/TestNGParallel/build/AndroidCalculator.apk" APP_PACKAGE="com.android2.calculator3" APP_ACTIVITY="com.android2.calculator3.Calculator" mvn clean -Dtest=Runner test
+
+1.Please make sure you give the absolute path of the apk
+2.RUNNER can be set with parallel and distribute.
    
 <h3>Reports</h3>
 
