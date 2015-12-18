@@ -6,7 +6,7 @@ Add the below dependencies in your pom.xml
 <dependency>
 	<groupId>com.github.saikrishna321</groupId>
 	<artifactId>AppiumTestDistribution</artifactId>
-	<version>v2.0.0</version>
+	<version>3.0.0</version>
 </dependency>
 ```
 
