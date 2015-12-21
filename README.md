@@ -1,4 +1,6 @@
-# AppiumTestDistribution
+# Appium Parallel Execution for Android
+
+<h2>Run Appium Android test in parallel across devices connected</h2>
 
 Add the below dependencies in your pom.xml
 
