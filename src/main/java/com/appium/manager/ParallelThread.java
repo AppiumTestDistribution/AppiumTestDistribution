@@ -22,7 +22,7 @@ public class ParallelThread {
 	protected static int deviceCount;
 	static Map<String, String> devices = new HashMap<String, String>();
 	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
-	BaseTest baseTest = new BaseTest();
+	AppiumParallelTest baseTest = new AppiumParallelTest();
 	HtmlReporter htmlReporter = new HtmlReporter();
 	Executor executor = new Executor();
 	public static Properties prop = new Properties();

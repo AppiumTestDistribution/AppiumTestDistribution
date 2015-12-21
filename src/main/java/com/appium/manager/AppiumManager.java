@@ -37,7 +37,7 @@ public class AppiumManager {
 	 * bootstrap port and device UDID
 	 */
 
-	public AppiumServiceBuilder appiumServer(String deviceID,String methodName) throws Exception {
+	public AppiumServiceBuilder appiumServer(String deviceID, String methodName) throws Exception {
 		System.out.println("Starting Appium Server");
 		System.out.println(deviceID);
 		input = new FileInputStream("config.properties");
@@ -47,10 +47,10 @@ public class AppiumManager {
 		int bootstrapPort = ap.getPort();
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
 				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
-				.withArgument(GeneralServerFlag.APP,
-						prop.getProperty("APP_PATH"))
+				.withArgument(GeneralServerFlag.APP, prop.getProperty("APP_PATH"))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
-				.withLogFile(new File(System.getProperty("user.dir") + "/target/appiumlogs/" + methodName + ".txt"))
+				.withLogFile(new File(
+						System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID + "__" + methodName + ".txt"))
 				.withArgument(GeneralServerFlag.UIID, deviceID)
 				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
 				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))

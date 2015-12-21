@@ -7,12 +7,12 @@ import java.util.List;
 
 import org.apache.velocity.exception.VelocityException;
 
-import com.appium.manager.BaseTest;
+import com.appium.manager.AppiumParallelTest;
 
 import net.masterthought.cucumber.ReportBuilder;
 
 public class HtmlReporter {
-	static File reportOutputDirectory = new File(System.getProperty("user.dir") + "/build/"+BaseTest.prop.getProperty("jsonreport"));
+	static File reportOutputDirectory = new File(System.getProperty("user.dir") + "/build/"+AppiumParallelTest.prop.getProperty("jsonreport"));
 	static List<String> list = new ArrayList<String>();
 
 	public static void listFilesForFolder(final File folder) {

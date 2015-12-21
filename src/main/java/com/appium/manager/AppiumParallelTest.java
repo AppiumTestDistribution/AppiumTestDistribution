@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -27,9 +26,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
@@ -41,7 +39,7 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 
-public class BaseTest extends TestListenerAdapter {
+public class AppiumParallelTest extends TestListenerAdapter {
 	protected String port;
 	public AppiumDriver<MobileElement> driver;
 	CommandPrompt cp = new CommandPrompt();
@@ -57,7 +55,7 @@ public class BaseTest extends TestListenerAdapter {
 	public File logFile;
 	public PrintWriter log_file_writer;
 
-	public void testopenBroswer(String methodName) throws Exception {
+	public AppiumDriver<MobileElement> testopenBroswer(String methodName) throws Exception {
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		ArrayList<String> devices = androidDevice.getDeviceSerail();
@@ -84,7 +82,7 @@ public class BaseTest extends TestListenerAdapter {
 		capabilities.setCapability("package", prop.getProperty("APP_PACKAGE"));
 		capabilities.setCapability("appActivity", prop.getProperty("APP_ACTIVITY"));
 		Thread.sleep(5000);
-		driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+		return new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 
 	}
 
@@ -94,33 +92,38 @@ public class BaseTest extends TestListenerAdapter {
 		// driver.quit();
 	}
 
-	@BeforeMethod
-	public void beforeMethod(Method caller) throws Exception {
-		testopenBroswer(caller.getName());
+	// @BeforeMethod
+	public AppiumDriver<MobileElement> startAppiumServerInParallel(String string) throws Exception {
+		driver = testopenBroswer(string);
 		logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
-		logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + caller.getName() + ".txt");
+		logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__" + string + ".txt");
 		log_file_writer = new PrintWriter(logFile);
 		System.out.println(device_udid);
 		String category = androidDevice.deviceModel(device_udid);
-		ExtentTestManager.startTest(caller.getName(), "Mobile Appium Test",
+		ExtentTestManager.startTest(string, "Mobile Appium Test",
 				category + device_udid.replace(".", "_").replace(":", "_"));
+
+		return driver;
 	}
 
-	@AfterMethod
-	public void afterMethod(ITestResult result) {
+	// @AfterMethod
+	public void killAppiumServer(ITestResult result) {
 		if (result.isSuccess()) {
 			ExtentTestManager.getTest().log(LogStatus.PASS, "Test passed");
-			ExtentTestManager.getTest().log(LogStatus.INFO, "Logs:: <a href=" + System.getProperty("user.dir")
-					+ "/target/appiumlogs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
+			ExtentTestManager.getTest().log(LogStatus.INFO,
+					"Logs:: <a href=" + System.getProperty("user.dir") + "/target/appiumlogs/" + device_udid + "__"
+							+ result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
 			log_file_writer.println(logEntries);
 			log_file_writer.flush();
-			ExtentTestManager.getTest().log(LogStatus.INFO, "ADBLogs:: <a href=" + System.getProperty("user.dir")
-					+ "/target/adblogs/" + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
+			ExtentTestManager.getTest().log(LogStatus.INFO,
+					"ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
+							+ result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
 			System.out.println(driver.getSessionId() + ": Saving device log - Done.");
 		} else if (result.getStatus() == ITestResult.FAILURE) {
 			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
-			ExtentTestManager.getTest().log(LogStatus.INFO, "Logs::<a href=" + System.getProperty("user.dir")
-					+ "/target/appiumlogs/" + result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
+			ExtentTestManager.getTest().log(LogStatus.INFO,
+					"Logs::<a href=" + System.getProperty("user.dir") + "/target/appiumlogs/" + device_udid + "__"
+							+ result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
 				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
@@ -134,8 +137,9 @@ public class BaseTest extends TestListenerAdapter {
 							+ "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
 			log_file_writer.println(logEntries);
 			log_file_writer.flush();
-			ExtentTestManager.getTest().log(LogStatus.INFO, "ADBLogs:: <a href=" + System.getProperty("user.dir")
-					+ "/target/adblogs/" + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
+			ExtentTestManager.getTest().log(LogStatus.INFO,
+					"ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
+							+ result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
 			System.out.println(driver.getSessionId() + ": Saving device log - Done.");
 		} else if (result.getStatus() == ITestResult.SKIP) {
 			ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
@@ -155,9 +159,10 @@ public class BaseTest extends TestListenerAdapter {
 		return sw.toString();
 	}
 
+	
 	@AfterSuite
 	public void afterSuite() {
-		ExtentManager.getInstance().flush();
+		//ExtentManager.getInstance().flush();
 	}
 
 	public void waitForElement(By id, int time) {
