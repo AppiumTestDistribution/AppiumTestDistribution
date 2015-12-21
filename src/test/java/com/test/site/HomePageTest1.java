@@ -6,14 +6,9 @@ package com.test.site;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
-import com.appium.manager.BaseTest;
-
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 
 
-
-public class HomePageTest1 extends BaseTest{
+public class HomePageTest1 extends UserBaseTest{
 	
 
 	@Test
@@ -21,15 +16,15 @@ public class HomePageTest1 extends BaseTest{
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit2")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		//driver.close();
+		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		//getDriver().close();
     }
 	
 	@Test
@@ -37,18 +32,18 @@ public class HomePageTest1 extends BaseTest{
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		//WebElement el= driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
-		//highlightElement(driver, el);
-		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit3")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
+		//WebElement el= getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
+		//highlightElement(getDriver(), el);
+		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
 		
-		//driver.close();
+		//getDriver().close();
     }
 	
 	@Test
@@ -56,17 +51,17 @@ public class HomePageTest1 extends BaseTest{
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		//WebElement el= driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
-		//highlightElement(driver, el);
-		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit3")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		//driver.close();
+		//WebElement el= getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
+		//highlightElement(getDriver(), el);
+		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		//getDriver().close();
     }
 	
 	
@@ -75,14 +70,14 @@ public class HomePageTest1 extends BaseTest{
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		//WebElement el= driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
-		//highlightElement(driver, el);
-		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit3")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		//driver.close();
+		//WebElement el= getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
+		//highlightElement(getDriver(), el);
+		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		//getDriver().close();
     }
 	
 	@Test
@@ -90,14 +85,14 @@ public class HomePageTest1 extends BaseTest{
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		//WebElement el= driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
-		//highlightElement(driver, el);
-		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit3")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		//driver.close();
+		//WebElement el= getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
+		//highlightElement(getDriver(), el);
+		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		//getDriver().close();
     }
 	
 	@Test
@@ -105,14 +100,14 @@ public class HomePageTest1 extends BaseTest{
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		//WebElement el= driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
-		//highlightElement(driver, el);
-		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit3")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		//driver.close();
+		//WebElement el= getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
+		//highlightElement(getDriver(), el);
+		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		//getDriver().close();
     }
 	
 	@Test
@@ -120,13 +115,13 @@ public class HomePageTest1 extends BaseTest{
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		//WebElement el= driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
-		//highlightElement(driver, el);
-		driver.findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit3")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/plus")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/digit9")).click();
-		driver.findElement(By.id("com.android2.calculator3:id/equal")).click();
-		//driver.close();
+		//WebElement el= getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss"));
+		//highlightElement(getDriver(), el);
+		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+		//getDriver().close();
     }
 }
