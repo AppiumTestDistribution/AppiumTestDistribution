@@ -60,6 +60,7 @@ Note:
 
 * Provide the absolute path of the apk file.
 * APPIUM_JS_PATH should be the location of the appium.js in yout location machine
+* RUNNER option can be parallel/distribute(Parallel will run the all the tests across device- which helps to get the device coverage/ Distribute will distribute all the tests across devices)
 
 
 <h3>Reports</h3>
