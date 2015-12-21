@@ -38,17 +38,30 @@ public class Runner {
 ```
 
 1. Extend your tests to BaseTest which is part of the dependencies, which takes care of running the appium server session in parallel threads.
-
-    
     
 <h3>Run Test from CommandLine</h3>
 ```
-RUNNER="distribute" APP_PATH="/Users/saikrisv/Documents/workspace/TestNGParallel/build/AndroidCalculator.apk" APP_PACKAGE="com.android2.calculator3" APP_ACTIVITY="com.android2.calculator3.Calculator" mvn clean -Dtest=Runner test
-
-* Please make sure you give the absolute path of the apk
-* RUNNER can be set with parallel and distribute.
+mvn clean -Dtest=Runner test
 
 ```   
+
+2.Create a config.properties under your test directory, which hold the below properties 
+
+```
+APP_PATH=/Users/saikrisv/Documents/workspace/TestNGParallel/build/AndroidCalculator.apk
+APP_PACKAGE=com.android2.calculator3
+APP_ACTIVITY=com.android2.calculator3.Calculator
+RUNNER=distribute
+APPIUM_JS_PATH=/usr/local/lib/node_modules/appium/bin/appium.js
+
+```
+
+Note: 
+
+* Provide the absolute path of the apk file.
+* APPIUM_JS_PATH should be the location of the appium.js in yout location machine
+
+
 <h3>Reports</h3>
 
 Your should see report file generated as ExtentReport.html

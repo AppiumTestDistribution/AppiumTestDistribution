@@ -62,11 +62,11 @@ public class BaseTest extends TestListenerAdapter {
 		prop.load(input);
 		ArrayList<String> devices = androidDevice.getDeviceSerail();
 
-		if (prop.getProperty("runner").equalsIgnoreCase("distribute")) {
+		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 			System.out.println("*************" + Thread.currentThread().getName());
 			System.out.println("******Current Thread Running*******" + Thread.currentThread().getName().split("-")[3]);
 			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
-		} else if (prop.getProperty("runner").equalsIgnoreCase("parallel")) {
+		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
 			System.out.println("******Into Parallel BaseTest*******" + Thread.currentThread().getName().split("-")[1]);
 			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[1]) - 1;
 			System.out.println("Device received from array" + devices.get(thread_device_count));
@@ -81,8 +81,8 @@ public class BaseTest extends TestListenerAdapter {
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
 		capabilities.setCapability("platformVersion", "5.X");
-		capabilities.setCapability("package", System.getenv("APP_PACKAGE"));
-		capabilities.setCapability("appActivity", System.getenv("APP_ACTIVITY"));
+		capabilities.setCapability("package", prop.getProperty("APP_PACKAGE"));
+		capabilities.setCapability("appActivity", prop.getProperty("APP_ACTIVITY"));
 		Thread.sleep(5000);
 		driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 

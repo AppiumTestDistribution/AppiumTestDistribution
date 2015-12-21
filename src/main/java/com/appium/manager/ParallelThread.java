@@ -76,11 +76,11 @@ public class ParallelThread {
 			}
 		});
 
-		if (System.getenv("RUNNER").equalsIgnoreCase("distribute")) {
+		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 			// executor.distributeTests(deviceCount, testcases);
 			executor.runMethodParallelAppium(pack, deviceCount);
 
-		} else if (System.getenv("RUNNER").equalsIgnoreCase("parallel")) {
+		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
 			executor.parallelTests(deviceCount, testcases);
 		}
 

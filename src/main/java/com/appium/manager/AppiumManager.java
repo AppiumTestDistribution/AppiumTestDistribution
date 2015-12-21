@@ -46,9 +46,9 @@ public class AppiumManager {
 		int chromePort = ap.getPort();
 		int bootstrapPort = ap.getPort();
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
-				.withAppiumJS(new File("/usr/local/lib/node_modules/appium/bin/appium.js"))
+				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
 				.withArgument(GeneralServerFlag.APP,
-						System.getenv("APP_PATH"))
+						prop.getProperty("APP_PATH"))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
 				.withLogFile(new File(System.getProperty("user.dir") + "/target/appiumlogs/" + methodName + ".txt"))
 				.withArgument(GeneralServerFlag.UIID, deviceID)
