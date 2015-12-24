@@ -1,3 +1,4 @@
+.idea
 allure-report/*
 test-output/*
 target/*
@@ -6,3 +7,4 @@ report.json
 *.json
 *.html
 *.png
+*.iml

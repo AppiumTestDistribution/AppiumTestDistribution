@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.appium.cucumber.report.HtmlReporter;
-import com.appium.executor.Executor;
+import com.appium.executor.MyTestExecutor;
 
 public class ParallelThread {
 	protected static int deviceCount;
@@ -24,7 +24,7 @@ public class ParallelThread {
 	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	AppiumParallelTest baseTest = new AppiumParallelTest();
 	HtmlReporter htmlReporter = new HtmlReporter();
-	Executor executor = new Executor();
+	MyTestExecutor myTestExecutor = new MyTestExecutor();
 	public static Properties prop = new Properties();
 	public static InputStream input = null;
 	List<Class> testcases;
@@ -78,10 +78,10 @@ public class ParallelThread {
 
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 			// executor.distributeTests(deviceCount, testcases);
-			executor.runMethodParallelAppium(pack, deviceCount);
+			myTestExecutor.runMethodParallelAppium(pack, deviceCount);
 
 		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-			executor.parallelTests(deviceCount, testcases);
+			myTestExecutor.parallelTests(deviceCount, testcases);
 		}
 
 	}

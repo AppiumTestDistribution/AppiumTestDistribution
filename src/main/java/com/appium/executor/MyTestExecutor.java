@@ -1,17 +1,5 @@
 package com.appium.executor;
 
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -23,7 +11,17 @@ import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
-public class Executor {
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Arrays.asList;
+import static org.testng.xml.XmlSuite.ParallelMode.METHODS;
+
+public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
 	
 	public void distributeTests(int deviceCount, List<Class> testcases) {
@@ -77,9 +75,6 @@ public class Executor {
 	}
 	
 	public void runMethodParallelAppium(String pack,int devicecount) throws Exception {
-
-		// getClassPackage("com.test.parallel");
-
 		Collection<URL> urls = ClasspathHelper.forPackage(pack);
 		Iterator<URL> iter = urls.iterator();
 		URL url = iter.next();
@@ -90,34 +85,10 @@ public class Executor {
 				new ConfigurationBuilder().setUrls(newUrls).setScanners(new MethodAnnotationsScanner()));
 		Set<Method> resources = reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
 
-		ExecutorService executorService = Executors.newFixedThreadPool(devicecount);
+		runMethodParallel(constructXmlSuite(resources), devicecount);
 
-		for (Method met : resources) {
-			executorService.submit(new Runnable() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					if (met.getDeclaringClass().getSimpleName().contains("Test")) {
-						System.out.println("*****CurrentRunningThread" + Thread.currentThread().getName()
-								+ met.getDeclaringClass() + "***MethodName****" + met.getName().toString());
-						runMethodParallel(met.getDeclaringClass(), met.getName().toString());
-					}
-
-				}
-			});
-		}
-		
-		executorService.shutdown();
-		try {
-			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		System.out.println("Finally complete");
-
 	}
-
 
 	public static void testRunnerTestNg(Class arg) {
 		TestNG test = new TestNG();
@@ -127,30 +98,39 @@ public class Executor {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static void runMethodParallel(Class classes, String method) {
-		System.out.println("running test: " + classes.getSimpleName() + ":" + method);
+	public void runMethodParallel(XmlSuite suite, int threadCount) {
 		TestNG testNG = new TestNG();
 		testNG.setVerbose(2);
+		testNG.setThreadCount(threadCount);
+		testNG.setParallel(METHODS);
+		testNG.setXmlSuites(asList(suite));
+		testNG.run();
+	}
+
+	public XmlSuite constructXmlSuite(Set<Method> methods) {
 		XmlSuite suite = new XmlSuite();
 		suite.setName("TestNG Forum");
+
 		XmlTest test = new XmlTest(suite);
 		test.setName("TestNG Test");
-		XmlClass clazz = new XmlClass();
-		// Since DemoClassWithManyMethods is a nested class, we have to use "$"
-		// symbol, else we could have just used
-		// getCanonicalName() alone
 
-		// clazz.setName(MethodRunner.class.getCanonicalName() + "$" +
-		// classes.getSimpleName());
-		clazz.setName(classes.getCanonicalName());
-		// clazz.setClass(classes);
+		List<XmlClass> xmlClasses = new ArrayList<>();
+		for (Method method : methods) {
+			if (method.getDeclaringClass().getSimpleName().contains("Test")) {
+				xmlClasses.add(include(method.getDeclaringClass(), method.getName().toString()));
+			}
+		}
+		test.setXmlClasses(xmlClasses);
+		return suite;
+	}
+
+	private XmlClass include(Class clazz, String method) {
+		XmlClass xmlClazz = new XmlClass();
+		xmlClazz.setName(clazz.getCanonicalName());
 		XmlInclude include = new XmlInclude(method);
-
-		include.setXmlClass(clazz);
-		clazz.setIncludedMethods(Arrays.asList(include));
-		test.setXmlClasses(Arrays.asList(clazz));
-		testNG.setXmlSuites(Arrays.asList(suite));
-		testNG.run();
+		include.setXmlClass(xmlClazz);
+		xmlClazz.setIncludedMethods(asList(include));
+		return xmlClazz;
 	}
 
 }
