@@ -126,8 +126,10 @@ public class MyTestExecutor {
 
 	private XmlClass createClass(String className, List<Method> methods) {
 		XmlClass clazz = new XmlClass();
-		clazz.setName(className);
-		clazz.setIncludedMethods(constructIncludes(methods));
+		if (methods.size() > 0) {
+			clazz.setName(methods.get(0).getDeclaringClass().getCanonicalName());
+			clazz.setIncludedMethods(constructIncludes(methods));
+		}
 		return clazz;
 	}
 
