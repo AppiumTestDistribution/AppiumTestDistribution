@@ -4,8 +4,7 @@ import org.junit.Test;
 import org.testng.xml.XmlSuite;
 
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -25,10 +24,13 @@ public class MyTestExecutorTest {
             methods.add(m);
         }
 
+
         MyTestExecutor ex1 = new MyTestExecutor();
-        XmlSuite xmlSuite = ex1.constructXmlSuite(methods);
+        XmlSuite xmlSuite = ex1.constructXmlSuite(ex1.createTestsMap(methods));
         System.out.println("xml:" + xmlSuite.toXml());
         assertTrue(true);
     }
+
+
 
 }

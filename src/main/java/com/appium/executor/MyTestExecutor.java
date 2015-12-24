@@ -73,8 +73,8 @@ public class MyTestExecutor {
 		
 		System.out.println("Finally complete");
 	}
-	
-	public void runMethodParallelAppium(String pack,int devicecount) throws Exception {
+
+	public void runMethodParallelAppium(String pack, int devicecount) throws Exception {
 		Collection<URL> urls = ClasspathHelper.forPackage(pack);
 		Iterator<URL> iter = urls.iterator();
 		URL url = iter.next();
@@ -85,14 +85,14 @@ public class MyTestExecutor {
 				new ConfigurationBuilder().setUrls(newUrls).setScanners(new MethodAnnotationsScanner()));
 		Set<Method> resources = reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
 
-		runMethodParallel(constructXmlSuite(resources), devicecount);
+		runMethodParallel(constructXmlSuite(createTestsMap(resources)), devicecount);
 
 		System.out.println("Finally complete");
 	}
 
 	public static void testRunnerTestNg(Class arg) {
 		TestNG test = new TestNG();
-		test.setTestClasses(new Class[] { arg });
+		test.setTestClasses(new Class[]{arg});
 		System.out.println("Into TestNGRunner");
 		test.run();
 	}
@@ -107,7 +107,7 @@ public class MyTestExecutor {
 		testNG.run();
 	}
 
-	public XmlSuite constructXmlSuite(Set<Method> methods) {
+	public XmlSuite constructXmlSuite(Map<String, List<Method>> methods) {
 		XmlSuite suite = new XmlSuite();
 		suite.setName("TestNG Forum");
 
@@ -115,22 +115,40 @@ public class MyTestExecutor {
 		test.setName("TestNG Test");
 
 		List<XmlClass> xmlClasses = new ArrayList<>();
-		for (Method method : methods) {
-			if (method.getDeclaringClass().getSimpleName().contains("Test")) {
-				xmlClasses.add(include(method.getDeclaringClass(), method.getName().toString()));
+		for (String className : methods.keySet()) {
+			if (className.contains("Test")) {
+				xmlClasses.add(createClass(className, methods.get(className)));
 			}
 		}
 		test.setXmlClasses(xmlClasses);
 		return suite;
 	}
 
-	private XmlClass include(Class clazz, String method) {
-		XmlClass xmlClazz = new XmlClass();
-		xmlClazz.setName(clazz.getCanonicalName());
-		XmlInclude include = new XmlInclude(method);
-		include.setXmlClass(xmlClazz);
-		xmlClazz.setIncludedMethods(asList(include));
-		return xmlClazz;
+	private XmlClass createClass(String className, List<Method> methods) {
+		XmlClass clazz = new XmlClass();
+		clazz.setName(className);
+		clazz.setIncludedMethods(constructIncludes(methods));
+		return clazz;
 	}
 
+	private List<XmlInclude> constructIncludes(List<Method> methods) {
+		List<XmlInclude> includes = new ArrayList<>();
+		for(Method m : methods) {
+			includes.add(new XmlInclude(m.getName()));
+		}
+		return includes;
+	}
+
+	public Map<String, List<Method>> createTestsMap(Set<Method> methods) {
+		Map<String, List<Method>> testsMap = new HashMap<>();
+		methods.stream().forEach(method -> {
+			List<Method> methodsList = testsMap.get(method.getDeclaringClass().getSimpleName());
+			if (methodsList == null) {
+				methodsList = new ArrayList<>();
+				testsMap.put(method.getDeclaringClass().getSimpleName(), methodsList);
+			}
+			methodsList.add(method);
+		});
+		return testsMap;
+	}
 }
