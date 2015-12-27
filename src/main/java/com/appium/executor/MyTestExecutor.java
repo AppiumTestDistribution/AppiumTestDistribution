@@ -121,15 +121,14 @@ public class MyTestExecutor {
 			}
 		}
 		test.setXmlClasses(xmlClasses);
+		System.out.println(suite.toXml());
 		return suite;
 	}
 
 	private XmlClass createClass(String className, List<Method> methods) {
 		XmlClass clazz = new XmlClass();
-		if (methods.size() > 0) {
-			clazz.setName(methods.get(0).getDeclaringClass().getCanonicalName());
-			clazz.setIncludedMethods(constructIncludes(methods));
-		}
+		clazz.setName(className);
+		clazz.setIncludedMethods(constructIncludes(methods));
 		return clazz;
 	}
 
