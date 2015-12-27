@@ -13,45 +13,31 @@ import com.appium.manager.AppiumParallelTest;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 
-public class UserBaseTest extends AppiumParallelTest{
+public class UserBaseTest extends AppiumParallelTest {
 
 	AppiumDriver<MobileElement> driver;
-	
+
 	@BeforeMethod()
 	public void startApp(Method method) throws Exception {
-     this.driver= startAppiumServerInParallel(method.getName());
+		this.driver = startAppiumServerInParallel(method.getName());
 	}
-	
-	@AfterMethod()
-	public void killServer(ITestResult result){
-      killAppiumServer(result);		
-	}
-	
 
-	public AppiumDriver<MobileElement> getDriver(){
+	@AfterMethod()
+	public void killServer(ITestResult result) {
+		killAppiumServer(result);
+	}
+
+	public AppiumDriver<MobileElement> getDriver() {
 		return this.driver;
 	}
-	
-<<<<<<< Updated upstream
-	@BeforeClass
-	public void beforeClass(){
-		System.out.println("Before Class" + Thread.currentThread().getId());
-=======
+
 	@BeforeClass()
-	public void beforeClass()
-	{
-	System.out.println("Before Class called" + Thread.currentThread().getId());	
-	}
-	
-	@AfterClass()
-	public void afterClass(){
-		System.out.println("After Class called" + Thread.currentThread().getId());
->>>>>>> Stashed changes
+	public void beforeClass() {
+		System.out.println("Before Class called" + Thread.currentThread().getId());
 	}
 
-	
 	@AfterClass
-	public void afterClass(){
+	public void afterClass() {
 		System.out.println("After Class" + Thread.currentThread().getId());
 	}
 }
