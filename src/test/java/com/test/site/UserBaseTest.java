@@ -32,9 +32,21 @@ public class UserBaseTest extends AppiumParallelTest{
 		return this.driver;
 	}
 	
+<<<<<<< Updated upstream
 	@BeforeClass
 	public void beforeClass(){
 		System.out.println("Before Class" + Thread.currentThread().getId());
+=======
+	@BeforeClass()
+	public void beforeClass()
+	{
+	System.out.println("Before Class called" + Thread.currentThread().getId());	
+	}
+	
+	@AfterClass()
+	public void afterClass(){
+		System.out.println("After Class called" + Thread.currentThread().getId());
+>>>>>>> Stashed changes
 	}
 
 	

@@ -143,4 +143,20 @@ public class AndroidDeviceConfiguration {
 		
 	}
 	
+	
+	/*
+	 * This method gets the device OS name 
+	 */
+	public String deviceOS(String deviceID){
+		String deviceOSLevel = null;
+		try {
+			deviceOSLevel = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release").replaceAll("\\W", "");
+		} catch (InterruptedException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return deviceOSLevel;
+		
+	}
+	
 }

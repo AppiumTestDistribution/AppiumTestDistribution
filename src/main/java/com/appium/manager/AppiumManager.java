@@ -45,6 +45,7 @@ public class AppiumManager {
 		int port = ap.getPort();
 		int chromePort = ap.getPort();
 		int bootstrapPort = ap.getPort();
+		int selendroidPort = ap.getPort();
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
 				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
 				.withArgument(GeneralServerFlag.APP, prop.getProperty("APP_PATH"))
@@ -54,7 +55,8 @@ public class AppiumManager {
 				.withArgument(GeneralServerFlag.UIID, deviceID)
 				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
 				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))
-				.withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
+				.withArgument(GeneralServerFlag.SESSION_OVERRIDE)
+				.withArgument(AndroidServerFlag.SELENDROID_PORT, Integer.toString(selendroidPort)).usingPort(port);
 		/* and so on */;
 		appiumDriverLocalService = builder.build();
 		appiumDriverLocalService.start();

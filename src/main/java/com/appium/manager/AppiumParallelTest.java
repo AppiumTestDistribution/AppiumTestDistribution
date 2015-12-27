@@ -37,6 +37,7 @@ import com.report.factory.ExtentTestManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 
 public class AppiumParallelTest extends TestListenerAdapter {
@@ -79,9 +80,13 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability("deviceName", "Android");
 		capabilities.setCapability("platformName", "android");
 		capabilities.setCapability("platformVersion", "5.X");
+		if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 4.1) {
+			capabilities.setCapability("automationName", "Selendroid");
+		}
+
 		capabilities.setCapability("package", prop.getProperty("APP_PACKAGE"));
 		capabilities.setCapability("appActivity", prop.getProperty("APP_ACTIVITY"));
-		Thread.sleep(5000);
+		Thread.sleep(2000);
 		return new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 
 	}
@@ -159,10 +164,9 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		return sw.toString();
 	}
 
-	
 	@AfterSuite
 	public void afterSuite() {
-		//ExtentManager.getInstance().flush();
+		// ExtentManager.getInstance().flush();
 	}
 
 	public void waitForElement(By id, int time) {

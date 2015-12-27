@@ -1,5 +1,21 @@
 package com.appium.executor;
 
+import static java.util.Arrays.asList;
+import static org.testng.xml.XmlSuite.ParallelMode.METHODS;
+
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -11,19 +27,9 @@ import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import static java.util.Arrays.asList;
-import static org.testng.xml.XmlSuite.ParallelMode.METHODS;
-
 public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
-	
+
 	public void distributeTests(int deviceCount, List<Class> testcases) {
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
 		for (final Class testFile : testcases) {
@@ -45,7 +51,7 @@ public class MyTestExecutor {
 	}
 
 	public void parallelTests(int deviceCount, List<Class> testCases) throws InterruptedException {
-	
+
 		for (int i = 0; i < deviceCount; i++) {
 			final int x = i;
 			Thread t = new Thread(new Runnable() {
@@ -62,17 +68,18 @@ public class MyTestExecutor {
 					}
 				}
 			});
-			
+
 			threads.add(t);
 			t.start();
-	    }
-		
+		}
+
 		for (Thread t : threads) {
 			t.join();
 		}
-		
+
 		System.out.println("Finally complete");
 	}
+
 
 	public void runMethodParallelAppium(String pack, int devicecount) throws Exception {
 		Collection<URL> urls = ClasspathHelper.forPackage(pack);
@@ -96,7 +103,7 @@ public class MyTestExecutor {
 		System.out.println("Into TestNGRunner");
 		test.run();
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public void runMethodParallel(XmlSuite suite, int threadCount) {
 		TestNG testNG = new TestNG();
@@ -131,6 +138,7 @@ public class MyTestExecutor {
 		clazz.setIncludedMethods(constructIncludes(methods));
 		return clazz;
 	}
+
 
 	private List<XmlInclude> constructIncludes(List<Method> methods) {
 		List<XmlInclude> includes = new ArrayList<>();
