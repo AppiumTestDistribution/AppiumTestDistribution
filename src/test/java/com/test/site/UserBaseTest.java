@@ -3,8 +3,9 @@ package com.test.site;
 import java.lang.reflect.Method;
 
 import org.testng.ITestResult;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import com.appium.manager.AppiumParallelTest;
@@ -30,5 +31,15 @@ public class UserBaseTest extends AppiumParallelTest{
 	public AppiumDriver<MobileElement> getDriver(){
 		return this.driver;
 	}
+	
+	@BeforeClass
+	public void beforeClass(){
+		System.out.println("Before Class" + Thread.currentThread().getId());
+	}
 
+	
+	@AfterClass
+	public void afterClass(){
+		System.out.println("After Class" + Thread.currentThread().getId());
+	}
 }
