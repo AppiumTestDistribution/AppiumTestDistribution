@@ -77,16 +77,19 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		device_udid = devices.get(thread_device_count);
 		appiumMan.appiumServer(device_udid, methodName);
 		DesiredCapabilities capabilities = new DesiredCapabilities();
-		capabilities.setCapability("deviceName", "Android");
-		capabilities.setCapability("platformName", "android");
-		capabilities.setCapability("platformVersion", "5.X");
-		if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 4.1) {
-			capabilities.setCapability("automationName", "Selendroid");
+		capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
+		capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
+		capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
+		if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 16) {
+			capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
 		}
-
-		capabilities.setCapability("package", prop.getProperty("APP_PACKAGE"));
-		capabilities.setCapability("appActivity", prop.getProperty("APP_ACTIVITY"));
-		Thread.sleep(2000);
+        capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("APP_PATH"));
+		capabilities.setCapability(MobileCapabilityType.APP_PACKAGE, prop.getProperty("APP_PACKAGE"));
+		capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY, prop.getProperty("APP_ACTIVITY"));
+		if(prop.getProperty("APP_WAIT_ACTIVITY") != null){
+			capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, prop.getProperty("APP_WAIT_ACTIVITY"));
+		}
+		Thread.sleep(5000);
 		return new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 
 	}

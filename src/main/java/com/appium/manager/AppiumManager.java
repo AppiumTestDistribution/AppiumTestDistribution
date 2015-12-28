@@ -48,7 +48,6 @@ public class AppiumManager {
 		int selendroidPort = ap.getPort();
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
 				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
-				.withArgument(GeneralServerFlag.APP, prop.getProperty("APP_PATH"))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
 				.withLogFile(new File(
 						System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID + "__" + methodName + ".txt"))

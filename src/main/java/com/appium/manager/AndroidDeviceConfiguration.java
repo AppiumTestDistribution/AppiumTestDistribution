@@ -150,7 +150,7 @@ public class AndroidDeviceConfiguration {
 	public String deviceOS(String deviceID){
 		String deviceOSLevel = null;
 		try {
-			deviceOSLevel = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release").replaceAll("\\W", "");
+			deviceOSLevel = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.sdk").replaceAll("\\W", "");
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
