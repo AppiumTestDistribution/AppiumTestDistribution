@@ -10,7 +10,7 @@ Add the below dependencies in your pom.xml
 <dependency>
 	<groupId>com.github.saikrishna321</groupId>
 	<artifactId>AppiumTestDistribution</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.2</version>
 </dependency>
 ```
 
@@ -23,7 +23,7 @@ Add the below dependencies in your pom.xml
 	</repositories>
 ```
 <h2>Sample Tests</h2>
- Clone the project (https://github.com/saikrishna321/AppiumTestDistributionExample)
+ Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
 <h1>Configure tests</h1>
 
 Main Runnerclass should look as below :: 
