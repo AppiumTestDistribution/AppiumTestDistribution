@@ -77,8 +77,8 @@ public class ParallelThread {
 		});
 
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-			// executor.distributeTests(deviceCount, testcases);
-			myTestExecutor.runMethodParallelAppium(pack, deviceCount);
+			myTestExecutor.distributeTests(deviceCount, testcases);
+			// myTestExecutor.runMethodParallelAppium(pack, deviceCount);
 
 		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
 			myTestExecutor.parallelTests(deviceCount, testcases);
