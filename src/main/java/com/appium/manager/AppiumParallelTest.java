@@ -77,27 +77,32 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		device_udid = devices.get(thread_device_count);
 		appiumMan.appiumServer(device_udid, methodName);
 		DesiredCapabilities capabilities = new DesiredCapabilities();
-		capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
-		capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
-		capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
-		if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 16) {
-			capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
+		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {			
+			capabilities.setCapability("deviceName", "Android");
+			capabilities.setCapability("platformVersion", "5.0.X");
+			// If you want the tests on real device, make sure chrome browser is
+			// installed and change the line to
+			capabilities.setCapability("browserName", prop.getProperty("BROWSER_TYPE"));
+			capabilities.setCapability("setJavaScriptEnabled", true);
+		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
+			capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
+			capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
+			capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
+			if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 16) {
+				capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
+			}
+			capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("APP_PATH"));
+			capabilities.setCapability(MobileCapabilityType.APP_PACKAGE, prop.getProperty("APP_PACKAGE"));
+			capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY, prop.getProperty("APP_ACTIVITY"));
+			if (prop.getProperty("APP_WAIT_ACTIVITY") != null) {
+				capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY,
+						prop.getProperty("APP_WAIT_ACTIVITY"));
+			}
 		}
-        capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("APP_PATH"));
-		capabilities.setCapability(MobileCapabilityType.APP_PACKAGE, prop.getProperty("APP_PACKAGE"));
-		capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY, prop.getProperty("APP_ACTIVITY"));
-		if(prop.getProperty("APP_WAIT_ACTIVITY") != null){
-			capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, prop.getProperty("APP_WAIT_ACTIVITY"));
-		}
+
 		Thread.sleep(5000);
 		return new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
 
-	}
-
-	@AfterClass
-	public void closeApp() {
-		// driver.close();
-		// driver.quit();
 	}
 
 	// @BeforeMethod
@@ -165,11 +170,6 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		PrintWriter pw = new PrintWriter(sw);
 		t.printStackTrace(pw);
 		return sw.toString();
-	}
-
-	@AfterSuite
-	public void afterSuite() {
-		// ExtentManager.getInstance().flush();
 	}
 
 	public void waitForElement(By id, int time) {

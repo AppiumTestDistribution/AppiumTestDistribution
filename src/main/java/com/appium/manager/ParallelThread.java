@@ -19,14 +19,14 @@ import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 
 public class ParallelThread {
-	protected static int deviceCount;
-	static Map<String, String> devices = new HashMap<String, String>();
-	static AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
+	protected int deviceCount;
+	Map<String, String> devices = new HashMap<String, String>();
+	AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	AppiumParallelTest baseTest = new AppiumParallelTest();
 	HtmlReporter htmlReporter = new HtmlReporter();
 	MyTestExecutor myTestExecutor = new MyTestExecutor();
-	public static Properties prop = new Properties();
-	public static InputStream input = null;
+	public Properties prop = new Properties();
+	public InputStream input = null;
 	List<Class> testcases;
 
 	@SuppressWarnings({ "rawtypes" })

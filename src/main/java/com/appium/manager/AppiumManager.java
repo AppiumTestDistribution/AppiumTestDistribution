@@ -21,8 +21,8 @@ public class AppiumManager {
 	CommandPrompt cp = new CommandPrompt();
 	AvailabelPorts ap = new AvailabelPorts();
 	AppiumDriverLocalService appiumDriverLocalService;
-	public static Properties prop = new Properties();
-	public static InputStream input = null;
+	public Properties prop = new Properties();
+	public InputStream input = null;
 
 	/**
 	 * start appium with default arguments

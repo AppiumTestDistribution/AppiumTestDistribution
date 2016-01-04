@@ -9,8 +9,8 @@ public class AndroidDeviceConfiguration {
 
 	CommandPrompt cmd = new CommandPrompt();
 	Map<String, String> devices = new HashMap<String, String>();
-	ArrayList<String> deviceSerail= new ArrayList<String>();
-	ArrayList<String> deviceModel= new ArrayList<String>();
+	ArrayList<String> deviceSerail = new ArrayList<String>();
+	ArrayList<String> deviceModel = new ArrayList<String>();
 
 	/**
 	 * This method start adb server
@@ -34,7 +34,7 @@ public class AndroidDeviceConfiguration {
 	public void stopADB() throws Exception {
 		cmd.runCommand("adb kill-server");
 	}
-	
+
 	/**
 	 * This method return connected devices
 	 * 
@@ -47,7 +47,13 @@ public class AndroidDeviceConfiguration {
 		String[] lines = output.split("\n");
 
 		if (lines.length <= 1) {
+			System.out.println("\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
+					+ "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
+					+ "\uD83C\uDF7A" + "\uD83C\uDF7A");
 			System.out.println("No Device Connected");
+			System.out.println("\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
+					+ "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
+					+ "\uD83C\uDF7A" + "\uD83C\uDF7A");
 			stopADB();
 			System.exit(0); // exit if no connected devices found
 		}
@@ -62,8 +68,7 @@ public class AndroidDeviceConfiguration {
 						.replaceAll("\\s+", "");
 				String brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
 						.replaceAll("\\s+", "");
-				String osVersion = cmd
-						.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release")
+				String osVersion = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release")
 						.replaceAll("\\s+", "");
 				String deviceName = brand + " " + model;
 
@@ -89,9 +94,7 @@ public class AndroidDeviceConfiguration {
 		}
 		return devices;
 	}
-	
-	
-	
+
 	public ArrayList<String> getDeviceSerail() throws Exception {
 
 		startADB(); // start adb service
@@ -127,36 +130,37 @@ public class AndroidDeviceConfiguration {
 		}
 		return deviceSerail;
 	}
-	
+
 	/*
-	 * This method gets the device model name 
+	 * This method gets the device model name
 	 */
-	public String deviceModel(String deviceID){
+	public String deviceModel(String deviceID) {
 		String deviceModelName = null;
 		try {
-			deviceModelName = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W", "");
+			deviceModelName = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W",
+					"");
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return deviceModelName;
-		
+
 	}
-	
-	
+
 	/*
-	 * This method gets the device OS name 
+	 * This method gets the device OS API Level
 	 */
-	public String deviceOS(String deviceID){
+	public String deviceOS(String deviceID) {
 		String deviceOSLevel = null;
 		try {
-			deviceOSLevel = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.sdk").replaceAll("\\W", "");
+			deviceOSLevel = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.sdk")
+					.replaceAll("\\W", "");
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return deviceOSLevel;
-		
+
 	}
-	
+
 }
