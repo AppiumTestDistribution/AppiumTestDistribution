@@ -13,8 +13,10 @@ public class HomePageTest5 extends UserBaseTest {
 
 	public void testMethodFive_5() throws Exception {
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
-		waitForElement(By.id("com.android2.calculator3:id/cling_dismiss"), 30);
-		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		if(getDriver().findElements(By.id("com.android2.calculator3:id/cling_dismiss")).size() > 0){
+			getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+		}
+		
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();

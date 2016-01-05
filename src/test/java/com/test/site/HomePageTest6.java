@@ -12,11 +12,11 @@ import io.appium.java_client.SwipeElementDirection;
 
 
 
-public class HomePageTest2 extends UserBaseTest{
+public class HomePageTest6 extends UserBaseTest{
 
 
 	@Test
-    public void testMethodOne_2() throws Exception  {
+    public void testMethodTwelve_12() throws Exception  {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		if(getDriver().findElements(By.id("com.android2.calculator3:id/cling_dismiss")).size() > 0){

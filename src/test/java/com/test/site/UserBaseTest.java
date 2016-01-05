@@ -15,29 +15,32 @@ import io.appium.java_client.MobileElement;
 
 public class UserBaseTest extends AppiumParallelTest {
 
-	AppiumDriver<MobileElement> driver;
+	public AppiumDriver<MobileElement> driver;
 
 	@BeforeMethod()
-	public void startApp(Method method) throws Exception {
-		this.driver = startAppiumServerInParallel(method.getName());
+	public void startApp(Method name) throws Exception {
+		startAppiumTest(name.getName());
 	}
 
 	@AfterMethod()
 	public void killServer(ITestResult result) {
-		killAppiumServer(result);
+		logTestResults(result);
 	}
 
 	public AppiumDriver<MobileElement> getDriver() {
-		return this.driver;
+		return driver;
 	}
 
 	@BeforeClass()
-	public void beforeClass() {
-		System.out.println("Before Class called" + Thread.currentThread().getId());
+	public void beforeClass() throws Exception {
+		System.out.println("Before Class called" + Thread.currentThread().getId());	
+	    System.out.println(getClass().getName());
+		driver = startAppiumServerInParallel(getClass().getName());
 	}
 
-	@AfterClass
+	@AfterClass()
 	public void afterClass() {
 		System.out.println("After Class" + Thread.currentThread().getId());
+		killAppiumServer();
 	}
 }
