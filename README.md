@@ -59,6 +59,8 @@ APP_PACKAGE=com.android2.calculator3
 APP_ACTIVITY=com.android2.calculator3.Calculator
 RUNNER=distribute
 APPIUM_JS_PATH=/usr/local/lib/node_modules/appium/bin/appium.js
+BROWSER_TYPE=chrome
+APP_TYPE=native
 
 ```
 
@@ -67,6 +69,7 @@ Note:
 * Provide the absolute path of the apk file.
 * APPIUM_JS_PATH should be the location of the appium.js in yout location machine
 * RUNNER option can be parallel/distribute(Parallel will run the all the tests across device- which helps to get the device coverage/ Distribute will distribute all the tests across devices)
+* APP_TYPE should be set to "native" to run native/hybrid tests and "web" to run webtests in chrome.
 
 
 <h3>Reports</h3>
