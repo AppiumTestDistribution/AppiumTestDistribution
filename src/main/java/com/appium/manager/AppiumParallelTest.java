@@ -113,6 +113,9 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		String category = androidDevice.deviceModel(device_udid);
 		ExtentTestManager.startTest(methodName, "Mobile Appium Test",
 				category + device_udid.replace(".", "_").replace(":", "_"));
+		ExtentTestManager.getTest().log(LogStatus.INFO,
+				"Logs:: <a href=" + System.getProperty("user.dir") + "/target/appiumlogs/" + device_udid + "__"
+						+ methodName + ".txt" + ">AppiumServerLogs</a>");
 		return driver;
 	}
 	
@@ -133,9 +136,9 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	public void logTestResults(ITestResult result) {
 		if (result.isSuccess()) {
 			ExtentTestManager.getTest().log(LogStatus.PASS, result.getMethod().getMethodName());
-			ExtentTestManager.getTest().log(LogStatus.INFO,
+			/*ExtentTestManager.getTest().log(LogStatus.INFO,
 					"Logs:: <a href=" + System.getProperty("user.dir") + "/target/appiumlogs/" + device_udid + "__"
-							+ result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
+							+ result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");*/
 			if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
 				log_file_writer.println(logEntries);
 				log_file_writer.flush();
@@ -148,9 +151,9 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		}
 		if (result.getStatus() == ITestResult.FAILURE) {
 			ExtentTestManager.getTest().log(LogStatus.FAIL, "<pre>" + getStackTrace(result.getThrowable()) + "</pre>");
-			ExtentTestManager.getTest().log(LogStatus.INFO,
+			/*ExtentTestManager.getTest().log(LogStatus.INFO,
 					"Logs::<a href=" + System.getProperty("user.dir") + "/target/appiumlogs/" + device_udid + "__"
-							+ result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");
+							+ result.getMethod().getMethodName() + ".txt" + ">AppiumServerLogs</a>");*/
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
 				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
@@ -177,6 +180,8 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		}
 
 	}
+	
+	
 
 	public void killAppiumServer() {
 		System.out.println("**************ClosingAppiumSession****************");
