@@ -43,7 +43,40 @@ public class Runner {
 
 ```
 
-1. Extend your tests to BaseTest which is part of the dependencies, which takes care of running the appium server session in parallel threads.
+1. Extend your tests to AppiumParallelTest which is part of the dependencies, which takes care of running the appium server session in parallel threads.
+
+```
+public class UserBaseTest extends AppiumParallelTest {
+
+	public AppiumDriver<MobileElement> driver;
+
+	@BeforeMethod()
+	public void startApp(Method name) throws Exception {
+		startAppiumTest(name.getName());
+	}
+
+	@AfterMethod()
+	public void killServer(ITestResult result) {
+		logTestResults(result);
+		getDriver().resetApp();
+	}
+
+	public AppiumDriver<MobileElement> getDriver() {
+		return driver;
+	}
+
+	@BeforeClass()
+	public void beforeClass() throws Exception {
+		driver = startAppiumServerInParallel(getClass().getSimpleName());
+	}
+
+	@AfterClass()
+	public void afterClass() {;
+		killAppiumServer();
+	}
+}
+
+```
     
 <h3>Run Test from CommandLine</h3>
 ```
@@ -75,5 +108,6 @@ Note:
 <h3>Reports</h3>
 
 Your should see report file generated as ExtentReport.html
+
 
 
