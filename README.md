@@ -109,5 +109,9 @@ Note:
 
 Your should see report file generated as ExtentReport.html
 
+![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/report1.jpg)
 
+![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/report2.jpg)
+
+![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/report3.jpg)
 
