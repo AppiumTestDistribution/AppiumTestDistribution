@@ -6,7 +6,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
-public class LoginTest extends com.test.site.UserBaseTest {
+import com.test.site.UserBaseTest;
+
+public class LoginTest extends UserBaseTest {
 
 
 	@Test
