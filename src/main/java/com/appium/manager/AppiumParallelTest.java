@@ -45,13 +45,13 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	protected String port;
 	public AppiumDriver<MobileElement> driver;
 	CommandPrompt cp = new CommandPrompt();
-	AppiumManager appiumMan = new AppiumManager();
+	public AppiumManager appiumMan = new AppiumManager();
 	AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
 	public static Properties prop = new Properties();
-	public static InputStream input = null;
+	public InputStream input = null;
 	public String device_udid;
 	public ExtentTest testReporter;
-	AppiumDriverLocalService appiumDriverLocalService;
+	public AppiumDriverLocalService appiumDriverLocalService;
 	int thread_device_count;
 	public List<LogEntry> logEntries;
 	public File logFile;
@@ -119,7 +119,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		return driver;
 	}
 	
-	public void startAppiumTest(String methodName) throws FileNotFoundException{
+	public void startLogResults(String methodName) throws FileNotFoundException{
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
 			logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
 			logFile = new File(
@@ -133,7 +133,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	}
 
 	// @AfterMethod
-	public void logTestResults(ITestResult result) {
+	public void endLogTestResults(ITestResult result) {
 		if (result.isSuccess()) {
 			ExtentTestManager.getTest().log(LogStatus.PASS, result.getMethod().getMethodName());
 			/*ExtentTestManager.getTest().log(LogStatus.INFO,
@@ -183,11 +183,12 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	
 	
 
-	public void killAppiumServer() {
+	public void killAppiumServer() throws InterruptedException, IOException {
 		System.out.println("**************ClosingAppiumSession****************");
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
+			System.out.println("Closing Session::" + driver.getSessionId());
 			driver.closeApp();
 		}
 		appiumMan.destroyAppiumNode();

@@ -20,7 +20,7 @@ public class AppiumManager {
 
 	CommandPrompt cp = new CommandPrompt();
 	AvailabelPorts ap = new AvailabelPorts();
-	AppiumDriverLocalService appiumDriverLocalService;
+	public AppiumDriverLocalService appiumDriverLocalService;
 	public Properties prop = new Properties();
 	public InputStream input = null;
 
@@ -54,7 +54,7 @@ public class AppiumManager {
 				.withArgument(GeneralServerFlag.UIID, deviceID)
 				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
 				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))
-				.withArgument(GeneralServerFlag.SESSION_OVERRIDE).withArgument(GeneralServerFlag.DEBUG_LOG_SPACING)
+				.withArgument(GeneralServerFlag.SESSION_OVERRIDE).withArgument(AndroidServerFlag.SUPPRESS_ADB_KILL_SERVER)
 				.withArgument(AndroidServerFlag.SELENDROID_PORT, Integer.toString(selendroidPort)).usingPort(port);
 		/* and so on */;
 		appiumDriverLocalService = builder.build();

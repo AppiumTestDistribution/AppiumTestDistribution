@@ -163,4 +163,15 @@ public class AndroidDeviceConfiguration {
 
 	}
 
+	/**
+	 * This method will close the running app
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public void closeRunningApp(String deviceID, String app_package) throws InterruptedException, IOException {
+		// adb -s 192.168.56.101:5555 com.android2.calculator3
+		cmd.runCommand("adb -s " + deviceID + " shell am force-stop " + app_package);
+	}
+
 }

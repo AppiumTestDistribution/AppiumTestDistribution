@@ -1,5 +1,6 @@
 package com.test.site;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.testng.ITestResult;
@@ -15,16 +16,14 @@ import io.appium.java_client.MobileElement;
 
 public class UserBaseTest extends AppiumParallelTest {
 
-	public AppiumDriver<MobileElement> driver;
-
 	@BeforeMethod()
 	public void startApp(Method name) throws Exception {
-		startAppiumTest(name.getName());
+		startLogResults(name.getName());
 	}
 
 	@AfterMethod()
 	public void killServer(ITestResult result) {
-		logTestResults(result);
+		endLogTestResults(result);
 		getDriver().resetApp();
 	}
 
@@ -40,7 +39,7 @@ public class UserBaseTest extends AppiumParallelTest {
 	}
 
 	@AfterClass()
-	public void afterClass() {
+	public void afterClass() throws InterruptedException, IOException {
 		System.out.println("After Class" + Thread.currentThread().getId());
 		killAppiumServer();
 	}
