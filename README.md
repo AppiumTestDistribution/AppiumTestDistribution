@@ -48,16 +48,14 @@ public class Runner {
 ```
 public class UserBaseTest extends AppiumParallelTest {
 
-	public AppiumDriver<MobileElement> driver;
-
 	@BeforeMethod()
 	public void startApp(Method name) throws Exception {
-		startAppiumTest(name.getName());
+		startLogResults(name.getName());
 	}
 
 	@AfterMethod()
 	public void killServer(ITestResult result) {
-		logTestResults(result);
+		endLogTestResults(result);
 		getDriver().resetApp();
 	}
 
@@ -67,11 +65,14 @@ public class UserBaseTest extends AppiumParallelTest {
 
 	@BeforeClass()
 	public void beforeClass() throws Exception {
+		System.out.println("Before Class called" + Thread.currentThread().getId());	
+	    System.out.println(getClass().getName());
 		driver = startAppiumServerInParallel(getClass().getSimpleName());
 	}
 
 	@AfterClass()
-	public void afterClass() {;
+	public void afterClass() throws InterruptedException, IOException {
+		System.out.println("After Class" + Thread.currentThread().getId());
 		killAppiumServer();
 	}
 }
