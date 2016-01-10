@@ -174,4 +174,15 @@ public class AndroidDeviceConfiguration {
 		cmd.runCommand("adb -s " + deviceID + " shell am force-stop " + app_package);
 	}
 
+	/**
+	 * 
+	 * This method clears the app data only for android
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public void clearAppData(String deviceID, String app_package) throws InterruptedException, IOException {
+		// adb -s 192.168.56.101:5555 com.android2.calculator3
+		cmd.runCommand("adb -s " + deviceID + " shell pm clear " + app_package);
+	}
 }

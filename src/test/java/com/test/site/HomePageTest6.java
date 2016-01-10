@@ -2,8 +2,6 @@ package com.test.site;
 
 
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 

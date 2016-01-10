@@ -26,9 +26,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
@@ -204,6 +201,14 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	public void waitForElement(By id, int time) {
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable((id)));
+	}
+	
+	public void resetAppData() throws InterruptedException, IOException{
+		androidDevice.clearAppData(device_udid, prop.getProperty("APP_PACKAGE"));
+	}
+	
+	public void closeOpenApp() throws InterruptedException, IOException{
+		androidDevice.closeRunningApp(device_udid, prop.getProperty("APP_PACKAGE"));
 	}
 
 	@SuppressWarnings("unused")

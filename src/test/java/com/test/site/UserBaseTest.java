@@ -43,4 +43,6 @@ public class UserBaseTest extends AppiumParallelTest {
 		System.out.println("After Class" + Thread.currentThread().getId());
 		killAppiumServer();
 	}
+	
+
 }
