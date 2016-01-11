@@ -78,8 +78,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
 			capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
 			capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.0.X");
-			// If you want the tests on real device, make sure chrome browser is
-			// installed and change the line to
+			// If you want the tests on real device, make sure chrome browser is installed
 			capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, prop.getProperty("BROWSER_TYPE"));
 			capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
 			capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
@@ -187,6 +186,8 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
 			System.out.println("Closing Session::" + driver.getSessionId());
 			driver.closeApp();
+		}else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+			driver.quit();
 		}
 		appiumMan.destroyAppiumNode();
 	}
