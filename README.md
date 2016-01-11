@@ -12,7 +12,7 @@ Add the below dependencies in your pom.xml
 <dependency>
 	<groupId>com.github.saikrishna321</groupId>
 	<artifactId>AppiumTestDistribution</artifactId>
-	<version>3.0.2</version>
+	<version>3.0.3</version>
 </dependency>
 ```
 
@@ -65,8 +65,6 @@ public class UserBaseTest extends AppiumParallelTest {
 
 	@BeforeClass()
 	public void beforeClass() throws Exception {
-		System.out.println("Before Class called" + Thread.currentThread().getId());	
-	    System.out.println(getClass().getName());
 		driver = startAppiumServerInParallel(getClass().getSimpleName());
 	}
 
@@ -102,8 +100,10 @@ Note:
 
 * Provide the absolute path of the apk file.
 * APPIUM_JS_PATH should be the location of the appium.js in yout location machine
-* RUNNER option can be parallel/distribute(Parallel will run the all the tests across device- which helps to get the device coverage/ Distribute will distribute all the tests across devices)
+* RUNNER option can be parallel/distribute(Parallel will run  all the tests across device- which helps you to get the device coverage/ Distribute will distribute all the tests across devices which helps you faster execution)
 * APP_TYPE should be set to "native" to run native/hybrid tests and "web" to run webtests in chrome.
+* Make sure you have chrome browser installed on real devices, if not please download from playstore.
+* Make sure you don't use ``` 	getDriver().resetApp()  ``` when your running your webtests.
 
 
 <h3>Reports</h3>
