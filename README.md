@@ -116,3 +116,7 @@ Your should see report file generated as ExtentReport.html
 
 ![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/report3.jpg)
 
+<h3>TestRunning in Distributed Way</h3>
+
+[![ScreenShot](http://s29.postimg.org/uln15acdz/Screen_Shot_2016_01_10_at_12_02_10_pm.png)](https://www.youtube.com/watch?v=KfMoJ6dSC3g)
+
