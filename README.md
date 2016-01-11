@@ -24,6 +24,13 @@ Add the below dependencies in your pom.xml
 		</repository>
 	</repositories>
 ```
+
+<h2>Prerequisites</h2>
+
+1. Make sure Appium(1.4.16) is installed through node.
+2. Make sure adb sdk is set under ANDROID_HOME.
+3. Install JDK 1.8 and set under path JAVA_HOME to get this framework working.
+
 <h2>Sample Tests</h2>
  Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
 <h1>Configure tests</h1>
@@ -120,3 +127,7 @@ Your should see report file generated as ExtentReport.html
 
 [![ScreenShot](http://s29.postimg.org/uln15acdz/Screen_Shot_2016_01_10_at_12_02_10_pm.png)](https://www.youtube.com/watch?v=KfMoJ6dSC3g)
 
+## License
+
+![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)
+AppiumTestDistribution is released under [GNU Public License version 3.0](http://www.gnu.org/licenses/gpl-3.0.txt)
