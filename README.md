@@ -4,7 +4,7 @@
 
 <h2>Run Appium Android test in parallel across devices connected</h2>
 
-![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/image.jpg)
+![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/conect1-anim.gif)
 
 Add the below dependencies in your pom.xml
 
