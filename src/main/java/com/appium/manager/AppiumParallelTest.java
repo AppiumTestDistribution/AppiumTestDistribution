@@ -27,7 +27,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
-import com.appium.utils.CommandPrompt;
+import com.appium.utils.*;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.report.factory.ExtentManager;
@@ -220,6 +220,10 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, prop.getProperty("BROWSER_TYPE"));
 		capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
 		capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
+	}
+	
+	public void writeLogsToReport(String s){
+		ExtentTestManager.logOutPut(s);
 	}
 
 	@SuppressWarnings("unused")

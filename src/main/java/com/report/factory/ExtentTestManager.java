@@ -35,4 +35,8 @@ public class ExtentTestManager { // new
 		extent.addSystemInfo(sysInfo);
 		return test;
 	}
+	
+	public synchronized static void logOutPut(String s) {
+		extent.setTestRunnerOutput(s);
+	}
 }
