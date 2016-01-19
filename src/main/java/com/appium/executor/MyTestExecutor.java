@@ -1,21 +1,5 @@
 package com.appium.executor;
 
-import static java.util.Arrays.asList;
-import static org.testng.xml.XmlSuite.ParallelMode.METHODS;
-
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -25,11 +9,23 @@ import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
+import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
+
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Arrays.asList;
+import static org.testng.xml.XmlSuite.ParallelMode.METHODS;
 
 public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
 
+	@SuppressWarnings("rawtypes")
 	public void distributeTests(int deviceCount, List<Class> testcases) {
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
 		for (final Class testFile : testcases) {
@@ -50,6 +46,7 @@ public class MyTestExecutor {
 		System.out.println("ending");
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void parallelTests(int deviceCount, List<Class> testCases) throws InterruptedException {
 
 		for (int i = 0; i < deviceCount; i++) {
@@ -92,32 +89,33 @@ public class MyTestExecutor {
 				new ConfigurationBuilder().setUrls(newUrls).setScanners(new MethodAnnotationsScanner()));
 		Set<Method> resources = reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
 
-		runMethodParallel(constructXmlSuite(createTestsMap(resources)), devicecount);
+		runMethodParallel(constructXmlSuite(createTestsMap(resources), devicecount), devicecount);
 
 		System.out.println("Finally complete");
 	}
 
-	public static void testRunnerTestNg(Class arg) {
+	public static void testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
 		TestNG test = new TestNG();
 		test.setTestClasses(new Class[]{arg});
 		System.out.println("Into TestNGRunner");
 		test.run();
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void runMethodParallel(XmlSuite suite, int threadCount) {
 		TestNG testNG = new TestNG();
 		testNG.setVerbose(2);
 		testNG.setThreadCount(threadCount);
 		testNG.setParallel(METHODS);
 		testNG.setXmlSuites(asList(suite));
+		System.out.println(suite.toXml());
 		testNG.run();
 	}
 
-	public XmlSuite constructXmlSuite(Map<String, List<Method>> methods) {
+	public XmlSuite constructXmlSuite(Map<String, List<Method>> methods,int deviceCount) {
 		XmlSuite suite = new XmlSuite();
 		suite.setName("TestNG Forum");
-
+        suite.setThreadCount(deviceCount);
+        suite.setParallel(ParallelMode.METHODS);
 		XmlTest test = new XmlTest(suite);
 		test.setName("TestNG Test");
 
@@ -128,7 +126,6 @@ public class MyTestExecutor {
 			}
 		}
 		test.setXmlClasses(xmlClasses);
-		System.out.println(suite.toXml());
 		return suite;
 	}
 
@@ -151,10 +148,10 @@ public class MyTestExecutor {
 	public Map<String, List<Method>> createTestsMap(Set<Method> methods) {
 		Map<String, List<Method>> testsMap = new HashMap<>();
 		methods.stream().forEach(method -> {
-			List<Method> methodsList = testsMap.get(method.getDeclaringClass().getSimpleName());
+			List<Method> methodsList = testsMap.get(method.getDeclaringClass().getPackage().getName() + "." + method.getDeclaringClass().getSimpleName());
 			if (methodsList == null) {
 				methodsList = new ArrayList<>();
-				testsMap.put(method.getDeclaringClass().getSimpleName(), methodsList);
+				testsMap.put(method.getDeclaringClass().getPackage().getName() + "." + method.getDeclaringClass().getSimpleName(), methodsList);
 			}
 			methodsList.add(method);
 		});
