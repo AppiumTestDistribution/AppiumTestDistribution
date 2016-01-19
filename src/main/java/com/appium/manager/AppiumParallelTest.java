@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -77,6 +78,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		// array position
 		device_udid = devices.get(thread_device_count);
 		appiumMan.appiumServer(device_udid, methodName);
+		//appiumMan.appiumServerParallelMethods(device_udid, methodName);
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
 			androidWeb();
 		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
@@ -222,8 +224,8 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
 	}
 	
-	public void writeLogsToReport(String s){
-		ExtentTestManager.logOutPut(s);
+	public void writeLogsToReport(String s,Method m){
+		ExtentTestManager.logOutPut(s,m);
 	}
 
 	@SuppressWarnings("unused")

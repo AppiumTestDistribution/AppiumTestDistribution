@@ -1,10 +1,11 @@
 package com.report.factory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExtentTestManager { // new
 	public static Map<Integer, ExtentTest> extentTestMap = new HashMap<Integer, ExtentTest>();
@@ -35,8 +36,10 @@ public class ExtentTestManager { // new
 		extent.addSystemInfo(sysInfo);
 		return test;
 	}
-	
-	public synchronized static void logOutPut(String s) {
+
+	public synchronized static void logOutPut(String s, Method m) {
+		extent.setTestRunnerOutput("<h5>" + "ClassName::" + m.getDeclaringClass().getSimpleName() +"*******"+"MethodName:::"
+				+ m.getName() + "</h5>");
 		extent.setTestRunnerOutput(s);
 	}
 }
