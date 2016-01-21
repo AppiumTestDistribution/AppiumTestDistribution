@@ -224,9 +224,6 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
 	}
 	
-	public void writeLogsToReport(String s,Method m){
-		ExtentTestManager.logOutPut(s,m);
-	}
 
 	@SuppressWarnings("unused")
 	public void convertXmlToJSon() throws IOException {
