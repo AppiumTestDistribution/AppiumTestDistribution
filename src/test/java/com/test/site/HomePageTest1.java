@@ -3,10 +3,10 @@ package com.test.site;
 
 
 
-import java.lang.reflect.Method;
-
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
+
+import com.report.factory.ExtentTestManager;
 
 
 
@@ -14,15 +14,15 @@ public class HomePageTest1 extends UserBaseTest{
 	
 
 	@Test
-    public void testMethodOne_1(Method m) throws Exception  {
+    public void testMethodOne_1() throws Exception  {
 	    
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
-		writeLogsToReport("Login Test",m);
+		ExtentTestManager.logOutPut("Login Test");
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
-		writeLogsToReport("Enter UserName and Password",m);
-		writeLogsToReport("Login Successfull",m);
+		ExtentTestManager.logOutPut("Enter UserName and Password");
+		ExtentTestManager.logOutPut("Login Successfull");
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
@@ -33,11 +33,11 @@ public class HomePageTest1 extends UserBaseTest{
     }
 	
 	@Test
-    public void testMethodOne_6(Method m) throws Exception  {
+    public void testMethodOne_6() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
-		writeLogsToReport("Second Add method",m);
+		ExtentTestManager.logOutPut("Second Add method");
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
@@ -51,11 +51,11 @@ public class HomePageTest1 extends UserBaseTest{
     }
 	
 	@Test
-    public void testMethodOne_7(Method m) throws Exception  {
+    public void testMethodOne_7() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
-		writeLogsToReport(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName(),m);
+		ExtentTestManager.logOutPut(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit33")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
@@ -69,11 +69,11 @@ public class HomePageTest1 extends UserBaseTest{
 	
 	
 	@Test
-    public void testMethodOne_8(Method m) throws Exception  {
+    public void testMethodOne_8() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
-		writeLogsToReport(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName(),m);
+		ExtentTestManager.logOutPut(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
