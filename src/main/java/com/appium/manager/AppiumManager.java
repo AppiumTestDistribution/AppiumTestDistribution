@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import com.appium.utils.CommandPrompt;
+
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.AndroidServerFlag;
@@ -23,14 +25,7 @@ public class AppiumManager {
 	public AppiumDriverLocalService appiumDriverLocalService;
 	public Properties prop = new Properties();
 	public InputStream input = null;
-
-	/**
-	 * start appium with default arguments
-	 */
-	public void startDefaultAppium() throws Exception {
-		cp.runCommand("appium --session-override");
-		Thread.sleep(5000);
-	}
+	public AppiumServiceBuilder builder = new AppiumServiceBuilder();
 
 	/**
 	 * start appium with auto generated ports : appium port, chrome port,
@@ -54,7 +49,8 @@ public class AppiumManager {
 				.withArgument(GeneralServerFlag.UIID, deviceID)
 				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
 				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))
-				.withArgument(GeneralServerFlag.SESSION_OVERRIDE).withArgument(AndroidServerFlag.SUPPRESS_ADB_KILL_SERVER)
+				.withArgument(GeneralServerFlag.SESSION_OVERRIDE)
+				.withArgument(AndroidServerFlag.SUPPRESS_ADB_KILL_SERVER)
 				.withArgument(AndroidServerFlag.SELENDROID_PORT, Integer.toString(selendroidPort)).usingPort(port);
 		/* and so on */;
 		appiumDriverLocalService = builder.build();

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.appium.utils.CommandPrompt;
+
 public class AndroidDeviceConfiguration {
 
 	CommandPrompt cmd = new CommandPrompt();
