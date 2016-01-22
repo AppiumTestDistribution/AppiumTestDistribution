@@ -33,7 +33,7 @@ public class CommandPrompt {
 				break;
 			}*/
 			allLine = allLine + "" + line + "\n";
-			if (line.contains("Console LogLevel: debug"))
+			if (line.contains("Console LogLevel: debug") && line.contains("Complete"))
 				break;	
 			   i++;
 		}

@@ -6,6 +6,8 @@ package com.test.site;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
+import com.annotation.values.RetryCount;
+import com.appium.utils.Retry;
 import com.report.factory.ExtentTestManager;
 
 
@@ -13,7 +15,8 @@ import com.report.factory.ExtentTestManager;
 public class HomePageTest1 extends UserBaseTest{
 	
 
-	@Test
+	@Test(retryAnalyzer=Retry.class)
+	@RetryCount(maxRetryCount=2)
     public void testMethodOne_1() throws Exception  {
 	    
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -32,7 +35,7 @@ public class HomePageTest1 extends UserBaseTest{
 		//getDriver().close();
     }
 	
-	@Test
+	@Test(retryAnalyzer=Retry.class)
     public void testMethodOne_6() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -50,7 +53,8 @@ public class HomePageTest1 extends UserBaseTest{
 		//getDriver().close();
     }
 	
-	@Test
+	@Test(retryAnalyzer=Retry.class)
+	@RetryCount(maxRetryCount=2)
     public void testMethodOne_7() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -68,7 +72,7 @@ public class HomePageTest1 extends UserBaseTest{
     }
 	
 	
-	@Test
+	@Test(retryAnalyzer=Retry.class)
     public void testMethodOne_8() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -82,7 +86,7 @@ public class HomePageTest1 extends UserBaseTest{
 		//getDriver().close();
     }
 	
-	@Test
+	@Test(retryAnalyzer=Retry.class)
     public void testMethodOne_9() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -95,7 +99,7 @@ public class HomePageTest1 extends UserBaseTest{
 		//getDriver().close();
     }
 	
-	@Test
+	@Test(retryAnalyzer=Retry.class)
     public void testMethodOne_10() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -108,7 +112,7 @@ public class HomePageTest1 extends UserBaseTest{
 		//getDriver().close();
     }
 	
-	@Test
+	@Test(retryAnalyzer=Retry.class)
     public void testMethodOne_11() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());

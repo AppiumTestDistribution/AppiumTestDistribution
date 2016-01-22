@@ -1,17 +1,18 @@
 package com.test.site;
 
-import java.lang.reflect.Method;
-
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
+import com.annotation.values.RetryCount;
+import com.appium.utils.Retry;
 import com.report.factory.ExtentTestManager;
 
 
 public class HomePageTest3 extends UserBaseTest{
 
 
-	@Test
+	@Test(retryAnalyzer=Retry.class)
+	@RetryCount(maxRetryCount=2)
 	public void testMethodOne_3() throws InterruptedException {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
