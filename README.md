@@ -115,13 +115,7 @@ Note:
 
 <h3>Reports</h3>
 
-Your should see report file generated as ExtentReport.html
-
-![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/report1.jpg)
-
-![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/report2.jpg)
-
-![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/report3.jpg)
+Your should see report file generated as ExtentReport.html under the target folder.
 
 <h3>TestRunning in Distributed Way</h3>
 
