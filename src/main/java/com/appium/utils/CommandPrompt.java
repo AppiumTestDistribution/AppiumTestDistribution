@@ -11,7 +11,7 @@ import org.testng.TestNG;
 
 public class CommandPrompt {
 
-	Process p;
+	static Process p;
 	ProcessBuilder builder;
 
 	/**
@@ -22,7 +22,6 @@ public class CommandPrompt {
 	 */
 	public String runCommand(String command) throws InterruptedException, IOException {
 		p = Runtime.getRuntime().exec(command);
-
 		// get std output
 		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		String line = "";
@@ -37,9 +36,7 @@ public class CommandPrompt {
 				break;	
 			   i++;
 		}
-		//System.out.println(allLine);
 		return allLine;
 
 	}
-
 }

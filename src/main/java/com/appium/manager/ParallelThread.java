@@ -17,11 +17,13 @@ import java.util.Properties;
 
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
+import com.appium.ios.IOSDeviceConfiguration;
 
 public class ParallelThread {
 	protected int deviceCount;
 	Map<String, String> devices = new HashMap<String, String>();
 	AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
+	IOSDeviceConfiguration iosDevice= new IOSDeviceConfiguration();
 	AppiumParallelTest baseTest = new AppiumParallelTest();
 	HtmlReporter htmlReporter = new HtmlReporter();
 	MyTestExecutor myTestExecutor = new MyTestExecutor();
@@ -62,8 +64,15 @@ public class ParallelThread {
 		}
 		input = new FileInputStream("config.properties");
 		prop.load(input);
-		devices = deviceConf.getDevices();
-		deviceCount = devices.size() / 3;
+		
+		if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
+			devices = deviceConf.getDevices();
+			deviceCount = devices.size() / 3;
+		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
+			deviceCount=iosDevice.getIOSUDID().size();		
+		}
+		
+		
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 

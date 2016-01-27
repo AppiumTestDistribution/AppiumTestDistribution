@@ -18,13 +18,15 @@ public class UserBaseTest extends AppiumParallelTest {
 
 	@BeforeMethod()
 	public void startApp(Method name) throws Exception {
+		driver = startAppiumServerInParallel(name.getName());
 		startLogResults(name.getName());
 	}
 
 	@AfterMethod()
-	public void killServer(ITestResult result) {
+	public void killServer(ITestResult result) throws InterruptedException, IOException {
 		endLogTestResults(result);
-		getDriver().resetApp();
+		//getDriver().resetApp();
+		deleteAppIOS("com.tesco.sample");
 	}
 
 	public AppiumDriver<MobileElement> getDriver() {
@@ -35,7 +37,7 @@ public class UserBaseTest extends AppiumParallelTest {
 	public void beforeClass() throws Exception {
 		System.out.println("Before Class called" + Thread.currentThread().getId());	
 	    System.out.println(getClass().getName());
-		driver = startAppiumServerInParallel(getClass().getSimpleName());
+		startAppiumServer(getClass().getSimpleName());
 	}
 
 	@AfterClass()

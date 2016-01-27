@@ -28,6 +28,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
+import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.*;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
@@ -37,8 +38,11 @@ import com.report.factory.ExtentTestManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDeviceActionShortcuts;
+import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
 
 public class AppiumParallelTest extends TestListenerAdapter {
 	protected String port;
@@ -46,6 +50,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	CommandPrompt cp = new CommandPrompt();
 	public AppiumManager appiumMan = new AppiumManager();
 	AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+	IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
 	public static Properties prop = new Properties();
 	public InputStream input = null;
 	public String device_udid;
@@ -56,11 +61,18 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	public File logFile;
 	public PrintWriter log_file_writer;
 	public DesiredCapabilities capabilities = new DesiredCapabilities();
+	public ArrayList<String> devices;
+	public String category;
 
-	public AppiumDriver<MobileElement> testopenBroswer(String methodName) throws Exception {
+	public AppiumServiceBuilder startAppiumServer(String methodName) throws Exception {
 		input = new FileInputStream("config.properties");
 		prop.load(input);
-		ArrayList<String> devices = androidDevice.getDeviceSerail();
+		if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
+			devices = androidDevice.getDeviceSerail();
+		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
+			devices = iosDevice.getIOSUDID();
+			iosDevice.setIOSWebKitProxyPorts();
+		}
 
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 			System.out.println("*************" + Thread.currentThread().getName());
@@ -77,32 +89,51 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		// Thread.currentThread().getName().split("-")[1] to get the device
 		// array position
 		device_udid = devices.get(thread_device_count);
-		appiumMan.appiumServer(device_udid, methodName);
-		//appiumMan.appiumServerParallelMethods(device_udid, methodName);
-		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-			androidWeb();
-		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
-			androidNative();
+		
+		if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
+			category = iosDevice.getDeviceName(device_udid).replace("\n", " ");
+		} else {
+			category = androidDevice.deviceModel(device_udid);
 		}
 
-		Thread.sleep(5000);
-		return new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+		ExtentTestManager.startTest(methodName, "Mobile Appium Test",
+				category + device_udid.replace(".", "_").replace(":", "_"));
+		ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
+				+ "/target/appiumlogs/" + device_udid + "__" + methodName + ".txt" + ">Logs</a>");
+		if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
+			return appiumMan.appiumServer(device_udid, methodName);
+		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
+			iosDevice.startIOSWebKit(device_udid);
+			return appiumMan.appiumServerIOS(device_udid, methodName);
 
+		}
+		return null;
 	}
 
 	// @BeforeMethod
 	public AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
-		driver = testopenBroswer(methodName);
-		String category = androidDevice.deviceModel(device_udid);
-		ExtentTestManager.startTest(methodName, "Mobile Appium Test",
-				category + device_udid.replace(".", "_").replace(":", "_"));
-		ExtentTestManager.getTest().log(LogStatus.INFO,"AppiumServerLogs","<a href=" + System.getProperty("user.dir")
-				+ "/target/appiumlogs/" + device_udid + "__" + methodName + ".txt" + ">Logs</a>");
+
+		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+			androidWeb();
+		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
+			androidNative();
+		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")) {
+			iosNative();
+		}
+
+		Thread.sleep(5000);
+		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")
+				|| prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+			driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")) {
+			driver = new IOSDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+		}
+
 		return driver;
 	}
 
 	public void startLogResults(String methodName) throws FileNotFoundException {
-		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
+		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
 			logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
 			logFile = new File(
 					System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__" + methodName + ".txt");
@@ -119,17 +150,17 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	// @AfterMethod
 	public void endLogTestResults(ITestResult result) {
 		if (result.isSuccess()) {
-			ExtentTestManager.getTest().log(LogStatus.PASS,result.getMethod().getMethodName(), "Pass");
+			ExtentTestManager.getTest().log(LogStatus.PASS, result.getMethod().getMethodName(), "Pass");
 			/*
 			 * ExtentTestManager.getTest().log(LogStatus.INFO, "Logs:: <a href="
 			 * + System.getProperty("user.dir") + "/target/appiumlogs/" +
 			 * device_udid + "__" + result.getMethod().getMethodName() + ".txt"
 			 * + ">AppiumServerLogs</a>");
 			 */
-			if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
+			if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
 				log_file_writer.println(logEntries);
 				log_file_writer.flush();
-				ExtentTestManager.getTest().log(LogStatus.INFO,result.getMethod().getMethodName(),
+				ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
 						"ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
 								+ result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
 				System.out.println(driver.getSessionId() + ": Saving device log - Done.");
@@ -137,8 +168,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 
 		}
 		if (result.getStatus() == ITestResult.FAILURE) {
-			ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result
-					.getThrowable()); 
+			ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
 				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
@@ -147,13 +177,13 @@ public class AppiumParallelTest extends TestListenerAdapter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ExtentTestManager.getTest().log(LogStatus.INFO,result.getMethod().getMethodName(),
+			ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
 					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")
 							+ "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
-			if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
+			if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
 				log_file_writer.println(logEntries);
 				log_file_writer.flush();
-				ExtentTestManager.getTest().log(LogStatus.INFO,result.getMethod().getMethodName(),
+				ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
 						"ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
 								+ result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
 				System.out.println(driver.getSessionId() + ": Saving device log - Done.");
@@ -170,13 +200,14 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		System.out.println("**************ClosingAppiumSession****************");
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
-		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
+		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
 			System.out.println("Closing Session::" + driver.getSessionId());
 			driver.closeApp();
 		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
 			driver.quit();
 		}
 		appiumMan.destroyAppiumNode();
+		// iosDevice.destroyIOSWebKitProxy();
 	}
 
 	protected String getStackTrace(Throwable t) {
@@ -223,7 +254,28 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
 		capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
 	}
-	
+
+	private void iosNative() {
+		// TODO Auto-generated method stub
+		capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
+		capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
+		capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("APP_PATH"));
+		capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
+		capabilities.setCapability("bundleId", prop.getProperty("BUNDLE_ID"));
+		capabilities.setCapability("autoAcceptAlerts", true);
+	}
+
+	public void deleteAppIOS(String bundleID) throws InterruptedException, IOException {
+		iosDevice.unInstallApp(device_udid, bundleID);
+	}
+
+	public void installAppIOS(String appPath) throws InterruptedException, IOException {
+		iosDevice.installApp(device_udid, appPath);
+	}
+
+	public Boolean checkAppIsInstalled(String bundleID) throws InterruptedException, IOException {
+		return iosDevice.checkIfAppIsInstalled(bundleID);
+	}
 
 	@SuppressWarnings("unused")
 	public void convertXmlToJSon() throws IOException {
