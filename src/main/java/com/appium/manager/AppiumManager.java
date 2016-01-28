@@ -75,12 +75,14 @@ public class AppiumManager {
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		int port = ap.getPort();
+		int bootstrapPort=ap.getPort();
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
 				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
 				.withLogFile(new File(
 						System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID + "__" + methodName + ".txt"))
-				.withArgument(GeneralServerFlag.UIID, deviceID)
+				.withArgument(GeneralServerFlag.UIID, deviceID).withArgument(IOSServerFlag.USE_NATIVE_INSTRUMENTS)
+				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))
 				.withArgument(GeneralServerFlag.TEMP_DIRECTORY,
 						new File(String.valueOf(classPathRoot)).getAbsolutePath() + "/target/" + "tmp_" + port)
 				.withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
