@@ -127,7 +127,7 @@ public class IOSDeviceConfiguration {
 		String getWebKitProxyPortToBeStarted = deviceMap.get(udid);
 		p = Runtime.getRuntime()
 				.exec("ios_webkit_debug_proxy -c " + udid + ":" + getWebKitProxyPortToBeStarted + " -d");
-		System.out.println("WwebKit Proxy is started on device " + udid + " and with port number "
+		System.out.println("WebKit Proxy is started on device " + udid + " and with port number "
 				+ getWebKitProxyPortToBeStarted);
 	}
 

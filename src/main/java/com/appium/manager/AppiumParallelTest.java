@@ -255,7 +255,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
 	}
 
-	private void iosNative() {
+	public void iosNative() {
 		// TODO Auto-generated method stub
 		capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
 		capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
