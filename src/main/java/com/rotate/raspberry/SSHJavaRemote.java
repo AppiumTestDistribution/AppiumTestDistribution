@@ -12,9 +12,9 @@ import com.jcraft.jsch.Session;
 
 public class SSHJavaRemote {
 
-	public void rotateLandscape(String host, String command) {
+	public void rotateDevice(String host, String command) {
 		try{
-//            command = "python Documents/motor.py";
+//          command = "python Documents/motor.py";
             String user = "pi";
             String password = "raspberry";
              
