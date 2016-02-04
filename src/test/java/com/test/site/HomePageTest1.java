@@ -22,8 +22,10 @@ public class HomePageTest1 extends UserBaseTest{
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
 		ExtentTestManager.logOutPut("Login Test");
+		captureAndroidScreenShot("Launch Screen");
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
+		captureAndroidScreenShot("Calculation Page");
 		ExtentTestManager.logOutPut("Enter UserName and Password");
 		ExtentTestManager.logOutPut("Login Successfull");
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();

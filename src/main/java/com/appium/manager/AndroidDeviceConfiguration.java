@@ -138,14 +138,18 @@ public class AndroidDeviceConfiguration {
 	 */
 	public String deviceModel(String deviceID) {
 		String deviceModelName = null;
+		String brand = null;
 		try {
 			deviceModelName = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W",
 					"");
+
+			brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
+                    .replaceAll("\\W", "");
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return deviceModelName;
+		return deviceModelName + brand;
 
 	}
 

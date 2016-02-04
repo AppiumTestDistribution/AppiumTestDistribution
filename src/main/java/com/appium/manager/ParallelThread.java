@@ -64,6 +64,7 @@ public class ParallelThread {
 		prop.load(input);
 		devices = deviceConf.getDevices();
 		deviceCount = devices.size() / 3;
+		createSnapshotFolder(deviceCount);
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 
@@ -84,6 +85,31 @@ public class ParallelThread {
 			myTestExecutor.parallelTests(deviceCount, testcases);
 		}
 
+	}
+
+	public void createSnapshotFolder(int deviceCount) {
+		for (int i = 1; i <= deviceCount; i++) {
+			String deviceSerial = devices.get("deviceID" + i);
+			System.out.println(deviceSerial);
+			
+			File file2 = new File(System.getProperty("user.dir")+"/target/screenshot");
+            if (!file2.exists()) {
+                if (file2.mkdir()) {
+                    System.out.println("Directory is created!");
+                } else {
+                    System.out.println("Failed to create directory!");
+                }
+            }
+			
+			File file = new File(System.getProperty("user.dir") + "/target/screenshot/" + deviceSerial);
+			if (!file.exists()) {
+				if (file.mkdir()) {
+					System.out.println("Device Serial Directory is created!");
+				} else {
+					System.out.println("Failed to create directory!");
+				}
+			}
+		}
 	}
 
 }

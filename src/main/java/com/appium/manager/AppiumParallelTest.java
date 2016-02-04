@@ -78,7 +78,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		// array position
 		device_udid = devices.get(thread_device_count);
 		appiumMan.appiumServer(device_udid, methodName);
-		//appiumMan.appiumServerParallelMethods(device_udid, methodName);
+		// appiumMan.appiumServerParallelMethods(device_udid, methodName);
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
 			androidWeb();
 		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
@@ -96,7 +96,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		String category = androidDevice.deviceModel(device_udid);
 		ExtentTestManager.startTest(methodName, "Mobile Appium Test",
 				category + device_udid.replace(".", "_").replace(":", "_"));
-		ExtentTestManager.getTest().log(LogStatus.INFO,"AppiumServerLogs","<a href=" + System.getProperty("user.dir")
+		ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
 				+ "/target/appiumlogs/" + device_udid + "__" + methodName + ".txt" + ">Logs</a>");
 		return driver;
 	}
@@ -119,7 +119,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	// @AfterMethod
 	public void endLogTestResults(ITestResult result) {
 		if (result.isSuccess()) {
-			ExtentTestManager.getTest().log(LogStatus.PASS,result.getMethod().getMethodName(), "Pass");
+			ExtentTestManager.getTest().log(LogStatus.PASS, result.getMethod().getMethodName(), "Pass");
 			/*
 			 * ExtentTestManager.getTest().log(LogStatus.INFO, "Logs:: <a href="
 			 * + System.getProperty("user.dir") + "/target/appiumlogs/" +
@@ -129,7 +129,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
 				log_file_writer.println(logEntries);
 				log_file_writer.flush();
-				ExtentTestManager.getTest().log(LogStatus.INFO,result.getMethod().getMethodName(),
+				ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
 						"ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
 								+ result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
 				System.out.println(driver.getSessionId() + ": Saving device log - Done.");
@@ -137,8 +137,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 
 		}
 		if (result.getStatus() == ITestResult.FAILURE) {
-			ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result
-					.getThrowable()); 
+			ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
 			File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			try {
 				FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
@@ -147,13 +146,13 @@ public class AppiumParallelTest extends TestListenerAdapter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ExtentTestManager.getTest().log(LogStatus.INFO,result.getMethod().getMethodName(),
+			ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
 					"Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")
 							+ "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
 			if (prop.getProperty("APP_TYPE").equalsIgnoreCase("native")) {
 				log_file_writer.println(logEntries);
 				log_file_writer.flush();
-				ExtentTestManager.getTest().log(LogStatus.INFO,result.getMethod().getMethodName(),
+				ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
 						"ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
 								+ result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
 				System.out.println(driver.getSessionId() + ": Saving device log - Done.");
@@ -223,7 +222,18 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
 		capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
 	}
-	
+
+	public void captureAndroidScreenShot(String screenShotName) {
+		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		try {
+			String androidModel = androidDevice.deviceModel(device_udid);
+			FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/" + device_udid + "/"
+					+ androidModel + "/" + screenShotName + ".png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@SuppressWarnings("unused")
 	public void convertXmlToJSon() throws IOException {
