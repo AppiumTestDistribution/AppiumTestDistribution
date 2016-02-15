@@ -4,10 +4,9 @@ import com.appium.manager.AvailabelPorts;
 import com.appium.utils.CommandPrompt;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.apache.tools.ant.util.SymbolicLinkUtils;
 
 public class IOSDeviceConfiguration {
 	public ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
@@ -15,6 +14,8 @@ public class IOSDeviceConfiguration {
 	AvailabelPorts ap = new AvailabelPorts();
 	public HashMap<String, String> deviceMap = new HashMap<String, String>();
 	public Process p;
+	String getWebKitProxyPortToBeStarted;
+	HashMap appiumServerProcess = new HashMap();
 
 	public void checkIfMobileDeviceApiIsInstalled() throws InterruptedException, IOException {
 		boolean checkMobileDevice = commandPrompt.runCommand("brew list").contains("ideviceinstaller");
@@ -87,8 +88,8 @@ public class IOSDeviceConfiguration {
 	 * 
 	 * @throws InterruptedException
 	 * @throws IOException
-	 *             Need to fix bug not fetching the verison and product type for
-	 *             report catergory
+	 *             Need to fix bug not fetching the version and product type for
+	 *             report category
 	 */
 
 	public String getIOSDeviceProductTypeAndVersion(String udid) throws InterruptedException, IOException {
@@ -124,15 +125,37 @@ public class IOSDeviceConfiguration {
 	}
 
 	public void startIOSWebKit(String udid) throws IOException {
-		String getWebKitProxyPortToBeStarted = deviceMap.get(udid);
+		getWebKitProxyPortToBeStarted = deviceMap.get(udid);
 		p = Runtime.getRuntime()
 				.exec("ios_webkit_debug_proxy -c " + udid + ":" + getWebKitProxyPortToBeStarted + " -d");
 		System.out.println("WebKit Proxy is started on device " + udid + " and with port number "
 				+ getWebKitProxyPortToBeStarted);
+		//Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
+		appiumServerProcess.put(Thread.currentThread().getId(),getPid(p));
 	}
 
-	public void destroyIOSWebKitProxy() {
-		p.destroy();
+	public int getPid(Process process) {
+
+		try {
+			Class<?> cProcessImpl = process.getClass();
+			Field fPid = cProcessImpl.getDeclaredField("pid");
+			if (!fPid.isAccessible()) {
+				fPid.setAccessible(true);
+			}
+			return fPid.getInt(process);
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+
+	public void destroyIOSWebKitProxy() throws IOException, InterruptedException {
+		if (appiumServerProcess.get(Thread.currentThread().getId()) != "-1") {
+			String command = "kill -9 " + appiumServerProcess.get(Thread.currentThread().getId());
+			System.out.println("******************" + command);
+			Runtime.getRuntime().exec(command);
+		}
+
+
 	}
 
 	public static void main(String[] arg) throws Exception {

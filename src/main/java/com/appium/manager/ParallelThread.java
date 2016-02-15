@@ -1,23 +1,20 @@
 package com.appium.manager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-/*
- * This class picks the devices connected 
- * and distributes across multiple thread.
- * 
- * Thanks to @Thote_Gowda(thotegowda.gr@gmail.com)
- */
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
+
+/*
+ * This class picks the devices connected
+ * and distributes across multiple thread.
+ *
+ * Thanks to @Thote_Gowda(thotegowda.gr@gmail.com)
+ */
 
 public class ParallelThread {
 	protected int deviceCount;
@@ -86,8 +83,8 @@ public class ParallelThread {
 		});
 
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-			myTestExecutor.distributeTests(deviceCount, testcases);
-			// myTestExecutor.runMethodParallelAppium(pack, deviceCount);
+			//myTestExecutor.distributeTests(deviceCount, testcases);
+			myTestExecutor.runMethodParallelAppium(pack, deviceCount);
 
 		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
 			myTestExecutor.parallelTests(deviceCount, testcases);

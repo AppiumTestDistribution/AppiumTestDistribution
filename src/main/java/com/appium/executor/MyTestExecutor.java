@@ -20,7 +20,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
-import static org.testng.xml.XmlSuite.ParallelMode.METHODS;
 
 public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
@@ -103,9 +102,6 @@ public class MyTestExecutor {
 
 	public void runMethodParallel(XmlSuite suite, int threadCount) {
 		TestNG testNG = new TestNG();
-		testNG.setVerbose(2);
-		testNG.setThreadCount(threadCount);
-		testNG.setParallel(METHODS);
 		testNG.setXmlSuites(asList(suite));
 		System.out.println(suite.toXml());
 		testNG.run();
@@ -115,7 +111,8 @@ public class MyTestExecutor {
 		XmlSuite suite = new XmlSuite();
 		suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
-        suite.setParallel(ParallelMode.METHODS);
+        suite.setParallel(ParallelMode.CLASSES);
+		suite.setVerbose(2);
 		XmlTest test = new XmlTest(suite);
 		test.setName("TestNG Test");
 
@@ -157,4 +154,5 @@ public class MyTestExecutor {
 		});
 		return testsMap;
 	}
+
 }
