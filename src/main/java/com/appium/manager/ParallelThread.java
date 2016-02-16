@@ -82,12 +82,14 @@ public class ParallelThread {
 			}
 		});
 
+		//TODO: Add another check for OS on distribution and parallel
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 			//myTestExecutor.distributeTests(deviceCount, testcases);
-			myTestExecutor.runMethodParallelAppium(pack, deviceCount);
+			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
 
-		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-			myTestExecutor.parallelTests(deviceCount, testcases);
+		}//TODO: Add another check for OS on distribution and parallel
+		else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
 		}
 
 	}

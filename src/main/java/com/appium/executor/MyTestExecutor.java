@@ -77,7 +77,7 @@ public class MyTestExecutor {
 	}
 
 
-	public void runMethodParallelAppium(String pack, int devicecount) throws Exception {
+	public void runMethodParallelAppium(String pack, int devicecount,String executionType) throws Exception {
 		Collection<URL> urls = ClasspathHelper.forPackage(pack);
 		Iterator<URL> iter = urls.iterator();
 		URL url = iter.next();
@@ -88,8 +88,11 @@ public class MyTestExecutor {
 				new ConfigurationBuilder().setUrls(newUrls).setScanners(new MethodAnnotationsScanner()));
 		Set<Method> resources = reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
 
-		runMethodParallel(constructXmlSuite(createTestsMap(resources), devicecount), devicecount);
-
+		if(executionType.equalsIgnoreCase("distribute")){
+			runMethodParallel(constructXmlSuiteForDistribution(createTestsMap(resources), devicecount), devicecount);
+		}else{
+			runMethodParallel(constructXmlSuiteForParallel(createTestsMap(resources), devicecount), devicecount);
+		}
 		System.out.println("Finally complete");
 	}
 
@@ -106,18 +109,17 @@ public class MyTestExecutor {
 		System.out.println(suite.toXml());
 		testNG.run();
 	}
-
-	public XmlSuite constructXmlSuite(Map<String, List<Method>> methods,int deviceCount) {
+	
+	public XmlSuite constructXmlSuiteForParallel(Map<String, List<Method>> methods,int deviceCount) {
 		XmlSuite suite = new XmlSuite();
 		suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
-        suite.setParallel(ParallelMode.CLASSES);
+        suite.setParallel(ParallelMode.TESTS);
 		suite.setVerbose(2);
-		for(int i=0;i<2;i++) {
+		for(int i=0;i<deviceCount;i++){
 			XmlTest test = new XmlTest(suite);
 			test.setName("TestNG Test"+i);
 			test.setPreserveOrder("false");
-
 			List<XmlClass> xmlClasses = new ArrayList<>();
 			for (String className : methods.keySet()) {
 				if (className.contains("Test")) {
@@ -126,6 +128,24 @@ public class MyTestExecutor {
 			}
 			test.setXmlClasses(xmlClasses);
 		}
+		return suite;
+	}
+
+	public XmlSuite constructXmlSuiteForDistribution(Map<String, List<Method>> methods,int deviceCount) {
+		XmlSuite suite = new XmlSuite();
+		suite.setName("TestNG Forum");
+        suite.setThreadCount(deviceCount);
+        suite.setParallel(ParallelMode.CLASSES);
+		suite.setVerbose(2);
+		XmlTest test = new XmlTest(suite);
+		test.setName("TestNG Test");
+		List<XmlClass> xmlClasses = new ArrayList<>();
+		for (String className : methods.keySet()) {
+			if (className.contains("Test")) {
+				xmlClasses.add(createClass(className, methods.get(className)));
+			}
+		}
+		test.setXmlClasses(xmlClasses);
 		return suite;
 	}
 

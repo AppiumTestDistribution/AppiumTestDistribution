@@ -26,14 +26,14 @@ public class MyTestExecutorTest {
 			methods.add(m);
 		}
 
-		XmlSuite xmlSuite = ex1.constructXmlSuite(ex1.createTestsMap(methods),4);
+		XmlSuite xmlSuite = ex1.constructXmlSuiteForParallel(ex1.createTestsMap(methods),4);
 		System.out.println("xml:" + xmlSuite.toXml());
 		assertTrue(true);
 	}
 
 	@Test
 	public void testParallelMethods() throws Exception {
-		ex1.runMethodParallelAppium("com.appium.executor", 3);
+		ex1.runMethodParallelAppium("com.appium.executor", 3,"parallel");
 	}
 
 }

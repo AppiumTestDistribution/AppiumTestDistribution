@@ -74,6 +74,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			iosDevice.setIOSWebKitProxyPorts();
 		}
 
+		//TODO: Handle precisely and currently failing on iOS (parallel) when TestNG thread name as "TESTNG"
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 			System.out.println("*************" + Thread.currentThread().getName());
 			System.out.println(
@@ -95,7 +96,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		} else {
 			category = androidDevice.deviceModel(device_udid);
 		}
-
+		System.out.println(category + device_udid.replace(".", "_").replace(":", "_"));
 		ExtentTestManager.startTest(methodName, "Mobile Appium Test",
 				category + device_udid.replace(".", "_").replace(":", "_"));
 		ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
@@ -207,7 +208,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			driver.quit();
 		}
 		appiumMan.destroyAppiumNode();
-		// iosDevice.destroyIOSWebKitProxy();
+		iosDevice.destroyIOSWebKitProxy();
 	}
 
 	protected String getStackTrace(Throwable t) {
