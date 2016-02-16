@@ -113,23 +113,26 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
 		suite.setVerbose(2);
-		XmlTest test = new XmlTest(suite);
-		test.setName("TestNG Test");
+		for(int i=0;i<2;i++) {
+			XmlTest test = new XmlTest(suite);
+			test.setName("TestNG Test"+i);
+			test.setPreserveOrder("false");
 
-		List<XmlClass> xmlClasses = new ArrayList<>();
-		for (String className : methods.keySet()) {
-			if (className.contains("Test")) {
-				xmlClasses.add(createClass(className, methods.get(className)));
+			List<XmlClass> xmlClasses = new ArrayList<>();
+			for (String className : methods.keySet()) {
+				if (className.contains("Test")) {
+					xmlClasses.add(createClass(className, methods.get(className)));
+				}
 			}
+			test.setXmlClasses(xmlClasses);
 		}
-		test.setXmlClasses(xmlClasses);
 		return suite;
 	}
 
 	private XmlClass createClass(String className, List<Method> methods) {
 		XmlClass clazz = new XmlClass();
 		clazz.setName(className);
-		clazz.setIncludedMethods(constructIncludes(methods));
+		//clazz.setIncludedMethods(constructIncludes(methods));
 		return clazz;
 	}
 
