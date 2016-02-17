@@ -1,20 +1,18 @@
 package com.appium.manager;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-
+import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.CommandPrompt;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+import com.report.factory.ExtentManager;
+import com.report.factory.ExtentTestManager;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.json.XML;
@@ -28,30 +26,20 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
-import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.utils.*;
-import com.relevantcodes.extentreports.ExtentTest;
-import com.relevantcodes.extentreports.LogStatus;
-import com.report.factory.ExtentManager;
-import com.report.factory.ExtentTestManager;
-
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDeviceActionShortcuts;
-import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class AppiumParallelTest extends TestListenerAdapter {
 	protected String port;
 	public AppiumDriver<MobileElement> driver;
 	CommandPrompt cp = new CommandPrompt();
 	public AppiumManager appiumMan = new AppiumManager();
-	AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
-	IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
-	public static Properties prop = new Properties();
+
+
 	public InputStream input = null;
 	public String device_udid;
 	public ExtentTest testReporter;
@@ -61,36 +49,74 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	public File logFile;
 	public PrintWriter log_file_writer;
 	public DesiredCapabilities capabilities = new DesiredCapabilities();
-	public ArrayList<String> devices;
 	public String category;
 
+  private static ArrayList<String> devices;
+  public static Properties prop = new Properties();
+  private static IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
+  private static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+  private static ConcurrentHashMap<String, Boolean> deviceMapping = new ConcurrentHashMap<>();
+  static {
+    try {
+      prop.load(new FileInputStream("config.properties"));
+      if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
+        devices = androidDevice.getDeviceSerail();
+      } else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
+        devices = iosDevice.getIOSUDID();
+        iosDevice.setIOSWebKitProxyPorts();
+      }
+      for (String device : devices) {
+        deviceMapping.put(device, true);
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("Failed to initialize framework");
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.out.println("Failed to initialize framework");
+    }
+  }
+
+  public static String getNextAvailableDeviceId() {
+    ConcurrentHashMap.KeySetView<String, Boolean> devices = deviceMapping.keySet();
+    for (String device: devices) {
+      if (deviceMapping.get(device) == true) {
+        deviceMapping.put(device, false);
+        return device;
+      }
+    }
+    return null;
+  }
+
+  public static void freeDevice(String deviceId) {
+    deviceMapping.put(deviceId, true);
+  }
+
 	public AppiumServiceBuilder startAppiumServer(String methodName) throws Exception {
-		input = new FileInputStream("config.properties");
-		prop.load(input);
-		if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
-			devices = androidDevice.getDeviceSerail();
-		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
-			devices = iosDevice.getIOSUDID();
-			iosDevice.setIOSWebKitProxyPorts();
-		}
+//		//TODO: Handle precisely and currently failing on iOS (parallel) when TestNG thread name as "TESTNG"
+//		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+//			System.out.println("*************" + Thread.currentThread().getName());
+//			System.out.println(
+//					"******Running Test in Distributed Way******" + Thread.currentThread().getName().split("-")[3]);
+//			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
+//		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+//			System.out
+//					.println("******Running Test in Parallel *******" + Thread.currentThread().getName().split("-")[1]);
+//			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[1]);
+//		}
+//
+//		// When tests are running in parallel then we get
+//		// Thread.currentThread().getName().split("-")[1] to get the device
+//		// array position
+//		device_udid = devices.get(thread_device_count);
 
-		//TODO: Handle precisely and currently failing on iOS (parallel) when TestNG thread name as "TESTNG"
-		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-			System.out.println("*************" + Thread.currentThread().getName());
-			System.out.println(
-					"******Running Test in Distributed Way******" + Thread.currentThread().getName().split("-")[3]);
-			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
-		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-			System.out
-					.println("******Running Test in Parallel *******" + Thread.currentThread().getName().split("-")[1]);
-			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[1]);
-		}
+    device_udid = getNextAvailableDeviceId();
+    if (device_udid == null) {
+      System.out.println("No devices are free to run test or Failed to run test");
+      return null;
+    }
 
-		// When tests are running in parallel then we get
-		// Thread.currentThread().getName().split("-")[1] to get the device
-		// array position
-		device_udid = devices.get(thread_device_count);
-		
 		if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
 			category = iosDevice.getDeviceName(device_udid).replace("\n", " ");
 		} else {
@@ -209,6 +235,8 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		}
 		appiumMan.destroyAppiumNode();
 		iosDevice.destroyIOSWebKitProxy();
+
+    freeDevice(device_udid);
 	}
 
 	protected String getStackTrace(Throwable t) {
