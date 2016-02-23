@@ -1,11 +1,16 @@
 package com.report.factory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.relevantcodes.extentreports.DisplayOrder;
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public class ComplexReportFactory {
 
@@ -13,18 +18,31 @@ public class ComplexReportFactory {
 	public static Map<Long, String> threadToExtentTestMap = new HashMap<Long, String>();
 	public static Map<String, ExtentTest> nameToTestMap = new HashMap<String, ExtentTest>();
 	private static String filenameOfReport = System.getProperty("user.dir") + "/index.html";
+	public static Properties prop = new Properties();
+	public static InputStream input = null;
 	
 	@SuppressWarnings("unchecked")
-	private synchronized static ExtentReports getExtentReport() {
+	private synchronized static ExtentReports getExtentReport(){
 		if (reporter == null) {
 			// you can get the file name and other parameters here from a
 			// config file or global variables
 			reporter = new ExtentReports(filenameOfReport, true, DisplayOrder.NEWEST_FIRST);
-			@SuppressWarnings("rawtypes")
+			try {
+				input = new FileInputStream("config.properties");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			try {
+				prop.load(input);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			Map sysInfo = new HashMap();
 			sysInfo.put("Selenium Java Version", "2.48.2");
 			sysInfo.put("Environment", "Prod");
 			sysInfo.put("AppiumVersion", "3.3.0");
+			sysInfo.put("RunnerMode",prop.getProperty("RUNNER").toUpperCase());
+
 			reporter.addSystemInfo(sysInfo);
 		}
 		return reporter;
