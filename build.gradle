@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.appium.android'
+version = '2.0.5-SNAPSHOT'
+
+description = "Tool to run Android Appium Test across devices in Parallel"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+
+repositories {
+
+    maven { url "https://jitpack.io" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'io.appium', name: 'java-client', version: '3.3.0'
+    compile group: 'org.apache.ant', name: 'ant', version: '1.9.6'
+    compile group: 'ant', name: 'ant-junit', version: '1.6.5'
+    compile group: 'org.json', name: 'json', version: '20141113'
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    compile group: 'org.jdom', name: 'jdom2', version: '2.0.6'
+    compile group: 'net.masterthought', name: 'cucumber-reporting', version: '0.4.0'
+    compile group: 'com.relevantcodes', name: 'extentreports', version: '2.40.1'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
+    compile group: 'org.testng', name: 'testng', version: '6.9.10'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+test {
+    // enable TestNG support (default is JUnit)
+    useTestNG()
+    testLogging {
+        // Show that tests are run in the command-line output
+        events 'started', 'passed'
+    }
+}

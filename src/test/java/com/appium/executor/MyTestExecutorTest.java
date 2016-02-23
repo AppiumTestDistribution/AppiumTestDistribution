@@ -1,13 +1,13 @@
 package com.appium.executor;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.testng.xml.XmlSuite;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
-import org.testng.xml.XmlSuite;
+import static org.junit.Assert.assertTrue;
 
 public class MyTestExecutorTest {
 	MyTestExecutor ex1 = new MyTestExecutor();
@@ -26,7 +26,7 @@ public class MyTestExecutorTest {
 			methods.add(m);
 		}
 
-		XmlSuite xmlSuite = ex1.constructXmlSuiteForParallel(ex1.createTestsMap(methods),4);
+		XmlSuite xmlSuite = ex1.constructXmlSuiteForParallel(ex1.createTestsMap(methods),3);
 		System.out.println("xml:" + xmlSuite.toXml());
 		assertTrue(true);
 	}

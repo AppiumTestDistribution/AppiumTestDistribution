@@ -1,19 +1,17 @@
 package com.appium.manager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Properties;
-
 import com.appium.utils.CommandPrompt;
-
-import io.appium.java_client.ios.IOSDeviceActionShortcuts;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.AndroidServerFlag;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import io.appium.java_client.service.local.flags.IOSServerFlag;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * Appium Manager - this class contains method to start and stops appium server
@@ -101,5 +99,9 @@ public class AppiumManager {
 
 	public void destroyAppiumNode() {
 		appiumDriverLocalService.stop();
+		if(appiumDriverLocalService.isRunning()){
+			System.out.println("AppiumServer didn't shut... Trying to quit again....");
+			appiumDriverLocalService.stop();
+		}
 	}
 }

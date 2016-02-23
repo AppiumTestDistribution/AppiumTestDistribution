@@ -1,18 +1,16 @@
 package com.test.site;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-
+import com.appium.manager.AppiumParallelTest;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
-import com.appium.manager.AppiumParallelTest;
-
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
+import java.io.IOException;
+import java.lang.reflect.Method;
 
 public class UserBaseTest extends AppiumParallelTest {
 
@@ -25,8 +23,8 @@ public class UserBaseTest extends AppiumParallelTest {
 	@AfterMethod()
 	public void killServer(ITestResult result) throws InterruptedException, IOException {
 		endLogTestResults(result);
-		//getDriver().resetApp();
-		deleteAppIOS("com.tesco.sample");
+		getDriver().resetApp();
+		//deleteAppIOS("com.tesco.sample");
 	}
 
 	public AppiumDriver<MobileElement> getDriver() {

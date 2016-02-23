@@ -55,8 +55,8 @@ public class AppiumParallelTest extends TestListenerAdapter {
   public static Properties prop = new Properties();
   private static IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
   private static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
-  private static ConcurrentHashMap<String, Boolean> deviceMapping = new ConcurrentHashMap<>();
-  static {
+  private static ConcurrentHashMap<String, Boolean> deviceMapping = new ConcurrentHashMap<String, Boolean>();
+	static {
     try {
       prop.load(new FileInputStream("config.properties"));
       if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
@@ -78,39 +78,23 @@ public class AppiumParallelTest extends TestListenerAdapter {
     }
   }
 
-  public static String getNextAvailableDeviceId() {
-    ConcurrentHashMap.KeySetView<String, Boolean> devices = deviceMapping.keySet();
-    for (String device: devices) {
-      if (deviceMapping.get(device) == true) {
-        deviceMapping.put(device, false);
-        return device;
-      }
-    }
-    return null;
-  }
+	public static synchronized String getNextAvailableDeviceId() {
+		ConcurrentHashMap.KeySetView<String, Boolean> devices = deviceMapping.keySet();
+		for (String device: devices) {
+			if (deviceMapping.get(device) == true) {
+				deviceMapping.put(device, false);
+				return device;
+			}
+		}
+		return null;
+	}
+
 
   public static void freeDevice(String deviceId) {
     deviceMapping.put(deviceId, true);
   }
 
-	public AppiumServiceBuilder startAppiumServer(String methodName) throws Exception {
-//		//TODO: Handle precisely and currently failing on iOS (parallel) when TestNG thread name as "TESTNG"
-//		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-//			System.out.println("*************" + Thread.currentThread().getName());
-//			System.out.println(
-//					"******Running Test in Distributed Way******" + Thread.currentThread().getName().split("-")[3]);
-//			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[3]) - 1;
-//		} else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-//			System.out
-//					.println("******Running Test in Parallel *******" + Thread.currentThread().getName().split("-")[1]);
-//			thread_device_count = Integer.valueOf(Thread.currentThread().getName().split("-")[1]);
-//		}
-//
-//		// When tests are running in parallel then we get
-//		// Thread.currentThread().getName().split("-")[1] to get the device
-//		// array position
-//		device_udid = devices.get(thread_device_count);
-
+	public synchronized AppiumServiceBuilder startAppiumServer(String methodName) throws Exception {
     device_udid = getNextAvailableDeviceId();
     if (device_udid == null) {
       System.out.println("No devices are free to run test or Failed to run test");
@@ -138,7 +122,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	}
 
 	// @BeforeMethod
-	public AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
+	public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
 
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
 			androidWeb();
@@ -223,7 +207,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 
 	}
 
-	public void killAppiumServer() throws InterruptedException, IOException {
+	public synchronized void killAppiumServer() throws InterruptedException, IOException {
 		System.out.println("**************ClosingAppiumSession****************");
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
