@@ -135,9 +135,9 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		Thread.sleep(5000);
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")
 				|| prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-			driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+			driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
 		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")) {
-			driver = new IOSDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+			driver = new IOSDriver<>(appiumMan.getAppiumUrl(), capabilities);
 		}
 
 		return driver;
@@ -211,14 +211,14 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		System.out.println("**************ClosingAppiumSession****************");
 		ExtentTestManager.endTest();
 		ExtentManager.getInstance().flush();
-		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
+/*		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
 			System.out.println("Closing Session::" + driver.getSessionId());
 			driver.closeApp();
 		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
 			driver.quit();
-		}
+		}*/
 		appiumMan.destroyAppiumNode();
-		iosDevice.destroyIOSWebKitProxy();
+		//iosDevice.destroyIOSWebKitProxy();
 
     freeDevice(device_udid);
 	}
@@ -243,10 +243,11 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		androidDevice.closeRunningApp(device_udid, prop.getProperty("APP_PACKAGE"));
 	}
 
-	public void androidNative() {
+	public synchronized void androidNative() {
 		capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
 		capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
 		capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
+		capabilities.setCapability("browserName", "");
 		if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 16) {
 			capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
 		}

@@ -20,29 +20,29 @@ public class UserBaseTest extends AppiumParallelTest {
 		startLogResults(name.getName());
 	}
 
-	@AfterMethod()
-	public void killServer(ITestResult result) throws InterruptedException, IOException {
-		endLogTestResults(result);
-		getDriver().resetApp();
-		//deleteAppIOS("com.tesco.sample");
-	}
+    @AfterMethod()
+    public void killServer(ITestResult result) throws InterruptedException, IOException {
+        endLogTestResults(result);
+        getDriver().quit();
+        //deleteAppIOS("com.tesco.sample");
+    }
 
-	public AppiumDriver<MobileElement> getDriver() {
-		return driver;
-	}
+    public AppiumDriver<MobileElement> getDriver() {
+        return driver;
+    }
 
-	@BeforeClass()
-	public void beforeClass() throws Exception {
-		System.out.println("Before Class called" + Thread.currentThread().getId());	
-	    System.out.println(getClass().getName());
-		startAppiumServer(getClass().getSimpleName());
-	}
+    @BeforeClass()
+    public void beforeClass() throws Exception {
+        System.out.println("Before Class called" + Thread.currentThread().getId());
+        System.out.println(getClass().getName());
+        startAppiumServer(getClass().getSimpleName());
+    }
 
-	@AfterClass()
-	public void afterClass() throws InterruptedException, IOException {
-		System.out.println("After Class" + Thread.currentThread().getId());
-		killAppiumServer();
-	}
-	
+    @AfterClass()
+    public void afterClass() throws InterruptedException, IOException {
+        System.out.println("After Class" + Thread.currentThread().getId());
+        killAppiumServer();
+    }
+
 
 }

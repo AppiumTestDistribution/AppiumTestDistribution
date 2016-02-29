@@ -41,6 +41,7 @@ public class AppiumManager {
 		int chromePort = ap.getPort();
 		int bootstrapPort = ap.getPort();
 		int selendroidPort = ap.getPort();
+		System.out.println("BootStrapPort"+bootstrapPort);
 		AppiumServiceBuilder builder = new AppiumServiceBuilder()
 				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
