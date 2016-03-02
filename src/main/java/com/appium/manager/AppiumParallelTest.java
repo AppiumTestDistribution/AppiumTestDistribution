@@ -277,6 +277,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
 		capabilities.setCapability("bundleId", prop.getProperty("BUNDLE_ID"));
 		capabilities.setCapability("autoAcceptAlerts", true);
+		capabilities.setCapability("browserName", "");
 	}
 
 	public void deleteAppIOS(String bundleID) throws InterruptedException, IOException {
