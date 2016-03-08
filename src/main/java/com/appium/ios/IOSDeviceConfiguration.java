@@ -157,22 +157,4 @@ public class IOSDeviceConfiguration {
 
 
 	}
-
-	public static void main(String[] arg) throws Exception {
-		IOSDeviceConfiguration configuration = new IOSDeviceConfiguration();
-		configuration.getIOSUDID();
-		/*
-		 * configuration.setIOSWebKitProxyPorts();
-		 * configuration.startIOSWebKit(configuration.deviceUDIDiOS.get(0));
-		 * Thread.sleep(3000); configuration.destroyIOSWebKitProxy();
-		 */
-		//configuration.getIOSDeviceProductTypeAndVersion(configuration.deviceUDIDiOS.get(0));
-		System.out.println(configuration.getDeviceName(configuration.getIOSUDID().get(0)));
-		// configuration.unInstallApp(configuration.deviceUDIDiOS.get(0),
-		// "com.tesco.sample");
-		// configuration.installApp(configuration.deviceUDIDiOS.get(0),
-		// "/Users/saikrisv/Downloads/WordPress25-1.ipa");
-		// configuration.checkIfMobileDeviceApiIsInstalled();
-	}
-
 }

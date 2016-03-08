@@ -12,6 +12,8 @@ import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
@@ -23,6 +25,7 @@ import static java.util.Arrays.asList;
 
 public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
+	public static Properties prop = new Properties();
 
 	@SuppressWarnings("rawtypes")
 	public void distributeTests(int deviceCount, List<Class> testcases) {
@@ -111,11 +114,24 @@ public class MyTestExecutor {
 	}
 	
 	public XmlSuite constructXmlSuiteForParallel(Map<String, List<Method>> methods,int deviceCount) {
+		ArrayList<String> items = new ArrayList<>();
+		try {
+			prop.load(new FileInputStream("config.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		XmlSuite suite = new XmlSuite();
+		if (prop.getProperty("LISTENERS")!=null){
+			Collections.addAll(items, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
+		}
+
 		suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.TESTS);
 		suite.setVerbose(2);
+		if (prop.getProperty("LISTENERS")!=null) {
+			suite.setListeners(items);
+		}
 		for(int i=0;i<deviceCount;i++){
 			XmlTest test = new XmlTest(suite);
 			test.setName("TestNG Test"+i);
@@ -132,11 +148,23 @@ public class MyTestExecutor {
 	}
 
 	public XmlSuite constructXmlSuiteForDistribution(Map<String, List<Method>> methods,int deviceCount) {
+		ArrayList<String> items = new ArrayList<>();
+		try {
+			prop.load(new FileInputStream("config.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (prop.getProperty("LISTENERS")!=null){
+			Collections.addAll(items, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
+		}
 		XmlSuite suite = new XmlSuite();
 		suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
 		suite.setVerbose(2);
+		if (prop.getProperty("LISTENERS")!=null) {
+			suite.setListeners(items);
+		}
 		XmlTest test = new XmlTest(suite);
 		test.setName("TestNG Test");
 		List<XmlClass> xmlClasses = new ArrayList<>();

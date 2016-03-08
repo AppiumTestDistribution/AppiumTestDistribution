@@ -218,7 +218,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			driver.quit();
 		}*/
 		appiumMan.destroyAppiumNode();
-		//iosDevice.destroyIOSWebKitProxy();
+		iosDevice.destroyIOSWebKitProxy();
 
     freeDevice(device_udid);
 	}
