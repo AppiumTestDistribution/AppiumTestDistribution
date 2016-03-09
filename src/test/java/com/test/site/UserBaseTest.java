@@ -16,7 +16,7 @@ public class UserBaseTest extends AppiumParallelTest {
 
 	@BeforeMethod()
 	public void startApp(Method name) throws Exception {
-		driver = startAppiumServerInParallel(name.getName());
+		driver = startAppiumServerInParallel();
 		startLogResults(name.getName());
 	}
 

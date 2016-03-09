@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -95,12 +96,11 @@ public class AppiumParallelTest extends TestListenerAdapter {
   }
 
 	public synchronized AppiumServiceBuilder startAppiumServer(String methodName) throws Exception {
-    device_udid = getNextAvailableDeviceId();
-    if (device_udid == null) {
-      System.out.println("No devices are free to run test or Failed to run test");
-      return null;
-    }
-
+	    device_udid = getNextAvailableDeviceId();
+	    if (device_udid == null) {
+	      System.out.println("No devices are free to run test or Failed to run test");
+	      return null;
+	    }
 		if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
 			category = iosDevice.getDeviceName(device_udid).replace("\n", " ");
 		} else {
@@ -116,13 +116,12 @@ public class AppiumParallelTest extends TestListenerAdapter {
 		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
 			iosDevice.startIOSWebKit(device_udid);
 			return appiumMan.appiumServerIOS(device_udid, methodName);
-
 		}
 		return null;
 	}
 
 	// @BeforeMethod
-	public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
+	public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel() throws Exception {
 
 		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
 			androidWeb();
@@ -218,7 +217,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			driver.quit();
 		}*/
 		appiumMan.destroyAppiumNode();
-		//iosDevice.destroyIOSWebKitProxy();
+		iosDevice.destroyIOSWebKitProxy();
 
     freeDevice(device_udid);
 	}
@@ -244,6 +243,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 	}
 
 	public synchronized void androidNative() {
+//		capabilities.setPlatform(Platform.);
 		capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
 		capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
 		capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");

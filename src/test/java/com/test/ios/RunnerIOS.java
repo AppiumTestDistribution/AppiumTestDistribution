@@ -9,7 +9,7 @@ public class RunnerIOS {
 	@Test
 	public void testApp() throws Exception{
 		ParallelThread parallelThread = new ParallelThread();
-		parallelThread.runner("com.test.ios");
+		parallelThread.runner("com.test.steps");
 	}
 
 	

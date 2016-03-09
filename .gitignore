@@ -10,3 +10,4 @@ report.json
 *.html
 *.png
 *.iml
+/target/

@@ -27,9 +27,22 @@ public class ParallelThread {
 	public Properties prop = new Properties();
 	public InputStream input = null;
 	List<Class> testcases;
+	public static List<String> featureFiles = new ArrayList<String>();
 
+	public void listFilesForFolder(final File folder) {
+		for (final File fileEntry : folder.listFiles()) {
+			if (fileEntry.isDirectory()) {
+				listFilesForFolder(fileEntry);
+			} else if (fileEntry.getName().endsWith(".feature")) {
+				featureFiles.add(fileEntry.getName());
+
+			}
+		}
+	}
+	
 	@SuppressWarnings({ "rawtypes" })
 	public void runner(String pack) throws Exception {
+		listFilesForFolder(new File(System.getProperty("user.dir") + "/src/test/java/com/cucumber/features/"));
 		File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
 		if (!f.exists()) {
 			System.out.println("creating directory: " + "Logs");
@@ -82,15 +95,29 @@ public class ParallelThread {
 			}
 		});
 
-		//TODO: Add another check for OS on distribution and parallel
-		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-			//myTestExecutor.distributeTests(deviceCount, testcases);
-			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
+		if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
+			//TODO: Add another check for OS on distribution and parallel
+			if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+				//myTestExecutor.distributeTests(deviceCount, testcases);
+				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
 
-		}//TODO: Add another check for OS on distribution and parallel
-		else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
+			}//TODO: Add another check for OS on distribution and parallel
+			else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
+			}
+		}else if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")){
+			//TODO: Add another check for OS on distribution and parallel
+			if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+				System.out.println("Execution begins");
+				myTestExecutor.distributeTests(deviceCount, featureFiles);
+//				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
+
+			}//TODO: Add another check for OS on distribution and parallel
+			else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+//				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
+			}
 		}
+		
 
 	}
 
