@@ -1,11 +1,11 @@
 package com.appium.manager;
 
+import com.appium.utils.CommandPrompt;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.appium.utils.CommandPrompt;
 
 public class AndroidDeviceConfiguration {
 
@@ -138,14 +138,18 @@ public class AndroidDeviceConfiguration {
 	 */
 	public String deviceModel(String deviceID) {
 		String deviceModelName = null;
+		String brand = null;
 		try {
 			deviceModelName = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W",
 					"");
+
+			brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
+					.replaceAll("\\W", "");
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return deviceModelName;
+		return deviceModelName + brand;
 
 	}
 

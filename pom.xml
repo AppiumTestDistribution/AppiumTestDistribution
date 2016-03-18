@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>io.appium</groupId>
 			<artifactId>java-client</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -67,6 +67,11 @@
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.9.10</version>
+		</dependency>
+		<dependency>
+			<groupId>org.im4java</groupId>
+			<artifactId>im4java</artifactId>
+			<version>1.4.0</version>
 		</dependency>
 	</dependencies>
 	<build>
