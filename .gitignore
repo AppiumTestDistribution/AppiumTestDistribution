@@ -9,3 +9,4 @@ report.json
 *.json
 *.html
 *.iml
+/target/

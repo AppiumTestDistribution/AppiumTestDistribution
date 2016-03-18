@@ -31,16 +31,20 @@ public class IOSDeviceConfiguration {
 	public ArrayList<String> getIOSUDID() {
 		try {
 			String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
-			String[] lines = getIOSDeviceID.split("\n");
-			for (int i = 0; i < lines.length; i++) {
-				lines[i] = lines[i].replaceAll("\\s+", "");
-				deviceUDIDiOS.add(lines[i]);
+			if(getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID.isEmpty()){
+				return null;
+			}else{
+				String[] lines = getIOSDeviceID.split("\n");
+				for (int i = 0; i < lines.length; i++) {
+					lines[i] = lines[i].replaceAll("\\s+", "");
+					deviceUDIDiOS.add(lines[i]);
+				}
+				return deviceUDIDiOS;
 			}
 		} catch (InterruptedException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
-		return deviceUDIDiOS;
 	}
 
 	/**
@@ -106,6 +110,19 @@ public class IOSDeviceConfiguration {
 	public String getDeviceName(String udid) throws InterruptedException, IOException {
 		String deviceName = commandPrompt.runCommand("idevicename --udid " + udid);
 		return deviceName;
+	}
+	
+	public boolean checkiOSDevice(String UDID) throws Exception{
+		try{
+			if(commandPrompt.runCommand("idevice_id -l").contains(UDID)){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public HashMap<String, String> setIOSWebKitProxyPorts() throws Exception {
