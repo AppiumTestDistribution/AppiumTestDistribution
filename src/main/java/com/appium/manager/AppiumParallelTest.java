@@ -52,7 +52,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
     public ExtentTest child;
 
     private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
-    private static ArrayList<String> devices;
+    private static ArrayList<String> devices = new ArrayList<String>();
     public static Properties prop = new Properties();
     private static IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
     private static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
@@ -61,16 +61,22 @@ public class AppiumParallelTest extends TestListenerAdapter {
     static {
         try {
             prop.load(new FileInputStream("config.properties"));
-            if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
-                devices = androidDevice.getDeviceSerail();
-            } else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
-                devices = iosDevice.getIOSUDID();
-                iosDevice.setIOSWebKitProxyPorts();
+            if(iosDevice.getIOSUDID() != null){
+            	System.out.println("Adding iOS devices");
+            	devices.addAll(iosDevice.getIOSUDID());
             }
+            if(devices.size() != 0){
+            	iosDevice.setIOSWebKitProxyPorts();
+            }
+            if(androidDevice.getDeviceSerail() != null){
+            	System.out.println("Adding android devices");
+            	devices.addAll(androidDevice.getDeviceSerail());
+            }
+            System.out.println(devices);
+            
             for (String device : devices) {
                 deviceMapping.put(device, true);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to initialize framework");
@@ -103,7 +109,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
             return null;
         }
 
-        if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
+        if (iosDevice.checkiOSDevice(device_udid)) {
             category = iosDevice.getDeviceName(device_udid).replace("\n", " ");
         } else {
             category = androidDevice.deviceModel(device_udid);
@@ -114,14 +120,12 @@ public class AppiumParallelTest extends TestListenerAdapter {
         parentContext.put(Thread.currentThread().getId(), parent);
         ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
                 + "/target/appiumlogs/" + device_udid + "__" + methodName + ".txt" + ">Logs</a>");
-        if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
-            return appiumMan.appiumServer(device_udid, methodName);
-        } else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
-            iosDevice.startIOSWebKit(device_udid);
+        if (iosDevice.checkiOSDevice(device_udid)) {
+        	iosDevice.startIOSWebKit(device_udid);
             return appiumMan.appiumServerIOS(device_udid, methodName);
-
+        } else {
+            return appiumMan.appiumServerIOS(device_udid, methodName);
         }
-        return null;
     }
 
     // @BeforeMethod
@@ -130,19 +134,33 @@ public class AppiumParallelTest extends TestListenerAdapter {
                 .startTest(methodName).assignCategory(category + device_udid.replace(".", "_").replace(":", "_"));
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             androidWeb();
-        } else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
-            androidNative();
-        } else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")) {
-            iosNative();
+        } else {
+        	System.out.println(iosDevice.checkiOSDevice(device_udid));
+        	if (iosDevice.checkiOSDevice(device_udid)) {
+        		iosNative();
+        	} else {
+        		androidNative();
+        	}
         }
 
         Thread.sleep(5000);
-        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")
-                || prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
-        } else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")) {
-            driver = new IOSDriver<>(appiumMan.getAppiumUrl(), capabilities);
-        }
+        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+        	driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+        } else{
+        	System.out.println(iosDevice.checkiOSDevice(device_udid));
+        	if (iosDevice.checkiOSDevice(device_udid)) {
+        		driver = new IOSDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+        	} else {
+        		driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
+        	}
+        }        
+        
+//        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")
+//                || prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+//            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
+//        } else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")) {
+//            driver = new IOSDriver<>(appiumMan.getAppiumUrl(), capabilities);
+//        }
 
         return driver;
     }
@@ -253,13 +271,12 @@ public class AppiumParallelTest extends TestListenerAdapter {
 
     public synchronized void androidNative() {
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
         capabilities.setCapability("browserName", "");
         if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 16) {
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
         }
-        capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("APP_PATH"));
+        capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
         capabilities.setCapability(MobileCapabilityType.APP_PACKAGE, prop.getProperty("APP_PACKAGE"));
         capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY, prop.getProperty("APP_ACTIVITY"));
         if (prop.getProperty("APP_WAIT_ACTIVITY") != null) {
@@ -281,7 +298,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
         // TODO Auto-generated method stub
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
-        capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("APP_PATH"));
+        capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("IOS_APP_PATH"));
         capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
         capabilities.setCapability("bundleId", prop.getProperty("BUNDLE_ID"));
         capabilities.setCapability("autoAcceptAlerts", true);

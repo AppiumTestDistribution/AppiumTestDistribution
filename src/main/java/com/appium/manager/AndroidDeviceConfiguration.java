@@ -56,45 +56,46 @@ public class AndroidDeviceConfiguration {
 			System.out.println("\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
 					+ "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
 					+ "\uD83C\uDF7A" + "\uD83C\uDF7A");
-			stopADB();
-			System.exit(0); // exit if no connected devices found
-		}
+//			stopADB();
+//			System.exit(0); // exit if no connected devices found
+			return null;
+		}else{
+			for (int i = 1; i < lines.length; i++) {
+				lines[i] = lines[i].replaceAll("\\s+", "");
 
-		for (int i = 1; i < lines.length; i++) {
-			lines[i] = lines[i].replaceAll("\\s+", "");
+				if (lines[i].contains("device")) {
+					lines[i] = lines[i].replaceAll("device", "");
+					String deviceID = lines[i];
+					String model = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
+							.replaceAll("\\s+", "");
+					String brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
+							.replaceAll("\\s+", "");
+					String osVersion = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release")
+							.replaceAll("\\s+", "");
+					String deviceName = brand + " " + model;
 
-			if (lines[i].contains("device")) {
-				lines[i] = lines[i].replaceAll("device", "");
-				String deviceID = lines[i];
-				String model = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
-						.replaceAll("\\s+", "");
-				String brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
-						.replaceAll("\\s+", "");
-				String osVersion = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release")
-						.replaceAll("\\s+", "");
-				String deviceName = brand + " " + model;
+					devices.put("deviceID" + i, deviceID);
+					devices.put("deviceName" + i, deviceName);
+					devices.put("osVersion" + i, osVersion);
 
-				devices.put("deviceID" + i, deviceID);
-				devices.put("deviceName" + i, deviceName);
-				devices.put("osVersion" + i, osVersion);
+					System.out.println("Following device is connected");
+					System.out.println(deviceID + " " + deviceName + " " + osVersion + "\n");
+				} else if (lines[i].contains("unauthorized")) {
+					lines[i] = lines[i].replaceAll("unauthorized", "");
+					String deviceID = lines[i];
 
-				System.out.println("Following device is connected");
-				System.out.println(deviceID + " " + deviceName + " " + osVersion + "\n");
-			} else if (lines[i].contains("unauthorized")) {
-				lines[i] = lines[i].replaceAll("unauthorized", "");
-				String deviceID = lines[i];
+					System.out.println("Following device is unauthorized");
+					System.out.println(deviceID + "\n");
+				} else if (lines[i].contains("offline")) {
+					lines[i] = lines[i].replaceAll("offline", "");
+					String deviceID = lines[i];
 
-				System.out.println("Following device is unauthorized");
-				System.out.println(deviceID + "\n");
-			} else if (lines[i].contains("offline")) {
-				lines[i] = lines[i].replaceAll("offline", "");
-				String deviceID = lines[i];
-
-				System.out.println("Following device is offline");
-				System.out.println(deviceID + "\n");
+					System.out.println("Following device is offline");
+					System.out.println(deviceID + "\n");
+				}
 			}
+			return devices;
 		}
-		return devices;
 	}
 
 	public ArrayList<String> getDeviceSerail() throws Exception {
@@ -105,32 +106,32 @@ public class AndroidDeviceConfiguration {
 
 		if (lines.length <= 1) {
 			System.out.println("No Device Connected");
-			stopADB();
-			System.exit(0); // exit if no connected devices found
-		}
+//			stopADB();
+			return null;
+		}else{
+			for (int i = 1; i < lines.length; i++) {
+				lines[i] = lines[i].replaceAll("\\s+", "");
 
-		for (int i = 1; i < lines.length; i++) {
-			lines[i] = lines[i].replaceAll("\\s+", "");
+				if (lines[i].contains("device")) {
+					lines[i] = lines[i].replaceAll("device", "");
+					String deviceID = lines[i];
+					deviceSerail.add(deviceID);
+				} else if (lines[i].contains("unauthorized")) {
+					lines[i] = lines[i].replaceAll("unauthorized", "");
+					String deviceID = lines[i];
 
-			if (lines[i].contains("device")) {
-				lines[i] = lines[i].replaceAll("device", "");
-				String deviceID = lines[i];
-				deviceSerail.add(deviceID);
-			} else if (lines[i].contains("unauthorized")) {
-				lines[i] = lines[i].replaceAll("unauthorized", "");
-				String deviceID = lines[i];
+					System.out.println("Following device is unauthorized");
+					System.out.println(deviceID + "\n");
+				} else if (lines[i].contains("offline")) {
+					lines[i] = lines[i].replaceAll("offline", "");
+					String deviceID = lines[i];
 
-				System.out.println("Following device is unauthorized");
-				System.out.println(deviceID + "\n");
-			} else if (lines[i].contains("offline")) {
-				lines[i] = lines[i].replaceAll("offline", "");
-				String deviceID = lines[i];
-
-				System.out.println("Following device is offline");
-				System.out.println(deviceID + "\n");
+					System.out.println("Following device is offline");
+					System.out.println(deviceID + "\n");
+				}
 			}
+			return deviceSerail;
 		}
-		return deviceSerail;
 	}
 
 	/*

@@ -17,7 +17,7 @@ import java.util.*;
  */
 
 public class ParallelThread {
-	protected int deviceCount;
+	protected int deviceCount = 0;
 	Map<String, String> devices = new HashMap<String, String>();
 	AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	IOSDeviceConfiguration iosDevice= new IOSDeviceConfiguration();
@@ -62,12 +62,20 @@ public class ParallelThread {
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 		
-		if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
+		if(deviceConf.getDevices() != null){
 			devices = deviceConf.getDevices();
 			deviceCount = devices.size() / 3;
-		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
-			deviceCount=iosDevice.getIOSUDID().size();		
 		}
+		if(iosDevice.getIOSUDID() != null){
+			deviceCount += iosDevice.getIOSUDID().size();
+		}
+		
+//		if (prop.getProperty("PLATFORM").equalsIgnoreCase("android")) {
+//			devices = deviceConf.getDevices();
+//			deviceCount = devices.size() / 3;
+//		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
+//			deviceCount=iosDevice.getIOSUDID().size();		
+//		}
 		
 		
 		System.out.println("Total Number of devices detected::" + deviceCount);
