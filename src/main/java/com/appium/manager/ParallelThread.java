@@ -65,12 +65,12 @@ public class ParallelThread {
 		if(deviceConf.getDevices() != null){
 			devices = deviceConf.getDevices();
 			deviceCount = devices.size() / 3;
+			createSnapshotFolder(deviceCount);
 		} 
 		if(iosDevice.getIOSUDID() != null){
 			deviceCount += iosDevice.getIOSUDID().size();
 		}
 		
-		createSnapshotFolder(deviceCount);
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 

@@ -154,13 +154,6 @@ public class AppiumParallelTest extends TestListenerAdapter {
         		driver = new AndroidDriver<MobileElement>(appiumMan.getAppiumUrl(), capabilities);
         	}
         }        
-        
-//        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")
-//                || prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-//            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
-//        } else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")) {
-//            driver = new IOSDriver<>(appiumMan.getAppiumUrl(), capabilities);
-//        }
 
         return driver;
     }
