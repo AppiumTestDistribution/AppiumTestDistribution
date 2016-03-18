@@ -2,12 +2,9 @@ package com.test.site;
 
 
 
-import java.lang.reflect.Method;
-
+import com.report.factory.ExtentTestManager;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
-
-import com.report.factory.ExtentTestManager;
 
 
 public class HomePageTest4 extends UserBaseTest {
@@ -19,6 +16,7 @@ public class HomePageTest4 extends UserBaseTest {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
+		captureAndroidScreenShot("TestMethod4");
 		ExtentTestManager.logOutPut(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit5")).click();

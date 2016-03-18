@@ -316,6 +316,20 @@ public class AppiumParallelTest extends TestListenerAdapter {
         return iosDevice.checkIfAppIsInstalled(bundleID);
     }
 
+    public void captureAndroidScreenShot(String screenShotName) {
+        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        try {
+            String androidModel = androidDevice.deviceModel(device_udid);
+            FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/" + device_udid + "/"
+                    + androidModel + "/" + screenShotName + ".png"));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+
     @SuppressWarnings("unused")
     public void convertXmlToJSon() throws IOException {
         String fileName = "report.json";
