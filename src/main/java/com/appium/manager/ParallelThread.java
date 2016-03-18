@@ -65,9 +65,7 @@ public class ParallelThread {
 		if(deviceConf.getDevices() != null){
 			devices = deviceConf.getDevices();
 			deviceCount = devices.size() / 3;
-		} else if (prop.getProperty("PLATFORM").equalsIgnoreCase("ios")) {
-			deviceCount=iosDevice.getIOSUDID().size();		
-		}
+		} 
 		if(iosDevice.getIOSUDID() != null){
 			deviceCount += iosDevice.getIOSUDID().size();
 		}
