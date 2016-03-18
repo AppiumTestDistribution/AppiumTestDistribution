@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
+import com.appium.utils.ImageUtils;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.report.factory.ExtentManager;
@@ -14,6 +15,7 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.commons.io.FileUtils;
+import org.im4java.core.IM4JavaException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.openqa.selenium.By;
@@ -27,6 +29,8 @@ import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -57,6 +61,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
     private static IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
     private static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
     private static ConcurrentHashMap<String, Boolean> deviceMapping = new ConcurrentHashMap<String, Boolean>();
+    public ImageUtils imageUtils = new ImageUtils();
 
     static {
         try {
@@ -159,13 +164,13 @@ public class AppiumParallelTest extends TestListenerAdapter {
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
-        if (driver.toString().split("\\(")[0] == "AndroidDriver:  on LINUX") {
+        if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+            System.out.println("Starting ADB logs"+device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(
                     System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__" + methodName + ".txt");
             log_file_writer = new PrintWriter(logFile);
         }
-        System.out.println(device_udid);
         /*
 		 * String category = androidDevice.deviceModel(device_udid);
 		 * ExtentTestManager.startTest(methodName, "Mobile Appium Test",
@@ -206,7 +211,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
             ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")
                             + "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
-            if (driver.toString().split("\\(")[0] == "AndroidDriver:  on LINUX") {
+            if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
@@ -234,7 +239,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			driver.quit();
 		}*/
         appiumMan.destroyAppiumNode();
-        if (driver.toString().split(":")[0].equals("IOSDriver")){
+        if (driver.toString().split(":")[0].trim().equals("IOSDriver")){
             iosDevice.destroyIOSWebKitProxy();
         }
 
@@ -310,12 +315,35 @@ public class AppiumParallelTest extends TestListenerAdapter {
     }
 
     public void captureScreenShot(String screenShotName) {
+        File framePath = new File(System.getProperty("user.dir")+"/src/main/resources/");
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        if(driver.toString().split(":")[0].equals("AndroidDriver")){
+        String androidModel = androidDevice.deviceModel(device_udid);
+        if(driver.toString().split(":")[0].trim().equals("AndroidDriver")){
             try {
-                String androidModel = androidDevice.deviceModel(device_udid);
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
                         + androidModel + "/" + screenShotName + ".png"));
+                File [] files1 = framePath.listFiles();
+                for (int i = 0; i < files1.length; i++){
+                    if (files1[i].isFile()){ //this line weeds out other directories/folders
+                        System.out.println(files1[i]);
+                        Path p = Paths.get(files1[i].toString());
+                        String fileName=p.getFileName().toString().toLowerCase();
+                        if(androidModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())){
+                            try {
+                                imageUtils.wrapDeviceFrames(files1[i].toString(),System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
+                                        + androidModel + "/" + screenShotName + ".png",System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
+                                        + androidModel + "/" + screenShotName + "_framed.png");
+                                ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
+                                        + androidModel + "/" + screenShotName + "_framed.png");
+                                break;
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (IM4JavaException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

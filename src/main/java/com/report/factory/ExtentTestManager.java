@@ -53,9 +53,9 @@ public class ExtentTestManager { // new
 		return test;
 	}
 
-	public synchronized static void logOutPut(String s) {	
-		extent.setTestRunnerOutput("<h5>" + "ClassName::" + Thread.currentThread().getStackTrace()[2].getClassName() +"*******"+"MethodName:::"
-				+ Thread.currentThread().getStackTrace()[2].getMethodName() + "</h5>");
-		extent.setTestRunnerOutput(s);
+	public synchronized static void logOutPut(String imgSrc) {
+		imgSrc = "<img src="+imgSrc+"style=\"width:600px;height:700px;\">";
+		extent.setTestRunnerOutput(imgSrc);
+		//extent.setTestRunnerOutput(s);
 	}
 }
