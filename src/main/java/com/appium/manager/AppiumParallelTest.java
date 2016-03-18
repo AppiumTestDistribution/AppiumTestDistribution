@@ -159,7 +159,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
-        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
+        if (driver.toString().split("\\(")[0] == "AndroidDriver:  on LINUX") {
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(
                     System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__" + methodName + ".txt");
@@ -183,7 +183,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			 * device_udid + "__" + result.getMethod().getMethodName() + ".txt"
 			 * + ">AppiumServerLogs</a>");
 			 */
-            if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
+            if (!prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
@@ -206,7 +206,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
             ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")
                             + "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
-            if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
+            if (driver.toString().split("\\(")[0] == "AndroidDriver:  on LINUX") {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
@@ -234,7 +234,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
 			driver.quit();
 		}*/
         appiumMan.destroyAppiumNode();
-        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("iosnative")){
+        if (driver.toString().split(":")[0].equals("IOSDriver")){
             iosDevice.destroyIOSWebKitProxy();
         }
 
@@ -309,15 +309,17 @@ public class AppiumParallelTest extends TestListenerAdapter {
         return iosDevice.checkIfAppIsInstalled(bundleID);
     }
 
-    public void captureAndroidScreenShot(String screenShotName) {
+    public void captureScreenShot(String screenShotName) {
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        try {
-            String androidModel = androidDevice.deviceModel(device_udid);
-            FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/" + device_udid + "/"
-                    + androidModel + "/" + screenShotName + ".png"));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if(driver.toString().split(":")[0].equals("AndroidDriver")){
+            try {
+                String androidModel = androidDevice.deviceModel(device_udid);
+                FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
+                        + androidModel + "/" + screenShotName + ".png"));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

@@ -16,7 +16,7 @@ public class HomePageTest4 extends UserBaseTest {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
-		captureAndroidScreenShot("TestMethod4");
+		captureScreenShot("TestMethod4");
 		ExtentTestManager.logOutPut(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit5")).click();

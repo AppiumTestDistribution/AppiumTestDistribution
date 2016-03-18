@@ -22,7 +22,7 @@ public class HomePageTest1 extends UserBaseTest{
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
 		ExtentTestManager.logOutPut("Login Test");
-		captureAndroidScreenShot("TestMethod1");
+		captureScreenShot("TestMethod1");
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
 		ExtentTestManager.logOutPut("Enter UserName and Password");
@@ -61,7 +61,7 @@ public class HomePageTest1 extends UserBaseTest{
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		Thread.sleep(3000);
 		ExtentTestManager.logOutPut(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
-		captureAndroidScreenShot("TestMethod7");
+		captureScreenShot("TestMethod7");
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit33")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
@@ -82,7 +82,7 @@ public class HomePageTest1 extends UserBaseTest{
 		ExtentTestManager.logOutPut(Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
-		captureAndroidScreenShot("TestMethod8");
+		captureScreenShot("TestMethod8");
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();

@@ -31,7 +31,6 @@ public class ImageUtils {
 
     public static void main(String[] arg) throws IOException {
         File dir = new File(System.getProperty("user.dir")+"/target/screenshot/");
-
         System.out.println("Getting all files in " + dir.getCanonicalPath() + " including those in subdirectories");
         List<File> files = (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (File file : files) {

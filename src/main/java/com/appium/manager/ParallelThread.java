@@ -65,10 +65,11 @@ public class ParallelThread {
 		if(deviceConf.getDevices() != null){
 			devices = deviceConf.getDevices();
 			deviceCount = devices.size() / 3;
-			createSnapshotFolder(deviceCount);
+			createSnapshotFolder(deviceCount,"android");
 		} 
 		if(iosDevice.getIOSUDID() != null){
 			deviceCount += iosDevice.getIOSUDID().size();
+			createSnapshotFolder(deviceCount,"iPhone");
 		}
 		
 		System.out.println("Total Number of devices detected::" + deviceCount);
@@ -95,7 +96,7 @@ public class ParallelThread {
 
 	}
 
-	public void createSnapshotFolder(int deviceCount) {
+	public void createSnapshotFolder(int deviceCount,String platform) {
 		for (int i = 1; i <= deviceCount; i++) {
 			String deviceSerial = devices.get("deviceID" + i);
 			System.out.println(deviceSerial);
@@ -109,14 +110,26 @@ public class ParallelThread {
 				}
 			}
 
-			File file = new File(System.getProperty("user.dir") + "/target/screenshot/" + deviceSerial);
-			if (!file.exists()) {
-				if (file.mkdir()) {
-					System.out.println("Device Serial Directory is created!");
+			File file3 = new File(System.getProperty("user.dir")+"/target/screenshot/"+platform);
+			if (!file3.exists()) {
+				if (file3.mkdir()) {
+					System.out.println("Directory is created!");
 				} else {
 					System.out.println("Failed to create directory!");
 				}
 			}
+
+			if(platform == "android"){
+				File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial);
+				if (!file.exists()) {
+					if (file.mkdir()) {
+						System.out.println("Android Device Serial Directory is created!");
+					} else {
+						System.out.println("Failed to create directory!");
+					}
+				}
+			}
+
 		}
 	}
 
