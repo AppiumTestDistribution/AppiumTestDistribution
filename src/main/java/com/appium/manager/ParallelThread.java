@@ -72,6 +72,10 @@ public class ParallelThread {
 			createSnapshotFolder(deviceCount,"iPhone");
 		}
 		
+		if(deviceCount == 0){
+			System.exit(0);
+		}
+		
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 
@@ -84,12 +88,11 @@ public class ParallelThread {
 			}
 		});
 
-		//TODO: Add another check for OS on distribution and parallel
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 			//myTestExecutor.distributeTests(deviceCount, testcases);
 			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
 
-		}//TODO: Add another check for OS on distribution and parallel
+		}
 		else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
 			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
 		}
