@@ -123,7 +123,7 @@ public class ParallelThread {
 			}
 
 			if(platform == "android"){
-				File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial);
+				File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial.replaceAll("\\W", "_"));
 				if (!file.exists()) {
 					if (file.mkdir()) {
 						System.out.println("Android Device Serial Directory is created!");

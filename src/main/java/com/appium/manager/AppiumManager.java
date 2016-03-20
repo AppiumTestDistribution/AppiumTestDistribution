@@ -33,7 +33,7 @@ public class AppiumManager {
 	 */
 
 	public AppiumServiceBuilder appiumServer(String deviceID, String methodName) throws Exception {
-		System.out.println("Starting Appium Server");
+		System.out.println("Starting Appium Server Android");
 		System.out.println(deviceID);
 		input = new FileInputStream("config.properties");
 		prop.load(input);
@@ -46,7 +46,7 @@ public class AppiumManager {
 				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
 				.withLogFile(new File(
-						System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID + "__" + methodName + ".txt"))
+						System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID.replaceAll("\\W", "_") + "__" + methodName + ".txt"))
 				.withArgument(GeneralServerFlag.UIID, deviceID)
 				.withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
 				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))
@@ -68,7 +68,7 @@ public class AppiumManager {
 	 */
 
 	public AppiumServiceBuilder appiumServerIOS(String deviceID, String methodName) throws Exception {
-		System.out.println("Starting Appium Server");
+		System.out.println("Starting Appium Server IOS");
 		System.out.println(deviceID);
 		File classPathRoot = new File(System.getProperty("user.dir"));
 		input = new FileInputStream("config.properties");
@@ -79,7 +79,7 @@ public class AppiumManager {
 				.withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
 				.withArgument(GeneralServerFlag.LOG_LEVEL, "info")
 				.withLogFile(new File(
-						System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID + "__" + methodName + ".txt"))
+						System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID.replaceAll("\\W", "_") + "__" + methodName + ".txt"))
 				.withArgument(GeneralServerFlag.UIID, deviceID).withArgument(IOSServerFlag.USE_NATIVE_INSTRUMENTS)
 				.withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER, Integer.toString(bootstrapPort))
 				.withArgument(GeneralServerFlag.TEMP_DIRECTORY,

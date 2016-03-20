@@ -54,7 +54,9 @@ public class ExtentTestManager { // new
 	}
 
 	public synchronized static void logOutPut(String imgSrc) {
-		imgSrc = "<img src="+imgSrc + " style=\"width:100%;height:100%;\">";
+		imgSrc = "<div class='sample'><img src="+imgSrc + " style=\"width:25%;height:100%;\"></div>";
+		String style=".sample{ width: 25%; }";
+		extent.config().insertCustomStyles(style);
 		extent.setTestRunnerOutput(imgSrc);
 		//extent.setTestRunnerOutput(s);
 	}

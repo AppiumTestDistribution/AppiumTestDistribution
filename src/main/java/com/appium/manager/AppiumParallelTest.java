@@ -117,23 +117,23 @@ public class AppiumParallelTest extends TestListenerAdapter {
         } else {
             category = androidDevice.deviceModel(device_udid);
         }
-        System.out.println(category + device_udid.replace(".", "_").replace(":", "_"));
+        System.out.println(category + device_udid.replaceAll("\\W", "_"));
         parent = ExtentTestManager.startTest(methodName, "Mobile Appium Test",
-                category + device_udid.replace(".", "_").replace(":", "_"));
+                category + device_udid.replaceAll("\\W", "_"));
         parentContext.put(Thread.currentThread().getId(), parent);
         ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
-                + "/target/appiumlogs/" + device_udid + "__" + methodName + ".txt" + ">Logs</a>");
+                + "/target/appiumlogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName + ".txt" + ">Logs</a>");
         if (iosDevice.checkiOSDevice(device_udid)) {
         	iosDevice.startIOSWebKit(device_udid);
             return appiumMan.appiumServerIOS(device_udid, methodName);
         } else {
-            return appiumMan.appiumServerIOS(device_udid, methodName);
+            return appiumMan.appiumServer(device_udid, methodName);
         }
     }
 
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
         child = ExtentTestManager
-                .startTest(methodName).assignCategory(category + device_udid.replace(".", "_").replace(":", "_"));
+                .startTest(methodName).assignCategory(category + device_udid.replaceAll("\\W", "_"));
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             androidWeb();
         } else {
@@ -165,7 +165,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
             System.out.println("Starting ADB logs"+device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(
-                    System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__" + methodName + ".txt");
+                    System.getProperty("user.dir") + "/target/adblogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName + ".txt");
             log_file_writer = new PrintWriter(logFile);
         }
     }
@@ -177,7 +177,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
-                        "ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
+                        "ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid.replaceAll("\\W", "_") + "__"
                                 + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
                 System.out.println(driver.getSessionId() + ": Saving device log - Done.");
             }
@@ -187,14 +187,14 @@ public class AppiumParallelTest extends TestListenerAdapter {
             ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             try {
-                FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
+                FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid.replaceAll("\\W", "_")
                         + result.getMethod().getMethodName() + ".png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
             ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(System.getProperty("user.dir")
-                            + "/target/" + device_udid + result.getMethod().getMethodName() + ".png"));
+                            + "/target/" + device_udid.replaceAll("\\W", "_") + result.getMethod().getMethodName() + ".png"));
             if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
@@ -298,7 +298,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
         String androidModel = androidDevice.deviceModel(device_udid);
         if(driver.toString().split(":")[0].trim().equals("AndroidDriver")){
             try {
-                FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
+                FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                         + androidModel + "/" + screenShotName + ".png"));
                 File [] files1 = framePath.listFiles();
                 for (int i = 0; i < files1.length; i++){
@@ -308,10 +308,10 @@ public class AppiumParallelTest extends TestListenerAdapter {
                         String fileName=p.getFileName().toString().toLowerCase();
                         if(androidModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())){
                             try {
-                                imageUtils.wrapDeviceFrames(files1[i].toString(),System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
-                                        + androidModel + "/" + screenShotName + ".png",System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
+                                imageUtils.wrapDeviceFrames(files1[i].toString(),System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                                        + androidModel + "/" + screenShotName + ".png",System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                                         + androidModel + "/" + screenShotName + "_framed.png");
-                                ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid + "/"
+                                ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                                         + androidModel + "/" + screenShotName + "_framed.png");
                                 break;
                             } catch (InterruptedException e) {
