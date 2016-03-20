@@ -45,17 +45,21 @@ public class ExtentTestManager { // new
 			e.printStackTrace();
 		}
 		Map sysInfo = new HashMap();
-		sysInfo.put("Selenium Java Version", "2.48.2");
+		sysInfo.put("Selenium Java Version", "2.52.0");
 		sysInfo.put("Environment", "Prod");
-		sysInfo.put("AppiumVersion", "3.3.0");
+		sysInfo.put("AppiumVersion", "3.4.0");
 		sysInfo.put("RunnerMode",prop.getProperty("RUNNER").toUpperCase());
 		extent.addSystemInfo(sysInfo);
 		return test;
 	}
 
 	public synchronized static void logOutPut(String imgSrc) {
-		imgSrc = "<img src="+imgSrc+"style=\"width:600px;height:700px;\">";
+		imgSrc = "<img src="+imgSrc + " style=\"width:100%;height:100%;\">";
 		extent.setTestRunnerOutput(imgSrc);
 		//extent.setTestRunnerOutput(s);
+	}
+
+	public synchronized static void logOutPut(String s,String s1) {
+		extent.setTestRunnerOutput(s);
 	}
 }
