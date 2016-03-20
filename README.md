@@ -1,8 +1,8 @@
 # Appium Parallel Execution for Android and iOS on Real Devices
 
 [![Join the chat at https://gitter.im/saikrishna321/AppiumTestDistribution](https://badges.gitter.im/saikrishna321/AppiumTestDistribution.svg)](https://gitter.im/saikrishna321/AppiumTestDistribution?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-<h2>Run Appium Android and iOS test in parallel across devices connected</h2>
+[![Build Status](https://travis-ci.org/saikrishna321/AppiumTestDistribution.svg?branch=master)](https://travis-ci.org/saikrishna321/AppiumTestDistribution/builds/)
+##Run Appium Android and iOS test in parallel across devices connected
 
 ![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/conect1-anim.gif)
 
@@ -25,15 +25,16 @@ Add the below dependencies in your pom.xml
 	</repositories>
 ```
 
-<h2>Prerequisites</h2>
+##Prerequisites
 
 1. Make sure Appium(1.4.16) is installed through node and if using the latest appium v1.5 make sure you have it build from the source.
 2. Make sure adb sdk is set under ANDROID_HOME.
 3. Install JDK 1.8 and set under path JAVA_HOME to get this framework working.
 
-<h2>Sample Tests</h2>
+##Sample Tests
  Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
-<h1>Configure tests</h1>
+
+##Configure tests
 
 Main Runnerclass should look as below :: 
 
@@ -84,7 +85,7 @@ public class UserBaseTest extends AppiumParallelTest {
 
 ```
     
-<h3>Run Test from CommandLine</h3>
+###Run Test from CommandLine
 ```
 mvn clean -Dtest=Runner test
 
@@ -125,20 +126,21 @@ Note:
 * Make sure you have chrome browser installed on android real devices, if not please download from playstore.
 * Make sure you don't use ``` 	getDriver().resetApp()  ``` when your running your webtests.
 
-<h2>Credits</h2>
+##Credits
 Thanks to
 [@SrinivasanTarget](https://github.com/SrinivasanTarget) [@thote](https://github.com/thote) and [@jaydeepc](https://github.com/jaydeepc)
 
-<h3>Reports</h3>
+###Reports
 
 Your should see report file generated as ExtentReport.html under the target folder.
 
-<h3>TestRunning in Distributed Way</h3>
+###TestRunning in Distributed Way
 
 [![ScreenShot](http://s29.postimg.org/uln15acdz/Screen_Shot_2016_01_10_at_12_02_10_pm.png)](https://www.youtube.com/watch?v=KfMoJ6dSC3g)
 
-<h2>WIP</h2>
+##WIP
 iOS WebTest using Safari
+
 ## License
 
 ![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)

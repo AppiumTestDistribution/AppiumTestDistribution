@@ -76,9 +76,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
             if(androidDevice.getDeviceSerail() != null){
             	System.out.println("Adding android devices");
             	devices.addAll(androidDevice.getDeviceSerail());
-            }
-            System.out.println(devices);
-            
+            }            
             for (String device : devices) {
                 deviceMapping.put(device, true);
             }
@@ -133,7 +131,6 @@ public class AppiumParallelTest extends TestListenerAdapter {
         }
     }
 
-    // @BeforeMethod
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
         child = ExtentTestManager
                 .startTest(methodName).assignCategory(category + device_udid.replace(".", "_").replace(":", "_"));
@@ -164,30 +161,18 @@ public class AppiumParallelTest extends TestListenerAdapter {
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
-        if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+        if (!prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             System.out.println("Starting ADB logs"+device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(
                     System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__" + methodName + ".txt");
             log_file_writer = new PrintWriter(logFile);
         }
-        /*
-		 * String category = androidDevice.deviceModel(device_udid);
-		 * ExtentTestManager.startTest(methodName, "Mobile Appium Test",
-		 * category + device_udid.replace(".", "_").replace(":", "_"));
-		 */
     }
 
-    // @AfterMethod
     public void endLogTestResults(ITestResult result) {
         if (result.isSuccess()) {
             ExtentTestManager.getTest().log(LogStatus.PASS, result.getMethod().getMethodName(), "Pass");
-			/*
-			 * ExtentTestManager.getTest().log(LogStatus.INFO, "Logs:: <a href="
-			 * + System.getProperty("user.dir") + "/target/appiumlogs/" +
-			 * device_udid + "__" + result.getMethod().getMethodName() + ".txt"
-			 * + ">AppiumServerLogs</a>");
-			 */
             if (!prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
@@ -205,7 +190,6 @@ public class AppiumParallelTest extends TestListenerAdapter {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/" + device_udid
                         + result.getMethod().getMethodName() + ".png"));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
@@ -232,12 +216,6 @@ public class AppiumParallelTest extends TestListenerAdapter {
         System.out.println("**************ClosingAppiumSession****************");
         ExtentManager.getInstance().endTest(parent);
         ExtentManager.getInstance().flush();
-/*		if (prop.getProperty("APP_TYPE").equalsIgnoreCase("androidnative")) {
-			System.out.println("Closing Session::" + driver.getSessionId());
-			driver.closeApp();
-		} else if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-			driver.quit();
-		}*/
         appiumMan.destroyAppiumNode();
         if (driver.toString().split(":")[0].trim().equals("IOSDriver")){
             iosDevice.destroyIOSWebKitProxy();
