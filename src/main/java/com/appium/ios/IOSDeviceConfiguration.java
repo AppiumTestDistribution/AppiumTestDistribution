@@ -7,17 +7,19 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class IOSDeviceConfiguration {
 	public ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
 	CommandPrompt commandPrompt = new CommandPrompt();
 	AvailabelPorts ap = new AvailabelPorts();
 	public HashMap<String, String> deviceMap = new HashMap<String, String>();
+	Map<String, String> devices = new HashMap<>();
 	public Process p;
 	String getWebKitProxyPortToBeStarted;
 	HashMap appiumServerProcess = new HashMap();
 
-	public void checkIfMobileDeviceApiIsInstalled() throws InterruptedException, IOException {
+	public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {
 		boolean checkMobileDevice = commandPrompt.runCommand("brew list").contains("ideviceinstaller");
 		if (checkMobileDevice) {
 			System.out.println("iDeviceInstaller already exists");
@@ -40,6 +42,25 @@ public class IOSDeviceConfiguration {
 					deviceUDIDiOS.add(lines[i]);
 				}
 				return deviceUDIDiOS;
+			}
+		} catch (InterruptedException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Map<String,String> getIOSUDIDHash() {
+		try {
+			String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
+			if(getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID.isEmpty()){
+				return null;
+			}else{
+				String[] lines = getIOSDeviceID.split("\n");
+				for (int i = 0; i < lines.length; i++) {
+					lines[i] = lines[i].replaceAll("\\s+", "");
+					devices.put("deviceID" + i,lines[i]);
+				}
+				return devices;
 			}
 		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
@@ -108,7 +129,7 @@ public class IOSDeviceConfiguration {
 	}
 
 	public String getDeviceName(String udid) throws InterruptedException, IOException {
-		String deviceName = commandPrompt.runCommand("idevicename --udid " + udid);
+		String deviceName = commandPrompt.runCommand("idevicename --udid " + udid).replace("\\W","_");
 		return deviceName;
 	}
 	

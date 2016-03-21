@@ -1,6 +1,5 @@
 package com.appium.manager;
 
-import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
 
@@ -19,10 +18,9 @@ import java.util.*;
 public class ParallelThread {
 	protected int deviceCount = 0;
 	Map<String, String> devices = new HashMap<String, String>();
+	Map<String, String> iOSdevices = new HashMap<String, String>();
 	AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
 	IOSDeviceConfiguration iosDevice= new IOSDeviceConfiguration();
-	AppiumParallelTest baseTest = new AppiumParallelTest();
-	HtmlReporter htmlReporter = new HtmlReporter();
 	MyTestExecutor myTestExecutor = new MyTestExecutor();
 	public Properties prop = new Properties();
 	public InputStream input = null;
@@ -61,21 +59,22 @@ public class ParallelThread {
 		}
 		input = new FileInputStream("config.properties");
 		prop.load(input);
-		
+
 		if(deviceConf.getDevices() != null){
 			devices = deviceConf.getDevices();
 			deviceCount = devices.size() / 3;
-			createSnapshotFolder(deviceCount,"android");
-		} 
-		if(iosDevice.getIOSUDID() != null){
-			deviceCount += iosDevice.getIOSUDID().size();
-			createSnapshotFolder(deviceCount,"iPhone");
+			createSnapshotFolderAndroid(deviceCount,"android");
 		}
-		
+		if(iosDevice.getIOSUDID() != null){
+			iOSdevices = iosDevice.getIOSUDIDHash();
+			deviceCount += iosDevice.getIOSUDID().size();
+			createSnapshotFolderiOS(deviceCount,"iPhone");
+		}
+
 		if(deviceCount == 0){
 			System.exit(0);
 		}
-		
+
 		System.out.println("Total Number of devices detected::" + deviceCount);
 		System.out.println("starting running tests in threads");
 
@@ -99,31 +98,12 @@ public class ParallelThread {
 
 	}
 
-	public void createSnapshotFolder(int deviceCount,String platform) {
+	public void createSnapshotFolderAndroid(int deviceCount,String platform) {
 		for (int i = 1; i <= deviceCount; i++) {
 			String deviceSerial = devices.get("deviceID" + i);
 			System.out.println(deviceSerial);
-
-			File file2 = new File(System.getProperty("user.dir")+"/target/screenshot");
-			if (!file2.exists()) {
-				if (file2.mkdir()) {
-					System.out.println("Directory is created!");
-				} else {
-					System.out.println("Failed to create directory!");
-				}
-			}
-
-			File file3 = new File(System.getProperty("user.dir")+"/target/screenshot/"+platform);
-			if (!file3.exists()) {
-				if (file3.mkdir()) {
-					System.out.println("Directory is created!");
-				} else {
-					System.out.println("Failed to create directory!");
-				}
-			}
-
-			if(platform == "android"){
-				File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial.replaceAll("\\W", "_"));
+            createPlatformDirectory(platform);
+            File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial.replaceAll("\\W", "_"));
 				if (!file.exists()) {
 					if (file.mkdir()) {
 						System.out.println("Android Device Serial Directory is created!");
@@ -131,9 +111,48 @@ public class ParallelThread {
 						System.out.println("Failed to create directory!");
 					}
 				}
-			}
+
 
 		}
 	}
+
+    public void createSnapshotFolderiOS(int deviceCount,String platform) {
+        for (int i = 1; i <= deviceCount; i++) {
+            String deviceSerial = iOSdevices.get("deviceID" + i);
+            System.out.println(deviceSerial);
+            createPlatformDirectory(platform);
+            File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial.replaceAll("\\W", "_"));
+            if (!file.exists()) {
+                if (file.mkdir()) {
+                    System.out.println("IOS Device Serial Directory is created!");
+                } else {
+                    System.out.println("Failed to create directory!");
+                }
+            }
+
+
+        }
+    }
+
+
+    public void createPlatformDirectory(String platform){
+        File file2 = new File(System.getProperty("user.dir")+"/target/screenshot");
+        if (!file2.exists()) {
+            if (file2.mkdir()) {
+                System.out.println("Directory is created!");
+            } else {
+                System.out.println("Failed to create directory!");
+            }
+        }
+
+        File file3 = new File(System.getProperty("user.dir")+"/target/screenshot/"+platform);
+        if (!file3.exists()) {
+            if (file3.mkdir()) {
+                System.out.println("Directory is created!");
+            } else {
+                System.out.println("Failed to create directory!");
+            }
+        }
+    }
 
 }
