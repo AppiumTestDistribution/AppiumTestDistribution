@@ -5,7 +5,7 @@ allure-report/*
 test-output/*
 target/*
 report.json
-*.xml
+testng.xml
 *.json
 *.html
 *.iml
