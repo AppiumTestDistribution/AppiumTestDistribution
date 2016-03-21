@@ -151,7 +151,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
-        if (!prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             System.out.println("Starting ADB logs"+device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(
@@ -163,7 +163,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
     public void endLogTestResults(ITestResult result) {
         if (result.isSuccess()) {
             ExtentTestManager.getTest().log(LogStatus.PASS, result.getMethod().getMethodName(), "Pass");
-            if (!prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+            if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
@@ -318,7 +318,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
             }
         }else if(driver.toString().split(":")[0].trim().equals("IOSDriver"))
         {
-            String iosModel=iosDevice.getDeviceName(device_udid);
+            String iosModel=iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
             try {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
                         + iosModel + "/" + screenShotName + ".png"));
