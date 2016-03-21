@@ -40,6 +40,7 @@ public class HomePageTest1 extends UserBaseTest{
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		captureScreenShot("TestMethod1");
 		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
@@ -88,6 +89,7 @@ public class HomePageTest1 extends UserBaseTest{
 		Thread.sleep(3000);
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
+		captureScreenShot("TestMethod1");
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
@@ -116,6 +118,7 @@ public class HomePageTest1 extends UserBaseTest{
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+		captureScreenShot("TestMethod1");
 		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
 		//getDriver().close();
     }

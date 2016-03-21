@@ -18,6 +18,7 @@ public class HomePageTest5 extends UserBaseTest {
 		getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
+		captureScreenShot("TestMethod1");
 		getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
 		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
 

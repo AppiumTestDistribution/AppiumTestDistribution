@@ -312,7 +312,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
                                         + androidModel + "/" + screenShotName + ".png",System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                                         + androidModel + "/" + screenShotName + "_framed.png");
                                 ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
-                                        + androidModel + "/" + screenShotName + "_framed.png");
+                                        + androidModel + "/" + screenShotName + "_framed.png",screenShotName.toUpperCase());
                                 break;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();

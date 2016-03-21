@@ -3,10 +3,7 @@ package com.report.factory;
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -53,15 +50,10 @@ public class ExtentTestManager { // new
 		return test;
 	}
 
-	public synchronized static void logOutPut(String imgSrc) {
-		imgSrc = "<div class='sample'><img src="+imgSrc + " style=\"width:25%;height:100%;\"></div>";
-		String style=".sample{ width: 25%; }";
-		extent.config().insertCustomStyles(style);
+	public synchronized static void logOutPut(String imgSrc,String headerName) {
+		imgSrc = "<div class='sample'><h4 class='md-display-4'>"+headerName+"</h4><img src="+imgSrc + " style=\"width:100%;height:100%;\"></div>";
+		extent.loadConfig(new File("/Users/saikrisv/git/AppiumTestDistribution/extent.xml"));
 		extent.setTestRunnerOutput(imgSrc);
 		//extent.setTestRunnerOutput(s);
-	}
-
-	public synchronized static void logOutPut(String s,String s1) {
-		extent.setTestRunnerOutput(s);
 	}
 }
