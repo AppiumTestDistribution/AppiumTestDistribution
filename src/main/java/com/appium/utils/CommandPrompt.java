@@ -5,7 +5,11 @@ package com.appium.utils;
  */
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.testng.TestNG;
 
@@ -14,12 +18,7 @@ public class CommandPrompt {
 	static Process p;
 	ProcessBuilder builder;
 
-	/**
-	 * This method run command on windows and mac
-	 * 
-	 * @param strings
-	 *            to run
-	 */
+
 	public String runCommand(String command) throws InterruptedException, IOException {
 		p = Runtime.getRuntime().exec(command);
 		// get std output
@@ -32,11 +31,38 @@ public class CommandPrompt {
 				break;
 			}*/
 			allLine = allLine + "" + line + "\n";
-			if (line.contains("Console LogLevel: debug") && line.contains("Complete"))
+            System.out.println(allLine);
+            if (line.contains("Console LogLevel: debug") && line.contains("Complete"))
 				break;	
 			   i++;
 		}
 		return allLine;
 
 	}
+
+    public String runCommandThruProcessBuilder(String command) throws InterruptedException, IOException {
+        List<String> commands = new ArrayList<String>();
+        commands.add("/bin/sh");
+        commands.add("-c");
+        commands.add(command);
+        ProcessBuilder builder = new ProcessBuilder(commands);
+        Map<String, String> environ = builder.environment();
+
+        final Process process = builder.start();
+        InputStream is = process.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        String line;
+        String allLine = "";
+        while ((line = br.readLine()) != null) {
+            allLine = allLine + "" + line + "\n";
+            System.out.println(allLine);
+        }
+        return allLine.split(":")[1].replace("\n","").trim();
+    }
+
+    public static void main (String Args[]) throws InterruptedException, IOException{
+        CommandPrompt cp = new CommandPrompt();
+        cp.runCommandThruProcessBuilder("ideviceinfo | grep ProductType");
+    }
 }

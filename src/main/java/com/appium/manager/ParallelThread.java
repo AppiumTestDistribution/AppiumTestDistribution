@@ -67,8 +67,10 @@ public class ParallelThread {
 		}
 		if(iosDevice.getIOSUDID() != null){
 			iOSdevices = iosDevice.getIOSUDIDHash();
-			deviceCount += iosDevice.getIOSUDID().size();
-			createSnapshotFolderiOS(deviceCount,"iPhone");
+			deviceCount += iOSdevices.size();
+            System.out.println("iOSdevices.size():"+iOSdevices.size());
+            System.out.println(deviceCount);
+            createSnapshotFolderiOS(deviceCount,"iPhone");
 		}
 
 		if(deviceCount == 0){
@@ -117,7 +119,7 @@ public class ParallelThread {
 	}
 
     public void createSnapshotFolderiOS(int deviceCount,String platform) {
-        for (int i = 1; i <= deviceCount; i++) {
+        for (int i = 0; i < deviceCount; i++) {
             String deviceSerial = iOSdevices.get("deviceID" + i);
             System.out.println(deviceSerial);
             createPlatformDirectory(platform);
