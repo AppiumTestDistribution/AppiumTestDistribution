@@ -142,10 +142,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
         	driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
         } else{
-        	System.out.println(iosDevice.checkiOSDevice(device_udid));
         	if (iosDevice.checkiOSDevice(device_udid)) {
         		driver = new IOSDriver<>(appiumMan.getAppiumUrl(), capabilities);
-        	} else {
+        	} else if (!iosDevice.checkiOSDevice(device_udid)){
         		driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
         	}
         }        
@@ -321,7 +320,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             }
         }else if(driver.toString().split(":")[0].trim().equals("IOSDriver"))
         {
-            String iosModel=iosDevice.getDeviceName(device_udid);
+            String iosModel=iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
             try {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
                         + iosModel + "/" + screenShotName + ".png"));

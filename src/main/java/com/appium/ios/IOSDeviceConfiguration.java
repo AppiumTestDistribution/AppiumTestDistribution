@@ -60,7 +60,7 @@ public class IOSDeviceConfiguration {
 					lines[i] = lines[i].replaceAll("\\s+", "");
 					devices.put("deviceID" + i,lines[i]);
 				}
-				return devices;
+                return devices;
 			}
 		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
@@ -118,14 +118,7 @@ public class IOSDeviceConfiguration {
 	 */
 
 	public String getIOSDeviceProductTypeAndVersion(String udid) throws InterruptedException, IOException {
-		System.out.println("ideviceinfo --udid " + udid + " | grep ProductType");
-		System.out.println("ideviceinfo --udid " + udid + " | grep ProductVersion");
-		String productType = commandPrompt.runCommand("ideviceinfo --udid " + udid);
-		System.out.println(productType);
-		String version = commandPrompt.runCommand("ideviceinfo --udid " + udid);
-		System.out.println(version);
-		System.out.println(productType.concat(version));
-		return productType.concat(version);
+		return commandPrompt.runCommandThruProcessBuilder("ideviceinfo --udid "+udid+" | grep ProductType");
 	}
 
 	public String getDeviceName(String udid) throws InterruptedException, IOException {
@@ -135,7 +128,8 @@ public class IOSDeviceConfiguration {
 	
 	public boolean checkiOSDevice(String UDID) throws Exception{
 		try{
-			if(commandPrompt.runCommand("idevice_id -l").contains(UDID)){
+            boolean checkDeviceExists = commandPrompt.runCommand("idevice_id --list").contains(UDID);
+			if(checkDeviceExists){
 				return true;
 			}else{
 				return false;
