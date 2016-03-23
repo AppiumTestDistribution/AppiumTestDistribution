@@ -10,7 +10,6 @@ public class HomePageTest4 extends UserBaseTest {
 
 
 	@Test
-
 	public void testMethodFour_4() throws Exception {
 		
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());

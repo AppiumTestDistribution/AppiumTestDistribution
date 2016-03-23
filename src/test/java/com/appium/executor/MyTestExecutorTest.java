@@ -33,7 +33,7 @@ public class MyTestExecutorTest {
 
 	@Test
 	public void testParallelMethods() throws Exception {
-		ex1.runMethodParallelAppium("com.appium.executor", 3,"parallel");
+		ex1.runMethodParallelAppium("com.appium.executor", 3,"distribute");
 	}
 
 }

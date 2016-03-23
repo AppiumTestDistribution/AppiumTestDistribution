@@ -121,6 +121,7 @@ public class MyTestExecutor {
 			e.printStackTrace();
 		}
 		XmlSuite suite = new XmlSuite();
+		items.add("com.appium.manager.AppiumParallelTest");
 		if (prop.getProperty("LISTENERS")!=null){
 			Collections.addAll(items, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
 		}
@@ -129,6 +130,7 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.TESTS);
 		suite.setVerbose(2);
+		suite.setListeners(items);
 		if (prop.getProperty("LISTENERS")!=null) {
 			suite.setListeners(items);
 		}
@@ -162,6 +164,8 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
 		suite.setVerbose(2);
+		items.add("com.appium.manager.AppiumParallelTest");
+		suite.setListeners(items);
 		if (prop.getProperty("LISTENERS")!=null) {
 			suite.setListeners(items);
 		}

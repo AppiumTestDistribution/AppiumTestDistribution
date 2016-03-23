@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.ImageUtils;
 import com.relevantcodes.extentreports.ExtentTest;
@@ -23,7 +24,9 @@ import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.ITestListener;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 import org.testng.TestListenerAdapter;
 
 import java.io.*;
@@ -33,7 +36,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class AppiumParallelTest extends TestListenerAdapter {
+public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
     public AppiumDriver<MobileElement> driver;
     public AppiumManager appiumMan = new AppiumManager();
     public String device_udid;
@@ -151,7 +154,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
-        if (!prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+        if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
             System.out.println("Starting ADB logs"+device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(
@@ -163,7 +166,7 @@ public class AppiumParallelTest extends TestListenerAdapter {
     public void endLogTestResults(ITestResult result) {
         if (result.isSuccess()) {
             ExtentTestManager.getTest().log(LogStatus.PASS, result.getMethod().getMethodName(), "Pass");
-            if (!prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+            if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
@@ -410,4 +413,20 @@ public class AppiumParallelTest extends TestListenerAdapter {
         }
     }
 
+    public AppiumDriver<MobileElement> getDriver() {
+        return driver;
+    }
+
+    public void onTestStart(ITestResult result) {
+        Object currentClass = result.getInstance();
+        AppiumDriver<MobileElement> driver = ((AppiumParallelTest) currentClass).getDriver();
+        SkipIf skip = result.getMethod().getConstructorOrMethod().getMethod().getAnnotation(SkipIf.class);
+        if(skip!=null){
+            String info = skip.platform();
+            if (driver.toString().split("\\(")[0].trim().toString().contains(info)) {
+                System.out.println("skipping test");
+                throw new SkipException("Skipped because property was set to :::"+info);
+            }
+        }
+    }
 }

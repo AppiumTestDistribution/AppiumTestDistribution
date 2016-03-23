@@ -4,6 +4,7 @@ package com.test.site;
 
 
 import com.annotation.values.RetryCount;
+import com.annotation.values.SkipIf;
 import com.appium.utils.Retry;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
@@ -15,6 +16,7 @@ public class HomePageTest1 extends UserBaseTest{
 
 	@Test(retryAnalyzer=Retry.class)
 	@RetryCount(maxRetryCount=2)
+	@SkipIf(platform = "AndroidDriver")
     public void testMethodOne_1() throws Exception  {
 	    
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -32,6 +34,7 @@ public class HomePageTest1 extends UserBaseTest{
     }
 	
 	@Test(retryAnalyzer=Retry.class)
+	@SkipIf(platform = "AndroidDriver")
     public void testMethodOne_6() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -51,6 +54,7 @@ public class HomePageTest1 extends UserBaseTest{
 	
 	@Test(retryAnalyzer=Retry.class)
 	@RetryCount(maxRetryCount=2)
+	@SkipIf(platform = "AndroidDriver")
     public void testMethodOne_7() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -69,6 +73,7 @@ public class HomePageTest1 extends UserBaseTest{
 	
 	
 	@Test(retryAnalyzer=Retry.class)
+	@SkipIf(platform = "AndroidDriver")
     public void testMethodOne_8() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -83,6 +88,7 @@ public class HomePageTest1 extends UserBaseTest{
     }
 	
 	@Test(retryAnalyzer=Retry.class)
+	@SkipIf(platform = "AndroidDriver")
     public void testMethodOne_9() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -97,6 +103,7 @@ public class HomePageTest1 extends UserBaseTest{
     }
 	
 	@Test(retryAnalyzer=Retry.class)
+	@SkipIf(platform = "AndroidDriver")
     public void testMethodOne_10() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());
@@ -108,7 +115,7 @@ public class HomePageTest1 extends UserBaseTest{
 		getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
 		//getDriver().close();
     }
-	
+
 	@Test(retryAnalyzer=Retry.class)
     public void testMethodOne_11() throws Exception  {
 	
