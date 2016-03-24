@@ -156,7 +156,7 @@ public class IOSDeviceConfiguration {
 		return deviceMap;
 	}
 
-	public void startIOSWebKit(String udid) throws IOException {
+	public String startIOSWebKit(String udid) throws IOException {
 		getWebKitProxyPortToBeStarted = deviceMap.get(udid);
 		p = Runtime.getRuntime()
 				.exec("ios_webkit_debug_proxy -c " + udid + ":" + getWebKitProxyPortToBeStarted + " -d");
@@ -164,6 +164,7 @@ public class IOSDeviceConfiguration {
 				+ getWebKitProxyPortToBeStarted);
 		//Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
 		appiumServerProcess.put(Thread.currentThread().getId(),getPid(p));
+		return getWebKitProxyPortToBeStarted;
 	}
 
 	public int getPid(Process process) {

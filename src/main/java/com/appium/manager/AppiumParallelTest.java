@@ -69,7 +69,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             if(androidDevice.getDeviceSerail() != null){
             	System.out.println("Adding android devices");
             	devices.addAll(androidDevice.getDeviceSerail());
-            }            
+            }
             for (String device : devices) {
                 deviceMapping.put(device, true);
             }
@@ -117,8 +117,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
                 + "/target/appiumlogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName + ".txt" + ">Logs</a>");
         if (iosDevice.checkiOSDevice(device_udid)) {
-        	iosDevice.startIOSWebKit(device_udid);
-            return appiumMan.appiumServerIOS(device_udid, methodName);
+        	String webKitPort = iosDevice.startIOSWebKit(device_udid);
+            return appiumMan.appiumServerIOS(device_udid, methodName,webKitPort);
         } else {
             return appiumMan.appiumServer(device_udid, methodName);
         }
@@ -147,7 +147,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         	} else if (!iosDevice.checkiOSDevice(device_udid)){
         		driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
         	}
-        }        
+        }
 
         return driver;
     }
