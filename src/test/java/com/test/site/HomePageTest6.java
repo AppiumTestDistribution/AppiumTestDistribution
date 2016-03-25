@@ -2,11 +2,10 @@ package com.test.site;
 
 
 
-import org.openqa.selenium.By;
-import org.testng.annotations.Test;
-
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.SwipeElementDirection;
+import org.openqa.selenium.By;
+import org.testng.annotations.Test;
 
 
 
