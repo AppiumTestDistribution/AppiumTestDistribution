@@ -63,9 +63,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 System.out.println("Adding iOS devices");
                 devices.addAll(iosDevice.getIOSUDID());
             }
-            if (devices.size() != 0) {
-                iosDevice.setIOSWebKitProxyPorts();
-            }
+//            if (devices.size() != 0) {
+//                iosDevice.setIOSWebKitProxyPorts();
+//            }
             if (androidDevice.getDeviceSerail() != null) {
                 System.out.println("Adding android devices");
                 devices.addAll(androidDevice.getDeviceSerail());
@@ -106,6 +106,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
 
         if (iosDevice.checkiOSDevice(device_udid)) {
+            iosDevice.setIOSWebKitProxyPorts(device_udid);
             category = iosDevice.getDeviceName(device_udid).replace("\n", " ");
         } else {
             category = androidDevice.deviceModel(device_udid);
@@ -274,7 +275,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
-                        "ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid + "__"
+                        "ADBLogs:: <a href=" + System.getProperty("user.dir") + "/target/adblogs/" + device_udid.replaceAll("\\W", "_") + "__"
                                 + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
                 System.out.println(driver.getSessionId() + ": Saving device log - Done.");
             }
