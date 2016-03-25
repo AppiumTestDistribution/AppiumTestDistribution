@@ -53,8 +53,6 @@ public class HomePageTest1 extends UserBaseTest{
     }
 	
 	@Test(retryAnalyzer=Retry.class)
-	@RetryCount(maxRetryCount=2)
-	@SkipIf(platform = "AndroidDriver")
     public void testMethodOne_7() throws Exception  {
 	
 		System.out.println("ThreadName: " + Thread.currentThread().getName() + Thread.currentThread().getStackTrace()[1].getClassName());

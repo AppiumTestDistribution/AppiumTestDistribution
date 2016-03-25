@@ -51,7 +51,7 @@ public class ExtentTestManager { // new
 	}
 
 	public synchronized static void logOutPut(String imgSrc,String headerName) {
-		imgSrc = "<div class='sample'><h4 class='md-display-4'>"+headerName+"</h4><img src="+imgSrc + " style=\"width:100%;height:100%;\"></div>";
+		imgSrc = "<div class='col l4 m6 s12'><div class='card-panel'><h4 class='md-display-4'>"+headerName+"</h4><img src="+imgSrc + " style=\"width:100%;height:100%;\"></div></div>";
 		extent.loadConfig(new File("/Users/saikrisv/git/AppiumTestDistribution/extent.xml"));
 		extent.setTestRunnerOutput(imgSrc);
 		//extent.setTestRunnerOutput(s);
