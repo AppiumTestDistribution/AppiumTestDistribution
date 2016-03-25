@@ -52,6 +52,18 @@
             .md-display-4 {
                 word-wrap: break-word;
             }
+
+            th:nth-child(3), td:nth-child(3) {
+            max-width: 250px !important;
+            min-width: 200px !important;
+            }
+
+            #testrunner-logs-view > .col > .card-panel {
+            height: 100%;
+            overflow: scroll;
+            text-align: center;
+            }
+
         </styles>
     </configuration>
 </extentreports>
