@@ -29,7 +29,6 @@ public class CommandPrompt {
 				break;
 			}*/
 			allLine = allLine + "" + line + "\n";
-            System.out.println(allLine);
             if (line.contains("Console LogLevel: debug") && line.contains("Complete"))
 				break;	
 			   i++;

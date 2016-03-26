@@ -16,7 +16,7 @@ public class IOSDeviceConfiguration {
 	public HashMap<String, String> deviceMap = new HashMap<String, String>();
 	Map<String, String> devices = new HashMap<>();
 	public Process p;
-	String getWebKitProxyPortToBeStarted;
+
 	HashMap appiumServerProcess = new HashMap();
 
 	public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {
@@ -140,31 +140,24 @@ public class IOSDeviceConfiguration {
 		}
 	}
 
-	public HashMap<String, String> setIOSWebKitProxyPorts() throws Exception {
+	public HashMap<String, String> setIOSWebKitProxyPorts(String device_udid) throws Exception {
 		try {
-			int webKitProxyPort = ap.getPort();
-			String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
-			String[] lines = getIOSDeviceID.split("\n");
-			for (int i = 0; i < lines.length; i++) {
-				lines[i] = lines[i].replaceAll("\\s+", "");
-				deviceMap.put(lines[i], Integer.toString(webKitProxyPort));
-			}
-		} catch (InterruptedException | IOException e) {
-			// TODO Auto-generated catch block
+            int webkitproxyport = ap.getPort();
+            deviceMap.put(device_udid, Integer.toString(webkitproxyport));
+        } catch (InterruptedException | IOException e) {
 			e.printStackTrace();
 		}
-		return deviceMap;
+        return deviceMap;
 	}
 
 	public String startIOSWebKit(String udid) throws IOException {
-		getWebKitProxyPortToBeStarted = deviceMap.get(udid);
-		p = Runtime.getRuntime()
-				.exec("ios_webkit_debug_proxy -c " + udid + ":" + getWebKitProxyPortToBeStarted + " -d");
+        p = Runtime.getRuntime()
+				.exec("ios_webkit_debug_proxy -c " + udid + ":" + deviceMap.get(udid) + " -d");
 		System.out.println("WebKit Proxy is started on device " + udid + " and with port number "
-				+ getWebKitProxyPortToBeStarted);
+				+ deviceMap.get(udid) + " and in thread " + Thread.currentThread().getId());
 		//Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
 		appiumServerProcess.put(Thread.currentThread().getId(),getPid(p));
-		return getWebKitProxyPortToBeStarted;
+		return deviceMap.get(udid);
 	}
 
 	public int getPid(Process process) {

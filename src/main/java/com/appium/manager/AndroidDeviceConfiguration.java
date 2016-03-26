@@ -20,13 +20,8 @@ public class AndroidDeviceConfiguration {
 	public void startADB() throws Exception {
 		String output = cmd.runCommand("adb start-server");
 		String[] lines = output.split("\n");
-		if (lines.length == 1)
-			System.out.println("adb service already started");
-		else if (lines[1].equalsIgnoreCase("* daemon started successfully *"))
-			System.out.println("adb service started");
-		else if (lines[0].contains("internal or external command")) {
+		if (lines[0].contains("internal or external command")) {
 			System.out.println("Please set ANDROID_HOME in your system variables");
-			System.exit(0);
 		}
 	}
 
@@ -56,8 +51,7 @@ public class AndroidDeviceConfiguration {
 			System.out.println("\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
 					+ "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
 					+ "\uD83C\uDF7A" + "\uD83C\uDF7A");
-//			stopADB();
-//			System.exit(0); // exit if no connected devices found
+			stopADB();
 			return null;
 		}else{
 			for (int i = 1; i < lines.length; i++) {
@@ -77,21 +71,12 @@ public class AndroidDeviceConfiguration {
 					devices.put("deviceID" + i, deviceID);
 					devices.put("deviceName" + i, deviceName);
 					devices.put("osVersion" + i, osVersion);
-
-					System.out.println("Following device is connected");
-					System.out.println(deviceID + " " + deviceName + " " + osVersion + "\n");
 				} else if (lines[i].contains("unauthorized")) {
 					lines[i] = lines[i].replaceAll("unauthorized", "");
 					String deviceID = lines[i];
-
-					System.out.println("Following device is unauthorized");
-					System.out.println(deviceID + "\n");
 				} else if (lines[i].contains("offline")) {
 					lines[i] = lines[i].replaceAll("offline", "");
 					String deviceID = lines[i];
-
-					System.out.println("Following device is offline");
-					System.out.println(deviceID + "\n");
 				}
 			}
 			return devices;
@@ -119,15 +104,9 @@ public class AndroidDeviceConfiguration {
 				} else if (lines[i].contains("unauthorized")) {
 					lines[i] = lines[i].replaceAll("unauthorized", "");
 					String deviceID = lines[i];
-
-					System.out.println("Following device is unauthorized");
-					System.out.println(deviceID + "\n");
 				} else if (lines[i].contains("offline")) {
 					lines[i] = lines[i].replaceAll("offline", "");
 					String deviceID = lines[i];
-
-					System.out.println("Following device is offline");
-					System.out.println(deviceID + "\n");
 				}
 			}
 			return deviceSerail;

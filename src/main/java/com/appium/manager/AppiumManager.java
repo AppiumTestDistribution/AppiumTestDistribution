@@ -77,7 +77,7 @@ public class AppiumManager {
 
     public AppiumServiceBuilder appiumServerIOS(String deviceID, String methodName,String webKitPort) throws Exception {
         System.out.println("Starting Appium Server IOS");
-        System.out.println(deviceID);
+        System.out.println(deviceID + " : " + webKitPort);
         File classPathRoot = new File(System.getProperty("user.dir"));
         input = new FileInputStream("config.properties");
         prop.load(input);

@@ -26,7 +26,6 @@ public class ParallelThread {
 	public InputStream input = null;
 	List<Class> testcases;
 
-	@SuppressWarnings({ "rawtypes" })
 	public void runner(String pack) throws Exception {
 		File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
 		if (!f.exists()) {
@@ -36,40 +35,32 @@ public class ParallelThread {
 				f.mkdir();
 				result = true;
 			} catch (SecurityException se) {
-				// handle it
-			}
-			if (result) {
-				System.out.println("DIR created");
+				se.printStackTrace();
 			}
 		}
 
-		File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
-		if (!adb_logs.exists()) {
-			System.out.println("creating directory: " + "ADBLogs");
-			boolean result = false;
-			try {
-				adb_logs.mkdir();
-				result = true;
-			} catch (SecurityException se) {
-				// handle it
-			}
-			if (result) {
-				System.out.println("DIR created");
-			}
-		}
 		input = new FileInputStream("config.properties");
 		prop.load(input);
 
 		if(deviceConf.getDevices() != null){
 			devices = deviceConf.getDevices();
 			deviceCount = devices.size() / 3;
+            File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+            if (!adb_logs.exists()) {
+                System.out.println("creating directory: " + "ADBLogs");
+                boolean result = false;
+                try {
+                    adb_logs.mkdir();
+                    result = true;
+                } catch (SecurityException se) {
+                    se.printStackTrace();
+                }
+            }
 			createSnapshotFolderAndroid(deviceCount,"android");
 		}
 		if(iosDevice.getIOSUDID() != null){
 			iOSdevices = iosDevice.getIOSUDIDHash();
 			deviceCount += iOSdevices.size();
-            System.out.println("iOSdevices.size():"+iOSdevices.size());
-            System.out.println(deviceCount);
             createSnapshotFolderiOS(deviceCount,"iPhone");
 		}
 
@@ -90,7 +81,6 @@ public class ParallelThread {
 		});
 
 		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-			//myTestExecutor.distributeTests(deviceCount, testcases);
 			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
 
 		}
@@ -100,15 +90,14 @@ public class ParallelThread {
 
 	}
 
-	public void createSnapshotFolderAndroid(int deviceCount,String platform) {
-		for (int i = 1; i <= deviceCount; i++) {
+	public void createSnapshotFolderAndroid(int deviceCount,String platform) throws Exception {
+		for (int i = 1; i <= (devices.size() / 3); i++) {
 			String deviceSerial = devices.get("deviceID" + i);
-			System.out.println(deviceSerial);
             createPlatformDirectory(platform);
             File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial.replaceAll("\\W", "_"));
 				if (!file.exists()) {
 					if (file.mkdir()) {
-						System.out.println("Android Device Serial Directory is created!");
+						System.out.println("Android "+ deviceSerial +" Directory is created!");
 					} else {
 						System.out.println("Failed to create directory!");
 					}
@@ -119,20 +108,17 @@ public class ParallelThread {
 	}
 
     public void createSnapshotFolderiOS(int deviceCount,String platform) {
-        for (int i = 0; i < deviceCount; i++) {
+        for (int i = 0; i < iOSdevices.size(); i++) {
             String deviceSerial = iOSdevices.get("deviceID" + i);
-            System.out.println(deviceSerial);
             createPlatformDirectory(platform);
-            File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial.replaceAll("\\W", "_"));
+            File file = new File(System.getProperty("user.dir") + "/target/screenshot/"+platform+"/"+deviceSerial);
             if (!file.exists()) {
                 if (file.mkdir()) {
-                    System.out.println("IOS Device Serial Directory is created!");
+                    System.out.println("IOS "+ deviceSerial +" Directory is created!");
                 } else {
                     System.out.println("Failed to create directory!");
                 }
             }
-
-
         }
     }
 
@@ -140,20 +126,12 @@ public class ParallelThread {
     public void createPlatformDirectory(String platform){
         File file2 = new File(System.getProperty("user.dir")+"/target/screenshot");
         if (!file2.exists()) {
-            if (file2.mkdir()) {
-                System.out.println("Directory is created!");
-            } else {
-                System.out.println("Failed to create directory!");
-            }
+            file2.mkdir();
         }
 
         File file3 = new File(System.getProperty("user.dir")+"/target/screenshot/"+platform);
         if (!file3.exists()) {
-            if (file3.mkdir()) {
-                System.out.println("Directory is created!");
-            } else {
-                System.out.println("Failed to create directory!");
-            }
+            file3.mkdir();
         }
     }
 
