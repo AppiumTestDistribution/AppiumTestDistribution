@@ -128,7 +128,8 @@ public class IOSDeviceConfiguration {
 	
 	public boolean checkiOSDevice(String UDID) throws Exception{
 		try{
-            boolean checkDeviceExists = commandPrompt.runCommand("idevice_id --list").contains(UDID);
+			String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
+			boolean checkDeviceExists = getIOSDeviceID.contains(UDID);
 			if(checkDeviceExists){
 				return true;
 			}else{

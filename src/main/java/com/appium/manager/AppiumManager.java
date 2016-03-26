@@ -33,7 +33,7 @@ public class AppiumManager {
      * bootstrap port and device UDID
      */
 
-    public AppiumServiceBuilder appiumServer(String deviceID, String methodName) throws Exception {
+    public AppiumServiceBuilder appiumServerForAndroid(String deviceID, String methodName) throws Exception {
         System.out.println("Starting Appium Server Android");
         System.out.println(deviceID);
         input = new FileInputStream("config.properties");
@@ -42,7 +42,6 @@ public class AppiumManager {
         int chromePort = ap.getPort();
         int bootstrapPort = ap.getPort();
         int selendroidPort = ap.getPort();
-        System.out.println("BootStrapPort" + bootstrapPort);
         AppiumServiceBuilder builder = new AppiumServiceBuilder()
                 .withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "info")
@@ -58,8 +57,6 @@ public class AppiumManager {
         ;
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
-        System.out.println(appiumDriverLocalService.isRunning());
-        System.out.println(builder);
         return builder;
 
     }
@@ -75,9 +72,8 @@ public class AppiumManager {
         }
     };
 
-    public AppiumServiceBuilder appiumServerIOS(String deviceID, String methodName,String webKitPort) throws Exception {
+    public AppiumServiceBuilder appiumServerForIOS(String deviceID, String methodName,String webKitPort) throws Exception {
         System.out.println("Starting Appium Server IOS");
-        System.out.println(deviceID + " : " + webKitPort);
         File classPathRoot = new File(System.getProperty("user.dir"));
         input = new FileInputStream("config.properties");
         prop.load(input);
@@ -94,12 +90,11 @@ public class AppiumManager {
                 .withArgument(GeneralServerFlag.TEMP_DIRECTORY,
                         new File(String.valueOf(classPathRoot)).getAbsolutePath() + "/target/" + "tmp_" + port)
                 .withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
+
 		/* and so on */
         ;
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
-        System.out.println(appiumDriverLocalService.isRunning());
-        System.out.println(builder);
         return builder;
 
     }
