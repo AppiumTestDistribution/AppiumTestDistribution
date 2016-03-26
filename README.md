@@ -44,6 +44,7 @@ public class Runner {
 	@Test
 	public void testApp() throws Exception {
 		ParallelThread parallelThread = new ParallelThread();
+		//parallelThread.runner(package_name_where_test_located);
 		parallelThread.runner("com.paralle.tests");
 
 	}
@@ -93,38 +94,66 @@ mvn clean -Dtest=Runner test
 
 2.Create a config.properties under your test directory, which hold the below properties
 
-For android tests
-
 ```
-APP_PATH=/Users/saikrisv/Documents/workspace/TestNGParallel/build/AndroidCalculator.apk
 APP_PACKAGE=com.android2.calculator3
 APP_ACTIVITY=com.android2.calculator3.Calculator
 RUNNER=distribute
-APPIUM_JS_PATH=/usr/local/lib/node_modules/appium/bin/appium.js
-BROWSER_TYPE=chrome
-APP_TYPE=androidnative
-PLATFORM=android
-
-```
-For iOS test
-```
-RUNNER=parallel
 APPIUM_JS_PATH=/Users/saikrisv/git/appium_master/appium/build/lib/main.js
-APP_TYPE=iosnative
-PLATFORM=ios
-BUNDLE_ID=com.***.ios
-APP_PATH=ipaFilePath
+BROWSER_TYPE=chrome
+APP_TYPE=NA
+BUNDLE_ID=
+IOS_APP_PATH=absolute path to .ipa
+ANDROID_APP_PATH=absoulte path to .apk
+
 ```
 
-Note: 
+##Tips: 
 
-* Provide the absolute path of the apk file.
+* Provide the absolute path of the apk and .ipa file.
 * APPIUM_JS_PATH should be the location of the appium.js in yout location machine.If your using the latest Appium v1.5 please make sure
   you have the source build locally. Refer the Bug(https://github.com/appium/appium/issues/6202)
 * RUNNER option can be parallel/distribute(Parallel will run  all the tests across device- which helps you to get the device coverage/ Distribute will distribute all the tests across devices which helps you faster execution)
-* APP_TYPE should be set to "androidnative/iosnative" to run native/hybrid tests and "web" to run webtests in chrome.
+* APP_TYPE should be set to "web" to run webtests on chrome in android, if running native/hybrod test set APP_TYPE="NA".
 * Make sure you have chrome browser installed on android real devices, if not please download from playstore.
 * Make sure you don't use ``` 	getDriver().resetApp()  ``` when your running your webtests.
+* On Test Failures device frame will be added to screenshot captured during execution.(For example:)
+* Specific test method can be skipped on specific platform(AndroidDriver/IOSDriver) when running tests Concurrently on the same OSX Host.
+	```
+	@Test
+ 	@SkipIf(platform = "AndroidDriver")
+	 	public void testMethodOne_8() throws Exception  {}
+
+	@Test
+ 	@SkipIf(platform = "IOSDriver")
+	 	public void testMethodOne_9() throws Exception  {}
+	 
+	```
+* Retry Annotation on test failures.
+
+	```
+	@Test(retryAnalyzer=Retry.class)
+	@RetryCount(maxRetryCount=2)
+	public void testMethodOne_8() throws Exception  {}
+	
+	```
+
+##Device Art for Android
+* Nexus 4
+* Nexus 5
+* Nexus 6
+* Nexus 6P
+* Nexus 5x
+* Yet to add S3,S4,S5 and S6
+
+##Device Art for iPhone
+
+* iPhone 5c
+* iPhone 5s
+* iPhone 6
+* iPhone 6 Plus
+* iPhone 6s
+* iPhone 6s Plus
+* iPod touch 5G
 
 ##Credits
 Thanks to
