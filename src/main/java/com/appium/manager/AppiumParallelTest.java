@@ -29,10 +29,13 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.TestListenerAdapter;
 
+import java.awt.*;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -73,6 +76,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             for (String device : devices) {
                 deviceMapping.put(device, true);
             }
+            System.out.println(deviceMapping);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to initialize framework");
@@ -179,7 +183,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (result.getStatus() == ITestResult.FAILURE) {
             String androidModel = null;
             String iosModel = null;
-            File framePath = new File(System.getProperty("user.dir") + "/src/main/resources/");
+            File framePath = new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
@@ -509,5 +513,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 throw new SkipException("Skipped because property was set to :::" + info);
             }
         }
+    }
+    public static Image getImage(final String pathAndFileName) {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(pathAndFileName);
+        return Toolkit.getDefaultToolkit().getImage(url);
     }
 }
