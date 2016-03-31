@@ -368,7 +368,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void captureScreenShot(String screenShotName) throws IOException, InterruptedException {
-        File framePath = new File(System.getProperty("user.dir") + "/src/main/resources/");
+        File framePath = new File(System.getProperty("user.dir") + "/src/main/resources/frames/");
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
             String androidModel = androidDevice.getDeviceModel(device_udid);
