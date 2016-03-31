@@ -109,11 +109,11 @@ ANDROID_APP_PATH=absoulte path to .apk
 
 ##Tips: 
 
-* Provide the absolute path of the apk and .ipa file.
-* APPIUM_JS_PATH should be the location of the appium.js in yout location machine.If your using the latest Appium v1.5 please make sure
+* Provide the absolute path of the .apk and .ipa file.
+* APPIUM_JS_PATH should be the location of the appium.js in your local machine.If your using the latest Appium v1.5 please make sure
   you have the source build locally. Refer the Bug(https://github.com/appium/appium/issues/6202)
-* RUNNER option can be parallel/distribute(Parallel will run  all the tests across device- which helps you to get the device coverage/ Distribute will distribute all the tests across devices which helps you faster execution)
-* APP_TYPE should be set to "web" to run webtests on chrome in android, if running native/hybrod test set APP_TYPE="NA".
+* RUNNER option can be parallel/distribute(Parallel will run all the tests across device- which helps you to get the device coverage/ Distribute will distribute all the tests across devices which helps you faster execution)
+* APP_TYPE should be set to "web" to run webtests on chrome in android, if running native/hybrid test, set APP_TYPE="NA".
 * Make sure you have chrome browser installed on android real devices, if not please download from playstore.
 * Make sure you don't use ``` 	getDriver().resetApp()  ``` when your running your webtests.
 * On Test Failures device frame will be added to screenshot captured during execution.(For example:)

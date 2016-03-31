@@ -116,7 +116,7 @@ public class AndroidDeviceConfiguration {
 	/*
 	 * This method gets the device model name
 	 */
-	public String deviceModel(String deviceID) {
+	public String getDeviceModel(String deviceID) {
 		String deviceModelName = null;
 		String brand = null;
 		try {

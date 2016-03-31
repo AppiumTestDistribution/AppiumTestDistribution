@@ -66,11 +66,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 System.out.println("Adding iOS devices");
                 devices.addAll(iosDevice.getIOSUDID());
             }
-//            if (devices.size() != 0) {
-//                iosDevice.setIOSWebKitProxyPorts();
-//            }
             if (androidDevice.getDeviceSerail() != null) {
-                System.out.println("Adding android devices");
+                System.out.println("Adding Android devices");
                 devices.addAll(androidDevice.getDeviceSerail());
             }
             for (String device : devices) {
@@ -113,9 +110,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             iosDevice.setIOSWebKitProxyPorts(device_udid);
             category = iosDevice.getDeviceName(device_udid).replace("\n", " ");
         } else {
-            category = androidDevice.deviceModel(device_udid);
+            category = androidDevice.getDeviceModel(device_udid);
         }
-        System.out.println(category + device_udid.replaceAll("\\W", "_"));
         parent = ExtentTestManager.startTest(methodName, "Mobile Appium Test",
                 category + device_udid.replaceAll("\\W", "_"));
         parentContext.put(Thread.currentThread().getId(), parent);
@@ -123,9 +119,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 + "/target/appiumlogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName + ".txt" + ">Logs</a>");
         if (iosDevice.checkiOSDevice(device_udid)) {
             String webKitPort = iosDevice.startIOSWebKit(device_udid);
-            return appiumMan.appiumServerIOS(device_udid, methodName, webKitPort);
+            return appiumMan.appiumServerForIOS(device_udid, methodName, webKitPort);
         } else {
-            return appiumMan.appiumServer(device_udid, methodName);
+            return appiumMan.appiumServerForAndroid(device_udid, methodName);
         }
     }
 
@@ -138,7 +134,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         	System.out.println(iosDevice.checkiOSDevice(device_udid));
         	if (iosDevice.checkiOSDevice(device_udid)) {
         		iosNative();
-        	} else {
+        	} else if(!iosDevice.checkiOSDevice(device_udid)){
         		androidNative();
         	}
         }
@@ -187,7 +183,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
-                androidModel = androidDevice.deviceModel(device_udid);
+                androidModel = androidDevice.getDeviceModel(device_udid);
                 try {
                     FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                             + androidModel + "/failed_" + result.getMethod().getMethodName() + ".png"));
@@ -326,6 +322,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized void androidNative() {
+        System.out.println("Setting Android Desired Capabilities:");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
         capabilities.setCapability("browserName", "");
@@ -346,16 +343,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         // If you want the tests on real device, make sure chrome browser is
         // installed
         capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, prop.getProperty("BROWSER_TYPE"));
-        capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
         capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
     }
 
     public void iosNative() {
-        // TODO Auto-generated method stub
+        System.out.println("Setting iOS Desired Capabilities:");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
         capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("IOS_APP_PATH"));
-        capabilities.setCapability(MobileCapabilityType.SUPPORTS_ALERTS, true);
         capabilities.setCapability("bundleId", prop.getProperty("BUNDLE_ID"));
         capabilities.setCapability("autoAcceptAlerts", true);
     }
@@ -376,7 +371,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         File framePath = new File(System.getProperty("user.dir") + "/src/main/resources/");
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
-            String androidModel = androidDevice.deviceModel(device_udid);
+            String androidModel = androidDevice.getDeviceModel(device_udid);
             try {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                         + androidModel + "/" + screenShotName + ".png"));
