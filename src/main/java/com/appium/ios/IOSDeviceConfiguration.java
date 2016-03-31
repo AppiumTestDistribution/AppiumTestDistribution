@@ -152,8 +152,9 @@ public class IOSDeviceConfiguration {
 	}
 
 	public String startIOSWebKit(String udid) throws IOException {
+		String webkitRunner= System.getProperty("user.dir")+"/src/test/resources/bin/ios-webkit-debug-proxy-launcher.js -c " + udid + ":" + deviceMap.get(udid) + " -d";
         p = Runtime.getRuntime()
-				.exec("ios_webkit_debug_proxy -c " + udid + ":" + deviceMap.get(udid) + " -d");
+				.exec(webkitRunner);
 		System.out.println("WebKit Proxy is started on device " + udid + " and with port number "
 				+ deviceMap.get(udid) + " and in thread " + Thread.currentThread().getId());
 		//Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
