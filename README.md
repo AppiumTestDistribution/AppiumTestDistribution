@@ -2,7 +2,6 @@
 
 [![Join the chat at https://gitter.im/saikrishna321/AppiumTestDistribution](https://badges.gitter.im/saikrishna321/AppiumTestDistribution.svg)](https://gitter.im/saikrishna321/AppiumTestDistribution?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/saikrishna321/AppiumTestDistribution.svg?branch=master)](https://travis-ci.org/saikrishna321/AppiumTestDistribution/builds/)
-##Run Appium Android and iOS test in parallel across devices connected
 
 ![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/conect1-anim.gif)
 
@@ -30,9 +29,12 @@ Add the below dependencies in your pom.xml
 1. Make sure Appium(1.4.16) is installed through node and if using the latest appium v1.5 make sure you have it build from the source.
 2. Make sure adb sdk is set under ANDROID_HOME.
 3. Install JDK 1.8 and set under path JAVA_HOME to get this framework working.
+4. Make sure you have ImageMagick installed and set in path, if you want to use deviceArt for screenshots.
 
 ##Sample Tests
  Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
+ If you're application is cross-platform  and you end up  building a PageObjectPattern Framework then can run the tests across android and iOS devices connected in the same Mac OSX Host.
+ (For ex: 3 android devices and 3 iOS devices connected to the same machine, you can trigger the test parallely on both platforms)
 
 ##Configure tests
 
@@ -116,7 +118,11 @@ ANDROID_APP_PATH=absoulte path to .apk
 * APP_TYPE should be set to "web" to run webtests on chrome in android, if running native/hybrid test, set APP_TYPE="NA".
 * Make sure you have chrome browser installed on android real devices, if not please download from playstore.
 * Make sure you don't use ``` 	getDriver().resetApp()  ``` when your running your webtests.
-* On Test Failures device frame will be added to screenshot captured during execution.(For example:)
+* On Test Failures device frame will be added to screenshot captured during execution,provided you the frames inside the resources folder.please download the frames(https://github.com/saikrishna321/DeviceFrames) and place them under resources folder. (For ex: /src/test/resources/frames/)
+
+<h3>Sample ImagesFramed</h3>
+https://github.com/saikrishna321/AppiumTestDistribution/tree/android_ios_concurrent/image/device_frame_example)
+
 * Specific test method can be skipped on specific platform(AndroidDriver/IOSDriver) when running tests Concurrently on the same OSX Host.
 	```
 	@Test
