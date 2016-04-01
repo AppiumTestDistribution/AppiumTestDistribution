@@ -188,20 +188,22 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                             + androidModel + "/failed_" + result.getMethod().getMethodName() + ".png"));
                     File[] files1 = framePath.listFiles();
-                    for (int i = 0; i < files1.length; i++) {
-                        if (files1[i].isFile()) { //this line weeds out other directories/folders
-                            Path p = Paths.get(files1[i].toString());
-                            String fileName = p.getFileName().toString().toLowerCase();
-                            if (androidModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
-                                try {
-                                    imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
-                                            + androidModel + "/failed_" + result.getMethod().getMethodName() + ".png", System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
-                                            + androidModel + "/failed_" + result.getMethod().getMethodName() + "_framed.png");
-                                    break;
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (IM4JavaException e) {
-                                    e.printStackTrace();
+                    if(framePath.exists()){
+                        for (int i = 0; i < files1.length; i++) {
+                            if (files1[i].isFile()) { //this line weeds out other directories/folders
+                                Path p = Paths.get(files1[i].toString());
+                                String fileName = p.getFileName().toString().toLowerCase();
+                                if (androidModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
+                                    try {
+                                        imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                                                + androidModel + "/failed_" + result.getMethod().getMethodName() + ".png", System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                                                + androidModel + "/failed_" + result.getMethod().getMethodName() + "_framed.png");
+                                        break;
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    } catch (IM4JavaException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }
@@ -218,20 +220,22 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
                             + iosModel + "/failed_" + result.getMethod().getMethodName() + ".png"));
                     File[] files1 = framePath.listFiles();
-                    for (int i = 0; i < files1.length; i++) {
-                        if (files1[i].isFile()) {
-                            Path p = Paths.get(files1[i].toString());
-                            String fileName = p.getFileName().toString().toLowerCase();
-                            if (iosModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
-                                try {
-                                    imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
-                                            + iosModel + "/failed_" + result.getMethod().getMethodName() + ".png", System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
-                                            + iosModel + "/failed_" + result.getMethod().getMethodName() + "_framed.png");
-                                    break;
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (IM4JavaException e) {
-                                    e.printStackTrace();
+                    if(framePath.exists()){
+                        for (int i = 0; i < files1.length; i++) {
+                            if (files1[i].isFile()) {
+                                Path p = Paths.get(files1[i].toString());
+                                String fileName = p.getFileName().toString().toLowerCase();
+                                if (iosModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
+                                    try {
+                                        imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
+                                                + iosModel + "/failed_" + result.getMethod().getMethodName() + ".png", System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
+                                                + iosModel + "/failed_" + result.getMethod().getMethodName() + "_framed.png");
+                                        break;
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    } catch (IM4JavaException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }
