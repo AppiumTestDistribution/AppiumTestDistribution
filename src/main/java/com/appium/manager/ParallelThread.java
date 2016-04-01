@@ -59,6 +59,7 @@ public class ParallelThread {
 			createSnapshotFolderAndroid(deviceCount,"android");
 		}
 		if(iosDevice.getIOSUDID() != null){
+			iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
 			iOSdevices = iosDevice.getIOSUDIDHash();
 			deviceCount += iOSdevices.size();
             createSnapshotFolderiOS(deviceCount,"iPhone");

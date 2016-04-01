@@ -3,11 +3,12 @@ package com.appium.ios;
 import com.appium.manager.AvailabelPorts;
 import com.appium.utils.CommandPrompt;
 
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class IOSDeviceConfiguration {
 	public ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
@@ -16,6 +17,8 @@ public class IOSDeviceConfiguration {
 	public HashMap<String, String> deviceMap = new HashMap<String, String>();
 	Map<String, String> devices = new HashMap<>();
 	public Process p;
+	public Properties prop = new Properties();
+	public InputStream input = null;
 
 	HashMap appiumServerProcess = new HashMap();
 
@@ -151,9 +154,18 @@ public class IOSDeviceConfiguration {
         return deviceMap;
 	}
 
-	public String startIOSWebKit(String udid) throws IOException {
-		String webkitRunner= System.getProperty("user.dir")+"/src/test/resources/bin/ios-webkit-debug-proxy-launcher.js -c " + udid + ":" + deviceMap.get(udid) + " -d";
-        p = Runtime.getRuntime()
+	public String startIOSWebKit(String udid) throws IOException, InterruptedException {
+		input = new FileInputStream("config.properties");
+		prop.load(input);
+		String serverPath=prop.getProperty("APPIUM_JS_PATH");
+		File file = new File(serverPath);
+		File curentPath = new File(file.getParent());
+		System.out.println(curentPath);
+		file = new File(curentPath+"/.."+"/..");
+		String ios_web_lit_proxy_runner=file.getCanonicalPath()+"/bin/ios-webkit-debug-proxy-launcher.js";
+		String webkitRunner= ios_web_lit_proxy_runner+ " -c " + udid + ":" + deviceMap.get(udid) + " -d";
+		System.out.println(webkitRunner);
+		p = Runtime.getRuntime()
 				.exec(webkitRunner);
 		System.out.println("WebKit Proxy is started on device " + udid + " and with port number "
 				+ deviceMap.get(udid) + " and in thread " + Thread.currentThread().getId());
@@ -184,5 +196,24 @@ public class IOSDeviceConfiguration {
 		}
 
 
+	}
+
+	public void checkExecutePermissionForIOSDebugProxyLauncher() throws IOException {
+		input = new FileInputStream("config.properties");
+		prop.load(input);
+		String serverPath=prop.getProperty("APPIUM_JS_PATH");
+		File file = new File(serverPath);
+		File curentPath = new File(file.getParent());
+		System.out.println(curentPath);
+		file = new File(curentPath+"/.."+"/..");
+		File executePermission = new File(file.getCanonicalPath()+"/bin/ios-webkit-debug-proxy-launcher.js");
+		if(executePermission.exists()){
+			if(executePermission.canExecute() == false){
+				executePermission.setExecutable(true);
+				System.out.println("Access Granted for iOSWebKitProxyLauncher");
+			}else{
+				System.out.println("iOSWebKitProxyLauncher File already has access to execute");
+			}
+		}
 	}
 }

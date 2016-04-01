@@ -179,12 +179,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (result.getStatus() == ITestResult.FAILURE) {
             String androidModel = null;
             String iosModel = null;
-            File framePath = new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
                 androidModel = androidDevice.getDeviceModel(device_udid);
                 try {
+                    File framePath = new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
                     FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                             + androidModel + "/failed_" + result.getMethod().getMethodName() + ".png"));
                     File[] files1 = framePath.listFiles();
@@ -209,10 +209,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                    System.out.println("Resource Directory was not found");
                 }
             } else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
                 iosModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
                 try {
+                    File framePath = new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
                     FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
                             + iosModel + "/failed_" + result.getMethod().getMethodName() + ".png"));
                     File[] files1 = framePath.listFiles();
@@ -237,6 +239,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                    System.out.println("Resource Directory was not found");
                 }
             }
 
