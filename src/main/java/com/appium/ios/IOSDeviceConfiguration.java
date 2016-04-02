@@ -2,13 +2,13 @@ package com.appium.ios;
 
 import com.appium.manager.AvailabelPorts;
 import com.appium.utils.CommandPrompt;
-
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {
 	public ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
@@ -19,8 +19,7 @@ public class IOSDeviceConfiguration {
 	public Process p;
 	public Properties prop = new Properties();
 	public InputStream input = null;
-
-	HashMap appiumServerProcess = new HashMap();
+  public static ConcurrentHashMap<Long, Long> appiumServerProcess = new ConcurrentHashMap<>();
 
 	public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {
 		boolean checkMobileDevice = commandPrompt.runCommand("brew list").contains("ideviceinstaller");
@@ -165,15 +164,32 @@ public class IOSDeviceConfiguration {
 		String ios_web_lit_proxy_runner=file.getCanonicalPath()+"/bin/ios-webkit-debug-proxy-launcher.js";
 		String webkitRunner= ios_web_lit_proxy_runner+ " -c " + udid + ":" + deviceMap.get(udid) + " -d";
 		System.out.println(webkitRunner);
-		p = Runtime.getRuntime()
+      Process p1 = Runtime.getRuntime()
 				.exec(webkitRunner);
+
 		System.out.println("WebKit Proxy is started on device " + udid + " and with port number "
 				+ deviceMap.get(udid) + " and in thread " + Thread.currentThread().getId());
 		//Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
-		appiumServerProcess.put(Thread.currentThread().getId(),getPid(p));
+      appiumServerProcess.put(Thread.currentThread().getId(),getPidOfProcess(p1));
+      System.out.println("Process ID's:"+appiumServerProcess);
 		return deviceMap.get(udid);
 	}
 
+    public long getPidOfProcess(Process p) {
+        long pid = -1;
+
+        try {
+            if (p.getClass().getName().equals("java.lang.UNIXProcess")) {
+                Field f = p.getClass().getDeclaredField("pid");
+                f.setAccessible(true);
+                pid = f.getLong(p);
+                f.setAccessible(false);
+            }
+        } catch (Exception e) {
+            pid = -1;
+        }
+        return pid;
+    }
 	public int getPid(Process process) {
 
 		try {
@@ -189,13 +205,12 @@ public class IOSDeviceConfiguration {
 	}
 
 	public void destroyIOSWebKitProxy() throws IOException, InterruptedException {
-		if (appiumServerProcess.get(Thread.currentThread().getId()) != "-1") {
+		if (appiumServerProcess.get(Thread.currentThread().getId()).toString() != "-1") {
 			String command = "kill -9 " + appiumServerProcess.get(Thread.currentThread().getId());
-			System.out.println("******************" + command);
+        System.out.println("Kills webkit proxy");
+        System.out.println("******************" + command);
 			Runtime.getRuntime().exec(command);
 		}
-
-
 	}
 
 	public void checkExecutePermissionForIOSDebugProxyLauncher() throws IOException {

@@ -128,25 +128,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
         child = ExtentTestManager
                 .startTest(methodName).assignCategory(category + device_udid.replaceAll("\\W", "_"));
+        Thread.sleep(3000);
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-            androidWeb();
-        } else {
-        	System.out.println(iosDevice.checkiOSDevice(device_udid));
-        	if (iosDevice.checkiOSDevice(device_udid)) {
-        		iosNative();
-        	} else if(!iosDevice.checkiOSDevice(device_udid)){
-        		androidNative();
-        	}
-        }
-
-        Thread.sleep(5000);
-        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-        	driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
+        	driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
         } else{
         	if (iosDevice.checkiOSDevice(device_udid)) {
-        		driver = new IOSDriver<>(appiumMan.getAppiumUrl(), capabilities);
+        		driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosNative());
         	} else if (!iosDevice.checkiOSDevice(device_udid)){
-        		driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), capabilities);
+        		driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
         	}
         }
 
@@ -328,38 +317,44 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         androidDevice.closeRunningApp(device_udid, prop.getProperty("APP_PACKAGE"));
     }
 
-    public synchronized void androidNative() {
+    public synchronized DesiredCapabilities androidNative() {
         System.out.println("Setting Android Desired Capabilities:");
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
-        capabilities.setCapability("browserName", "");
+        DesiredCapabilities androidCapabilities = new DesiredCapabilities();
+        androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
+        androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
+        androidCapabilities.setCapability("browserName", "");
         if (Integer.parseInt(androidDevice.deviceOS(device_udid)) <= 16) {
-            capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
+            androidCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
         }
-        capabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
-        capabilities.setCapability(MobileCapabilityType.APP_PACKAGE, prop.getProperty("APP_PACKAGE"));
-        capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY, prop.getProperty("APP_ACTIVITY"));
+        androidCapabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
+        androidCapabilities.setCapability(MobileCapabilityType.APP_PACKAGE, prop.getProperty("APP_PACKAGE"));
+        androidCapabilities.setCapability(MobileCapabilityType.APP_ACTIVITY, prop.getProperty("APP_ACTIVITY"));
         if (prop.getProperty("APP_WAIT_ACTIVITY") != null) {
-            capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, prop.getProperty("APP_WAIT_ACTIVITY"));
+            androidCapabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, prop.getProperty("APP_WAIT_ACTIVITY"));
         }
+        return androidCapabilities;
     }
 
-    public void androidWeb() {
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.0.X");
+    public synchronized DesiredCapabilities androidWeb() {
+        DesiredCapabilities androidWebCapabilities = new DesiredCapabilities();
+        androidWebCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
+        androidWebCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.0.X");
         // If you want the tests on real device, make sure chrome browser is
         // installed
-        capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, prop.getProperty("BROWSER_TYPE"));
-        capabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
+        androidWebCapabilities.setCapability(MobileCapabilityType.BROWSER_NAME, prop.getProperty("BROWSER_TYPE"));
+        androidWebCapabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
+        return androidWebCapabilities;
     }
 
-    public void iosNative() {
+    public synchronized DesiredCapabilities iosNative() {
+        DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
-        capabilities.setCapability("deviceName", "iPhone");
-        capabilities.setCapability("platformVersion", "9.0");
-        capabilities.setCapability("app", prop.getProperty("IOS_APP_PATH"));
-        capabilities.setCapability("bundleId", prop.getProperty("BUNDLE_ID"));
-        capabilities.setCapability("autoAcceptAlerts", true);
+        iOSCapabilities.setCapability("platformVersion", "9.0");
+        iOSCapabilities.setCapability("app", prop.getProperty("IOS_APP_PATH"));
+        iOSCapabilities.setCapability("bundleId", prop.getProperty("BUNDLE_ID"));
+        iOSCapabilities.setCapability("autoAcceptAlerts", true);
+        iOSCapabilities.setCapability("deviceName", "iPhone");
+        return iOSCapabilities;
     }
 
     public void deleteAppIOS(String bundleID) throws InterruptedException, IOException {
