@@ -118,10 +118,10 @@ ANDROID_APP_PATH=absoulte path to .apk
 * APP_TYPE should be set to "web" to run webtests on chrome in android, if running native/hybrid test, set APP_TYPE="NA".
 * Make sure you have chrome browser installed on android real devices, if not please download from playstore.
 * Make sure you don't use ``` 	getDriver().resetApp()  ``` when your running your webtests.
-* On Test Failures device frame will be added to screenshot captured during execution,provided you the frames inside the resources folder.please download the frames(https://github.com/saikrishna321/DeviceFrames) and place them under resources folder. (For ex: /src/test/resources/frames/)
+* On Test Failures device frame will be added to screenshot captured during execution,provided you have the frames inside the resources folder.please download the frames(https://github.com/saikrishna321/DeviceFrames) and place them under resources folder. (For ex: /src/test/resources/frames/)
 
 <h3>Sample ImagesFramed</h3>
-https://github.com/saikrishna321/AppiumTestDistribution/tree/android_ios_concurrent/image/device_frame_example)
+https://github.com/saikrishna321/AppiumTestDistribution/tree/master/image/device_frame_example)
 
 * Specific test method can be skipped on specific platform(AndroidDriver/IOSDriver) when running tests Concurrently on the same OSX Host.
 	```
