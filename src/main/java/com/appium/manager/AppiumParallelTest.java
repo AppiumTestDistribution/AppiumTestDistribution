@@ -370,35 +370,38 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void captureScreenShot(String screenShotName) throws IOException, InterruptedException {
-        File framePath = new File(System.getProperty("user.dir") + "/src/main/resources/frames/");
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
             String androidModel = androidDevice.getDeviceModel(device_udid);
             try {
+                File framePath = new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                         + androidModel + "/" + screenShotName + ".png"));
                 File[] files1 = framePath.listFiles();
-                for (int i = 0; i < files1.length; i++) {
-                    if (files1[i].isFile()) { //this line weeds out other directories/folders
-                        System.out.println(files1[i]);
-                        Path p = Paths.get(files1[i].toString());
-                        String fileName = p.getFileName().toString().toLowerCase();
-                        if (androidModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
-                            try {
-                                imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
-                                        + androidModel + "/" + screenShotName + ".png", System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
-                                        + androidModel + "/" + screenShotName + "_framed.png");
-                                ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
-                                        + androidModel + "/" + screenShotName + "_framed.png", screenShotName.toUpperCase());
-                                break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (IM4JavaException e) {
-                                e.printStackTrace();
+                if(framePath.exists()){
+                    for (int i = 0; i < files1.length; i++) {
+                        if (files1[i].isFile()) { //this line weeds out other directories/folders
+                            System.out.println(files1[i]);
+                            Path p = Paths.get(files1[i].toString());
+                            String fileName = p.getFileName().toString().toLowerCase();
+                            if (androidModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
+                                try {
+                                    imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                                            + androidModel + "/" + screenShotName + ".png", System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                                            + androidModel + "/" + screenShotName + "_framed.png");
+                                    ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                                            + androidModel + "/" + screenShotName + "_framed.png", screenShotName.toUpperCase());
+                                    break;
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (IM4JavaException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
                 }
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -406,26 +409,29 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
             String iosModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
             try {
+                File framePath = new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
                         + iosModel + "/" + screenShotName + ".png"));
                 File[] files1 = framePath.listFiles();
-                for (int i = 0; i < files1.length; i++) {
-                    if (files1[i].isFile()) { //this line weeds out other directories/folders
-                        System.out.println(files1[i]);
-                        Path p = Paths.get(files1[i].toString());
-                        String fileName = p.getFileName().toString().toLowerCase();
-                        if (iosModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
-                            try {
-                                imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
-                                        + iosModel + "/" + screenShotName + ".png", System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
-                                        + iosModel + "/" + screenShotName + "_framed.png");
-                                ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
-                                        + iosModel + "/" + screenShotName + "_framed.png", screenShotName.toUpperCase());
-                                break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (IM4JavaException e) {
-                                e.printStackTrace();
+                if(framePath.exists()){
+                    for (int i = 0; i < files1.length; i++) {
+                        if (files1[i].isFile()) { //this line weeds out other directories/folders
+                            System.out.println(files1[i]);
+                            Path p = Paths.get(files1[i].toString());
+                            String fileName = p.getFileName().toString().toLowerCase();
+                            if (iosModel.toString().toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
+                                try {
+                                    imageUtils.wrapDeviceFrames(files1[i].toString(), System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
+                                            + iosModel + "/" + screenShotName + ".png", System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
+                                            + iosModel + "/" + screenShotName + "_framed.png");
+                                    ExtentTestManager.logOutPut(System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid.replaceAll("\\W", "_") + "/"
+                                            + iosModel + "/" + screenShotName + "_framed.png", screenShotName.toUpperCase());
+                                    break;
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (IM4JavaException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
