@@ -232,7 +232,6 @@ public class MyTestExecutor {
 	}
 
 	public void runTestCase(Class testCase) {
-		System.out.println("Running test in parallle:::"+testCase);
 		Result result = JUnitCore.runClasses(testCase);
 		for (Failure failure : result.getFailures()) {
 			System.out.println(failure.toString());
