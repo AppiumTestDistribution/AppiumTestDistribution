@@ -1,5 +1,9 @@
 package com.appium.executor;
 
+import com.appium.manager.PackageUtil;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -26,15 +30,24 @@ import static java.util.Arrays.asList;
 public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
 	public static Properties prop = new Properties();
-
+	public List<Class> testcases = new ArrayList<>();
 	@SuppressWarnings("rawtypes")
-	public void distributeTests(int deviceCount, List<Class> testcases) {
+	public void distributeTests(int deviceCount) {
+		try {
+			PackageUtil.getClasses("output").stream().forEach(s -> {
+                if (s.toString().contains("IT")) {
+                    System.out.println("forEach: " + testcases.add((Class) s));
+                }
+            });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
 		for (final Class testFile : testcases) {
 			executorService.submit(new Runnable() {
 				public void run() {
 					System.out.println("Running test file: " + testFile.getName());
-					testRunnerTestNg(testFile);
+					runTestCase(testFile);
 
 				}
 			});
@@ -208,6 +221,13 @@ public class MyTestExecutor {
 			methodsList.add(method);
 		});
 		return testsMap;
+	}
+
+	public void runTestCase(Class testCase) {
+		Result result = JUnitCore.runClasses(testCase);
+		for (Failure failure : result.getFailures()) {
+			System.out.println(failure.toString());
+		}
 	}
 
 }

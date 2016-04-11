@@ -73,6 +73,28 @@
 			<artifactId>im4java</artifactId>
 			<version>1.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>1.2.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.saikrishna321</groupId>
+			<artifactId>cucumber-jvm-parallel-plugin</artifactId>
+			<version>2.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>1.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit-dep</artifactId>
+			<version>4.8.2</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -88,6 +110,29 @@
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.saikrishna321</groupId>
+				<artifactId>cucumber-jvm-parallel-plugin</artifactId>
+				<version>2.0.5</version>
+				<executions>
+					<execution>
+						<id>generateRunners</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>generateRunners</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>src/test/java/output</outputDirectory>
+							<glue>com.test.cucumber.stepdefinitions</glue>
+							<featuresDirectory>src/test/resources/features/</featuresDirectory>
+							<cucumberOutputDir>target</cucumberOutputDir>
+							<format>json,html</format>
+							<tags>"@smoke"</tags>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

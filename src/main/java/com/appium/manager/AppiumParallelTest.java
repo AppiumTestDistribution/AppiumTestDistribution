@@ -50,6 +50,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public String category;
     public ExtentTest parent;
     public ExtentTest child;
+    public  String androidModel = null;
+    public String iosModel = null;
 
     private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
     private static ArrayList<String> devices = new ArrayList<String>();
@@ -112,11 +114,13 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else {
             category = androidDevice.getDeviceModel(device_udid);
         }
-        parent = ExtentTestManager.startTest(methodName, "Mobile Appium Test",
-                category + device_udid.replaceAll("\\W", "_"));
-        parentContext.put(Thread.currentThread().getId(), parent);
-        ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
-                + "/target/appiumlogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName + ".txt" + ">Logs</a>");
+        if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
+            parent = ExtentTestManager.startTest(methodName, "Mobile Appium Test",
+                    category + device_udid.replaceAll("\\W", "_"));
+            parentContext.put(Thread.currentThread().getId(), parent);
+            ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
+                    + "/target/appiumlogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName + ".txt" + ">Logs</a>");
+        }
         if (iosDevice.checkiOSDevice(device_udid)) {
             String webKitPort = iosDevice.startIOSWebKit(device_udid);
             return appiumMan.appiumServerForIOS(device_udid, methodName, webKitPort);
@@ -126,8 +130,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
-        child = ExtentTestManager
-                .startTest(methodName).assignCategory(category + device_udid.replaceAll("\\W", "_"));
+        if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
+            child = ExtentTestManager
+                    .startTest(methodName).assignCategory(category + device_udid.replaceAll("\\W", "_"));
+        }
         Thread.sleep(3000);
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
         	driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
@@ -166,8 +172,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         }
         if (result.getStatus() == ITestResult.FAILURE) {
-            String androidModel = null;
-            String iosModel = null;
             ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
@@ -286,8 +290,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
     public synchronized void killAppiumServer() throws InterruptedException, IOException {
         System.out.println("**************ClosingAppiumSession****************");
-        ExtentManager.getInstance().endTest(parent);
-        ExtentManager.getInstance().flush();
+        if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
+            ExtentManager.getInstance().endTest(parent);
+            ExtentManager.getInstance().flush();
+        }
         appiumMan.destroyAppiumNode();
         if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
             iosDevice.destroyIOSWebKitProxy();
