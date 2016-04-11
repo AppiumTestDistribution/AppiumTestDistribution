@@ -62,21 +62,29 @@ public class MyTestExecutor {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void parallelTests(int deviceCount, List<Class> testCases) throws InterruptedException {
-
+	public void parallelTests(int deviceCount) throws InterruptedException {
+		try {
+			PackageUtil.getClasses("output").stream().forEach(s -> {
+				if (s.toString().contains("IT")) {
+					System.out.println("forEach: " + testcases.add((Class) s));
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		for (int i = 0; i < deviceCount; i++) {
 			final int x = i;
 			Thread t = new Thread(new Runnable() {
 
 				public void run() {
 					// TODO Auto-generated method stub
-					runTests(testCases);
+					runTests(testcases);
 				}
 
 				private void runTests(List<Class> testCases) {
 					for (Class test : testCases) {
-						System.out.println("*****CurrentRunningThread" + Thread.currentThread().getName() + test);
-						testRunnerTestNg(test);
+						System.out.println("*****CurrentRunningThread" + Thread.currentThread().getId() + test);
+						runTestCase(test);
 					}
 				}
 			});
@@ -224,6 +232,7 @@ public class MyTestExecutor {
 	}
 
 	public void runTestCase(Class testCase) {
+		System.out.println("Running test in parallle:::"+testCase);
 		Result result = JUnitCore.runClasses(testCase);
 		for (Failure failure : result.getFailures()) {
 			System.out.println(failure.toString());

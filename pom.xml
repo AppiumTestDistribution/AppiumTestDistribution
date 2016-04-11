@@ -128,7 +128,6 @@
 							<glue>com.test.cucumber.stepdefinitions</glue>
 							<featuresDirectory>src/test/resources/features/</featuresDirectory>
 							<cucumberOutputDir>target</cucumberOutputDir>
-							<format>json,html</format>
 							<tags>"@smoke"</tags>
 						</configuration>
 					</execution>

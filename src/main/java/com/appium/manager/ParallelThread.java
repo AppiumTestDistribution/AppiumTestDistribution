@@ -95,6 +95,9 @@ public class ParallelThread {
 			if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
 				myTestExecutor.distributeTests(deviceCount);
 			}
+			else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+				myTestExecutor.parallelTests(deviceCount);
+			}
 		}
 	}
 
