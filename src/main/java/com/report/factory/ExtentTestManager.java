@@ -47,7 +47,6 @@ public class ExtentTestManager { // new
 		sysInfo.put("AppiumVersion", "3.4.0");
 		sysInfo.put("RunnerMode",prop.getProperty("RUNNER").toUpperCase());
 		extent.addSystemInfo(sysInfo);
-		extent.loadConfig(new File(System.getProperty("user.dir")+"/extent.xml"));
 		return test;
 	}
 

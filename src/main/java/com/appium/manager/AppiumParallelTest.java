@@ -289,7 +289,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized void killAppiumServer() throws InterruptedException, IOException {
-        System.out.println("**************ClosingAppiumSession****************");
+        System.out.println("**************ClosingAppiumSession****************"+Thread.currentThread().getId());
         if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
             ExtentManager.getInstance().endTest(parent);
             ExtentManager.getInstance().flush();

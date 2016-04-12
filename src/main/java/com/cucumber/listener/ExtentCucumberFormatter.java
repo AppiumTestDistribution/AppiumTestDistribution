@@ -158,6 +158,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public void endOfScenarioLifeCycle(Scenario scenario) {
         parentContext.get(Thread.currentThread().getId()).appendChild(child);
         ExtentManager.getInstance().flush();
+        getDriver().quit();
     }
 
     public void done() {
