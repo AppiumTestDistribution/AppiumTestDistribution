@@ -76,7 +76,6 @@
 			<groupId>info.cukes</groupId>
 			<artifactId>cucumber-junit</artifactId>
 			<version>1.2.4</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.saikrishna321</groupId>
