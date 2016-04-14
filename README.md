@@ -26,11 +26,18 @@ Add the below dependencies in your pom.xml
 
 ##Prerequisites
 
+###Android:
 1. Make sure Appium(1.4.16) is installed through node and if using the latest appium v1.5 make sure you have it build from the source.
 2. Make sure adb sdk is set under ANDROID_HOME.
 3. Install JDK 1.8 and set under path JAVA_HOME to get this framework working.
-4. Make sure you have ImageMagick installed and set in path, if you want to use deviceArt for screenshots.
+4. Device's developer option should be enabled
 
+### IOS (Real device):
+1. A Mac machine must have XCode
+2. libimobiledevice and ideviceinstaller need to be installed
+e.g `brew install libimobiledevice libplist libtasn1 usbmuxd openssl ideviceinstaller`
+3. Developer option must be enable in attached iOS device (Settings>Developer>Enable UI Automation)
+4. Appium instruments only on debug application (*.app or *.ipa), any application in release mode will not work
 ##Sample Tests
  Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
  If you're application is cross-platform  and you end up  building a PageObjectPattern Framework then can run the tests across android and iOS devices connected in the same Mac OSX Host.
@@ -100,7 +107,16 @@ mvn clean -Dtest=Runner test
 APP_PACKAGE=com.android2.calculator3
 APP_ACTIVITY=com.android2.calculator3.Calculator
 RUNNER=distribute
-APPIUM_JS_PATH=/Users/saikrisv/git/appium_master/appium/build/lib/main.js
+
+## For appium 1.5.X users (If appium installed using npm)
+APPIUM_JS_PATH=/usr/local/lib/node_modules/appium/build/lib/main.js
+
+## For appium 1.4.13 users (GUI)
+APPIUM_JS_PATH=/Appium.app/Contents/Resources/node_modules/appium/bin/appium.js
+
+## For appium 1.4.16 users (Non-GUI -- Installed using npm)
+APPIUM_JS_PATH=/usr/local/lib/node_modules/appium/bin/appium.js
+
 BROWSER_TYPE=chrome
 APP_TYPE=NA
 BUNDLE_ID=
@@ -175,6 +191,28 @@ Your should see report file generated as ExtentReport.html under the target fold
 
 ##WIP
 iOS WebTest using Safari
+
+##FAQ
+Q. Is this framework supports to run multiple IOS simulators?
+
+A. No, Apple does not allow to do so.
+
+Q. Unable to instruments application or instruments crashed on start up?
+
+A. Below are few possible causes
+* (app/ipa) should be in debug mode
+* (app) targeted to emulator will not be work with real device and vice versa
+* Check device's developer option
+
+Q. Unable to install application during automation?
+
+A. a quick would be try to install application using "ideviceinstaller -i ipa_name", if that does not work, check app is built with valid provisioning profile.
+
+Q. Can i run any test app (e.g:"Wordpress") on real devices?
+
+A. Yes, with Valid provisioning profile this app can be installed to your device
+(Note: Here, application needs to be signed by valid developer certificate)
+
 
 ## License
 
