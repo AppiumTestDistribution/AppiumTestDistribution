@@ -38,10 +38,11 @@ Add the below dependencies in your pom.xml
 e.g `brew install libimobiledevice libplist libtasn1 usbmuxd openssl ideviceinstaller`
 3. Developer option must be enable in attached iOS device (Settings>Developer>Enable UI Automation)
 4. Appium instruments only on debug application (*.app or *.ipa), any application in release mode will not work
-##Sample Tests
+
+### Sample Tests
  Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
  If you're application is cross-platform  and you end up  building a PageObjectPattern Framework then can run the tests across android and iOS devices connected in the same Mac OSX Host.
- (For ex: 3 android devices and 3 iOS devices connected to the same machine, you can trigger the test parallely on both platforms)
+ (For ex: 3 android devices and 3 iOS devices connected to the same machine, you can trigger the test parallel on both platforms)
 
 ##Configure tests
 
