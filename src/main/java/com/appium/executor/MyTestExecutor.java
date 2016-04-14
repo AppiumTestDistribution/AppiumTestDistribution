@@ -16,6 +16,7 @@ import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -58,6 +59,7 @@ public class MyTestExecutor {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		deleteOutputDirectory();
 		System.out.println("ending");
 	}
 
@@ -96,7 +98,7 @@ public class MyTestExecutor {
 		for (Thread t : threads) {
 			t.join();
 		}
-
+		deleteOutputDirectory();
 		System.out.println("Finally complete");
 	}
 
@@ -235,6 +237,14 @@ public class MyTestExecutor {
 		Result result = JUnitCore.runClasses(testCase);
 		for (Failure failure : result.getFailures()) {
 			System.out.println(failure.toString());
+		}
+	}
+
+	public void deleteOutputDirectory(){
+		File delete_output= new File(System.getProperty("user.dir")+"/src/test/java/output/");
+		File[] files = delete_output.listFiles();
+		for (File file : files) {
+			file.delete();
 		}
 	}
 
