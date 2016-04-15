@@ -70,7 +70,7 @@ public class UserBaseTest extends AppiumParallelTest {
 	@BeforeMethod()
 	public void startApp(Method name) throws Exception {
  		driver = startAppiumServerInParallel(name.getName());
-        	startLogResults(name.getName());
+        startLogResults(name.getName());
 	}
 
 	@AfterMethod()
@@ -196,7 +196,7 @@ iOS WebTest using Safari
 ##FAQ
 Q. Is this framework supports to run multiple IOS simulators?
 
-A. No, Apple does not allow to do so.
+A. No, multiple simulator will be supported in appium's future releases.
 
 Q. Unable to instruments application or instruments crashed on start up?
 
