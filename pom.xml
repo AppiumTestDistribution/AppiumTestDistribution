@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.appium.android</groupId>
 	<artifactId>TestDistribution</artifactId>
-	<version>2.7.7-SNAPSHOT</version>
+	<version>2.7.8-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<repositories>
 		<repository>

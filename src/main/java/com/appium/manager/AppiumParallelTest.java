@@ -50,8 +50,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public String category;
     public ExtentTest parent;
     public ExtentTest child;
-    public  String androidModel = null;
-    public String iosModel = null;
     public String deviceModel=null;
 
     private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
@@ -111,7 +109,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         if (iosDevice.checkiOSDevice(device_udid)) {
             iosDevice.setIOSWebKitProxyPorts(device_udid);
-            category = iosDevice.getDeviceName(device_udid).replace("\n", " ");
+            category = iosDevice.getDeviceName(device_udid).replace(" ", "_");
         } else {
             category = androidDevice.getDeviceModel(device_udid);
         }
@@ -131,6 +129,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
+        ExtentTestManager.loadConfig();
         if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
             child = ExtentTestManager
                     .startTest(methodName).assignCategory(category + device_udid.replaceAll("\\W", "_"));
