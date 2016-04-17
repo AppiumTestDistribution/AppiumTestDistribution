@@ -74,21 +74,31 @@ public class ParallelThread {
 
 		testcases = new ArrayList<Class>();
 
-		// final String pack = "com.paralle.tests"; // Or any other package
-		PackageUtil.getClasses(pack).stream().forEach(s -> {
-			if (s.toString().contains("Test")) {
-				System.out.println("forEach: " + testcases.add((Class) s));
+		if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
+			// final String pack = "com.paralle.tests"; // Or any other package
+			PackageUtil.getClasses(pack).stream().forEach(s -> {
+				if (s.toString().contains("Test")) {
+					System.out.println("forEach: " + testcases.add((Class) s));
+				}
+			});
+
+			if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
+
 			}
-		});
-
-		if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
-
-		}
-		else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-			myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
+			else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
+			}
 		}
 
+		if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")){
+			if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+				myTestExecutor.distributeTests(deviceCount);
+			}
+			else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+				myTestExecutor.parallelTests(deviceCount);
+			}
+		}
 	}
 
 	public void createSnapshotFolderAndroid(int deviceCount,String platform) throws Exception {

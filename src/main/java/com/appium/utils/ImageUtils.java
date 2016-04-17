@@ -14,11 +14,10 @@ import java.util.List;
  * Created by saikrisv on 17/03/16.
  */
 public class ImageUtils {
-    ConvertCmd cmd = new ConvertCmd();
-    IMOperation op = new IMOperation();
-
     public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed, String framedDeviceScreen)
             throws InterruptedException, IOException, IM4JavaException {
+        IMOperation op = new IMOperation();
+        ConvertCmd cmd = new ConvertCmd();
         op.addImage(deviceFrame);
         op.addImage(deviceScreenToBeFramed);
         op.gravity("center");

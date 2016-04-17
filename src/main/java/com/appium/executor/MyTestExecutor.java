@@ -1,5 +1,9 @@
 package com.appium.executor;
 
+import com.appium.manager.PackageUtil;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -12,6 +16,7 @@ import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -26,15 +31,24 @@ import static java.util.Arrays.asList;
 public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
 	public static Properties prop = new Properties();
-
+	public List<Class> testcases = new ArrayList<>();
 	@SuppressWarnings("rawtypes")
-	public void distributeTests(int deviceCount, List<Class> testcases) {
+	public void distributeTests(int deviceCount) {
+		try {
+			PackageUtil.getClasses("output").stream().forEach(s -> {
+                if (s.toString().contains("IT")) {
+                    System.out.println("forEach: " + testcases.add((Class) s));
+                }
+            });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
 		for (final Class testFile : testcases) {
 			executorService.submit(new Runnable() {
 				public void run() {
 					System.out.println("Running test file: " + testFile.getName());
-					testRunnerTestNg(testFile);
+					runTestCase(testFile);
 
 				}
 			});
@@ -45,25 +59,34 @@ public class MyTestExecutor {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		deleteOutputDirectory();
 		System.out.println("ending");
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void parallelTests(int deviceCount, List<Class> testCases) throws InterruptedException {
-
+	public void parallelTests(int deviceCount) throws InterruptedException {
+		try {
+			PackageUtil.getClasses("output").stream().forEach(s -> {
+				if (s.toString().contains("IT")) {
+					System.out.println("forEach: " + testcases.add((Class) s));
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		for (int i = 0; i < deviceCount; i++) {
 			final int x = i;
 			Thread t = new Thread(new Runnable() {
 
 				public void run() {
 					// TODO Auto-generated method stub
-					runTests(testCases);
+					runTests(testcases);
 				}
 
 				private void runTests(List<Class> testCases) {
 					for (Class test : testCases) {
-						System.out.println("*****CurrentRunningThread" + Thread.currentThread().getName() + test);
-						testRunnerTestNg(test);
+						System.out.println("*****CurrentRunningThread" + Thread.currentThread().getId() + test);
+						runTestCase(test);
 					}
 				}
 			});
@@ -75,7 +98,7 @@ public class MyTestExecutor {
 		for (Thread t : threads) {
 			t.join();
 		}
-
+		deleteOutputDirectory();
 		System.out.println("Finally complete");
 	}
 
@@ -208,6 +231,21 @@ public class MyTestExecutor {
 			methodsList.add(method);
 		});
 		return testsMap;
+	}
+
+	public void runTestCase(Class testCase) {
+		Result result = JUnitCore.runClasses(testCase);
+		for (Failure failure : result.getFailures()) {
+			System.out.println(failure.toString());
+		}
+	}
+
+	public void deleteOutputDirectory(){
+		File delete_output= new File(System.getProperty("user.dir")+"/src/test/java/output/");
+		File[] files = delete_output.listFiles();
+		for (File file : files) {
+			file.delete();
+		}
 	}
 
 }

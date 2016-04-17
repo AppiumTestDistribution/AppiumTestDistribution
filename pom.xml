@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.appium.android</groupId>
 	<artifactId>TestDistribution</artifactId>
-	<version>2.7.1-SNAPSHOT</version>
+	<version>2.7.8-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<repositories>
 		<repository>
@@ -21,7 +21,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ant</groupId>
@@ -73,6 +72,27 @@
 			<artifactId>im4java</artifactId>
 			<version>1.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>1.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.saikrishna321</groupId>
+			<artifactId>cucumber-jvm-parallel-plugin</artifactId>
+			<version>2.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>1.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit-dep</artifactId>
+			<version>LATEST</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -88,6 +108,28 @@
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.saikrishna321</groupId>
+				<artifactId>cucumber-jvm-parallel-plugin</artifactId>
+				<version>2.0.6</version>
+				<executions>
+					<execution>
+						<id>generateRunners</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>generateRunners</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>src/test/java/output</outputDirectory>
+							<glue>com.test.cucumber.stepdefinitions</glue>
+							<featuresDirectory>src/test/resources/features/</featuresDirectory>
+							<cucumberOutputDir>target</cucumberOutputDir>
+							<tags>"@smoke"</tags>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

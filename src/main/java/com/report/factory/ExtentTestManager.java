@@ -56,4 +56,8 @@ public class ExtentTestManager { // new
 		extent.setTestRunnerOutput(imgSrc);
 		//extent.setTestRunnerOutput(s);
 	}
+
+	public synchronized static void loadConfig(){
+		extent.loadConfig(new File(System.getProperty("user.dir")+"/extent.xml"));
+	}
 }
