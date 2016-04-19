@@ -27,6 +27,7 @@ public class ParallelThread {
 	List<Class> testcases;
 
 	public void runner(String pack) throws Exception {
+		String operSys = System.getProperty("os.name").toLowerCase();
 		File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
 		if (!f.exists()) {
 			System.out.println("creating directory: " + "Logs");
@@ -58,13 +59,15 @@ public class ParallelThread {
             }
 			createSnapshotFolderAndroid(deviceCount,"android");
 		}
-		if(iosDevice.getIOSUDID() != null){
-			iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-			iOSdevices = iosDevice.getIOSUDIDHash();
-			deviceCount += iOSdevices.size();
-            createSnapshotFolderiOS(deviceCount,"iPhone");
-		}
+		if(operSys.contains("mac")){
+			if(iosDevice.getIOSUDID() != null){
+				iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
+				iOSdevices = iosDevice.getIOSUDIDHash();
+				deviceCount += iOSdevices.size();
+				createSnapshotFolderiOS(deviceCount,"iPhone");
+			}
 
+		}
 		if(deviceCount == 0){
 			System.exit(0);
 		}
