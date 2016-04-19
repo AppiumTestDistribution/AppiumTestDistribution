@@ -129,7 +129,7 @@ public class AndroidDeviceConfiguration {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return deviceModelName + brand;
+		return deviceModelName+"_"+ brand;
 
 	}
 
