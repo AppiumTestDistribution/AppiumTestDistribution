@@ -69,10 +69,15 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     System.out.println("Adding iOS devices");
                     devices.addAll(iosDevice.getIOSUDID());
                 }
-            }
-            if (androidDevice.getDeviceSerail() != null) {
-                System.out.println("Adding Android devices");
-                devices.addAll(androidDevice.getDeviceSerail());
+                if (androidDevice.getDeviceSerail() != null) {
+                    System.out.println("Adding Android devices");
+                    devices.addAll(androidDevice.getDeviceSerail());
+                }
+            }else{
+                if (androidDevice.getDeviceSerail() != null) {
+                    System.out.println("Adding Android devices");
+                    devices.addAll(androidDevice.getDeviceSerail());
+                }
             }
             for (String device : devices) {
                 deviceMapping.put(device, true);
@@ -113,10 +118,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             if (iosDevice.checkiOSDevice(device_udid)) {
                 iosDevice.setIOSWebKitProxyPorts(device_udid);
                 category = iosDevice.getDeviceName(device_udid).replace(" ", "_");
+            }else if(!iosDevice.checkiOSDevice(device_udid)){
+                category = androidDevice.getDeviceModel(device_udid);
             }
+        }else{
+            category = androidDevice.getDeviceModel(device_udid);
         }
-        category = androidDevice.getDeviceModel(device_udid);
-
 
         if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
             parent = ExtentTestManager.startTest(methodName, "Mobile Appium Test",
@@ -129,10 +136,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             if (iosDevice.checkiOSDevice(device_udid)) {
                 String webKitPort = iosDevice.startIOSWebKit(device_udid);
                 return appiumMan.appiumServerForIOS(device_udid, methodName, webKitPort);
+            }else if(!iosDevice.checkiOSDevice(device_udid)){
+                return appiumMan.appiumServerForAndroid(device_udid, methodName);
             }
-        }
+        }else{
             return appiumMan.appiumServerForAndroid(device_udid, methodName);
         }
+        return null;
+    }
 
 
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName) throws Exception {
@@ -148,10 +159,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             if(System.getProperty("os.name").toLowerCase().contains("mac")){
                 if (iosDevice.checkiOSDevice(device_udid)) {
                     driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosNative());
+                } else if (!iosDevice.checkiOSDevice(device_udid)){
+                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
                 }
+            } else{
+                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
             }
-            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
-
         }
 
         return driver;
@@ -183,6 +196,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (result.getStatus() == ITestResult.FAILURE) {
             ExtentTestManager.getTest().log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
+                System.out.println("im in");
                 deviceModel = androidDevice.getDeviceModel(device_udid);
                 captureScreenshot(result.getMethod().getMethodName(),"android");
                 screenShotAndFrame(result.getMethod().getMethodName(),"android");
