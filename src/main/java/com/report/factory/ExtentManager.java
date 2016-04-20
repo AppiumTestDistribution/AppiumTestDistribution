@@ -9,7 +9,13 @@ public class ExtentManager {
 		if (instance == null) {
 			System.out.println(System.getProperty("user.dir"));
 			instance = new ExtentReports(System.getProperty("user.dir") + "/target/ExtentReport.html");
-			instance.x();
+			try{
+				if(System.getenv("ExtentX").equalsIgnoreCase("true")){
+					instance.x();
+				}
+			}catch (Exception e){
+				System.out.println("Not taking ExtendReporting");
+			}
 		}
 		return instance;
 	}

@@ -47,7 +47,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public File logFile;
     public PrintWriter log_file_writer;
     public DesiredCapabilities capabilities = new DesiredCapabilities();
-    public String category;
+    public String category=null;
     public ExtentTest parent;
     public ExtentTest child;
     public String deviceModel;
@@ -120,6 +120,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 category = iosDevice.getDeviceName(device_udid).replace(" ", "_");
             }else if(!iosDevice.checkiOSDevice(device_udid)){
                 category = androidDevice.getDeviceModel(device_udid);
+                System.out.println(category);
             }
         }else{
             category = androidDevice.getDeviceModel(device_udid);
@@ -127,7 +128,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
             parent = ExtentTestManager.startTest(methodName, "Mobile Appium Test",
-                    category + device_udid.replaceAll("\\W", "_"));
+                    category + "_" + device_udid.replaceAll("\\W", "_"));
             parentContext.put(Thread.currentThread().getId(), parent);
             ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs", "<a href=" + System.getProperty("user.dir")
                     + "/target/appiumlogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName + ".txt" + ">Logs</a>");
@@ -150,7 +151,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         ExtentTestManager.loadConfig();
         if(prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")){
             child = ExtentTestManager
-                    .startTest(methodName).assignCategory(category + device_udid.replaceAll("\\W", "_"));
+                    .startTest(methodName).assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
         }
         Thread.sleep(3000);
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
@@ -546,5 +547,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir") + "/target/screenshot/"+device+"/" + device_udid.replaceAll("\\W", "_") + "/"
                 + deviceModel + "/failed_" + methodName + ".png"));
         Thread.sleep(3000);
+    }
+
+    public void logger(String message){
+        ExtentTestManager.logger(message);
     }
 }

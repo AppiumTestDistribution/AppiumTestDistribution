@@ -2,6 +2,8 @@ package com.report.factory;
 
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+import org.testng.Reporter;
 
 import java.io.*;
 import java.util.HashMap;
@@ -59,5 +61,10 @@ public class ExtentTestManager { // new
 
 	public synchronized static void loadConfig(){
 		extent.loadConfig(new File(System.getProperty("user.dir")+"/extent.xml"));
+	}
+
+	public synchronized static void logger(String message){
+		Reporter.log(message + "<br>", true);
+		getTest().log(LogStatus.INFO,message+"<br>");
 	}
 }

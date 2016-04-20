@@ -119,17 +119,19 @@ public class AndroidDeviceConfiguration {
 	public String getDeviceModel(String deviceID) {
 		String deviceModelName = null;
 		String brand = null;
+		String deviceModel=null;
 		try {
 			deviceModelName = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model").replaceAll("\\W",
 					"");
 
-			brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
-					.replaceAll("\\W", "");
+			brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand");
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return deviceModelName+"_"+ brand;
+		deviceModel=deviceModelName.concat("_"+brand);
+
+		return deviceModel.trim();
 
 	}
 
