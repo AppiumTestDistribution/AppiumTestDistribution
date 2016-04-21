@@ -1,0 +1,3 @@
+[submodule "cucumber-jvm-parallel-plugin"]
+	path = cucumber-jvm-parallel-plugin
+	url = https://github.com/saikrishna321/cucumber-jvm-parallel-plugin.git
