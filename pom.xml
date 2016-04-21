@@ -96,7 +96,11 @@
 			<artifactId>junit-dep</artifactId>
 			<version>LATEST</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.github.saikrishna321</groupId>
+			<artifactId>cucumber-jvm-parallel-plugin</artifactId>
+			<version>2.0.6</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
