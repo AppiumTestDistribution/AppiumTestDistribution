@@ -229,9 +229,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void attachScreenShotToReport(String stepName){
         String platform = null;
-        if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
+        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
            platform="android";
-        }else if(driver.toString().split(":")[0].trim().equals("IOSDriver")){
+        }else if(getDriver().toString().split(":")[0].trim().equals("IOSDriver")){
             platform="iPhone";
         }else{
             platform="android";
