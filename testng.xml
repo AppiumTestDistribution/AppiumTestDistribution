@@ -1,11 +1,11 @@
 <suite name="Test-class Suite" parallel="classes" thread-count="2" >
   <test name="Test-class test" >
     <classes>
-      <class name="com.test.site.HomePageTest" />
-        <class name="com.test.site.HomePage5Test" />
+      <class name="com.test.site.HomePageTest1" />
+        <class name="com.test.site.HomePageTest5" />
           <class name="com.test.site.HomePageTest2" />
-            <class name="com.test.site.HomePage3Test" />
-              <class name="com.test.site.HomePage4Test" />
+            <class name="com.test.site.HomePageTest3" />
+              <class name="com.test.site.HomePageTest4" />
     </classes>
   </test>
   
