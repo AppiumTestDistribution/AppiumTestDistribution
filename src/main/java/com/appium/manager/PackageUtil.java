@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -36,14 +35,5 @@ public class PackageUtil {
 					}
 
 				}).collect(Collectors.toCollection(ArrayList::new));
-	}
-
-	public static void main(String[] arg) throws Exception {
-		List<Class> classList = new ArrayList<>();
-		PackageUtil.getClasses("/Users/saikrisv/git/AppiumTestDistribution/src/test/java/output/").stream().forEach(s -> {
-			if (s.toString().contains("IT")) {
-				System.out.println("forEach: " + classList.add((Class) s));
-			}
-		});
 	}
 }

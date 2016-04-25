@@ -1,5 +1,6 @@
 package com.appium.executor;
 
+import com.appium.cucumber.report.HtmlReporter;
 import com.appium.manager.PackageUtil;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -32,6 +33,7 @@ public class MyTestExecutor {
 	List<Thread> threads = new ArrayList<Thread>();
 	public static Properties prop = new Properties();
 	public List<Class> testcases = new ArrayList<>();
+	public HtmlReporter reporter = new HtmlReporter();
 	@SuppressWarnings("rawtypes")
 	public void distributeTests(int deviceCount) {
 		try {
@@ -60,6 +62,11 @@ public class MyTestExecutor {
 			e.printStackTrace();
 		}
 		deleteOutputDirectory();
+		try {
+			reporter.generateReports();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		System.out.println("ending");
 	}
 
@@ -99,6 +106,11 @@ public class MyTestExecutor {
 			t.join();
 		}
 		deleteOutputDirectory();
+		try {
+			reporter.generateReports();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Finally complete");
 	}
 
