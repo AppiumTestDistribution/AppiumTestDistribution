@@ -4,7 +4,7 @@
 	<groupId>com.github.saikrishna321</groupId>
 	<artifactId>AppiumTestDistribution</artifactId>
     <description>"A tool run Android and iOS test in parallel across devices"</description>
-	<version>2.9.6-SNAPSHOT</version>
+	<version>4.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<repositories>
 		<repository>
