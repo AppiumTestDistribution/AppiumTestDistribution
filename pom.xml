@@ -3,9 +3,40 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.saikrishna321</groupId>
 	<artifactId>AppiumTestDistribution</artifactId>
-    <description>"A tool run Android and iOS test in parallel across devices"</description>
-	<version>4.0.3</version>
+	<version>4.0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
+
+	<name>AppiumTestDistribution</name>
+	<description>"A tool run Android and iOS test in parallel across devices"</description>
+	<url>https://github.com/saikrishna321/AppiumTestDistribution</url>
+
+	<licenses>
+		<license>
+			<name>GNU Public License version 3.0</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>https://github.com/saikrishna321/AppiumTestDistribution.git</url>
+		<connection>scm:git:git@github.com:saikrishna321/AppiumTestDistribution.git</connection>
+	</scm>
+
+	<developers>
+		<developer>
+			<name>Sai Krishna</name>
+			<email>saikrishna321@yahoo.com</email>
+			<roles>
+				<role>owner</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Srinivasan Sekar</name>
+			<email>srinivasan.sekar1990@gmail.com</email>
+		</developer>
+	</developers>
+
+
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
@@ -89,32 +120,6 @@
 		</dependency>
 	</dependencies>
 
-    <licenses>
-        <license>
-            <name>GNU Public License version 3.0</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/saikrishna321/AppiumTestDistribution.git</url>
-        <connection>scm:git:git@github.com:saikrishna321/AppiumTestDistribution.git</connection>
-    </scm>
-
-    <developers>
-        <developer>
-            <name>Sai Krishna</name>
-            <email>saikrishna321@yahoo.com</email>
-            <roles>
-                <role>owner</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Srinivasan Sekar</name>
-            <email>srinivasan.sekar1990@gmail.com</email>
-        </developer>
-    </developers>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -156,30 +161,15 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.3</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
                                     <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -190,11 +180,27 @@
                             </execution>
                         </executions>
                     </plugin>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.3</version>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
-
 	<build>
 		<plugins>
 			<plugin>
