@@ -35,18 +35,18 @@ Add the below dependencies in your pom.xml
 
 ##[Configure-tests-for-TestNG](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-tests-for-TestNG)
 
-###Run Test from CommandLine
+##[Configure-tests-for-Cucumber](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-test-for-Cucumber)
 
-```
-mvn clean -Dtest=Runner test
-```
 ##[Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
 ##[Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
 
 ##Credits
 Thanks to
-[@SrinivasanTarget](https://github.com/SrinivasanTarget) [@thote](https://github.com/thote) and [@jaydeepc](https://github.com/jaydeepc)
+[@thote](https://github.com/thote) and [@jaydeepc](https://github.com/jaydeepc) for the motivation.
+[@SrinivasanTarget](https://github.com/SrinivasanTarget) for contributing on iOS parallel.
+[@temyers](https://github.com/temyers) for letting us use the cucumber-jvm-parallel-plugin(https://github.com/temyers/cucumber-jvm-parallel-plugin) 
+as part of framework which helps generating a Cucumber JUnit or TestNG runner for each feature file.
 
 ###Reports
 
