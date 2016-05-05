@@ -30,7 +30,17 @@ public class ParallelThread {
 	public InputStream input = null;
 	List<Class> testcases;
 
-	public void runner(String pack) throws Exception {
+	public void runner(String pack, List<String> tests) throws Exception {
+       triggerTest(pack,tests);
+	}
+
+	public void runner(String pack) throws Exception{
+		List<String> test = new ArrayList<>();
+		triggerTest(pack,test);
+	}
+
+	public void triggerTest(String pack, List<String> tests) throws Exception{
+
 		String operSys = System.getProperty("os.name").toLowerCase();
 		File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
 		if (!f.exists()) {
@@ -50,17 +60,17 @@ public class ParallelThread {
 		if(deviceConf.getDevices() != null){
 			devices = deviceConf.getDevices();
 			deviceCount = devices.size() / 3;
-            File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
-            if (!adb_logs.exists()) {
-                System.out.println("creating directory: " + "ADBLogs");
-                boolean result = false;
-                try {
-                    adb_logs.mkdir();
-                    result = true;
-                } catch (SecurityException se) {
-                    se.printStackTrace();
-                }
-            }
+			File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+			if (!adb_logs.exists()) {
+				System.out.println("creating directory: " + "ADBLogs");
+				boolean result = false;
+				try {
+					adb_logs.mkdir();
+					result = true;
+				} catch (SecurityException se) {
+					se.printStackTrace();
+				}
+			}
 			createSnapshotFolderAndroid(deviceCount,"android");
 		}
 		if(operSys.contains("mac")){
@@ -90,11 +100,11 @@ public class ParallelThread {
 			});
 
 			if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"distribute");
+				myTestExecutor.runMethodParallelAppium(tests,pack, deviceCount,"distribute");
 
 			}
-			else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-				myTestExecutor.runMethodParallelAppium(pack, deviceCount,"parallel");
+			 if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+				myTestExecutor.runMethodParallelAppium(tests,pack, deviceCount,"parallel");
 			}
 		}
 

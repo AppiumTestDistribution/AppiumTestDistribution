@@ -17,9 +17,7 @@ import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
@@ -115,7 +113,7 @@ public class MyTestExecutor {
 	}
 
 
-	public void runMethodParallelAppium(String pack, int devicecount,String executionType) throws Exception {
+	public void runMethodParallelAppium(List<String> test,String pack, int devicecount,String executionType) throws Exception {
 		Collection<URL> urls = ClasspathHelper.forPackage(pack);
 		Iterator<URL> iter = urls.iterator();
 		URL url = iter.next();
@@ -125,11 +123,10 @@ public class MyTestExecutor {
 		Reflections reflections = new Reflections(
 				new ConfigurationBuilder().setUrls(newUrls).setScanners(new MethodAnnotationsScanner()));
 		Set<Method> resources = reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
-
 		if(executionType.equalsIgnoreCase("distribute")){
-			runMethodParallel(constructXmlSuiteForDistribution(createTestsMap(resources), devicecount), devicecount);
+			runMethodParallel(constructXmlSuiteForDistribution(pack,test,createTestsMap(resources), devicecount), devicecount);
 		}else{
-			runMethodParallel(constructXmlSuiteForParallel(createTestsMap(resources), devicecount), devicecount);
+			runMethodParallel(constructXmlSuiteForParallel(pack,test,createTestsMap(resources), devicecount), devicecount);
 		}
 		System.out.println("Finally complete");
 	}
@@ -148,7 +145,7 @@ public class MyTestExecutor {
 		testNG.run();
 	}
 	
-	public XmlSuite constructXmlSuiteForParallel(Map<String, List<Method>> methods,int deviceCount) {
+	public XmlSuite constructXmlSuiteForParallel(String pack,List<String> testcases,Map<String, List<Method>> methods,int deviceCount) {
 		ArrayList<String> items = new ArrayList<>();
 		try {
 			prop.load(new FileInputStream("config.properties"));
@@ -176,7 +173,15 @@ public class MyTestExecutor {
 			List<XmlClass> xmlClasses = new ArrayList<>();
 			for (String className : methods.keySet()) {
 				if (className.contains("Test")) {
-					xmlClasses.add(createClass(className, methods.get(className)));
+					if(testcases.size()==0){
+						xmlClasses.add(createClass(className, methods.get(className)));
+					}else{
+						for (String s : testcases) {
+							if (pack.concat("."+s).equals(className)) {
+								xmlClasses.add(createClass(className, methods.get(className)));
+							}
+						}
+					}
 				}
 			}
 			test.setXmlClasses(xmlClasses);
@@ -184,24 +189,24 @@ public class MyTestExecutor {
 		return suite;
 	}
 
-	public XmlSuite constructXmlSuiteForDistribution(Map<String, List<Method>> methods,int deviceCount) {
+	public XmlSuite constructXmlSuiteForDistribution(String pack,List<String> tests,Map<String, List<Method>> methods,int deviceCount) {
 		ArrayList<String> items = new ArrayList<>();
 		try {
 			prop.load(new FileInputStream("config.properties"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (prop.getProperty("LISTENERS")!=null){
+		if (prop.getProperty("LISTENERS") != null) {
 			Collections.addAll(items, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
 		}
 		XmlSuite suite = new XmlSuite();
 		suite.setName("TestNG Forum");
-        suite.setThreadCount(deviceCount);
-        suite.setParallel(ParallelMode.CLASSES);
+		suite.setThreadCount(deviceCount);
+		suite.setParallel(ParallelMode.CLASSES);
 		suite.setVerbose(2);
 		items.add("com.appium.manager.AppiumParallelTest");
 		suite.setListeners(items);
-		if (prop.getProperty("LISTENERS")!=null) {
+		if (prop.getProperty("LISTENERS") != null) {
 			suite.setListeners(items);
 		}
 		XmlTest test = new XmlTest(suite);
@@ -209,12 +214,22 @@ public class MyTestExecutor {
 		List<XmlClass> xmlClasses = new ArrayList<>();
 		for (String className : methods.keySet()) {
 			if (className.contains("Test")) {
-				xmlClasses.add(createClass(className, methods.get(className)));
+				if(tests.size()==0){
+					xmlClasses.add(createClass(className, methods.get(className)));
+				}else{
+					for (String s : tests) {
+						if (pack.concat("."+s).equals(className)) {
+							xmlClasses.add(createClass(className, methods.get(className)));
+						}
+					}
+				}
+
 			}
 		}
-		test.setXmlClasses(xmlClasses);
-		return suite;
-	}
+			test.setXmlClasses(xmlClasses);
+			return suite;
+		}
+
 
 	private XmlClass createClass(String className, List<Method> methods) {
 		XmlClass clazz = new XmlClass();
