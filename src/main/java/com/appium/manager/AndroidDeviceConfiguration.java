@@ -83,7 +83,7 @@ public class AndroidDeviceConfiguration {
 		}
 	}
 
-	public ArrayList<String> getDeviceSerail() throws Exception {
+	public ArrayList<String> getDeviceSerial() throws Exception {
 
 		startADB(); // start adb service
 		String output = cmd.runCommand("adb devices");
@@ -172,5 +172,18 @@ public class AndroidDeviceConfiguration {
 	public void clearAppData(String deviceID, String app_package) throws InterruptedException, IOException {
 		// adb -s 192.168.56.101:5555 com.android2.calculator3
 		cmd.runCommand("adb -s " + deviceID + " shell pm clear " + app_package);
+	}
+
+	/**
+	 * This method removes apk from the devices attached
+	 * @param app_package
+	 * @throws Exception
+     */
+
+	public void removeApkFromDevices(String app_package) throws Exception {
+		for (String individualDeviceSerial : getDeviceSerial()) {
+			cmd.runCommand("adb -s " + individualDeviceSerial + " uninstall " + app_package);
+		}
+
 	}
 }
