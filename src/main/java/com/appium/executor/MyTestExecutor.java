@@ -164,6 +164,7 @@ public class MyTestExecutor {
         }
         XmlSuite suite = new XmlSuite();
         items.add("com.appium.manager.AppiumParallelTest");
+        items.add("com.appium.utils.RetryListener");
         if (prop.getProperty("LISTENERS") != null) {
             Collections.addAll(items, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
         }
@@ -216,6 +217,7 @@ public class MyTestExecutor {
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
         items.add("com.appium.manager.AppiumParallelTest");
+        items.add("com.appium.utils.RetryListener");
         suite.setListeners(items);
         if (prop.getProperty("LISTENERS") != null) {
             suite.setListeners(items);

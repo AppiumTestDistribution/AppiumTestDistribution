@@ -4,19 +4,34 @@ import com.annotation.values.RetryCount;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
 public class Retry implements IRetryAnalyzer {
     private int retryCount = 0;
     private int maxRetryCount;
+    public static Properties prop = new Properties();
 
     public boolean retry(ITestResult result) {
+        try {
+            prop.load(new FileInputStream("config.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Method[] methods = result.getInstance().getClass().getMethods();
         for (Method m : methods) {
             if (m.getName().equals(result.getMethod().getMethodName())) {
                 if (m.isAnnotationPresent(RetryCount.class)) {
                     RetryCount ta = m.getAnnotation(RetryCount.class);
                     maxRetryCount = ta.maxRetryCount();
+                } else {
+                    try {
+                        maxRetryCount = Integer.parseInt(prop.getProperty("MAX_RETRY_COUNT"));
+                    } catch (Exception e) {
+                        maxRetryCount = 0;
+                    }
                 }
             }
 
