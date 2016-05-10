@@ -70,14 +70,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     System.out.println("Adding iOS devices");
                     devices.addAll(iosDevice.getIOSUDID());
                 }
-                if (androidDevice.getDeviceSerail() != null) {
+                if (androidDevice.getDeviceSerial() != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(androidDevice.getDeviceSerail());
+                    devices.addAll(androidDevice.getDeviceSerial());
                 }
             } else {
-                if (androidDevice.getDeviceSerail() != null) {
+                if (androidDevice.getDeviceSerial() != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(androidDevice.getDeviceSerail());
+                    devices.addAll(androidDevice.getDeviceSerial());
                 }
             }
             for (String device : devices) {
@@ -315,6 +315,11 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public void closeOpenApp() throws InterruptedException, IOException {
         androidDevice.closeRunningApp(device_udid, prop.getProperty("APP_PACKAGE"));
     }
+
+    public void removeApkFromDevice(String app_package) throws Exception {
+        androidDevice.removeApkFromDevices(app_package);
+    }
+
 
     public synchronized DesiredCapabilities androidNative() {
         System.out.println("Setting Android Desired Capabilities:");
