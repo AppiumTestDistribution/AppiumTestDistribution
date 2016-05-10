@@ -10,18 +10,17 @@ import org.openqa.selenium.WebDriverException;
 
 import java.io.IOException;
 
-public class Hooks extends ExtentCucumberFormatter{
-	@Before
-    public void beforeClass(Scenario scenario) throws Exception {
-        System.out.println("Inside Before"+Thread.currentThread().getId());
+public class Hooks extends ExtentCucumberFormatter {
+    @Before public void beforeClass(Scenario scenario) throws Exception {
+        System.out.println("Inside Before" + Thread.currentThread().getId());
     }
 
 
-    @After
-    public void afterClass(Scenario scenario) throws InterruptedException, IOException {
+    @After public void afterClass(Scenario scenario) throws InterruptedException, IOException {
         if (scenario.isFailed()) {
             try {
-                byte[] screenshot = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BYTES);
+                byte[] screenshot =
+                    ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BYTES);
                 scenario.embed(screenshot, "image/png");
             } catch (WebDriverException wde) {
                 System.err.println(wde.getMessage());

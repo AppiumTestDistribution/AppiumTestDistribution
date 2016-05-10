@@ -13,7 +13,7 @@ public class DriverManager {
         return driver.get();
     }
 
-     public static void setWebDriver(AppiumDriver driver_) {
-         driver.set(driver_);
+    public static void setWebDriver(AppiumDriver driver_) {
+        driver.set(driver_);
     }
 }

@@ -45,12 +45,12 @@
 
             ]]>
             .sample{
-                width: 25%;
-                float: left;
-                text-align: center;
+            width: 25%;
+            float: left;
+            text-align: center;
             }
             .md-display-4 {
-                word-wrap: break-word;
+            word-wrap: break-word;
             }
 
             th:nth-child(3), td:nth-child(3) {

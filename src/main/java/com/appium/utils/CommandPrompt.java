@@ -1,7 +1,7 @@
 package com.appium.utils;
 
 /**
- * Command Prompt - this class contains method to run windows and mac commands  
+ * Command Prompt - this class contains method to run windows and mac commands
  */
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,31 +13,32 @@ import java.util.Map;
 
 public class CommandPrompt {
 
-	static Process p;
-	ProcessBuilder builder;
+    static Process p;
+    ProcessBuilder builder;
 
 
-	public String runCommand(String command) throws InterruptedException, IOException {
-		p = Runtime.getRuntime().exec(command);
-		// get std output
-		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		String line = "";
-		String allLine = "";
-		int i = 1;
-		while ((line = r.readLine()) != null) {
+    public String runCommand(String command) throws InterruptedException, IOException {
+        p = Runtime.getRuntime().exec(command);
+        // get std output
+        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String line = "";
+        String allLine = "";
+        int i = 1;
+        while ((line = r.readLine()) != null) {
 /*			if (line.isEmpty()) {
-				break;
+        break;
 			}*/
-			allLine = allLine + "" + line + "\n";
+            allLine = allLine + "" + line + "\n";
             if (line.contains("Console LogLevel: debug") && line.contains("Complete"))
-				break;	
-			   i++;
-		}
-		return allLine;
+                break;
+            i++;
+        }
+        return allLine;
 
-	}
+    }
 
-    public String runCommandThruProcessBuilder(String command) throws InterruptedException, IOException {
+    public String runCommandThruProcessBuilder(String command)
+        throws InterruptedException, IOException {
         List<String> commands = new ArrayList<String>();
         commands.add("/bin/sh");
         commands.add("-c");
@@ -55,6 +56,6 @@ public class CommandPrompt {
             allLine = allLine + "" + line + "\n";
             System.out.println(allLine);
         }
-        return allLine.split(":")[1].replace("\n","").trim();
+        return allLine.split(":")[1].replace("\n", "").trim();
     }
 }

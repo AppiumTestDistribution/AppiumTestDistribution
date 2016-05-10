@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="1" verbose="2" name="TestNG Forum" parallel="classes">
-  <listeners>
-    <listener class-name="com.appium.manager.AppiumParallelTest"/>
-  </listeners>
-  <test name="TestNG Test">
-    <classes>
-      <class name="com.test.site.HomePageTest3"/>
-      <class name="com.test.site.HomePageTest2"/>
-      <class name="com.test.site.HomePageTest1"/>
-      <class name="com.test.site.HomePageTest6"/>
-      <class name="com.test.site.HomePageTest5"/>
-      <class name="com.test.site.HomePageTest4"/>
-    </classes>
-  </test> <!-- TestNG Test -->
+    <listeners>
+        <listener class-name="com.appium.manager.AppiumParallelTest"/>
+    </listeners>
+    <test name="TestNG Test">
+        <classes>
+            <class name="com.test.site.HomePageTest3"/>
+            <class name="com.test.site.HomePageTest2"/>
+            <class name="com.test.site.HomePageTest1"/>
+            <class name="com.test.site.HomePageTest6"/>
+            <class name="com.test.site.HomePageTest5"/>
+            <class name="com.test.site.HomePageTest4"/>
+        </classes>
+    </test> <!-- TestNG Test -->
 </suite> <!-- TestNG Forum -->

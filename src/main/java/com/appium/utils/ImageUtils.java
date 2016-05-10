@@ -17,8 +17,8 @@ import java.util.List;
  * Created by saikrisv on 17/03/16.
  */
 public class ImageUtils {
-    public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed, String framedDeviceScreen)
-            throws InterruptedException, IOException, IM4JavaException {
+    public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed,
+        String framedDeviceScreen) throws InterruptedException, IOException, IM4JavaException {
         IMOperation op = new IMOperation();
         ConvertCmd cmd = new ConvertCmd();
         op.addImage(deviceFrame);
@@ -32,10 +32,12 @@ public class ImageUtils {
 
 
     public static void main(String[] arg) throws IOException {
-        File dir = new File(System.getProperty("user.dir")+"/target/screenshot/");
-        System.out.println("Getting all files in " + dir.getCanonicalPath() + " including those in subdirectories");
-        List<File> files = (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-        JsonArray mainObj  = new JsonArray();
+        File dir = new File(System.getProperty("user.dir") + "/target/screenshot/");
+        System.out.println("Getting all files in " + dir.getCanonicalPath()
+            + " including those in subdirectories");
+        List<File> files =
+            (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        JsonArray mainObj = new JsonArray();
 
         JsonObject jsonObject = new JsonObject();
 
@@ -44,16 +46,16 @@ public class ImageUtils {
         for (File file : files) {
             JsonObject ja;
 
-            if(file.getCanonicalFile().toString().contains("results")){
-                ja=new JsonObject();
-                deviceName=file.getName().split("_")[0];
-                String deviceModel=file.getName().split("_")[1];
-                String screenName=file.getName().split("_")[2];
-                String imagePath=file.getPath().toString();
-                ja.addProperty("Device Name",deviceName);
-                ja.addProperty("Device Model",deviceModel);
-                ja.addProperty("Screen Name",screenName);
-                ja.addProperty("Image Path",imagePath);
+            if (file.getCanonicalFile().toString().contains("results")) {
+                ja = new JsonObject();
+                deviceName = file.getName().split("_")[0];
+                String deviceModel = file.getName().split("_")[1];
+                String screenName = file.getName().split("_")[2];
+                String imagePath = file.getPath().toString();
+                ja.addProperty("Device Name", deviceName);
+                ja.addProperty("Device Model", deviceModel);
+                ja.addProperty("Screen Name", screenName);
+                ja.addProperty("Image Path", imagePath);
                 jsonObject.add(deviceName, ja);
 
             }

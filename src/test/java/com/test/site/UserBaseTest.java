@@ -14,14 +14,13 @@ import java.lang.reflect.Method;
 
 public class UserBaseTest extends AppiumParallelTest {
 
-	@BeforeMethod()
-	public void startApp(Method name) throws Exception {
-		driver = startAppiumServerInParallel(name.getName());
-		startLogResults(name.getName());
-	}
+    @BeforeMethod() public void startApp(Method name) throws Exception {
+        driver = startAppiumServerInParallel(name.getName());
+        startLogResults(name.getName());
+    }
 
-    @AfterMethod()
-    public void killServer(ITestResult result) throws InterruptedException, IOException {
+    @AfterMethod() public void killServer(ITestResult result)
+        throws InterruptedException, IOException {
         endLogTestResults(result);
         getDriver().quit();
         //deleteAppIOS("com.tesco.sample");
@@ -31,15 +30,13 @@ public class UserBaseTest extends AppiumParallelTest {
         return driver;
     }
 
-    @BeforeClass()
-    public void beforeClass() throws Exception {
+    @BeforeClass() public void beforeClass() throws Exception {
         System.out.println("Before Class called" + Thread.currentThread().getId());
         System.out.println(getClass().getName());
         startAppiumServer(getClass().getSimpleName());
     }
 
-    @AfterClass()
-    public void afterClass() throws InterruptedException, IOException {
+    @AfterClass() public void afterClass() throws InterruptedException, IOException {
         System.out.println("After Class" + Thread.currentThread().getId());
         killAppiumServer();
     }
