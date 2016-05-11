@@ -317,7 +317,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void removeApkFromDevice(String app_package) throws Exception {
-        androidDevice.removeApkFromDevices(app_package);
+        androidDevice.removeApkFromDevices(device_udid,app_package);
     }
 
 
