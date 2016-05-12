@@ -119,6 +119,11 @@
             <artifactId>cucumber-testng</artifactId>
             <version>1.2.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.madgag</groupId>
+            <artifactId>animated-gif-lib</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
