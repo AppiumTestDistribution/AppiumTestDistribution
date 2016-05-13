@@ -32,7 +32,7 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "AndroidDriver")
+    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver")
     public void testMethodOne_6() throws Exception {
 
         System.out.println(
@@ -43,7 +43,7 @@ public class HomePageTest1 extends UserBaseTest {
         getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
-        captureScreenShot("TestMethod1");
+        captureScreenShot("TestMethod2");
         getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
@@ -71,7 +71,7 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "AndroidDriver")
+    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver")
     public void testMethodOne_8() throws Exception {
 
         System.out.println(
@@ -87,7 +87,7 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "AndroidDriver")
+    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver")
     public void testMethodOne_9() throws Exception {
 
         System.out.println(
@@ -96,7 +96,7 @@ public class HomePageTest1 extends UserBaseTest {
         Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
-        captureScreenShot("TestMethod1");
+        captureScreenShot("TestMethod11");
         getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();

@@ -2,6 +2,7 @@ package com.appium.executor;
 
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.manager.PackageUtil;
+import com.appium.utils.ImageUtils;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -137,6 +138,7 @@ public class MyTestExecutor {
                 constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount),
                 devicecount);
         }
+        ImageUtils.createGif();
         System.out.println("Finally complete");
     }
 

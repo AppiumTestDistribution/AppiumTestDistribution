@@ -15,6 +15,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,11 +73,11 @@ public class ImageUtils {
         file1.close();
     }
 
-    public void createAnimatedGif(List<File> testScreenshots, File animatedGif) throws IOException {
+    public static void createAnimatedGif(List<File> testScreenshots, File animatedGif) throws IOException {
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
         encoder.start(animatedGif.getAbsolutePath());
         encoder.setDelay(1500 /* 1.5 seconds */);
-        encoder.setQuality(1 /* highest */);
+        encoder.setQuality(3 /* highest */);
         encoder.setRepeat(0 /* infinite */);
         encoder.setTransparent(Color.WHITE);
 
@@ -93,6 +95,48 @@ public class ImageUtils {
         }
 
         encoder.finish();
+    }
+
+    public static void createGif() throws IOException {
+        File[] files = new File(System.getProperty("user.dir") + "/target/screenshot/").listFiles();
+        showFiles(files);
+    }
+
+    public static void showFiles(File[] files) throws IOException {
+        int imageAdded = 0;
+        List<File> gifDevices = new ArrayList<>();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                System.out.println("Directory: " + file.getName());
+                showFiles(file.listFiles()); // Calls same method again.
+            } else {
+                System.out.println("File: " + file.getName());
+                int length = stringContainsItemFromList("results",
+                    Arrays.asList(file.getParentFile().list()));
+                if (file.getName().contains("results")) {
+                    gifDevices.add(file);
+                    imageAdded++;
+                    if (imageAdded == length) {
+                        System.out.println("Create Gif");
+                        String GifFileName =
+                            file.getParent().substring(file.getParent().lastIndexOf("/") + 1);
+                        createAnimatedGif(gifDevices,
+                            new File(file.getParent() + "/" + GifFileName + ".gif"));
+                    }
+                }
+
+            }
+        }
+    }
+
+    public static int stringContainsItemFromList(String inputString, List<String> items) {
+        int j = 0;
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).contains(inputString)) {
+                j++;
+            }
+        }
+        return j;
     }
 }
 
