@@ -38,6 +38,9 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 
 public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
     public AppiumDriver<MobileElement> driver;
@@ -385,22 +388,39 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return iosDevice.checkIfAppIsInstalled(bundleID);
     }
 
-    public void captureScreenShot(String screenShotName) throws IOException, InterruptedException {
+    public void captureScreenShot(String screenShotName) throws IOException, InterruptedException
+    {
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        String methodName= new Exception().getStackTrace()[1].getMethodName();
+        String className = new Exception().getStackTrace()[1].getClassName();
+
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm:sss a");
+        String formattedDate = sdf.format(date);
+
+
+
+
+
+        if (driver.toString().split(":")[0].trim().equals("AndroidDriver"))
+        {
             String androidModel = androidDevice.getDeviceModel(device_udid);
             try {
-                File framePath =
-                    new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
+                File framePath = new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
                 FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + androidModel + "/" + screenShotName
+                        .replaceAll("\\W", "_") +"/"+ className+ "/" + methodName +"/" + screenShotName
                         + ".png"));
                 File[] files1 = framePath.listFiles();
-                if (framePath.exists()) {
-                    for (int i = 0; i < files1.length; i++) {
-                        if (files1[i].isFile()) { //this line weeds out other directories/folders
+                if (framePath.exists())
+                {
+                    for (int i = 0; i < files1.length; i++)
+                    {
+                        if (files1[i].isFile())
+                        { //this line weeds out other directories/folders
                             System.out.println(files1[i]);
+
                             Path p = Paths.get(files1[i].toString());
                             String fileName = p.getFileName().toString().toLowerCase();
                             if (androidModel.toString().toLowerCase()
@@ -408,17 +428,17 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                 try {
                                     String screenToFrame = System.getProperty("user.dir")
                                         + "/target/screenshot/android/" + device_udid
-                                        .replaceAll("\\W", "_") + "/" + androidModel + "/"
+                                        .replaceAll("\\W", "_") + "/"+ className+ "/" + methodName +"/"
                                         + screenShotName + ".png";
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                         System.getProperty("user.dir")
                                             + "/target/screenshot/android/" + device_udid
-                                            .replaceAll("\\W", "_") + "/" + androidModel + "/"
-                                            + androidModel + "_" + screenShotName + "_results.png");
+                                            .replaceAll("\\W", "_")+ "/" + className+ "/"+ methodName +"/"
+                                            + androidModel + "_" +screenShotName + "_results.png");
                                     ExtentTestManager.logOutPut(System.getProperty("user.dir")
                                             + "/target/screenshot/android/" + device_udid
-                                            .replaceAll("\\W", "_") + "/" + androidModel + "/"
-                                            + androidModel + "_" + screenShotName + "_results.png",
+                                            .replaceAll("\\W", "_") + "/"+ className+ "/" + methodName +"/"
+                                            + androidModel +  "_" + screenShotName + "_results.png",
                                         screenShotName.toUpperCase());
                                     File fileToDelete = new File(screenToFrame);
                                     fileToDelete.delete();
@@ -443,8 +463,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 File framePath =
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
                 FileUtils.copyFile(scrFile, new File(
-                    System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + iosModel + "/" + screenShotName + ".png"));
+                    System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
+                        .replaceAll("\\W", "_") +"_"+iosModel+ "/"+ className+ "/"+ methodName +"/"+ screenShotName + ".png"));
                 File[] files1 = framePath.listFiles();
                 if (framePath.exists()) {
                     for (int i = 0; i < files1.length; i++) {
@@ -457,16 +477,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                 try {
                                     imageUtils.wrapDeviceFrames(files1[i].toString(),
                                         System.getProperty("user.dir")
-                                            + "/target/screenshot/iPhone/" + device_udid
-                                            .replaceAll("\\W", "_") + "/" + iosModel + "/"
+                                            + "/target/screenshot/iOS/" + device_udid
+                                            .replaceAll("\\W", "_") + "/"+ className+ "/" + methodName + "/"
                                             + screenShotName + ".png",
                                         System.getProperty("user.dir")
-                                            + "/target/screenshot/iPhone/" + device_udid
-                                            .replaceAll("\\W", "_") + "/" + iosModel + "/"
+                                            + "/target/screenshot/iOS/" + device_udid
+                                            .replaceAll("\\W", "_") + "/" + className+ "/" + methodName + "/"+iosModel+"_"
                                             + screenShotName + "_framed.png");
                                     ExtentTestManager.logOutPut(System.getProperty("user.dir")
-                                            + "/target/screenshot/iPhone/" + device_udid
-                                            .replaceAll("\\W", "_") + "/" + iosModel + "/"
+                                            + "/target/screenshot/iOS/" + device_udid
+                                            .replaceAll("\\W", "_") + "/" + className+ "/" + methodName + "/"+ iosModel+"_"
                                             + screenShotName + "_framed.png",
                                         screenShotName.toUpperCase());
                                     break;
