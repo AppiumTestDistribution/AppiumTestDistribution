@@ -10,6 +10,9 @@ import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 
 import javax.imageio.ImageIO;
+
+import static com.appium.utils.TestWriteUtils.GSON;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,6 +26,9 @@ import java.util.List;
  * Created by saikrisv on 17/03/16.
  */
 public class ImageUtils {
+	
+	
+	
     public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed,
         String framedDeviceScreen) throws InterruptedException, IOException, IM4JavaException {
         IMOperation op = new IMOperation();
@@ -36,23 +42,118 @@ public class ImageUtils {
         cmd.run(op);
     }
 
+    public  List<TestResults> creatResultsSet () throws Exception
+    {
 
-    public void createJSonForHtml() throws IOException {
+    	
+    	List<TestResults> testResultList=new ArrayList<TestResults>();
+    	
+    	
+    	File dir = new File(System.getProperty("user.dir") + "/target/screenshot");
+    	
+    	File[]oSList=dir.listFiles();
+    	
+    	for(File oFile:oSList)
+    	{
+    	
+    	File[]dList=oFile.listFiles();
+    	
+    	for(File dFile:dList)
+    	{
+    		TestResults testResult=new TestResults();
+    		if(dFile.isDirectory())
+    		{
+    			testResult.setDeviceUDID(dFile.getName());
+    			
+    	List<TestCases> testCaseList=new ArrayList<TestCases>();
+        File[]tList=dFile.listFiles();
+        for(File tFile:tList)
+        {
+        	
+        	TestCases testCase=new TestCases();
+        	if(tFile.isDirectory())
+        	{
+        		testCase.setTestCase(tFile.getName());
+        	
+        		File[]mList=tFile.listFiles();
+        		List<Testmethods> testMethodList=new ArrayList<Testmethods>();
+        			for(File mFile:mList)
+        				{
+    		
+        					Testmethods testMethod=new Testmethods();
+        					testMethod.setMethodName(mFile.getName());
+        						if(mFile.isDirectory())
+        							{
+        								File[] sList = mFile.listFiles();
+        								List<String>screenShotList=new ArrayList<String>();
+        								for(File sFile:sList)
+        									{
+        										if(sFile.isFile() && sFile.getCanonicalPath().contains("result"))
+        										{
+        											screenShotList.add(sFile.getCanonicalPath());
+        											//Set the Name and Model 
+        											testResult.setDeviceName(sFile.getName().split("_")[0]);
+        											testResult.setDeviceModel(sFile.getName().split("_")[1]);
+        											
+        										}
+        										else if(sFile.getCanonicalPath().contains(".gif"))
+        										{
+        											testMethod.setGifPath(sFile.getCanonicalPath());
+        										}
+        									}
+        								testMethod.setScrenShots(screenShotList);
+        							}
+    			
+        						testMethodList.add(testMethod);
+        				}
+    	
+    	
+        			testCase.setTestMethod(testMethodList);
+    	
+        	}
+        	
+        testCaseList.add(testCase);
+        	
+        	
+    	
+        }
+        
+        testResult.setTestCases(testCaseList);
+    	}
+    		testResultList.add(testResult);
+    		
+    	}
+    	}
+    	
+       
+    	System.out.println("Writing the Test Results into JSON");
+    	
+    	 FileWriter writer = new FileWriter(new File("Report.json"));
+	      GSON.toJson(testResultList, writer);
+	      writer.close();
+      return testResultList;
+    }
+
+    public void createJSonForHtml() throws IOException
+    {
         File dir = new File(System.getProperty("user.dir") + "/target/screenshot/");
+        
         System.out.println("Getting all files in " + dir.getCanonicalPath()
             + " including those in subdirectories");
-        List<File> files =
-            (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        List<File> files = (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+
         JsonArray mainObj = new JsonArray();
 
         JsonObject jsonObject = new JsonObject();
 
         String deviceName;
         FileWriter file1 = new FileWriter("test.json");
-        for (File file : files) {
+        for (File file : files)
+        {
             JsonObject ja;
 
-            if (file.getCanonicalFile().toString().contains("results")) {
+            if (file.getCanonicalFile().toString().contains("results"))
+            {
                 ja = new JsonObject();
                 deviceName = file.getName().split("_")[0];
                 String deviceModel = file.getName().split("_")[1];
