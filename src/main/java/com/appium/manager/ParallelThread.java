@@ -41,7 +41,10 @@ public class ParallelThread {
     }
 
     public void triggerTest(String pack, List<String> tests) throws Exception {
+        parallelExecution(pack, tests);
+    }
 
+    public void parallelExecution(String pack, List<String> tests) throws Exception {
         String operSys = System.getProperty("os.name").toLowerCase();
         File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
         if (!f.exists()) {

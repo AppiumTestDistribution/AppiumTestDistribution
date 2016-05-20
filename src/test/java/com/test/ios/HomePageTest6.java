@@ -1,7 +1,8 @@
-package com.test.site;
+package com.test.ios;
 
 
 
+import com.test.site.UserBaseTest;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.SwipeElementDirection;
 import org.openqa.selenium.By;

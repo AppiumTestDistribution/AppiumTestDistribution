@@ -35,6 +35,7 @@ public class MyTestExecutor {
     public static Properties prop = new Properties();
     public List<Class> testcases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
+    public ArrayList<String> items = new ArrayList<String>();
 
     @SuppressWarnings("rawtypes") public void distributeTests(int deviceCount) {
         try {
@@ -119,12 +120,30 @@ public class MyTestExecutor {
 
     public void runMethodParallelAppium(List<String> test, String pack, int devicecount,
         String executionType) throws Exception {
-        Collection<URL> urls = ClasspathHelper.forPackage(pack);
-        Iterator<URL> iter = urls.iterator();
-        URL url = iter.next();
-        urls.clear();
-        URL newUrl = new URL(url.toString() + pack.replaceAll("\\.", "/"));
-        List<URL> newUrls = Lists.newArrayList(newUrl);
+        URL newUrl = null;
+        List<URL> newUrls = new ArrayList<>();
+        Collections.addAll(items, pack.split("\\s*,\\s*"));
+        if (items.size() == 1) {
+            Collection<URL> urls = ClasspathHelper.forPackage(items.get(0));
+            Iterator<URL> iter = urls.iterator();
+            URL url = iter.next();
+            urls.clear();
+            newUrl = new URL(url.toString() + items.get(0).replaceAll("\\.", "/"));
+            newUrls = Lists.newArrayList(newUrl);
+        } else if (items.size() > 1) {
+            int a = 0;
+            Collection<URL> urls = ClasspathHelper.forPackage(items.get(a));
+            Iterator<URL> iter = urls.iterator();
+            URL url = iter.next();
+            urls.clear();
+            for (int i = 0; i < items.size(); i++) {
+                newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
+                newUrls.add(newUrl);
+                a++;
+            }
+        }
+
+
         Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(newUrls)
             .setScanners(new MethodAnnotationsScanner()));
         Set<Method> resources =
@@ -137,8 +156,8 @@ public class MyTestExecutor {
             runMethodParallel(
                 constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount),
                 devicecount);
+            ImageUtils.createGif();
         }
-        ImageUtils.createGif();
         System.out.println("Finally complete");
     }
 
@@ -158,26 +177,26 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
         Map<String, List<Method>> methods, int deviceCount) {
-        ArrayList<String> items = new ArrayList<>();
+        ArrayList<String> listeners = new ArrayList<>();
         try {
             prop.load(new FileInputStream("config.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         XmlSuite suite = new XmlSuite();
-        items.add("com.appium.manager.AppiumParallelTest");
-        items.add("com.appium.utils.RetryListener");
+        listeners.add("com.appium.manager.AppiumParallelTest");
+        listeners.add("com.appium.utils.RetryListener");
         if (prop.getProperty("LISTENERS") != null) {
-            Collections.addAll(items, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
+            Collections.addAll(listeners, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
         }
 
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.TESTS);
         suite.setVerbose(2);
-        suite.setListeners(items);
+        suite.setListeners(listeners);
         if (prop.getProperty("LISTENERS") != null) {
-            suite.setListeners(items);
+            suite.setListeners(listeners);
         }
         for (int i = 0; i < deviceCount; i++) {
             XmlTest test = new XmlTest(suite);
@@ -190,11 +209,15 @@ public class MyTestExecutor {
                         xmlClasses.add(createClass(className, methods.get(className)));
                     } else {
                         for (String s : testcases) {
-                            if (pack.concat("." + s).equals(className)) {
-                                xmlClasses.add(createClass(className, methods.get(className)));
+                            for (int j = 0; j < items.size(); j++) {
+                                String testName = items.get(j).concat("." + s).toString();
+                                if (testName.equals(className)) {
+                                    xmlClasses.add(createClass(className, methods.get(className)));
+                                }
                             }
                         }
                     }
+
                 }
             }
             test.setXmlClasses(xmlClasses);
@@ -204,25 +227,25 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForDistribution(String pack, List<String> tests,
         Map<String, List<Method>> methods, int deviceCount) {
-        ArrayList<String> items = new ArrayList<>();
+        ArrayList<String> listeners = new ArrayList<>();
         try {
             prop.load(new FileInputStream("config.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (prop.getProperty("LISTENERS") != null) {
-            Collections.addAll(items, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
+            Collections.addAll(listeners, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
         }
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
-        items.add("com.appium.manager.AppiumParallelTest");
-        items.add("com.appium.utils.RetryListener");
-        suite.setListeners(items);
+        listeners.add("com.appium.manager.AppiumParallelTest");
+        listeners.add("com.appium.utils.RetryListener");
+        suite.setListeners(listeners);
         if (prop.getProperty("LISTENERS") != null) {
-            suite.setListeners(items);
+            suite.setListeners(listeners);
         }
         XmlTest test = new XmlTest(suite);
         test.setName("TestNG Test");
@@ -233,8 +256,11 @@ public class MyTestExecutor {
                     xmlClasses.add(createClass(className, methods.get(className)));
                 } else {
                     for (String s : tests) {
-                        if (pack.concat("." + s).equals(className)) {
-                            xmlClasses.add(createClass(className, methods.get(className)));
+                        for (int i = 0; i < items.size(); i++) {
+                            String testName = items.get(i).concat("." + s).toString();
+                            if (testName.equals(className)) {
+                                xmlClasses.add(createClass(className, methods.get(className)));
+                            }
                         }
                     }
                 }
