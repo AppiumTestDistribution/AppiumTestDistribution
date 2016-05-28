@@ -188,6 +188,29 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void endLogTestResults(ITestResult result) throws IOException, InterruptedException {
+    	
+    	
+    	 
+    	 final String classNameCur=result.getName().split(" ")[2].substring(1);
+    	
+    	 final Package[] packages = Package.getPackages();
+    	    
+    	 String className = null;
+
+    	    for (final Package p : packages) {
+    	        final String pack = p.getName();
+    	        final String tentative = pack + "." + classNameCur;
+    	        try {
+    	            Class.forName(tentative);
+    	        } catch (final ClassNotFoundException e) {
+    	            continue;
+    	        }
+    	        className=tentative;
+    	        
+    	        break;
+    	    }
+    	 
+    	
         if (result.isSuccess()) {
             ExtentTestManager.getTest()
                 .log(LogStatus.PASS, result.getMethod().getMethodName(), "Pass");
@@ -202,26 +225,31 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             }
 
         }
-        if (result.getStatus() == ITestResult.FAILURE) {
+        if (result.getStatus() == ITestResult.FAILURE) 
+        {
             ExtentTestManager.getTest()
                 .log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
                 System.out.println("im in");
                 deviceModel = androidDevice.getDeviceModel(device_udid);
-                captureScreenshot(result.getMethod().getMethodName(), "android");
-                screenShotAndFrame(result.getMethod().getMethodName(), "android");
+                captureScreenshot(result.getMethod().getMethodName(), "android",className);
+                screenShotAndFrame(result.getMethod().getMethodName(), "android",className);
             } else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
                 deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
-                captureScreenshot(result.getMethod().getMethodName(), "iOS");
-                screenShotAndFrame(result.getMethod().getMethodName(), "iOS");
+                
+              
+                captureScreenshot(result.getMethod().getMethodName(), "iOS",className);
+                screenShotAndFrame(result.getMethod().getMethodName(), "iOS",className);
             }
 
-            if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
+            if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) 
+            {
                 File framedImageAndroid = new File(
                     System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
                         .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_" + result
                         .getMethod().getMethodName() + "_framed.png");
-                if (framedImageAndroid.exists()) {
+                if (framedImageAndroid.exists()) 
+                {
                     ExtentTestManager.getTest()
                         .log(LogStatus.INFO, result.getMethod().getMethodName(),
                             "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
@@ -229,7 +257,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                     + device_udid.replaceAll("\\W", "_") + "/" + deviceModel
                                     + "/failed_" + result.getMethod().getMethodName()
                                     + "_framed.png"));
-                } else {
+                } 
+                else 
+                {
                     ExtentTestManager.getTest()
                         .log(LogStatus.INFO, result.getMethod().getMethodName(),
                             "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
@@ -240,7 +270,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
 
             }
-            if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+            if (driver.toString().split(":")[0].trim().equals("IOSDriver")) 
+            {
                 File framedImageIOS = new File(
                     System.getProperty("user.dir") + "/target/screenshot/iPhone/" + device_udid
                         .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_" + result
@@ -587,7 +618,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return Toolkit.getDefaultToolkit().getImage(url);
     }
 
-    public void screenShotAndFrame(String methodName, String device) {
+    public void screenShotAndFrame(String methodName, String device, String className) {
         try {
             File framePath =
                 new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
@@ -603,8 +634,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                 String deviceFrame = files1[i].toString();
                                 String screenToBeFramed = System.getProperty("user.dir") +
                                     "/target/screenshot/" + device + "/" + device_udid
-                                    .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_"
-                                    + methodName + ".png";
+                                    .replaceAll("\\W", "_") + "/" + className+ "/"+ methodName +"/" + deviceModel +"_failed.png";
                                 String framedScreenShot =
                                     System.getProperty("user.dir") + "/target/screenshot/" + device
                                         + "/" + device_udid.replaceAll("\\W", "_") + "/"
@@ -630,16 +660,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
-    public void captureScreenshot(String methodName, String device)
+    public void captureScreenshot(String methodName, String device, String className)
         throws IOException, InterruptedException {
         scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         
        
-        String className = new Exception().getStackTrace()[1].getClassName();
+       
         
         FileUtils.copyFile(scrFile, new File(
             System.getProperty("user.dir") + "/target/screenshot/" + device + "/" + device_udid
-                .replaceAll("\\W", "_") + "/" + className+ "/"+ methodName +"/" + deviceModel + "/failed_"+".png"));
+                .replaceAll("\\W", "_") + "/" + className+ "/"+ methodName +"/" + deviceModel +"_failed"+".png"));
         Thread.sleep(3000);
     }
 
