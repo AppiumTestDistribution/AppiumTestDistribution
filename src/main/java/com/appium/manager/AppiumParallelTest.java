@@ -514,11 +514,11 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                         System.getProperty("user.dir")
                                             + "/target/screenshot/iOS/" + device_udid
                                             .replaceAll("\\W", "_") + "/" + className+ "/" + methodName + "/"+iosModel+"_"
-                                            + screenShotName + "_framed.png");
+                                            + screenShotName + "_results.png");
                                     ExtentTestManager.logOutPut(System.getProperty("user.dir")
                                             + "/target/screenshot/iOS/" + device_udid
                                             .replaceAll("\\W", "_") + "/" + className+ "/" + methodName + "/"+ iosModel+"_"
-                                            + screenShotName + "_framed.png",
+                                            + screenShotName + "_results.png",
                                         screenShotName.toUpperCase());
                                     break;
                                 } catch (InterruptedException e) {
