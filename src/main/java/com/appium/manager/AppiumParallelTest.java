@@ -212,8 +212,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 screenShotAndFrame(result.getMethod().getMethodName(), "android");
             } else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
                 deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
-                captureScreenshot(result.getMethod().getMethodName(), "iPhone");
-                screenShotAndFrame(result.getMethod().getMethodName(), "iPhone");
+                captureScreenshot(result.getMethod().getMethodName(), "iOS");
+                screenShotAndFrame(result.getMethod().getMethodName(), "iOS");
             }
 
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
@@ -633,9 +633,13 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public void captureScreenshot(String methodName, String device)
         throws IOException, InterruptedException {
         scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        
+       
+        String className = new Exception().getStackTrace()[1].getClassName();
+        
         FileUtils.copyFile(scrFile, new File(
             System.getProperty("user.dir") + "/target/screenshot/" + device + "/" + device_udid
-                .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_" + methodName + ".png"));
+                .replaceAll("\\W", "_") + "/" + className+ "/"+ methodName +"/" + deviceModel + "/failed_"+".png"));
         Thread.sleep(3000);
     }
 
