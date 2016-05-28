@@ -95,7 +95,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
     public static synchronized String getNextAvailableDeviceId() {
         ConcurrentHashMap.KeySetView<String, Boolean> devices = deviceMapping.keySet();
+        int i=0;
         for (String device : devices) {
+            Thread t = Thread.currentThread();
+            t.setName("Thread_"+i);
+            System.out.println("Parallel Thread is::" + t.getName());
+            i++;
             if (deviceMapping.get(device) == true) {
                 deviceMapping.put(device, false);
                 return device;
@@ -317,7 +322,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void removeApkFromDevice(String app_package) throws Exception {
-        androidDevice.removeApkFromDevices(device_udid,app_package);
+        androidDevice.removeApkFromDevices(device_udid, app_package);
     }
 
 

@@ -3,6 +3,7 @@ package com.test.site;
 import com.appium.manager.AppiumParallelTest;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
+import org.json.simple.JSONObject;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class UserBaseTest extends AppiumParallelTest {
-
+     JSonParser jSonParser = new JSonParser();
     @BeforeMethod() public void startApp(Method name) throws Exception {
         driver = startAppiumServerInParallel(name.getName());
         startLogResults(name.getName());
@@ -39,6 +40,13 @@ public class UserBaseTest extends AppiumParallelTest {
     @AfterClass() public void afterClass() throws InterruptedException, IOException {
         System.out.println("After Class" + Thread.currentThread().getId());
         killAppiumServer();
+    }
+
+    public void getUserName(){
+        String[] crds = Thread.currentThread().getName().toString().split("_");
+        System.out.println(crds[1]);
+        JSONObject user = jSonParser.getUserData(Integer.parseInt(crds[1]));
+        System.out.println(user.get("userName"));
     }
 
 
