@@ -464,7 +464,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
                 FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
-                        .replaceAll("\\W", "_") +"_"+ "/"+ className+ "/"+ methodName +"/"+ screenShotName + ".png"));
+                        .replaceAll("\\W", "_") + "/"+ className+ "/"+ methodName +"/"+ screenShotName + ".png"));
                 File[] files1 = framePath.listFiles();
                 if (framePath.exists()) {
                     for (int i = 0; i < files1.length; i++) {
