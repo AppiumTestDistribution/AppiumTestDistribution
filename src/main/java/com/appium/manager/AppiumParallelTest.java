@@ -669,7 +669,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         
         FileUtils.copyFile(scrFile, new File(
             System.getProperty("user.dir") + "/target/screenshot/" + device + "/" + device_udid
-                .replaceAll("\\W", "_") + "/" + className+ "/"+ methodName +"/" + deviceModel +"_failed"+".png"));
+                .replaceAll("\\W", "_") + "/" + className+ "/"+ methodName +"/" + deviceModel + "_"+methodName+"_failed"+".png"));
         Thread.sleep(3000);
     }
 
