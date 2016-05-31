@@ -627,12 +627,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     if (files1[i].isFile()) { //this line weeds out other directories/folders
                         Path p = Paths.get(files1[i].toString());
                         String fileName = p.getFileName().toString().toLowerCase();
-                        System.out.println("##########@@@@@@@@@########At the Gate########@@@@@@@!!!!!!!!"+fileName.split(".png")[0]+"@@@@@@@@@@@@$$$$$$$$$$$@@@@@@@@@@"+fileName);
+                        
                         if (deviceModel.toString().toLowerCase()
                             .contains(fileName.split(".png")[0].toLowerCase()))
                         
                         {
-                        	System.out.println("##########@@@@@@@@@########ENTERED########@@@@@@@!!!!!!!!");
+                        	
                             try {
                                 String deviceFrame = files1[i].toString();
                                 String screenToBeFramed = System.getProperty("user.dir") +
