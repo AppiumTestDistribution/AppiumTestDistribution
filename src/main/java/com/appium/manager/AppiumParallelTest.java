@@ -505,6 +505,11 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                             if (iosModel.toString().toLowerCase()
                                 .contains(fileName.split(".png")[0].toLowerCase())) {
                                 try {
+                                	
+                                	String screenToFrame=System.getProperty("user.dir")
+                                            + "/target/screenshot/iOS/" + device_udid
+                                            .replaceAll("\\W", "_") + "/"+ className+ "/" + methodName + "/"
+                                            + screenShotName + ".png";
                                     imageUtils.wrapDeviceFrames(files1[i].toString(),
                                         System.getProperty("user.dir")
                                             + "/target/screenshot/iOS/" + device_udid
@@ -519,6 +524,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                             .replaceAll("\\W", "_") + "/" + className+ "/" + methodName + "/"+ iosModel+"_"
                                             + screenShotName + "_results.png",
                                         screenShotName.toUpperCase());
+                                    File fileToDelete = new File(screenToFrame);
+                                    fileToDelete.delete();
+                                    
                                     break;
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
