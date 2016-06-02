@@ -52,7 +52,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>3.4.1</version>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -70,10 +70,10 @@
             <version>1.1</version>
         </dependency>
         <dependency>
-    	<groupId>com.google.code.gson</groupId>
-    	<artifactId>gson</artifactId>
-    	<version>2.6.2</version>
-	</dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.6.2</version>
+        </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
