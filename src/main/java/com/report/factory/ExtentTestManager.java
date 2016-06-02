@@ -44,9 +44,9 @@ public class ExtentTestManager { // new
             e.printStackTrace();
         }
         Map sysInfo = new HashMap();
-        sysInfo.put("Selenium Java Version", "2.52.0");
+        sysInfo.put("Selenium Java Version", "2.53.0");
         sysInfo.put("Environment", "Prod");
-        sysInfo.put("AppiumVersion", "3.4.0");
+        sysInfo.put("AppiumVersion", "4.0.0");
         sysInfo.put("RunnerMode", prop.getProperty("RUNNER").toUpperCase());
         extent.addSystemInfo(sysInfo);
         return test;
