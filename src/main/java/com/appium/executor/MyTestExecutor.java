@@ -156,9 +156,9 @@ public class MyTestExecutor {
             runMethodParallel(
                 constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount),
                 devicecount);
-            ImageUtils.createGif();
         }
         System.out.println("Finally complete");
+        ImageUtils.creatResultsSet();
     }
 
     public static void testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {

@@ -32,8 +32,8 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver")
-    public void testMethodOne_6() throws Exception {
+    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver") public void testMethodOne_6()
+        throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
@@ -71,8 +71,8 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver")
-    public void testMethodOne_8() throws Exception {
+    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver") public void testMethodOne_8()
+        throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
@@ -87,8 +87,8 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver")
-    public void testMethodOne_9() throws Exception {
+    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver") public void testMethodOne_9()
+        throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()

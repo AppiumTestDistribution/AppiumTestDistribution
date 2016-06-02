@@ -5,7 +5,6 @@ import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.AndroidServerFlag;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
-import io.appium.java_client.service.local.flags.IOSServerFlag;
 import io.appium.java_client.service.local.flags.ServerArgument;
 
 import java.io.File;
@@ -48,8 +47,7 @@ public class AppiumManager {
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
                 System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID
                     .replaceAll("\\W", "_") + "__" + methodName + ".txt"))
-                .withArgument(GeneralServerFlag.UIID, deviceID)
-                .withArgument(GeneralServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
+                .withArgument(AndroidServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
                 .withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER,
                     Integer.toString(bootstrapPort))
                 .withArgument(GeneralServerFlag.SESSION_OVERRIDE)
@@ -86,8 +84,6 @@ public class AppiumManager {
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
                 System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID
                     .replaceAll("\\W", "_") + "__" + methodName + ".txt"))
-                .withArgument(GeneralServerFlag.UIID, deviceID)
-                .withArgument(IOSServerFlag.USE_NATIVE_INSTRUMENTS)
                 .withArgument(webKitProxy, webKitPort)
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "debug")
                 .withArgument(GeneralServerFlag.TEMP_DIRECTORY,

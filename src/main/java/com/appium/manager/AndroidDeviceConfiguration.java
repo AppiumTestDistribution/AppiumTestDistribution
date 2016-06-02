@@ -189,7 +189,7 @@ public class AndroidDeviceConfiguration {
      * @throws Exception
      */
 
-    public void removeApkFromDevices(String deviceID,String app_package) throws Exception {
-            cmd.runCommand("adb -s " + deviceID + " uninstall " + app_package);
+    public void removeApkFromDevices(String deviceID, String app_package) throws Exception {
+        cmd.runCommand("adb -s " + deviceID + " uninstall " + app_package);
     }
 }

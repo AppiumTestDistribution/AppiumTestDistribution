@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class UserBaseTest extends AppiumParallelTest {
-     JSonParser jSonParser = new JSonParser();
+    JSonParser jSonParser = new JSonParser();
+
     @BeforeMethod() public void startApp(Method name) throws Exception {
         driver = startAppiumServerInParallel(name.getName());
         startLogResults(name.getName());
@@ -42,7 +43,7 @@ public class UserBaseTest extends AppiumParallelTest {
         killAppiumServer();
     }
 
-    public void getUserName(){
+    public void getUserName() {
         String[] crds = Thread.currentThread().getName().toString().split("_");
         System.out.println(crds[1]);
         JSONObject user = jSonParser.getUserData(Integer.parseInt(crds[1]));

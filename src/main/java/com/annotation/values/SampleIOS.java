@@ -36,7 +36,7 @@ public class SampleIOS extends AvailabelPorts {
             new AppiumServiceBuilder().withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
                 System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID + "__"
-                    + "sampletest.txt")).withArgument(GeneralServerFlag.UIID, deviceID)
+                    + "sampletest.txt"))
                 .withArgument(GeneralServerFlag.TEMP_DIRECTORY,
                     new File(String.valueOf(classPathRoot)).getAbsolutePath() + "/target/" + "tmp_"
                         + port).withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
