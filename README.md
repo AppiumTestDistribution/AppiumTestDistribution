@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/saikrishna321/AppiumTestDistribution](https://badges.gitter.im/saikrishna321/AppiumTestDistribution.svg)](https://gitter.im/saikrishna321/AppiumTestDistribution?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/saikrishna321/AppiumTestDistribution.svg?branch=master)](https://travis-ci.org/saikrishna321/AppiumTestDistribution/builds/)
 
-![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/anima_new.gif)
+![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/Network-2.gif)
 
 Add the below dependencies in your pom.xml
 
