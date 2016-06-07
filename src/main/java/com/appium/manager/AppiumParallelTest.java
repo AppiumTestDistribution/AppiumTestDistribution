@@ -11,6 +11,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -43,7 +44,7 @@ import java.util.logging.Level;
 
 
 public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
-    public AppiumDriver<MobileElement> driver;
+    public AppiumDriver<MobileElement> driver = null;
     public AppiumManager appiumMan = new AppiumManager();
     public String device_udid;
     public List<LogEntry> logEntries;
@@ -162,10 +163,15 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         throws Exception {
         ExtentTestManager.loadConfig();
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            child = ExtentTestManager.startTest(methodName)
+            child = ExtentTestManager.startTest(methodName.toString())
                 .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
         }
         Thread.sleep(3000);
+        startingServerInstance();
+        return driver;
+    }
+
+    public void startingServerInstance() throws Exception {
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
         } else {
@@ -179,8 +185,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
             }
         }
-
-        return driver;
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
@@ -359,6 +363,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
+        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,
+            prop.getProperty("APP_ACTIVITY"));
+        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
+            prop.getProperty("APP_PACKAGE"));
         androidCapabilities.setCapability("browserName", "");
         int android_api = Integer.parseInt(androidDevice.deviceOS(device_udid));
         try {
