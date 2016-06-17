@@ -27,34 +27,25 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
 public class MyTestExecutor {
-    List<Thread> threads = new ArrayList<Thread>();
+    List<Thread> threads = new ArrayList<>();
     public static Properties prop = new Properties();
-    public List<Class> testcases = new ArrayList<>();
+    public List<Class> testCases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
-    public ArrayList<String> items = new ArrayList<String>();
+    public ArrayList<String> items = new ArrayList<>();
 
     @SuppressWarnings("rawtypes") public void distributeTests(int deviceCount) {
-        try {
-            PackageUtil.getClasses("output").stream().forEach(s -> {
-                if (s.toString().contains("IT")) {
-                    System.out.println("forEach: " + testcases.add((Class) s));
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        printClasses();
         ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
-        for (final Class testFile : testcases) {
-            executorService.submit(new Runnable() {
-                public void run() {
-                    System.out.println("Running test file: " + testFile.getName());
-                    runTestCase(testFile);
+        for (final Class testFile : testCases) {
+            executorService.submit((Runnable) () -> {
+                System.out.println("Running test file: " + testFile.getName());
+                runTestCase(testFile);
 
-                }
             });
         }
         executorService.shutdown();
@@ -74,22 +65,13 @@ public class MyTestExecutor {
 
     @SuppressWarnings("rawtypes") public void parallelTests(int deviceCount)
         throws InterruptedException {
-        try {
-            PackageUtil.getClasses("output").stream().forEach(s -> {
-                if (s.toString().contains("IT")) {
-                    System.out.println("forEach: " + testcases.add((Class) s));
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        printClasses();
         for (int i = 0; i < deviceCount; i++) {
-            final int x = i;
             Thread t = new Thread(new Runnable() {
 
                 public void run() {
                     // TODO Auto-generated method stub
-                    runTests(testcases);
+                    runTests(testCases);
                 }
 
                 private void runTests(List<Class> testCases) {
@@ -118,9 +100,9 @@ public class MyTestExecutor {
     }
 
 
-    public void runMethodParallelAppium(List<String> test, String pack, int devicecount,
+    public void runMethodParallelAppium(List<String> test, String pack, int deviceCount,
         String executionType) throws Exception {
-        URL newUrl = null;
+        URL newUrl;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
         if (items.size() == 1) {
@@ -136,8 +118,8 @@ public class MyTestExecutor {
             Iterator<URL> iter = urls.iterator();
             URL url = iter.next();
             urls.clear();
-            for (int i = 0; i < items.size(); i++) {
-                newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
+            for (String item : items) {
+                newUrl = new URL(url.toString() + item.replaceAll("\\.", "/"));
                 newUrls.add(newUrl);
                 a++;
             }
@@ -151,14 +133,14 @@ public class MyTestExecutor {
         if (executionType.equalsIgnoreCase("distribute")) {
             runMethodParallel(
                 constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
-                    devicecount), devicecount);
+                    deviceCount), deviceCount);
         } else {
             runMethodParallel(
-                constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount),
-                devicecount);
+                constructXmlSuiteForParallel(pack, test, createTestsMap(resources), deviceCount),
+                deviceCount);
         }
         System.out.println("Finally complete");
-        ImageUtils.creatResultsSet();
+        ImageUtils.createResultsSet();
     }
 
     public static void testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
@@ -175,7 +157,7 @@ public class MyTestExecutor {
         testNG.run();
     }
 
-    public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
+    public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testCases,
         Map<String, List<Method>> methods, int deviceCount) {
         ArrayList<String> listeners = new ArrayList<>();
         try {
@@ -205,10 +187,10 @@ public class MyTestExecutor {
             List<XmlClass> xmlClasses = new ArrayList<>();
             for (String className : methods.keySet()) {
                 if (className.contains("Test")) {
-                    if (testcases.size() == 0) {
+                    if (testCases.size() == 0) {
                         xmlClasses.add(createClass(className, methods.get(className)));
                     } else {
-                        for (String s : testcases) {
+                        for (String s : testCases) {
                             for (int j = 0; j < items.size(); j++) {
                                 String testName = items.get(j).concat("." + s).toString();
                                 if (testName.equals(className)) {
@@ -281,11 +263,7 @@ public class MyTestExecutor {
 
 
     private List<XmlInclude> constructIncludes(List<Method> methods) {
-        List<XmlInclude> includes = new ArrayList<>();
-        for (Method m : methods) {
-            includes.add(new XmlInclude(m.getName()));
-        }
-        return includes;
+        return methods.stream().map(m -> new XmlInclude(m.getName())).collect(Collectors.toList());
     }
 
     public Map<String, List<Method>> createTestsMap(Set<Method> methods) {
@@ -314,8 +292,21 @@ public class MyTestExecutor {
     public void deleteOutputDirectory() {
         File delete_output = new File(System.getProperty("user.dir") + "/src/test/java/output/");
         File[] files = delete_output.listFiles();
+        assert files != null;
         for (File file : files) {
             file.delete();
+        }
+    }
+
+    public void printClasses(){
+        try {
+            PackageUtil.getClasses("output").stream().forEach(s -> {
+                if (s.toString().contains("IT")) {
+                    System.out.println("forEach: " + testCases.add((Class) s));
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

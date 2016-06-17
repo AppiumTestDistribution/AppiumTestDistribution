@@ -1,6 +1,6 @@
 package com.appium.ios;
 
-import com.appium.manager.AvailabelPorts;
+import com.appium.manager.AvailablePorts;
 import com.appium.utils.CommandPrompt;
 
 import java.io.*;
@@ -12,10 +12,10 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {
-    public ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
+    public ArrayList<String> deviceUDIDiOS = new ArrayList<>();
     CommandPrompt commandPrompt = new CommandPrompt();
-    AvailabelPorts ap = new AvailabelPorts();
-    public HashMap<String, String> deviceMap = new HashMap<String, String>();
+    AvailablePorts ap = new AvailablePorts();
+    public HashMap<String, String> deviceMap = new HashMap<>();
     Map<String, String> devices = new HashMap<>();
     public Process p, p1;
     public Properties prop = new Properties();
@@ -99,15 +99,13 @@ public class IOSDeviceConfiguration {
     }
 
     /**
-     * @param bundleID
-     * @return
+     * @param bundleID - Bundle ID of the .ipa file
+     * @return - Returns booleans based on if the ios app provided is installed
      * @throws InterruptedException
      * @throws IOException
      */
     public boolean checkIfAppIsInstalled(String bundleID) throws InterruptedException, IOException {
-        boolean appAlreadyExists =
-            commandPrompt.runCommand("ideviceinstaller --list-apps").contains(bundleID);
-        return appAlreadyExists;
+        return commandPrompt.runCommand("ideviceinstaller --list-apps").contains(bundleID);
     }
 
     /**
@@ -123,20 +121,13 @@ public class IOSDeviceConfiguration {
     }
 
     public String getDeviceName(String udid) throws InterruptedException, IOException {
-        String deviceName =
-            commandPrompt.runCommand("idevicename --udid " + udid).replace("\\W", "_");
-        return deviceName;
+        return commandPrompt.runCommand("idevicename --udid " + udid).replace("\\W", "_");
     }
 
     public boolean checkiOSDevice(String UDID) throws Exception {
         try {
             String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
-            boolean checkDeviceExists = getIOSDeviceID.contains(UDID);
-            if (checkDeviceExists) {
-                return true;
-            } else {
-                return false;
-            }
+            return getIOSDeviceID.contains(UDID);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -145,8 +136,8 @@ public class IOSDeviceConfiguration {
 
     public HashMap<String, String> setIOSWebKitProxyPorts(String device_udid) throws Exception {
         try {
-            int webkitproxyport = ap.getPort();
-            deviceMap.put(device_udid, Integer.toString(webkitproxyport));
+            int webkitProxyPort = ap.getPort();
+            deviceMap.put(device_udid, Integer.toString(webkitProxyPort));
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
@@ -158,9 +149,9 @@ public class IOSDeviceConfiguration {
         prop.load(input);
         String serverPath = prop.getProperty("APPIUM_JS_PATH");
         File file = new File(serverPath);
-        File curentPath = new File(file.getParent());
-        System.out.println(curentPath);
-        file = new File(curentPath + "/.." + "/..");
+        File currentPath = new File(file.getParent());
+        System.out.println(currentPath);
+        file = new File(currentPath + "/.." + "/..");
         String ios_web_lit_proxy_runner =
             file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
         String webkitRunner =
@@ -231,7 +222,7 @@ public class IOSDeviceConfiguration {
         File executePermission =
             new File(file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js");
         if (executePermission.exists()) {
-            if (executePermission.canExecute() == false) {
+            if (!executePermission.canExecute()) {
                 executePermission.setExecutable(true);
                 System.out.println("Access Granted for iOSWebKitProxyLauncher");
             } else {
