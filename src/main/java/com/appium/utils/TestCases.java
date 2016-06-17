@@ -5,7 +5,7 @@ import java.util.List;
 public class TestCases {
 
     private String testCase;
-    List<Testmethods> testMethod;
+    List<TestMethods> testMethod;
 
     public String getTestCase() {
         return testCase;
@@ -15,11 +15,11 @@ public class TestCases {
         this.testCase = testCase;
     }
 
-    public List<Testmethods> getTestMethod() {
+    public List<TestMethods> getTestMethod() {
         return testMethod;
     }
 
-    public void setTestMethod(List<Testmethods> testMethod) {
+    public void setTestMethod(List<TestMethods> testMethod) {
         this.testMethod = testMethod;
     }
 

@@ -2,7 +2,7 @@ package com.appium.utils;
 
 import java.util.List;
 
-public class Testmethods {
+public class TestMethods {
 
     private String methodName;
     private String gifPath;
@@ -15,7 +15,7 @@ public class Testmethods {
         this.gifPath = gifPath;
     }
 
-    private List<String> screnShots;
+    private List<String> screenShots;
 
     public String getMethodName() {
         return methodName;
@@ -25,12 +25,12 @@ public class Testmethods {
         this.methodName = methodName;
     }
 
-    public List<String> getScrenShots() {
-        return screnShots;
+    public List<String> getScreenShots() {
+        return screenShots;
     }
 
-    public void setScrenShots(List<String> screnShots) {
-        this.screnShots = screnShots;
+    public void setScreenShots(List<String> screenShots) {
+        this.screenShots = screenShots;
     }
 
 
