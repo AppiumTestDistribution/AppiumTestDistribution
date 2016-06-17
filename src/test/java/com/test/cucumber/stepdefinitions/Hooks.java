@@ -5,7 +5,6 @@ import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriverException;
 
 import java.io.IOException;
@@ -20,7 +19,7 @@ public class Hooks extends ExtentCucumberFormatter {
         if (scenario.isFailed()) {
             try {
                 byte[] screenshot =
-                    ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BYTES);
+                    getDriver().getScreenshotAs(OutputType.BYTES);
                 scenario.embed(screenshot, "image/png");
             } catch (WebDriverException wde) {
                 System.err.println(wde.getMessage());

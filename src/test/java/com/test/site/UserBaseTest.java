@@ -44,7 +44,7 @@ public class UserBaseTest extends AppiumParallelTest {
     }
 
     public void getUserName() {
-        String[] crds = Thread.currentThread().getName().toString().split("_");
+        String[] crds = Thread.currentThread().getName().split("_");
         System.out.println(crds[1]);
         JSONObject user = jSonParser.getUserData(Integer.parseInt(crds[1]));
         System.out.println(user.get("userName"));

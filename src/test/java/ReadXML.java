@@ -26,19 +26,18 @@ public class ReadXML {
             List<Element> tests = classElement.getChildren("testsuite");
             System.out.println("----------------------------");
 
-            for (int temp = 0; temp < tests.size(); temp++) {
-                Element supercarElement = tests.get(temp);
+            for (Element supercarElement : tests) {
                 System.out.println("\nCurrent Element :" + supercarElement.getName());
                 Attribute attribute = supercarElement.getAttribute("name");
                 System.out.println("TestCaseName : " + attribute.getValue());
-                List<Element> testcases = supercarElement.getChildren("testcase");
-                for (int count = 0; count < testcases.size(); count++) {
-                    Element carElement = testcases.get(count);
+                List<Element> testCases = supercarElement.getChildren("testcase");
+                for (int count = 0; count < testCases.size(); count++) {
+                    Element carElement = testCases.get(count);
                     Attribute typeAttribute = carElement.getAttribute("name");
                     if (typeAttribute != null)
                         System.out.println(
-                            "TestMethod in *********" + attribute.getValue() + typeAttribute
-                                .getValue());
+                                "TestMethod in *********" + attribute.getValue() + typeAttribute
+                                        .getValue());
                     else {
                         System.out.println("");
                     }
@@ -46,10 +45,8 @@ public class ReadXML {
 
                 }
             }
-        } catch (JDOMException e) {
+        } catch (JDOMException | IOException e) {
             e.printStackTrace();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
         }
     }
 

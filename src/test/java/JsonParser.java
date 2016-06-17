@@ -15,22 +15,21 @@ public class JsonParser {
         BufferedReader br = new BufferedReader(new FileReader("temp.json"));
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
-        List<String> classname = new ArrayList<String>();
-        List<String> name = new ArrayList<String>();
+        List<String> classname = new ArrayList<>();
+        List<String> name = new ArrayList<>();
 
         while (line != null) {
             sb.append(line);
             sb.append(System.lineSeparator());
             line = br.readLine();
         }
-        StringBuilder everything = sb;
-        JSONArray jsonObj = new JSONArray(everything.toString());
+        JSONArray jsonObj = new JSONArray(sb.toString());
 
         System.out.println(jsonObj.length());
         for (int i = 0; i < jsonObj.length(); i++) {
-            JSONObject entierJson = (JSONObject) jsonObj.getJSONObject(i).get("testsuite");
+            JSONObject entireJson = (JSONObject) jsonObj.getJSONObject(i).get("testsuite");
             // System.out.println(entierJson.get("testcase"));
-            Set keys = ((JSONObject) entierJson.get("testcase")).keySet();
+            Set keys = ((JSONObject) entireJson.get("testcase")).keySet();
             Iterator itr = keys.iterator();
 
             String key;
@@ -38,15 +37,15 @@ public class JsonParser {
             while (itr.hasNext()) {
                 key = (String) itr.next();
                 if (key.equals("classname")) {
-                    value = (String) ((JSONObject) entierJson.get("testcase")).get(key).toString();
+                    value = (String) ((JSONObject) entireJson.get("testcase")).get(key).toString();
                     classname.add(value);
-                    System.out.println(key + " - " + value.toString());
+                    System.out.println(key + " - " + value);
 
                 }
                 if (key.equals("name")) {
-                    value = (String) ((JSONObject) entierJson.get("testcase")).get(key).toString();
+                    value = (String) ((JSONObject) entireJson.get("testcase")).get(key).toString();
                     name.add(value);
-                    System.out.println(key + " - " + value.toString());
+                    System.out.println(key + " - " + value);
 
                 }
 

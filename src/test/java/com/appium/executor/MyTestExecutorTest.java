@@ -5,6 +5,7 @@ import org.testng.xml.XmlSuite;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,20 +18,14 @@ public class MyTestExecutorTest {
     @Test public void testXmlSuiteCreation() {
         Set<Method> methods = new HashSet<>();
 
-        Method[] thizMethods = MyTestExecutorTest.class.getMethods();
-        for (Method m : thizMethods) {
-            methods.add(m);
-        }
+        Method[] thisMethods = MyTestExecutorTest.class.getMethods();
+        Collections.addAll(methods, thisMethods);
 
         Method[] otherMethods = OtherTests.class.getMethods();
-        for (Method m : otherMethods) {
-            methods.add(m);
-        }
+        Collections.addAll(methods, otherMethods);
 
         Method[] otherMethods1 = OtherTests1.class.getMethods();
-        for (Method m : otherMethods1) {
-            methods.add(m);
-        }
+        Collections.addAll(methods, otherMethods1);
         List<String> tc = new ArrayList<>();
 
         XmlSuite xmlSuite =
