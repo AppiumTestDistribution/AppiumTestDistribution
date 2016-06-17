@@ -32,7 +32,4 @@ public class TestMethods {
     public void setScreenShots(List<String> screenShots) {
         this.screenShots = screenShots;
     }
-
-
-
 }
