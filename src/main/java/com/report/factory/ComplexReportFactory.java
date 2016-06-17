@@ -15,8 +15,8 @@ import java.util.Properties;
 public class ComplexReportFactory {
 
     public static ExtentReports reporter;
-    public static Map<Long, String> threadToExtentTestMap = new HashMap<Long, String>();
-    public static Map<String, ExtentTest> nameToTestMap = new HashMap<String, ExtentTest>();
+    public static Map<Long, String> threadToExtentTestMap = new HashMap<>();
+    public static Map<String, ExtentTest> nameToTestMap = new HashMap<>();
     private static String filenameOfReport = System.getProperty("user.dir") + "/index.html";
     public static Properties prop = new Properties();
     public static InputStream input = null;
@@ -86,7 +86,7 @@ public class ComplexReportFactory {
             String testName = threadToExtentTestMap.get(threadID);
             return nameToTestMap.get(testName);
         }
-        //system log, this shouldnt happen but in this crazy times if it did happen log it.
+        //system log, this shouldn't happen but in this crazy times if it did happen log it.
         return null;
     }
 

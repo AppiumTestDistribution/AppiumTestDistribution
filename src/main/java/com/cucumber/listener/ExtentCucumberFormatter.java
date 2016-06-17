@@ -16,7 +16,6 @@ import io.appium.java_client.MobileElement;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.util.Map;
 public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public LinkedList<Step> testSteps;
-    private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
+    private Map<Long, ExtentTest> parentContext = new HashMap<>();
     public ExtentTest parent;
     public ExtentTest child;
     public AppiumDriver<MobileElement> appium_driver;
@@ -73,7 +72,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         } else if ("failed".equals(result.getStatus())) {
             String failed_StepName = testSteps.poll().getName();
             ExtentTestManager.getTest().log(LogStatus.FAIL, failed_StepName, result.getError());
-            File scrFile = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
+            File scrFile = getDriver().getScreenshotAs(OutputType.FILE);
             if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
                 deviceModel = androidDevice.getDeviceModel(appiumParallelTest.device_udid);
                 screenShotAndFrame(failed_StepName, scrFile, "android");
@@ -81,9 +80,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 try {
                     deviceModel =
                         iosDevice.getIOSDeviceProductTypeAndVersion(appiumParallelTest.device_udid);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
                 screenShotAndFrame(failed_StepName, scrFile, "iPhone");
@@ -149,7 +146,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.testSteps = new LinkedList<Step>();
+        this.testSteps = new LinkedList<>();
         System.out.println(testSteps);
         child = ExtentTestManager.startTest(scenario.getName()).assignCategory(
             appiumParallelTest.category + appiumParallelTest.device_udid.replaceAll("\\W", "_"));
@@ -187,9 +184,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         ExtentManager.getInstance().flush();
         try {
             appiumParallelTest.killAppiumServer();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -205,27 +200,26 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".png"));
             File[] files1 = framePath.listFiles();
             if (framePath.exists()) {
-                for (int i = 0; i < files1.length; i++) {
-                    if (files1[i].isFile()) { //this line weeds out other directories/folders
-                        Path p = Paths.get(files1[i].toString());
+                assert files1 != null;
+                for (File aFiles1 : files1) {
+                    if (aFiles1.isFile()) { //this line weeds out other directories/folders
+                        Path p = Paths.get(aFiles1.toString());
                         String fileName = p.getFileName().toString().toLowerCase();
-                        if (deviceModel.toString().toLowerCase()
-                            .contains(fileName.split(".png")[0].toLowerCase())) {
+                        if (deviceModel.toLowerCase()
+                                .contains(fileName.split(".png")[0].toLowerCase())) {
                             try {
-                                imageUtils.wrapDeviceFrames(files1[i].toString(),
-                                    System.getProperty("user.dir") +
-                                        "/target/screenshot/" + device + "/"
-                                        + appiumParallelTest.device_udid.replaceAll("\\W", "_")
-                                        + "/" + deviceModel + "/failed_" + failed_StepName
-                                        .replaceAll(" ", "_") + ".png",
-                                    System.getProperty("user.dir") + "/target/screenshot/" + device
-                                        + "/" + appiumParallelTest.device_udid
-                                        .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_"
-                                        + failed_StepName.replaceAll(" ", "_") + "_framed.png");
+                                imageUtils.wrapDeviceFrames(aFiles1.toString(),
+                                        System.getProperty("user.dir") +
+                                                "/target/screenshot/" + device + "/"
+                                                + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                                                + "/" + deviceModel + "/failed_" + failed_StepName
+                                                .replaceAll(" ", "_") + ".png",
+                                        System.getProperty("user.dir") + "/target/screenshot/" + device
+                                                + "/" + appiumParallelTest.device_udid
+                                                .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_"
+                                                + failed_StepName.replaceAll(" ", "_") + "_framed.png");
                                 break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (IM4JavaException e) {
+                            } catch (InterruptedException | IM4JavaException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -240,7 +234,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     }
 
     public void attachScreenShotToReport(String stepName) {
-        String platform = null;
+        String platform;
         if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
             platform = "android";
         } else if (getDriver().toString().split(":")[0].trim().equals("IOSDriver")) {

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class ExtentTestManager { // new
-    public static Map<Integer, ExtentTest> extentTestMap = new HashMap<Integer, ExtentTest>();
+    public static Map<Integer, ExtentTest> extentTestMap = new HashMap<>();
 
     public static ExtentReports extent = ExtentManager.getInstance();
     public static Properties prop = new Properties();
