@@ -41,27 +41,30 @@ public class ImageUtils {
         cmd.run(op);
     }
 
-    public static List<TestResults> creatResultsSet() throws Exception {
+    public static List<TestResults> createResultsSet() throws Exception {
 
 
-        List<TestResults> testResultList = new ArrayList<TestResults>();
+        List<TestResults> testResultList = new ArrayList<>();
 
 
         File dir = new File(System.getProperty("user.dir") + "/target/screenshot");
 
         File[] oSList = dir.listFiles();
 
+        assert oSList != null;
         for (File oFile : oSList) {
 
             File[] dList = oFile.listFiles();
 
+            assert dList != null;
             for (File dFile : dList) {
                 TestResults testResult = new TestResults();
                 if (dFile.isDirectory()) {
                     testResult.setDeviceUDID(dFile.getName());
 
-                    List<TestCases> testCaseList = new ArrayList<TestCases>();
+                    List<TestCases> testCaseList = new ArrayList<>();
                     File[] tList = dFile.listFiles();
+                    assert tList != null;
                     for (File tFile : tList) {
 
                         TestCases testCase = new TestCases();
@@ -69,14 +72,16 @@ public class ImageUtils {
                             testCase.setTestCase(tFile.getName());
 
                             File[] mList = tFile.listFiles();
-                            List<Testmethods> testMethodList = new ArrayList<Testmethods>();
+                            List<TestMethods> testMethodList = new ArrayList<>();
+                            assert mList != null;
                             for (File mFile : mList) {
 
-                                Testmethods testMethod = new Testmethods();
+                                TestMethods testMethod = new TestMethods();
                                 testMethod.setMethodName(mFile.getName());
                                 if (mFile.isDirectory()) {
                                     File[] sList = mFile.listFiles();
-                                    List<String> screenShotList = new ArrayList<String>();
+                                    List<String> screenShotList = new ArrayList<>();
+                                    assert sList != null;
                                     for (File sFile : sList) {
                                         if (sFile.isFile() && sFile.getCanonicalPath()
                                             .contains("result")) {
@@ -90,7 +95,7 @@ public class ImageUtils {
                                             testMethod.setGifPath(sFile.getCanonicalPath());
                                         }
                                     }
-                                    testMethod.setScrenShots(screenShotList);
+                                    testMethod.setScreenShots(screenShotList);
                                 }
 
                                 testMethodList.add(testMethod);
@@ -145,7 +150,7 @@ public class ImageUtils {
                 deviceName = file.getName().split("_")[0];
                 String deviceModel = file.getName().split("_")[1];
                 String screenName = file.getName().split("_")[2];
-                String imagePath = file.getPath().toString();
+                String imagePath = file.getPath();
                 ja.addProperty("Device Name", deviceName);
                 ja.addProperty("Device Model", deviceModel);
                 ja.addProperty("Screen Name", screenName);
@@ -220,8 +225,8 @@ public class ImageUtils {
 
     public static int stringContainsItemFromList(String inputString, List<String> items) {
         int j = 0;
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).contains(inputString)) {
+        for (String item : items) {
+            if (item.contains(inputString)) {
                 j++;
             }
         }

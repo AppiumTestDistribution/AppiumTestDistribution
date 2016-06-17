@@ -9,19 +9,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CommandPrompt {
 
     static Process p;
-    ProcessBuilder builder;
 
 
     public String runCommand(String command) throws InterruptedException, IOException {
         p = Runtime.getRuntime().exec(command);
         // get std output
         BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line = "";
+        String line;
         String allLine = "";
         int i = 1;
         while ((line = r.readLine()) != null) {
@@ -36,12 +34,11 @@ public class CommandPrompt {
 
     public String runCommandThruProcessBuilder(String command)
         throws InterruptedException, IOException {
-        List<String> commands = new ArrayList<String>();
+        List<String> commands = new ArrayList<>();
         commands.add("/bin/sh");
         commands.add("-c");
         commands.add(command);
         ProcessBuilder builder = new ProcessBuilder(commands);
-        Map<String, String> environ = builder.environment();
 
         final Process process = builder.start();
         InputStream is = process.getInputStream();

@@ -22,14 +22,14 @@ import java.util.*;
 
 public class ParallelThread {
     protected int deviceCount = 0;
-    Map<String, String> devices = new HashMap<String, String>();
-    Map<String, String> iOSdevices = new HashMap<String, String>();
+    Map<String, String> devices = new HashMap<>();
+    Map<String, String> iOSdevices = new HashMap<>();
     AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
     IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
     MyTestExecutor myTestExecutor = new MyTestExecutor();
     public Properties prop = new Properties();
     public InputStream input = null;
-    List<Class> testcases;
+    List<Class> testCases;
 
     public void runner(String pack, List<String> tests) throws Exception {
         triggerTest(pack, tests);
@@ -49,10 +49,8 @@ public class ParallelThread {
         File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
         if (!f.exists()) {
             System.out.println("creating directory: " + "Logs");
-            boolean result = false;
             try {
                 f.mkdir();
-                result = true;
             } catch (SecurityException se) {
                 se.printStackTrace();
             }
@@ -67,10 +65,8 @@ public class ParallelThread {
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
             if (!adb_logs.exists()) {
                 System.out.println("creating directory: " + "ADBLogs");
-                boolean result = false;
                 try {
                     adb_logs.mkdir();
-                    result = true;
                 } catch (SecurityException se) {
                     se.printStackTrace();
                 }
@@ -93,13 +89,13 @@ public class ParallelThread {
         System.out.println("Total Number of devices detected::" + deviceCount);
         System.out.println("starting running tests in threads");
 
-        testcases = new ArrayList<Class>();
+        testCases = new ArrayList<>();
 
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            // final String pack = "com.paralle.tests"; // Or any other package
+            // final String pack = "com.parallel.tests"; // Or any other package
             PackageUtil.getClasses(pack).stream().forEach(s -> {
                 if (s.toString().contains("Test")) {
-                    System.out.println("forEach: " + testcases.add((Class) s));
+                    System.out.println("forEach: " + testCases.add((Class) s));
                 }
             });
 
@@ -137,8 +133,6 @@ public class ParallelThread {
                     System.out.println("Failed to create directory!");
                 }
             }
-
-
         }
     }
 
@@ -180,7 +174,7 @@ public class ParallelThread {
             (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (File file : files) {
             BufferedReader read = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-            ArrayList list = new ArrayList();
+            ArrayList<String> list = new ArrayList<>();
 
             String dataRow = read.readLine();
             while (dataRow != null) {
@@ -192,9 +186,9 @@ public class ParallelThread {
                 file.getAbsoluteFile()); //same as your file name above so that it will replace it
             writer.append("package output;");
 
-            for (int i = 0; i < list.size(); i++) {
+            for (String aList : list) {
                 writer.append(System.getProperty("line.separator"));
-                writer.append((CharSequence) list.get(i));
+                writer.append(aList);
             }
             writer.flush();
             writer.close();
