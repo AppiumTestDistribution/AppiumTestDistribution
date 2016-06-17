@@ -10,9 +10,8 @@ import java.util.Map;
 public class AndroidDeviceConfiguration {
 
     CommandPrompt cmd = new CommandPrompt();
-    Map<String, String> devices = new HashMap<String, String>();
-    ArrayList<String> deviceSerail = new ArrayList<String>();
-    ArrayList<String> deviceModel = new ArrayList<String>();
+    Map<String, String> devices = new HashMap<>();
+    ArrayList<String> deviceSerial = new ArrayList<>();
 
     /**
      * This method start adb server
@@ -76,13 +75,8 @@ public class AndroidDeviceConfiguration {
                     devices.put("deviceID" + i, deviceID);
                     devices.put("deviceName" + i, deviceName);
                     devices.put("osVersion" + i, osVersion);
-                } else if (lines[i].contains("unauthorized")) {
-                    lines[i] = lines[i].replaceAll("unauthorized", "");
-                    String deviceID = lines[i];
-                } else if (lines[i].contains("offline")) {
-                    lines[i] = lines[i].replaceAll("offline", "");
-                    String deviceID = lines[i];
                 }
+                checkForAdbError(lines, i);
             }
             return devices;
         }
@@ -105,16 +99,11 @@ public class AndroidDeviceConfiguration {
                 if (lines[i].contains("device")) {
                     lines[i] = lines[i].replaceAll("device", "");
                     String deviceID = lines[i];
-                    deviceSerail.add(deviceID);
-                } else if (lines[i].contains("unauthorized")) {
-                    lines[i] = lines[i].replaceAll("unauthorized", "");
-                    String deviceID = lines[i];
-                } else if (lines[i].contains("offline")) {
-                    lines[i] = lines[i].replaceAll("offline", "");
-                    String deviceID = lines[i];
+                    deviceSerial.add(deviceID);
                 }
+                checkForAdbError(lines, i);
             }
-            return deviceSerail;
+            return deviceSerial;
         }
     }
 
@@ -124,7 +113,7 @@ public class AndroidDeviceConfiguration {
     public String getDeviceModel(String deviceID) {
         String deviceModelName = null;
         String brand = null;
-        String deviceModel = null;
+        String deviceModel;
         try {
             deviceModelName =
                 cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
@@ -135,6 +124,7 @@ public class AndroidDeviceConfiguration {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        assert deviceModelName != null;
         deviceModel = deviceModelName.concat("_" + brand);
 
         return deviceModel.trim();
@@ -185,11 +175,23 @@ public class AndroidDeviceConfiguration {
     /**
      * This method removes apk from the devices attached
      *
-     * @param app_package
+     * @param app_package - Package name for an Android application
      * @throws Exception
      */
 
     public void removeApkFromDevices(String deviceID, String app_package) throws Exception {
         cmd.runCommand("adb -s " + deviceID + " uninstall " + app_package);
+    }
+
+    public String checkForAdbError(String[] lines, int i) {
+        if (lines[i].contains("unauthorized")) {
+            lines[i] = lines[i].replaceAll("unauthorized", "");
+            return lines[i];
+        }
+        else if (lines[i].contains("offline")) {
+            lines[i] = lines[i].replaceAll("offline", "");
+            return lines[i];
+        }
+        return "";
     }
 }

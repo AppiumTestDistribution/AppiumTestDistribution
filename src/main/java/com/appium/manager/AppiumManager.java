@@ -1,6 +1,5 @@
 package com.appium.manager;
 
-import com.appium.utils.CommandPrompt;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.AndroidServerFlag;
@@ -20,13 +19,10 @@ import java.util.Properties;
  */
 public class AppiumManager {
 
-    CommandPrompt cp = new CommandPrompt();
-    AvailabelPorts ap = new AvailabelPorts();
+    AvailablePorts ap = new AvailablePorts();
     public AppiumDriverLocalService appiumDriverLocalService;
     public Properties prop = new Properties();
     public InputStream input = null;
-    public AppiumServiceBuilder builder = new AppiumServiceBuilder();
-
     /**
      * start appium with auto generated ports : appium port, chrome port,
      * bootstrap port and device UDID
@@ -55,7 +51,6 @@ public class AppiumManager {
                 .withArgument(AndroidServerFlag.SELENDROID_PORT, Integer.toString(selendroidPort))
                 .usingPort(port);
         /* and so on */
-        ;
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
         return builder;
@@ -91,7 +86,6 @@ public class AppiumManager {
                         + port).withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
 
 		/* and so on */
-        ;
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
         return builder;
