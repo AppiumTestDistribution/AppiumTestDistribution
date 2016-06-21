@@ -171,6 +171,30 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return driver;
     }
 
+    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName,
+        DesiredCapabilities iosCaps, DesiredCapabilities androidCaps) throws Exception {
+        ExtentTestManager.loadConfig();
+        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
+            child = ExtentTestManager.startTest(methodName.toString())
+                .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
+        }
+        Thread.sleep(3000);
+        startingServerInstance(iosCaps,androidCaps);
+        return driver;
+    }
+
+    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName,
+        DesiredCapabilities caps) throws Exception {
+        ExtentTestManager.loadConfig();
+        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
+            child = ExtentTestManager.startTest(methodName.toString())
+                .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
+        }
+        Thread.sleep(3000);
+        startingServerInstance(caps);
+        return driver;
+    }
+
     public void startingServerInstance() throws Exception {
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
@@ -185,6 +209,55 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
             }
         }
+    }
+
+    public void startingServerInstance(DesiredCapabilities caps) throws Exception {
+        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
+        } else {
+            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                if(caps.asMap().get("bundleId")!=null){
+                        driver = new IOSDriver<>(appiumMan.getAppiumUrl(), caps);
+                    } else {
+                        checkSelendroid(caps);
+                        driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), caps);
+                    }
+                } else {
+                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), caps);
+            }
+        }
+    }
+
+    public void startingServerInstance(DesiredCapabilities iosCaps,DesiredCapabilities androidCaps) throws Exception {
+        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
+        } else {
+            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                if (iosDevice.checkiOSDevice(device_udid)) {
+                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
+                } else if (!iosDevice.checkiOSDevice(device_udid)) {
+                    checkSelendroid(androidCaps);
+                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+                }
+            } else {
+                checkSelendroid(androidCaps);
+                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+            }
+        }
+    }
+
+    public DesiredCapabilities checkSelendroid(DesiredCapabilities androidCaps) {
+        int android_api = Integer.parseInt(androidDevice.deviceOS(device_udid));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Android API Level::" + android_api);
+        if (android_api <= 16) {
+            androidCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
+        }
+        return androidCaps;
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
@@ -368,16 +441,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
             prop.getProperty("APP_PACKAGE"));
         androidCapabilities.setCapability("browserName", "");
-        int android_api = Integer.parseInt(androidDevice.deviceOS(device_udid));
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Android API Level::" + android_api);
-        if (android_api <= 16) {
-            androidCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
-        }
+        checkSelendroid(androidCapabilities);
         androidCapabilities
             .setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
         androidCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
