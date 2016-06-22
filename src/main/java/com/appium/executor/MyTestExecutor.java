@@ -171,7 +171,6 @@ public class MyTestExecutor {
     public void runMethodParallel(XmlSuite suite, int threadCount) {
         TestNG testNG = new TestNG();
         testNG.setXmlSuites(asList(suite));
-        System.out.println(suite.toXml());
         testNG.run();
     }
 

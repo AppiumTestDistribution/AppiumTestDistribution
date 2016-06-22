@@ -129,6 +129,11 @@
             <artifactId>animated-gif-lib</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.lalyos</groupId>
+            <artifactId>jfiglet</artifactId>
+            <version>0.0.7</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

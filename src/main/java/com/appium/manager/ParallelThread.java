@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.github.lalyos.jfiglet.FigletFont;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
@@ -31,11 +32,17 @@ public class ParallelThread {
     public InputStream input = null;
     List<Class> testcases;
 
+    public ParallelThread() throws IOException {
+        input = new FileInputStream("config.properties");
+        prop.load(input);
+    }
     public void runner(String pack, List<String> tests) throws Exception {
+        figlet();
         triggerTest(pack, tests);
     }
 
     public void runner(String pack) throws Exception {
+        figlet();
         List<String> test = new ArrayList<>();
         triggerTest(pack, test);
     }
@@ -58,8 +65,7 @@ public class ParallelThread {
             }
         }
 
-        input = new FileInputStream("config.properties");
-        prop.load(input);
+
 
         if (deviceConf.getDevices() != null) {
             devices = deviceConf.getDevices();
@@ -89,8 +95,9 @@ public class ParallelThread {
         if (deviceCount == 0) {
             System.exit(0);
         }
-
-        System.out.println("Total Number of devices detected::" + deviceCount);
+        System.out.println("***************************************************\n");
+        System.out.println("Total Number of devices detected::" + deviceCount+"\n");
+        System.out.println("***************************************************\n");
         System.out.println("starting running tests in threads");
 
         testcases = new ArrayList<Class>();
@@ -99,7 +106,7 @@ public class ParallelThread {
             // final String pack = "com.paralle.tests"; // Or any other package
             PackageUtil.getClasses(pack).stream().forEach(s -> {
                 if (s.toString().contains("Test")) {
-                    System.out.println("forEach: " + testcases.add((Class) s));
+                    testcases.add((Class) s);
                 }
             });
 
@@ -204,5 +211,15 @@ public class ParallelThread {
             lines.add(12, "plugin = {\"com.cucumber.listener.ExtentCucumberFormatter:\"},");
             Files.write(path, lines, StandardCharsets.UTF_8);
         }
+    }
+
+    public void figlet(){
+        String asciiArt1 = null;
+        try {
+            asciiArt1 = FigletFont.convertOneLine(prop.getProperty("RUNNER"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(asciiArt1);
     }
 }
