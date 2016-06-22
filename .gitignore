@@ -12,3 +12,4 @@ testng.xml
 *.html
 *.iml
 /target/
+.classpath
