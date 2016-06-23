@@ -124,14 +124,7 @@ public class MyTestExecutor {
         URL newUrl = null;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
-        if (items.size() == 1) {
-            Collection<URL> urls = ClasspathHelper.forPackage(items.get(0));
-            Iterator<URL> iter = urls.iterator();
-            URL url = iter.next();
-            urls.clear();
-            newUrl = new URL(url.toString() + items.get(0).replaceAll("\\.", "/"));
-            newUrls = Lists.newArrayList(newUrl);
-        } else if (items.size() > 1) {
+   
             int a = 0;
             Collection<URL> urls = ClasspathHelper.forPackage(items.get(a));
             Iterator<URL> iter = urls.iterator();
@@ -141,7 +134,7 @@ public class MyTestExecutor {
                 newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
                 newUrls.add(newUrl);
                 a++;
-            }
+  
         }
 
 
