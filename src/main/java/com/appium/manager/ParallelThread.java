@@ -37,12 +37,12 @@ public class ParallelThread {
         prop.load(input);
     }
     public void runner(String pack, List<String> tests) throws Exception {
-        figlet();
+        figlet(prop.getProperty("RUNNER"));
         triggerTest(pack, tests);
     }
 
     public void runner(String pack) throws Exception {
-        figlet();
+        figlet(prop.getProperty("RUNNER"));
         List<String> test = new ArrayList<>();
         triggerTest(pack, test);
     }
@@ -213,10 +213,10 @@ public class ParallelThread {
         }
     }
 
-    public void figlet(){
+    public static void figlet(String text){
         String asciiArt1 = null;
         try {
-            asciiArt1 = FigletFont.convertOneLine(prop.getProperty("RUNNER"));
+            asciiArt1 = FigletFont.convertOneLine(text);
         } catch (IOException e) {
             e.printStackTrace();
         }

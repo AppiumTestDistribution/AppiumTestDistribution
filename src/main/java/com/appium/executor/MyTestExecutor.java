@@ -2,6 +2,7 @@ package com.appium.executor;
 
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.manager.PackageUtil;
+import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -158,6 +159,7 @@ public class MyTestExecutor {
                 devicecount);
         }
         System.out.println("Finally complete");
+        ParallelThread.figlet("Test Completed");
         ImageUtils.creatResultsSet();
     }
 
