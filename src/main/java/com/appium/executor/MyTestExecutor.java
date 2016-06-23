@@ -12,7 +12,6 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
-import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
@@ -124,20 +123,17 @@ public class MyTestExecutor {
         URL newUrl = null;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
-   
-            int a = 0;
-            Collection<URL> urls = ClasspathHelper.forPackage(items.get(a));
-            Iterator<URL> iter = urls.iterator();
-            URL url = iter.next();
-            urls.clear();
-            for (int i = 0; i < items.size(); i++) {
-                newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
-                newUrls.add(newUrl);
-                a++;
-  
+        int a = 0;
+        Collection<URL> urls = ClasspathHelper.forPackage(items.get(a));
+        Iterator<URL> iter = urls.iterator();
+        URL url = iter.next();
+        urls.clear();
+        for (int i = 0; i < items.size(); i++) {
+            newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
+            newUrls.add(newUrl);
+            a++;
+
         }
-
-
         Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(newUrls)
             .setScanners(new MethodAnnotationsScanner()));
         Set<Method> resources =
