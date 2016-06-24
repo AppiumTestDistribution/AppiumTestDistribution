@@ -36,6 +36,7 @@ public class ParallelThread {
         input = new FileInputStream("config.properties");
         prop.load(input);
     }
+
     public void runner(String pack, List<String> tests) throws Exception {
         figlet(prop.getProperty("RUNNER"));
         triggerTest(pack, tests);
@@ -93,10 +94,11 @@ public class ParallelThread {
 
         }
         if (deviceCount == 0) {
+            figlet("No Android Devices Online");
             System.exit(0);
         }
         System.out.println("***************************************************\n");
-        System.out.println("Total Number of devices detected::" + deviceCount+"\n");
+        System.out.println("Total Number of devices detected::" + deviceCount + "\n");
         System.out.println("***************************************************\n");
         System.out.println("starting running tests in threads");
 
@@ -133,19 +135,19 @@ public class ParallelThread {
     public void createSnapshotFolderAndroid(int deviceCount, String platform) throws Exception {
         for (int i = 1; i <= (devices.size() / 3); i++) {
             String deviceSerial = devices.get("deviceID" + i);
-            createPlatformDirectory(platform);
-            File file = new File(
-                System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                    + deviceSerial.replaceAll("\\W", "_"));
-            if (!file.exists()) {
-                if (file.mkdir()) {
-                    System.out.println("Android " + deviceSerial + " Directory is created!");
-                } else {
-                    System.out.println("Failed to create directory!");
+            if (deviceSerial != null) {
+                createPlatformDirectory(platform);
+                File file = new File(
+                    System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                        + deviceSerial.replaceAll("\\W", "_"));
+                if (!file.exists()) {
+                    if (file.mkdir()) {
+                        System.out.println("Android " + deviceSerial + " Directory is created!");
+                    } else {
+                        System.out.println("Failed to create directory!");
+                    }
                 }
             }
-
-
         }
     }
 
@@ -213,7 +215,7 @@ public class ParallelThread {
         }
     }
 
-    public static void figlet(String text){
+    public static void figlet(String text) {
         String asciiArt1 = null;
         try {
             asciiArt1 = FigletFont.convertOneLine(text);
