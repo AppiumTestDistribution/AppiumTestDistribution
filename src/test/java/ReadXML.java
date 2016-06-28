@@ -39,8 +39,7 @@ public class ReadXML {
                         System.out.println(
                             "TestMethod in *********" + attribute.getValue() + typeAttribute
                                 .getValue());
-                    }
-                    else {
+                    } else {
                         System.out.println("");
                     }
 

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>4.0.3-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AppiumTestDistribution</name>
@@ -227,7 +227,7 @@
                         <configuration>
                             <configLocation>${basedir}/google-style.xml</configLocation>
                             <encoding>UTF-8</encoding>
-                            <linkXRef>false</linkXRef>
+                            <linkXRef>true</linkXRef>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>
@@ -257,7 +257,7 @@
                     <encoding>UTF-8</encoding>
                     <linkXRef>false</linkXRef>
                     <consoleOutput>true</consoleOutput>
-                    <failsOnError>false</failsOnError>
+                    <failsOnError>true</failsOnError>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                 </configuration>
                 <reportSets>
