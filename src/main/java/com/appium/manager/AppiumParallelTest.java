@@ -29,16 +29,27 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.TestListenerAdapter;
 
-import java.awt.*;
-import java.io.*;
+
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -179,7 +190,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
         }
         Thread.sleep(3000);
-        startingServerInstance(iosCaps,androidCaps);
+        startingServerInstance(iosCaps, androidCaps);
         return driver;
     }
 
@@ -216,19 +227,20 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
         } else {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if(caps.asMap().get("bundleId")!=null){
-                        driver = new IOSDriver<>(appiumMan.getAppiumUrl(), caps);
-                    } else {
-                        checkSelendroid(caps);
-                        driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), caps);
-                    }
+                if (caps.asMap().get("bundleId") != null) {
+                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(), caps);
                 } else {
+                    checkSelendroid(caps);
+                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), caps);
+                }
+            } else {
                 driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), caps);
             }
         }
     }
 
-    public void startingServerInstance(DesiredCapabilities iosCaps,DesiredCapabilities androidCaps) throws Exception {
+    public void startingServerInstance(DesiredCapabilities iosCaps, DesiredCapabilities androidCaps)
+        throws Exception {
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
         } else {
@@ -260,7 +272,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return androidCaps;
     }
 
-    public void startLogResults(String methodName) throws FileNotFoundException {
+    public void startLogResults(String methodName)
+        throws FileNotFoundException, FileNotFoundException {
         if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
@@ -509,54 +522,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return Toolkit.getDefaultToolkit().getImage(url);
     }
 
-    public void screenShotAndFrame(String methodName, String device, String className) {
-        try {
-            File framePath =
-                new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
-            File[] files1 = framePath.listFiles();
-            if (framePath.exists()) {
-                for (int i = 0; i < files1.length; i++) {
-                    if (files1[i].isFile()) { //this line weeds out other directories/folders
-                        Path p = Paths.get(files1[i].toString());
-                        String fileName = p.getFileName().toString().toLowerCase();
-
-                        if (deviceModel.toString().toLowerCase()
-                            .contains(fileName.split(".png")[0].toLowerCase()))
-
-                        {
-
-                            try {
-                                String deviceFrame = files1[i].toString();
-                                String screenToBeFramed = System.getProperty("user.dir") +
-                                    "/target/screenshot/" + device + "/" + device_udid
-                                    .replaceAll("\\W", "_") + "/" + className + "/" + methodName
-                                    + "/" + deviceModel + "_" + methodName + "_failed.png";
-                                String framedScreenShot =
-                                    System.getProperty("user.dir") + "/target/screenshot/" + device
-                                        + "/" + device_udid.replaceAll("\\W", "_") + "/" + className
-                                        + "/" + methodName + "/" + deviceModel + "_failed_"
-                                        + methodName + "_framed.png";
-                                imageUtils.wrapDeviceFrames(deviceFrame, screenToBeFramed,
-                                    framedScreenShot);
-                                File deleteActualImage = new File(screenToBeFramed);
-                                deleteActualImage.delete();
-                                break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (IM4JavaException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            System.out.println("Resource Directory was not found");
-        }
-    }
-
     public void captureScreenshot(String methodName, String device, String className)
         throws IOException, InterruptedException {
         scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -624,8 +589,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/" + model + "_"
                 + screenShotName + "_results.png";
         String framedFailedScreen =
-            System.getProperty("user.dir") + "/target/screenshot/" + platform +
-                "/" + device_udid.replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/"
+            System.getProperty("user.dir") + "/target/screenshot/" + platform
+                + "/" + device_udid.replaceAll("\\W", "_")
+                + "/" + className + "/" + methodName + "/"
                 + model + "_failed_" + methodName + "_framed.png";
 
         try {

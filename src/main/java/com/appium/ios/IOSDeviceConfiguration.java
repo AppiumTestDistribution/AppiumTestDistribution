@@ -3,7 +3,13 @@ package com.appium.ios;
 import com.appium.manager.AvailabelPorts;
 import com.appium.utils.CommandPrompt;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +23,8 @@ public class IOSDeviceConfiguration {
     AvailabelPorts ap = new AvailabelPorts();
     public HashMap<String, String> deviceMap = new HashMap<String, String>();
     Map<String, String> devices = new HashMap<>();
-    public Process p, p1;
+    public Process p;
+    public Process p1;
     public Properties prop = new Properties();
     public InputStream input = null;
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();

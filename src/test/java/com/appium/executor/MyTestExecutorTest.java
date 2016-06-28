@@ -1,5 +1,8 @@
 package com.appium.executor;
 
+
+import static junit.framework.TestCase.assertTrue;
+
 import org.junit.Test;
 import org.testng.xml.XmlSuite;
 
@@ -8,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static junit.framework.TestCase.assertTrue;
 
 public class MyTestExecutorTest {
     MyTestExecutor ex1 = new MyTestExecutor();

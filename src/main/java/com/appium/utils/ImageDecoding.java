@@ -2,10 +2,10 @@ package com.appium.utils;
 
 import sun.misc.BASE64Encoder;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
  * Created by saikrisv on 10/06/16.

@@ -34,9 +34,11 @@ public class AppiumManager {
 
     public AppiumServiceBuilder appiumServerForAndroid(String deviceID, String methodName)
         throws Exception {
-        System.out.println("**************************************************************************\n");
-        System.out.println("Starting Appium Server to handle Android Device::"+deviceID+"\n");
-        System.out.println("**************************************************************************\n");
+        System.out.println(
+            "**************************************************************************\n");
+        System.out.println("Starting Appium Server to handle Android Device::" + deviceID + "\n");
+        System.out.println(
+            "**************************************************************************\n");
         input = new FileInputStream("config.properties");
         prop.load(input);
         int port = ap.getPort();
@@ -75,9 +77,11 @@ public class AppiumManager {
 
     public AppiumServiceBuilder appiumServerForIOS(String deviceID, String methodName,
         String webKitPort) throws Exception {
-        System.out.println("**********************************************************************\n");
-        System.out.println("Starting Appium Server to handle IOS::"+deviceID+"\n");
-        System.out.println("**********************************************************************\n");
+        System.out
+            .println("**********************************************************************\n");
+        System.out.println("Starting Appium Server to handle IOS::" + deviceID + "\n");
+        System.out
+            .println("**********************************************************************\n");
         File classPathRoot = new File(System.getProperty("user.dir"));
         input = new FileInputStream("config.properties");
         prop.load(input);
@@ -92,9 +96,6 @@ public class AppiumManager {
                 .withArgument(GeneralServerFlag.TEMP_DIRECTORY,
                     new File(String.valueOf(classPathRoot)).getAbsolutePath() + "/target/" + "tmp_"
                         + port).withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
-
-		/* and so on */
-        ;
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
         return builder;

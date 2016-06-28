@@ -1,11 +1,12 @@
+
 package com.appium.webtest;
+
+import static org.junit.Assert.assertNotNull;
 
 import com.test.site.UserBaseTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
-
-import static org.junit.Assert.assertNotNull;
 
 public class LoginTest extends UserBaseTest {
 

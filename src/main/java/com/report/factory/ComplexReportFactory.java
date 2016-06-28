@@ -21,7 +21,7 @@ public class ComplexReportFactory {
     public static Properties prop = new Properties();
     public static InputStream input = null;
 
-    @SuppressWarnings("unchecked") private synchronized static ExtentReports getExtentReport() {
+    private synchronized static ExtentReports getExtentReport() {
         if (reporter == null) {
             // you can get the file name and other parameters here from a
             // config file or global variables

@@ -1,5 +1,7 @@
 package com.appium.executor;
 
+import static java.util.Arrays.asList;
+
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
@@ -23,12 +25,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Arrays.asList;
 
 public class MyTestExecutor {
     List<Thread> threads = new ArrayList<Thread>();
@@ -37,7 +48,8 @@ public class MyTestExecutor {
     public HtmlReporter reporter = new HtmlReporter();
     public ArrayList<String> items = new ArrayList<String>();
 
-    @SuppressWarnings("rawtypes") public void distributeTests(int deviceCount) {
+    @SuppressWarnings("rawtypes")
+    public void distributeTests(int deviceCount) {
         try {
             PackageUtil.getClasses("output").stream().forEach(s -> {
                 if (s.toString().contains("IT")) {
@@ -72,7 +84,8 @@ public class MyTestExecutor {
         System.out.println("ending");
     }
 
-    @SuppressWarnings("rawtypes") public void parallelTests(int deviceCount)
+    @SuppressWarnings("rawtypes")
+    public void parallelTests(int deviceCount)
         throws InterruptedException {
         try {
             PackageUtil.getClasses("output").stream().forEach(s -> {
@@ -173,13 +186,12 @@ public class MyTestExecutor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        XmlSuite suite = new XmlSuite();
         listeners.add("com.appium.manager.AppiumParallelTest");
         listeners.add("com.appium.utils.RetryListener");
         if (prop.getProperty("LISTENERS") != null) {
             Collections.addAll(listeners, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
         }
-
+        XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.TESTS);

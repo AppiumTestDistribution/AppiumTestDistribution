@@ -21,7 +21,7 @@ public class UserBaseTest extends AppiumParallelTest {
     JSonParser jSonParser = new JSonParser();
 
     @BeforeMethod() public void startApp(Method name) throws Exception {
-        driver = startAppiumServerInParallel(name.getName(),androidNative());
+        driver = startAppiumServerInParallel(name.getName(), androidNative());
         startLogResults(name.getName());
     }
 

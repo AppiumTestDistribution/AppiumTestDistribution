@@ -8,6 +8,7 @@ import java.util.Properties;
 public class ExtentManager {
     public static ExtentReports instance;
     public static Properties prop = new Properties();
+
     public synchronized static ExtentReports getInstance() {
         if (instance == null) {
             System.out.println(System.getProperty("user.dir"));

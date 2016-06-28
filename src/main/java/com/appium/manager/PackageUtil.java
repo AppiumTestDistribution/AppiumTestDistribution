@@ -1,9 +1,5 @@
 package com.appium.manager;
 
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.StandardLocation;
-import javax.tools.ToolProvider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +7,11 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 
 /*
  * This class gets all the classpath for the tests 

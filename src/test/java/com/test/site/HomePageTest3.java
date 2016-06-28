@@ -11,7 +11,8 @@ import java.io.IOException;
 public class HomePageTest3 extends UserBaseTest {
 
 
-    @Test(retryAnalyzer = Retry.class) @RetryCount(maxRetryCount = 2) public void testMethodOne_3()
+    @Test(retryAnalyzer = Retry.class)
+    @RetryCount(maxRetryCount = 2) public void testMethodOne_3()
         throws InterruptedException, IOException {
 
         System.out.println(
@@ -20,7 +21,7 @@ public class HomePageTest3 extends UserBaseTest {
         Thread.sleep(3000);
         captureScreenShot("TestMethod1");
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/digit42")).click();
+        getDriver().findElement(By.id("com.android2.calculator3:id/digit4")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();

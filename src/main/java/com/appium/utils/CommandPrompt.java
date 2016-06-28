@@ -26,8 +26,9 @@ public class CommandPrompt {
         int i = 1;
         while ((line = r.readLine()) != null) {
             allLine = allLine + "" + line + "\n";
-            if (line.contains("Console LogLevel: debug") && line.contains("Complete"))
+            if (line.contains("Console LogLevel: debug") && line.contains("Complete")) {
                 break;
+            }
             i++;
         }
         return allLine;

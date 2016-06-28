@@ -13,7 +13,8 @@ import org.testng.annotations.Test;
 public class HomePageTest1 extends UserBaseTest {
 
 
-    @Test(retryAnalyzer = Retry.class) @RetryCount(maxRetryCount = 2)
+    @Test(retryAnalyzer = Retry.class)
+    @RetryCount(maxRetryCount = 2)
     @SkipIf(platform = "AndroidDriver") public void testMethodOne_1() throws Exception {
 
         System.out.println(
@@ -32,7 +33,9 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver") public void testMethodOne_6()
+    @Test(retryAnalyzer = Retry.class)
+    @SkipIf
+        (platform = "IOSDriver") public void testMethodOne_6()
         throws Exception {
 
         System.out.println(
@@ -71,7 +74,8 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver") public void testMethodOne_8()
+    @Test(retryAnalyzer = Retry.class)
+    @SkipIf(platform = "IOSDriver") public void testMethodOne_8()
         throws Exception {
 
         System.out.println(
@@ -87,7 +91,8 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "IOSDriver") public void testMethodOne_9()
+    @Test(retryAnalyzer = Retry.class)
+    @SkipIf(platform = "IOSDriver") public void testMethodOne_9()
         throws Exception {
 
         System.out.println(
@@ -103,7 +108,8 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = Retry.class) @SkipIf(platform = "AndroidDriver")
+    @Test(retryAnalyzer = Retry.class)
+    @SkipIf(platform = "AndroidDriver")
     public void testMethodOne_10() throws Exception {
 
         System.out.println(

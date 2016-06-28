@@ -15,8 +15,8 @@ public class JSonParser {
     public JSONObject getUserData(int threadID) {
         JSONParser parser = new JSONParser();
         try {
-            Object obj = parser.parse(new FileReader(System.getProperty("user.dir") + "/" +
-                "credentials.json"));
+            Object obj = parser.parse(new FileReader(System.getProperty("user.dir") + "/"
+                + "credentials.json"));
             JSONObject jsonObject = (JSONObject) obj;
             JSONArray msg = (JSONArray) jsonObject.get("credentials");
             JSONObject a = (JSONObject) msg.get(threadID);

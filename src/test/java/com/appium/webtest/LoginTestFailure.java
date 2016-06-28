@@ -1,10 +1,11 @@
 package com.appium.webtest;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
-import static org.junit.Assert.assertNotNull;
 
 public class LoginTestFailure extends com.test.site.UserBaseTest {
 
@@ -15,7 +16,6 @@ public class LoginTestFailure extends com.test.site.UserBaseTest {
         assertNotNull(idElement);
         //elementHighlight(idElement);
         idElement.click();
-        //wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(".//*[@id='mobile-menu']/li[6]/a")));
         WebElement commentElement =
             getDriver().findElement(By.xpath(".//*[@id='mobile-menu']/li[6]/a"));
         //elementHighlight(commentElement);
@@ -25,7 +25,6 @@ public class LoginTestFailure extends com.test.site.UserBaseTest {
         WebElement contact_us =
             getDriver().findElement(By.xpath(".//*[@id='footer-menu']/div/ul/li[9]/a"));
         contact_us.click();
-        //wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(".//*[@id='contact-us-vertical']")));
 
     }
 

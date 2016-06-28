@@ -44,15 +44,7 @@ public class AndroidDeviceConfiguration {
         String[] lines = output.split("\n");
 
         if (lines.length <= 1) {
-            System.out.println(
-                "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
-                    + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
-                    + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A");
             System.out.println("No Device Connected");
-            System.out.println(
-                "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
-                    + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A"
-                    + "\uD83C\uDF7A" + "\uD83C\uDF7A" + "\uD83C\uDF7A");
             stopADB();
             return null;
         } else {
@@ -96,7 +88,6 @@ public class AndroidDeviceConfiguration {
 
         if (lines.length <= 1) {
             System.out.println("No Device Connected");
-            //			stopADB();
             return null;
         } else {
             for (int i = 1; i < lines.length; i++) {

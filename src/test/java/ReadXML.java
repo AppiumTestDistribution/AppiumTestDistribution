@@ -35,10 +35,11 @@ public class ReadXML {
                 for (int count = 0; count < testcases.size(); count++) {
                     Element carElement = testcases.get(count);
                     Attribute typeAttribute = carElement.getAttribute("name");
-                    if (typeAttribute != null)
+                    if (typeAttribute != null) {
                         System.out.println(
                             "TestMethod in *********" + attribute.getValue() + typeAttribute
                                 .getValue());
+                    }
                     else {
                         System.out.println("");
                     }
