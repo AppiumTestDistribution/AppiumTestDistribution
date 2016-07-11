@@ -29,27 +29,16 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.TestListenerAdapter;
 
-
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
+import java.awt.*;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -582,8 +571,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         String methodName, String className, String model, String platform) {
         String failedScreen =
             System.getProperty("user.dir") + "/target/screenshot/" + platform + "/" + device_udid
-                .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/" + screenShotNameWithTimeStamp
-                + deviceModel + "_" + methodName + "_failed" + ".png";
+                .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/"
+                + screenShotNameWithTimeStamp + deviceModel + "_" + methodName + "_failed" + ".png";
         String capturedScreen =
             System.getProperty("user.dir") + "/target/screenshot/" + platform + "/" + device_udid
                 .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/" + screenShotName
