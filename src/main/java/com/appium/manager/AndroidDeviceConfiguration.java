@@ -64,10 +64,14 @@ public class AndroidDeviceConfiguration {
                         "adb -s " + deviceID + " shell getprop ro.build.version.release")
                         .replaceAll("\\s+", "");
                     String deviceName = brand + " " + model;
+                    String apiLevel =
+                        cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.sdk")
+                            .replaceAll("\\W", "");
 
                     devices.put("deviceID" + i, deviceID);
                     devices.put("deviceName" + i, deviceName);
                     devices.put("osVersion" + i, osVersion);
+                    devices.put(deviceID, apiLevel);
                 } else if (lines[i].contains("unauthorized")) {
                     lines[i] = lines[i].replaceAll("unauthorized", "");
                     String deviceID = lines[i];

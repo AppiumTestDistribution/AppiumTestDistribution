@@ -81,10 +81,9 @@ public class ParallelThread {
         }
 
 
-
         if (deviceConf.getDevices() != null) {
             devices = deviceConf.getDevices();
-            deviceCount = devices.size() / 3;
+            deviceCount = devices.size() / 4;
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
             if (!adb_logs.exists()) {
                 System.out.println("creating directory: " + "ADBLogs");
@@ -147,7 +146,7 @@ public class ParallelThread {
     }
 
     public void createSnapshotFolderAndroid(int deviceCount, String platform) throws Exception {
-        for (int i = 1; i <= (devices.size() / 3); i++) {
+        for (int i = 1; i <= (devices.size() / 4); i++) {
             String deviceSerial = devices.get("deviceID" + i);
             if (deviceSerial != null) {
                 createPlatformDirectory(platform);
