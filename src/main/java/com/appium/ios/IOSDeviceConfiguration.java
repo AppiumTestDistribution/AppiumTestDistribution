@@ -2,6 +2,7 @@ package com.appium.ios;
 
 import com.appium.manager.AvailabelPorts;
 import com.appium.utils.CommandPrompt;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +44,8 @@ public class IOSDeviceConfiguration {
 
     public ArrayList<String> getIOSUDID() {
         try {
-            String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
+            String profile="system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad)/,/Serial/s/ Serial Number: (.+)/\\1/p'";
+            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                 .isEmpty()) {
                 return null;
@@ -245,5 +247,18 @@ public class IOSDeviceConfiguration {
                 System.out.println("iOSWebKitProxyLauncher File already has access to execute");
             }
         }
+    }
+
+    @Test
+    public void testApp(){
+        IOSDeviceConfiguration iosDeviceConfiguration = new IOSDeviceConfiguration();
+        try {
+            commandPrompt.runCommandThruProcessBuilder("");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        iosDeviceConfiguration.getIOSUDID();
     }
 }
