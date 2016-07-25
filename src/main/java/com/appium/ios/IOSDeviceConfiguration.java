@@ -28,11 +28,14 @@ public class IOSDeviceConfiguration {
     public Process p1;
     public Properties prop = new Properties();
     public InputStream input = null;
+
+    public final static int IOS_UDID_LENGTH = 40;
+
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
 
     public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {
         boolean checkMobileDevice =
-            commandPrompt.runCommand("brew list").contains("ideviceinstaller");
+                commandPrompt.runCommand("brew list").contains("ideviceinstaller");
         if (checkMobileDevice) {
             System.out.println("iDeviceInstaller already exists");
         } else {
@@ -43,17 +46,20 @@ public class IOSDeviceConfiguration {
     }
 
     public ArrayList<String> getIOSUDID() {
+
         try {
-            String profile="system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad)/,/Serial/s/ Serial Number: (.+)/\\1/p'";
+            int startPos = 0;
+            int endPos = IOS_UDID_LENGTH - 1;
+            String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad)/,/Serial/s/ Serial Number: (.+)/\\1/p'";
             String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
-                .isEmpty()) {
+                    .isEmpty()) {
                 return null;
             } else {
-                String[] lines = getIOSDeviceID.split("\n");
-                for (int i = 0; i < lines.length; i++) {
-                    lines[i] = lines[i].replaceAll("\\s+", "");
-                    deviceUDIDiOS.add(lines[i]);
+                while (endPos < getIOSDeviceID.length()) {
+                    deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1));
+                    startPos += IOS_UDID_LENGTH;
+                    endPos += IOS_UDID_LENGTH;
                 }
                 return deviceUDIDiOS;
             }
@@ -67,7 +73,7 @@ public class IOSDeviceConfiguration {
         try {
             String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
-                .isEmpty()) {
+                    .isEmpty()) {
                 return null;
             } else {
                 String[] lines = getIOSDeviceID.split("\n");
@@ -101,7 +107,7 @@ public class IOSDeviceConfiguration {
      * @throws IOException
      */
     public void unInstallApp(String UDID, String bundleID)
-        throws InterruptedException, IOException {
+            throws InterruptedException, IOException {
         System.out.println("Uninstalling App on device*******" + UDID);
         System.out.println("ideviceinstaller --udid " + UDID + " -U " + bundleID);
         commandPrompt.runCommand("ideviceinstaller --udid " + UDID + " -U " + bundleID);
@@ -115,7 +121,7 @@ public class IOSDeviceConfiguration {
      */
     public boolean checkIfAppIsInstalled(String bundleID) throws InterruptedException, IOException {
         boolean appAlreadyExists =
-            commandPrompt.runCommand("ideviceinstaller --list-apps").contains(bundleID);
+                commandPrompt.runCommand("ideviceinstaller --list-apps").contains(bundleID);
         return appAlreadyExists;
     }
 
@@ -126,14 +132,14 @@ public class IOSDeviceConfiguration {
      */
 
     public String getIOSDeviceProductTypeAndVersion(String udid)
-        throws InterruptedException, IOException {
+            throws InterruptedException, IOException {
         return commandPrompt
-            .runCommandThruProcessBuilder("ideviceinfo --udid " + udid + " | grep ProductType");
+                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid + " | grep ProductType");
     }
 
     public String getDeviceName(String udid) throws InterruptedException, IOException {
         String deviceName =
-            commandPrompt.runCommand("idevicename --udid " + udid).replace("\\W", "_");
+                commandPrompt.runCommand("idevicename --udid " + udid).replace("\\W", "_");
         return deviceName;
     }
 
@@ -171,14 +177,14 @@ public class IOSDeviceConfiguration {
         System.out.println(curentPath);
         file = new File(curentPath + "/.." + "/..");
         String ios_web_lit_proxy_runner =
-            file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
+                file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
         String webkitRunner =
-            ios_web_lit_proxy_runner + " -c " + udid + ":" + deviceMap.get(udid) + " -d";
+                ios_web_lit_proxy_runner + " -c " + udid + ":" + deviceMap.get(udid) + " -d";
         System.out.println(webkitRunner);
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
-            "WebKit Proxy is started on device " + udid + " and with port number " + deviceMap
-                .get(udid) + " and in thread " + Thread.currentThread().getId());
+                "WebKit Proxy is started on device " + udid + " and with port number " + deviceMap
+                        .get(udid) + " and in thread " + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         appiumServerProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + appiumServerProcess);
@@ -238,7 +244,7 @@ public class IOSDeviceConfiguration {
         System.out.println(curentPath);
         file = new File(curentPath + "/.." + "/..");
         File executePermission =
-            new File(file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js");
+                new File(file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js");
         if (executePermission.exists()) {
             if (executePermission.canExecute() == false) {
                 executePermission.setExecutable(true);
@@ -250,7 +256,7 @@ public class IOSDeviceConfiguration {
     }
 
     @Test
-    public void testApp(){
+    public void testApp() {
         IOSDeviceConfiguration iosDeviceConfiguration = new IOSDeviceConfiguration();
         try {
             commandPrompt.runCommandThruProcessBuilder("");
