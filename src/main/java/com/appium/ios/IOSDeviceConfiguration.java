@@ -50,7 +50,8 @@ public class IOSDeviceConfiguration {
         try {
             int startPos = 0;
             int endPos = IOS_UDID_LENGTH - 1;
-            String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad)/,/Serial/s/ Serial Number: (.+)/\\1/p'";
+            String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad)/," +
+                    "/Serial/s/ Serial Number: (.+)/\\1/p'";
             String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
