@@ -517,7 +517,17 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
     public void captureScreenshot(String methodName, String device, String className)
         throws IOException, InterruptedException {
+        String context = getDriver().getContext();
+        boolean contextChanged = false;
+        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") 
+                && !context.equals("NATIVE_APP")) {
+            getDriver().context("NATIVE_APP");
+            contextChanged = true;
+        }
         scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        if (contextChanged) {
+            getDriver().context(context);
+        }
         FileUtils.copyFile(scrFile, new File(
             System.getProperty("user.dir") + "/target/screenshot/" + device + "/" + device_udid
                 .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/" + deviceModel
@@ -529,12 +539,20 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         ExtentTestManager.logger(message);
     }
 
-    public void captureScreenShot(String screenShotName, int status, String screenClassName)
-        throws IOException, InterruptedException {
+    public void captureScreenShot(String screenShotName, int status, String className, 
+            String methodName) throws IOException, InterruptedException {
+        String context = getDriver().getContext();
+        boolean contextChanged = false;
+        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") 
+                && !context.equals("NATIVE_APP")) {
+            getDriver().context("NATIVE_APP");
+            contextChanged = true;
+        }
         File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        if (contextChanged) {
+            getDriver().context(context);
+        }
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        String methodName = screenShotName;
-        String className = screenClassName;
         screenShotNameWithTimeStamp = currentDateAndTime();
         if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
             String androidModel =
@@ -548,23 +566,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 "iOS");
         }
     }
+    
+    public void captureScreenShot(String screenShotName, int status, String screenClassName)
+        throws IOException, InterruptedException { 
+        captureScreenShot(screenShotName, status, screenClassName, screenShotName);
+    }
 
     public void captureScreenShot(String screenShotName) throws InterruptedException, IOException {
-        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         String methodName = new Exception().getStackTrace()[1].getMethodName();
         String className = new Exception().getStackTrace()[1].getClassName();
-        screenShotNameWithTimeStamp = currentDateAndTime();
-        if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
-            String androidModel =
-                screenShotNameWithTimeStamp + androidDevice.getDeviceModel(device_udid);
-            screenShotAndFrame(screenShotName, 1, scrFile, methodName, className, androidModel,
-                "android");
-        } else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
-            String iosModel = screenShotNameWithTimeStamp + iosDevice
-                .getIOSDeviceProductTypeAndVersion(device_udid);
-            screenShotAndFrame(screenShotName, 1, scrFile, methodName, className, iosModel, "iOS");
-        }
+        captureScreenShot(screenShotName, 1, className, methodName);
     }
 
     public void screenShotAndFrame(String screenShotName, int status, File scrFile,
