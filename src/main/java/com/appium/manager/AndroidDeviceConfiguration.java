@@ -66,7 +66,7 @@ public class AndroidDeviceConfiguration {
                     String deviceName = brand + " " + model;
                     String apiLevel =
                         cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.sdk")
-                            .replaceAll("\\W", "");
+                            .replaceAll("\n", "");
 
                     devices.put("deviceID" + i, deviceID);
                     devices.put("deviceName" + i, deviceName);

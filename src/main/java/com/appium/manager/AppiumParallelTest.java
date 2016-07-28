@@ -249,7 +249,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public DesiredCapabilities checkSelendroid(DesiredCapabilities androidCaps) {
         int android_api = 0;
         try {
-            android_api = Integer.parseInt(androidDevice.getDevices().get(device_udid));
+            String deviceAPI = androidDevice.getDevices().get(device_udid);
+            android_api = Integer.parseInt(deviceAPI);
         } catch (Exception e) {
             e.printStackTrace();
         }
