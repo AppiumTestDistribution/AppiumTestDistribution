@@ -3,6 +3,7 @@ package com.appium.executor;
 import static java.util.Arrays.asList;
 
 import com.appium.cucumber.report.HtmlReporter;
+import com.appium.manager.AppiumParallelTest;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
@@ -96,10 +97,14 @@ public class MyTestExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
+        ArrayList<String> devices = appiumParallelTest.getDevices();
+        
         for (int i = 0; i < deviceCount; i++) {
             final int x = i;
             Thread t = new Thread(new Runnable() {
-
+                
                 public void run() {
                     // TODO Auto-generated method stub
                     runTests(testcases);
@@ -109,11 +114,15 @@ public class MyTestExecutor {
                     for (Class test : testCases) {
                         System.out.println(
                             "*****CurrentRunningThread" + Thread.currentThread().getId() + test);
+                        //TODO: runTestcase(device, test)
                         runTestCase(test);
                     }
                 }
             });
 
+            //TODO: set this thread's device to run on with device[i] from deviceList
+            t.setName(devices.get(i));
+            
             threads.add(t);
             t.start();
         }

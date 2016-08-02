@@ -98,6 +98,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
+    public ArrayList<String> getDevices() {
+        return devices;
+    }
+    
     public static synchronized String getNextAvailableDeviceId() {
         ConcurrentHashMap.KeySetView<String, Boolean> devices = deviceMapping.keySet();
         int i = 0;
@@ -119,8 +123,13 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         deviceMapping.put(deviceId, true);
     }
 
+    //TODO: startAppiumServer for a specific device
+    
     public synchronized AppiumServiceBuilder startAppiumServer(String methodName) throws Exception {
-        device_udid = getNextAvailableDeviceId();
+        //XXX: see if required to check out in deviceMap?
+        device_udid = Thread.currentThread().getName();
+        
+        //device_udid = getNextAvailableDeviceId();
         if (device_udid == null) {
             System.out.println("No devices are free to run test or Failed to run test");
             return null;
