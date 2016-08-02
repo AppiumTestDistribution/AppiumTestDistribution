@@ -88,7 +88,8 @@ public class MyTestExecutor {
     }
 
     @SuppressWarnings("rawtypes")
-    public void parallelTests(int deviceCount)
+    //public void parallelTests(int deviceCount)
+    public void parallelTests(ArrayList<String> deviceIdList)
         throws InterruptedException {
         try {
             PackageUtil.getClasses("output").stream().forEach(s -> {
@@ -99,8 +100,8 @@ public class MyTestExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        //AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
+    
+        /*
         ArrayList<String> devices = new ArrayList<>();
         
         AndroidDeviceConfiguration androidConfig = new AndroidDeviceConfiguration();
@@ -120,10 +121,12 @@ public class MyTestExecutor {
         //add ios ids
         IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
         devices.addAll(iosDevice.getIOSUDID());
+        */
+        System.out.println("Devices to be used: " + deviceIdList.toString());
         
-        System.out.println("Devices to be used: " + devices.toString());
         
-        for (int i = 0; i < deviceCount; i++) {
+        //for (int i = 0; i < deviceCount; i++) {
+        for (int i = 0; i < deviceIdList.size(); i++) {
             final int x = i;
             Thread t = new Thread(new Runnable() {
                 
@@ -142,7 +145,7 @@ public class MyTestExecutor {
             });
 
             //TODO: set this thread's device to run on with device[i] from deviceList
-            t.setName(devices.get(i));
+            t.setName(deviceIdList.get(i));
             
             threads.add(t);
             t.start();

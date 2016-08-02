@@ -80,10 +80,19 @@ public class ParallelThread {
             }
         }
 
+        ArrayList<String> deviceIdList = new ArrayList<>();
 
         if (deviceConf.getDevices() != null) {
             devices = deviceConf.getDevices();
             deviceCount = devices.size() / 4;
+            
+            //XXX
+            for (String key : devices.keySet()) {
+                if (key.contains("deviceID")) {
+                    deviceIdList.add(devices.get(key));
+                }
+            }
+            
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
             if (!adb_logs.exists()) {
                 System.out.println("creating directory: " + "ADBLogs");
@@ -103,6 +112,10 @@ public class ParallelThread {
                 iOSdevices = iosDevice.getIOSUDIDHash();
                 deviceCount += iOSdevices.size();
                 createSnapshotFolderiOS(deviceCount, "iPhone");
+                //XXX
+                for (String key : iOSdevices.keySet()) {
+                    deviceIdList.add(iOSdevices.get(key));
+                }
             }
 
         }
@@ -140,7 +153,8 @@ public class ParallelThread {
                 myTestExecutor.distributeTests(deviceCount);
             } else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
-                myTestExecutor.parallelTests(deviceCount);
+                //myTestExecutor.parallelTests(deviceCount);
+                myTestExecutor.parallelTests(deviceIdList);
             }
         }
     }
