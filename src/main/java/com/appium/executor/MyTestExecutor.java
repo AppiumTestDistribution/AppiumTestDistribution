@@ -3,6 +3,8 @@ package com.appium.executor;
 import static java.util.Arrays.asList;
 
 import com.appium.cucumber.report.HtmlReporter;
+import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.manager.AndroidDeviceConfiguration;
 import com.appium.manager.AppiumParallelTest;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
@@ -98,8 +100,28 @@ public class MyTestExecutor {
             e.printStackTrace();
         }
         
-        AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
-        ArrayList<String> devices = appiumParallelTest.getDevices();
+        //AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
+        ArrayList<String> devices = new ArrayList<>();
+        
+        AndroidDeviceConfiguration androidConfig = new AndroidDeviceConfiguration();
+        
+        //add android ids
+        try {
+            Map<String, String> androidMap = androidConfig.getDevices();
+            for (String key : androidMap.keySet()) {
+                if (key.contains("deviceID")) {
+                    devices.add(androidMap.get(key));
+                }
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        //add ios ids
+        IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
+        devices.addAll(iosDevice.getIOSUDID());
+        
+        System.out.println("Devices to be used: " + devices.toString());
         
         for (int i = 0; i < deviceCount; i++) {
             final int x = i;
@@ -114,7 +136,6 @@ public class MyTestExecutor {
                     for (Class test : testCases) {
                         System.out.println(
                             "*****CurrentRunningThread" + Thread.currentThread().getId() + test);
-                        //TODO: runTestcase(device, test)
                         runTestCase(test);
                     }
                 }
