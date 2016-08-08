@@ -1,5 +1,7 @@
 package com.appium.manager;
 
+import com.annotation.values.Author;
+import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.ImageUtils;
@@ -29,8 +31,16 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.TestListenerAdapter;
 
-import java.awt.*;
-import java.io.*;
+
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,6 +66,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public ExtentTest child;
     public String deviceModel;
     public File scrFile = null;
+    public String testDescription = "";
     String screenShotNameWithTimeStamp;
 
     private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
@@ -138,7 +149,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
 
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            parent = ExtentTestManager.startTest(methodName, "Mobile Appium Test",
+            if (getClass().getAnnotation(Description.class) != null) {
+                testDescription = getClass().getAnnotation(Description.class).value();
+            }
+            parent = ExtentTestManager.startTest(methodName, testDescription,
                 category + "_" + device_udid.replaceAll("\\W", "_"));
             parentContext.put(Thread.currentThread().getId(), parent);
             ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs",
@@ -163,8 +177,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         throws Exception {
         ExtentTestManager.loadConfig();
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            child = ExtentTestManager.startTest(methodName.toString())
-                .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
+            setAuthorName(methodName);
         }
         Thread.sleep(3000);
         startingServerInstance();
@@ -175,8 +188,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         DesiredCapabilities iosCaps, DesiredCapabilities androidCaps) throws Exception {
         ExtentTestManager.loadConfig();
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            child = ExtentTestManager.startTest(methodName.toString())
-                .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
+            setAuthorName(methodName);
         }
         Thread.sleep(3000);
         startingServerInstance(iosCaps, androidCaps);
@@ -187,11 +199,23 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         DesiredCapabilities caps) throws Exception {
         ExtentTestManager.loadConfig();
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            child = ExtentTestManager.startTest(methodName.toString())
-                .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
+            setAuthorName(methodName);
         }
         startingServerInstance(caps);
         return driver;
+    }
+
+    public void setAuthorName(String methodName) throws NoSuchMethodException {
+        String authorName;
+        if (getClass().getMethod(methodName).getAnnotation(Author.class) != null) {
+            authorName = getClass().getMethod(methodName).getAnnotation(Author.class).name();
+            child = ExtentTestManager
+                .startTest(methodName.toString() + " ---- AuthorName:: " + authorName)
+                .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
+        } else {
+            child = ExtentTestManager.startTest(methodName.toString())
+                .assignCategory(category + "_" + device_udid.replaceAll("\\W", "_"));
+        }
     }
 
     public void startingServerInstance() throws Exception {
@@ -520,8 +544,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") 
-                && !context.equals("NATIVE_APP")) {
+        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
+            .equals("NATIVE_APP")) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;
         }
@@ -540,12 +564,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         ExtentTestManager.logger(message);
     }
 
-    public void captureScreenShot(String screenShotName, int status, String className, 
-            String methodName) throws IOException, InterruptedException {
+    public void captureScreenShot(String screenShotName, int status, String className,
+        String methodName) throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") 
-                && !context.equals("NATIVE_APP")) {
+        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
+            .equals("NATIVE_APP")) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;
         }
@@ -567,9 +591,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 "iOS");
         }
     }
-    
+
     public void captureScreenShot(String screenShotName, int status, String screenClassName)
-        throws IOException, InterruptedException { 
+        throws IOException, InterruptedException {
         captureScreenShot(screenShotName, status, screenClassName, screenShotName);
     }
 
@@ -658,4 +682,17 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
         return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
     }
+
+/*    public static String getElementDescription(Class a){
+        Method[] methods = a.getMethods();
+        for (Method m : methods)
+        {
+            if (m.isAnnotationPresent(ElementDescription.class))
+            {
+                ElementDescription ta = m.getAnnotation(ElementDescription.class);
+                return ta.value();
+            }
+        }
+        return null;*/
+
 }

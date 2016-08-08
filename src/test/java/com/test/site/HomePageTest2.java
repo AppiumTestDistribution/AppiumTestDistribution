@@ -2,18 +2,20 @@ package com.test.site;
 
 
 
+import com.annotation.values.Author;
+import com.annotation.values.Description;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.SwipeElementDirection;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
 
+@Description("This Test validates swipe scenarios")
+public class HomePageTest2
+    extends UserBaseTest {
 
-public class HomePageTest2 extends UserBaseTest {
-
-
-    @Test public void testMethodOne_2() throws Exception {
-
+    @Test
+    @Author(name = "Sai") public void testMethodOne_2() throws Exception {
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
                 .getStackTrace()[1].getClassName());

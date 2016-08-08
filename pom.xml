@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AppiumTestDistribution</name>
