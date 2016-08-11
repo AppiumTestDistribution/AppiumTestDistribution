@@ -1,4 +1,3 @@
-
 package com.appium.webtest;
 
 import static org.junit.Assert.assertNotNull;

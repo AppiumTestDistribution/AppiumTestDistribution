@@ -47,8 +47,13 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -335,9 +340,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
-                    "ADBLogs:: <a href=" + CI_BASE_URI + "/target/adblogs/"
-                        + device_udid.replaceAll("\\W", "_") + "__" + result.getMethod()
-                        .getMethodName() + ".txt" + ">AdbLogs</a>");
+                    "ADBLogs:: <a href=" + CI_BASE_URI + "/target/adblogs/" + device_udid
+                        .replaceAll("\\W", "_") + "__" + result.getMethod().getMethodName() + ".txt"
+                        + ">AdbLogs</a>");
                 System.out.println(driver.getSessionId() + ": Saving device log - Done.");
             }
 
@@ -367,20 +372,20 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     ExtentTestManager.getTest()
                         .log(LogStatus.INFO, result.getMethod().getMethodName(),
                             "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-                                CI_BASE_URI + "/target/screenshot/android/"
-                                    + device_udid.replaceAll("\\W", "_") + "/" + className + "/"
-                                    + result.getMethod().getMethodName() + "/"
-                                    + screenShotNameWithTimeStamp + deviceModel + "_failed_"
-                                    + result.getMethod().getMethodName() + "_framed.png"));
+                                CI_BASE_URI + "/target/screenshot/android/" + device_udid
+                                    .replaceAll("\\W", "_") + "/" + className + "/" + result
+                                    .getMethod().getMethodName() + "/" + screenShotNameWithTimeStamp
+                                    + deviceModel + "_failed_" + result.getMethod().getMethodName()
+                                    + "_framed.png"));
                 } else {
                     ExtentTestManager.getTest()
                         .log(LogStatus.INFO, result.getMethod().getMethodName(),
                             "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-                                CI_BASE_URI + "/target/screenshot/android/"
-                                    + device_udid.replaceAll("\\W", "_") + "/" + className + "/"
-                                    + result.getMethod().getMethodName() + "/"
-                                    + screenShotNameWithTimeStamp + deviceModel + "_" + result
-                                    .getMethod().getMethodName() + "_failed.png"));
+                                CI_BASE_URI + "/target/screenshot/android/" + device_udid
+                                    .replaceAll("\\W", "_") + "/" + className + "/" + result
+                                    .getMethod().getMethodName() + "/" + screenShotNameWithTimeStamp
+                                    + deviceModel + "_" + result.getMethod().getMethodName()
+                                    + "_failed.png"));
                 }
 
 
@@ -395,20 +400,20 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     ExtentTestManager.getTest()
                         .log(LogStatus.INFO, result.getMethod().getMethodName(),
                             "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-                                CI_BASE_URI + "/target/screenshot/iOS/"
-                                    + device_udid.replaceAll("\\W", "_") + "/" + className + "/"
-                                    + result.getMethod().getMethodName() + "/"
-                                    + screenShotNameWithTimeStamp + deviceModel + "_failed_"
-                                    + result.getMethod().getMethodName() + "_framed.png"));
+                                CI_BASE_URI + "/target/screenshot/iOS/" + device_udid
+                                    .replaceAll("\\W", "_") + "/" + className + "/" + result
+                                    .getMethod().getMethodName() + "/" + screenShotNameWithTimeStamp
+                                    + deviceModel + "_failed_" + result.getMethod().getMethodName()
+                                    + "_framed.png"));
                 } else {
                     ExtentTestManager.getTest()
                         .log(LogStatus.INFO, result.getMethod().getMethodName(),
                             "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-                                CI_BASE_URI + "/target/screenshot/iOS/"
-                                    + device_udid.replaceAll("\\W", "_") + "/" + className + "/"
-                                    + result.getMethod().getMethodName() + "/"
-                                    + screenShotNameWithTimeStamp + deviceModel + "_" + result
-                                    .getMethod().getMethodName() + "_failed.png"));
+                                CI_BASE_URI + "/target/screenshot/iOS/" + device_udid
+                                    .replaceAll("\\W", "_") + "/" + className + "/" + result
+                                    .getMethod().getMethodName() + "/" + screenShotNameWithTimeStamp
+                                    + deviceModel + "_" + result.getMethod().getMethodName()
+                                    + "_failed.png"));
                 }
 
             }
@@ -418,9 +423,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 log_file_writer.println(logEntries);
                 log_file_writer.flush();
                 ExtentTestManager.getTest().log(LogStatus.INFO, result.getMethod().getMethodName(),
-                    "ADBLogs:: <a href=" + CI_BASE_URI + "/target/adblogs/"
-                        + device_udid.replaceAll("\\W", "_") + "__" + result.getMethod()
-                        .getMethodName() + ".txt" + ">AdbLogs</a>");
+                    "ADBLogs:: <a href=" + CI_BASE_URI + "/target/adblogs/" + device_udid
+                        .replaceAll("\\W", "_") + "__" + result.getMethod().getMethodName() + ".txt"
+                        + ">AdbLogs</a>");
                 System.out.println(driver.getSessionId() + ": Saving device log - Done.");
             }
 
@@ -563,9 +568,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             getDriver().context(context);
         }
         FileUtils.copyFile(scrFile, new File(
-            CI_BASE_URI + "/target/screenshot/" + device + "/" + device_udid
-                .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/" + deviceModel
-                + "_" + methodName + "_failed" + ".png"));
+            CI_BASE_URI + "/target/screenshot/" + device + "/" + device_udid.replaceAll("\\W", "_")
+                + "/" + className + "/" + methodName + "/" + deviceModel + "_" + methodName
+                + "_failed" + ".png"));
         Thread.sleep(3000);
     }
 
@@ -574,11 +579,11 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void captureScreenShot(String screenShotName, int status, String className,
-        String methodName) throws IOException, InterruptedException {
+            String methodName) throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
-            .equals("NATIVE_APP")) {
+        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")
+                && !context.equals("NATIVE_APP")) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;
         }
@@ -691,17 +696,4 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
         return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
     }
-
-/*    public static String getElementDescription(Class a){
-        Method[] methods = a.getMethods();
-        for (Method m : methods)
-        {
-            if (m.isAnnotationPresent(ElementDescription.class))
-            {
-                ElementDescription ta = m.getAnnotation(ElementDescription.class);
-                return ta.value();
-            }
-        }
-        return null;*/
-
 }
