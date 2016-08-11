@@ -15,7 +15,7 @@ public class HomePageTest2
     extends UserBaseTest {
 
     @Test
-    @Author(name = "Sai") public void testMethodOne_2() throws Exception {
+    @Author(name = "AnsonLiao,Sai") public void testMethodOne_2() throws Exception {
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
                 .getStackTrace()[1].getClassName());

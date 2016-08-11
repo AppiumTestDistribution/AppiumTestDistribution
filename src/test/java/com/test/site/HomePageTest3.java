@@ -1,5 +1,6 @@
 package com.test.site;
 
+import com.annotation.values.Author;
 import com.annotation.values.RetryCount;
 import com.appium.utils.Retry;
 import org.openqa.selenium.By;
@@ -12,6 +13,7 @@ public class HomePageTest3 extends UserBaseTest {
 
 
     @Test(retryAnalyzer = Retry.class)
+    @Author(name="AnsonLiao")
     @RetryCount(maxRetryCount = 2) public void testMethodOne_3()
         throws InterruptedException, IOException {
 

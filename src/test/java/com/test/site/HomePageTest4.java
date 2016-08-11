@@ -2,6 +2,7 @@ package com.test.site;
 
 
 
+import com.annotation.values.Author;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
@@ -9,7 +10,8 @@ import org.testng.annotations.Test;
 public class HomePageTest4 extends UserBaseTest {
 
 
-    @Test public void testMethodFour_4() throws Exception {
+    @Test
+    @Author(name="Krishna")public void testMethodFour_4() throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
