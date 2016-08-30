@@ -2,14 +2,28 @@ package com.report.factory;
 
 import com.relevantcodes.extentreports.ExtentReports;
 
-public class ExtentManager {
-	public static ExtentReports instance;
+import java.io.FileInputStream;
+import java.util.Properties;
 
-	public synchronized static ExtentReports getInstance() {
-		if (instance == null) {
-			System.out.println(System.getProperty("user.dir"));
-			instance = new ExtentReports(System.getProperty("user.dir") + "/target/ExtentReport.html");
-		}
-		return instance;
-	}
+public class ExtentManager {
+    public static ExtentReports instance;
+    public static Properties prop = new Properties();
+
+    public synchronized static ExtentReports getInstance() {
+        if (instance == null) {
+            System.out.println(System.getProperty("user.dir"));
+            instance =
+                new ExtentReports(System.getProperty("user.dir") + "/target/ExtentReport.html");
+            try {
+                prop.load(new FileInputStream("config.properties"));
+                if (System.getenv("ExtentX").equalsIgnoreCase("true")) {
+                    instance.x(prop.getProperty("MONGODB_SERVER"),
+                        Integer.parseInt(prop.getProperty("MONGODB_PORT")));
+                }
+            } catch (Exception e) {
+                System.out.println("Not taking ExtendReporting");
+            }
+        }
+        return instance;
+    }
 }

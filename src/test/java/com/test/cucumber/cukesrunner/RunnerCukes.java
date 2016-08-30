@@ -8,9 +8,8 @@ import org.junit.Test;
  */
 public class RunnerCukes {
 
-    @Test
-    public  void testCukesRunner() throws Exception {
+    @Test public void testCukesRunner() throws Exception {
         ParallelThread cucumberParallelThread = new ParallelThread();
         cucumberParallelThread.runner("output");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+    }
 }

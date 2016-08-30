@@ -1,8 +1,10 @@
 package com.appium.utils;
 
 /**
- * Command Prompt - this class contains method to run windows and mac commands  
+ * Command Prompt - this class contains method to run windows and mac commands
  */
+import org.testng.annotations.Test;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,32 +15,64 @@ import java.util.Map;
 
 public class CommandPrompt {
 
-	static Process p;
-	ProcessBuilder builder;
+    static Process p;
+    ProcessBuilder builder;
 
 
-	public String runCommand(String command) throws InterruptedException, IOException {
-		p = Runtime.getRuntime().exec(command);
-		// get std output
-		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		String line = "";
-		String allLine = "";
-		int i = 1;
-		while ((line = r.readLine()) != null) {
-/*			if (line.isEmpty()) {
-				break;
-			}*/
-			allLine = allLine + "" + line + "\n";
-            if (line.contains("Console LogLevel: debug") && line.contains("Complete"))
-				break;	
-			   i++;
-		}
-		return allLine;
+    public String runCommand(String command) throws InterruptedException, IOException {
+        p = Runtime.getRuntime().exec(command);
+        // get std output
+        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String line = "";
+        String allLine = "";
+        int i = 1;
+        while ((line = r.readLine()) != null) {
+            allLine = allLine + "" + line + "\n";
+            if (line.contains("Console LogLevel: debug") && line.contains("Complete")) {
+                break;
+            }
+            i++;
+        }
+        return allLine;
 
-	}
+    }
 
     public String runCommandThruProcessBuilder(String command) throws InterruptedException, IOException {
-        List<String> commands = new ArrayList<String>();
+        BufferedReader br = getBufferedReader(command);
+        String line;
+        String allLine = "";
+        String result;
+
+        while ((line = br.readLine()) != null) {
+            allLine = allLine + "" + line + "\n";
+            System.out.println(allLine);
+        }
+
+        if (allLine.contains(":")) {
+            result = allLine.split(":")[1].replace("\n", "").trim();
+        }
+        else {
+            result = allLine.replace("\n", "").trim();
+        }
+
+        return result;
+    }
+
+    public String runProcessCommandToGetDeviceID(String command) throws InterruptedException, IOException {
+        BufferedReader br = getBufferedReader(command);
+        String line;
+        String allLine = "";
+
+        while ((line = br.readLine()) != null) {
+            allLine = allLine.trim() + "" + line.trim() + "\n";
+            System.out.println(allLine);
+        }
+
+        return allLine.trim();
+    }
+
+    public BufferedReader getBufferedReader(String command) throws IOException {
+        List<String> commands = new ArrayList<>();
         commands.add("/bin/sh");
         commands.add("-c");
         commands.add(command);
@@ -48,13 +82,19 @@ public class CommandPrompt {
         final Process process = builder.start();
         InputStream is = process.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        String line;
-        String allLine = "";
-        while ((line = br.readLine()) != null) {
-            allLine = allLine + "" + line + "\n";
-            System.out.println(allLine);
-        }
-        return allLine.split(":")[1].replace("\n","").trim();
+        return new BufferedReader(isr);
+    }
+
+    @Test
+    public void f1() throws IOException {
+        CommandPrompt commandPrompt = new CommandPrompt();
+        // /git/maaii-automation/Maaii-Appium-Wispi/binary/Shatel.apk
+        String command = "/Users/ansonliao/Library/Android/sdk/build-tools/23.0.2/aapt dump badging /git/maaii-automation/Maaii-Appium-Wispi/binary/Shatel.apk | awk '/package/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
+        BufferedReader bufferedReader = commandPrompt.getBufferedReader(command);
+        String line = null;
+        System.out.println(bufferedReader.readLine());
+//        while ((line = bufferedReader.readLine()) != null) {
+//            System.out.println(line);
+//        }
     }
 }
