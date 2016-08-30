@@ -35,11 +35,6 @@
             <name>Srinivasan Sekar</name>
             <email>srinivasan.sekar1990@gmail.com</email>
         </developer>
-        <developer>
-            <name>Anson Liao</name>
-            <email>ansonliao@maaii.com</email>
-        </developer>
-    </developers>
 
     <repositories>
         <repository>
