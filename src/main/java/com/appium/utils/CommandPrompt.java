@@ -3,6 +3,8 @@ package com.appium.utils;
 /**
  * Command Prompt - this class contains method to run windows and mac commands
  */
+import org.testng.annotations.Test;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,27 +37,37 @@ public class CommandPrompt {
 
     }
 
-    public String runCommandThruProcessBuilder(String command)
-        throws InterruptedException, IOException {
+    public String runCommandThruProcessBuilder(String command) throws InterruptedException, IOException {
         BufferedReader br = getBufferedReader(command);
         String line;
         String allLine = "";
+        String result;
+
         while ((line = br.readLine()) != null) {
             allLine = allLine + "" + line + "\n";
             System.out.println(allLine);
         }
-        return allLine.split(":")[1].replace("\n", "").trim();
+
+        if (allLine.contains(":")) {
+            result = allLine.split(":")[1].replace("\n", "").trim();
+        }
+        else {
+            result = allLine.replace("\n", "").trim();
+        }
+
+        return result;
     }
 
-    public String runProcessCommandToGetDeviceID(String command)
-        throws InterruptedException, IOException {
+    public String runProcessCommandToGetDeviceID(String command) throws InterruptedException, IOException {
         BufferedReader br = getBufferedReader(command);
         String line;
         String allLine = "";
+
         while ((line = br.readLine()) != null) {
             allLine = allLine.trim() + "" + line.trim() + "\n";
             System.out.println(allLine);
         }
+
         return allLine.trim();
     }
 
@@ -72,4 +84,5 @@ public class CommandPrompt {
         InputStreamReader isr = new InputStreamReader(is);
         return new BufferedReader(isr);
     }
+
 }

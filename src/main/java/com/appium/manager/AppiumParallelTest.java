@@ -4,7 +4,10 @@ import com.annotation.values.Author;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.android.AndroidUtils;
 import com.appium.utils.ImageUtils;
+import com.appium.utils.ios.Ipa;
+import com.appium.utils.ios.IpaParser;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.report.factory.ExtentManager;
@@ -17,6 +20,7 @@ import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+import net.dongliu.apk.parser.ApkParser;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.By;
@@ -73,7 +77,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public File scrFile = null;
     public String testDescription = "";
     String screenShotNameWithTimeStamp;
-    private String CI_BASE_URI = null;
+    public String CI_BASE_URI = null;
 
     private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
     private static ArrayList<String> devices = new ArrayList<String>();
@@ -83,6 +87,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
         new ConcurrentHashMap<String, Boolean>();
     public ImageUtils imageUtils = new ImageUtils();
+
+    private static IpaParser ipaParser = new IpaParser();
+    private static Ipa ipa;
+    private static String apkPackageName = null;
+    private static String apkLaunchActivity = null;
+    private static String ipaBundleId = null;
+    private static String apkFilePath = null;
+    private static String ipaFilePath = null;
 
     static {
         try {
@@ -106,6 +118,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 deviceMapping.put(device, true);
             }
             System.out.println(deviceMapping);
+
+//            getAppFilePath(prop.getProperty("ANDROID_APP_PATH"));
+//            getAppFilePath(prop.getProperty("IOS_APP_PATH"));
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to initialize framework");
@@ -476,20 +491,36 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
 
-    public synchronized DesiredCapabilities androidNative() {
+    public synchronized DesiredCapabilities androidNative() throws FileNotFoundException {
         System.out.println("Setting Android Desired Capabilities:");
+
+        if (apkFilePath == null) {
+            apkFilePath = getAppFilePath(prop.getProperty("ANDROID_APP_PATH"));
+
+            System.out.println("Parsing APK for getting APK information:::: " + apkFilePath);
+
+            try(ApkParser apkParser = new ApkParser(new File(apkFilePath))) {
+                apkPackageName = apkParser.getApkMeta().getPackageName();
+                apkLaunchActivity = AndroidUtils.getAPKInfo(apkFilePath).get(AndroidUtils.APK_LAUNCH_ACTIVITY);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+//        String packageName = AndroidUtils.getAPKInfo(apkFilePath).get(AndroidUtils.APK_PACKAGE_KEY_NAME).trim();
+//        String launchActivity = AndroidUtils.getAPKInfo(apkFilePath).get(AndroidUtils.APK_LAUNCH_ACTIVITY).trim();
+
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
-        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,
-            prop.getProperty("APP_ACTIVITY"));
-        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-            prop.getProperty("APP_PACKAGE"));
+        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, apkLaunchActivity);
+        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, apkPackageName);
         androidCapabilities.setCapability("browserName", "");
         checkSelendroid(androidCapabilities);
-        androidCapabilities
-            .setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
+        androidCapabilities.setCapability(MobileCapabilityType.APP, apkFilePath);
         androidCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
+
         return androidCapabilities;
     }
 
@@ -506,15 +537,26 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized DesiredCapabilities iosNative() {
-        DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
+
+        if (ipaFilePath == null) {
+            ipaFilePath = getAppFilePath(prop.getProperty("IOS_APP_PATH"));
+
+            System.out.println("Parsing IPA for getting IPA information:::: " + ipaFilePath);
+            ipa = ipaParser.parse(new File(ipaFilePath));
+            ipaBundleId = ipa.getBundleIdentifier();
+        }
+
+//        String bundleID = IOSUtils.getIPAInfo(ipaFilePath).get(IOSUtils.IPA_BUNDLE_ID).trim();
+
+        DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
-        iOSCapabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("IOS_APP_PATH"));
-        iOSCapabilities
-            .setCapability(IOSMobileCapabilityType.BUNDLE_ID, prop.getProperty("BUNDLE_ID"));
+        iOSCapabilities.setCapability(MobileCapabilityType.APP, ipaFilePath);
+        iOSCapabilities.setCapability(IOSMobileCapabilityType.BUNDLE_ID, ipaBundleId);
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
         iOSCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
+
         return iOSCapabilities;
     }
 
@@ -696,4 +738,68 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
         return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
     }
+
+    /**
+     * Added by Anson Liao
+     */
+    private static String getAppFilePath(String appFilePath) {
+        String appAbsPath = null;
+
+        if (appFilePath.trim().length() == 0 || appFilePath == null) {
+            try {
+                throw new IOException(":::: Parsed App file path, but the provided App path is empty or null.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if ((appFilePath.trim().toUpperCase().startsWith("HTTP") || appFilePath.trim().toUpperCase().startsWith("FTP")) &&
+                (appFilePath.trim().toUpperCase().endsWith(".APK") || appFilePath.trim().toUpperCase().endsWith(".IPA"))) {
+            String[] strings = appFilePath.trim().split("/");
+            String appName = strings[strings.length - 1];
+            String destAppRelatedPath = "build/" + appName;
+            appAbsPath = (new File(destAppRelatedPath)).getAbsolutePath();
+
+            if (!(new File(appAbsPath).exists())) {
+                copyFileFromURL(appFilePath.trim(), appAbsPath);
+            }
+            else{
+                System.out.println(":::: Local App file was found, no need to download: " + new File(destAppRelatedPath).getAbsolutePath());
+            }
+
+//            appAbsPath =  new File(destAppRelatedPath).getAbsolutePath();
+        }
+        else {
+            if (!(new File(appFilePath.trim())).exists()) {
+                try {
+                    throw new FileNotFoundException("App file was not found, path:: " + appFilePath.trim());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                appAbsPath =  appFilePath.trim();
+            }
+        }
+
+        return appAbsPath;
+    }
+
+    private static synchronized void copyFileFromURL(String url, String destDirectory) {
+        int TIME_OUT = 5*1000*60;   // 5 mins
+
+        try {
+            FileUtils.copyURLToFile(new URL(url), new File(destDirectory), TIME_OUT, TIME_OUT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    @Test
+//    public void getAppFilePathTest() {
+//        String appPath = getAppFilePath("http://jenkins.dev.maaii.com:8080/job/wispi/job/wispi-ios-merge/lastSuccessfulBuild/artifact/build/wispi-testbed-1.0.70.110.ipa");
+//        System.out.println(appPath);
+////        getAppFilePath("");
+//    }
+
 }
