@@ -4,11 +4,11 @@ import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AndroidDeviceConfiguration;
 import com.appium.manager.AppiumParallelTest;
 import com.appium.utils.ImageUtils;
-import com.relevantcodes.extentreports.ExtentTest;
-import com.relevantcodes.extentreports.LogStatus;
+import com.appium.utils.MobilePlatform;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
-
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -21,7 +21,6 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
-
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -81,14 +80,14 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void result(Result result) {
         if ("passed".equals(result.getStatus())) {
-            ExtentTestManager.getTest().log(LogStatus.PASS, testSteps.poll().getName(), "PASSED");
+            ExtentTestManager.getTest().log(Status.PASS, testSteps.poll().getName());
         } else if ("failed".equals(result.getStatus())) {
             String failed_StepName = testSteps.poll().getName();
-            ExtentTestManager.getTest().log(LogStatus.FAIL, failed_StepName, result.getError());
+            ExtentTestManager.getTest().log(Status.FAIL, result.getError());
             String context = getDriver().getContext();
             boolean contextChanged = false;
-            if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") 
-                    && !context.equals("NATIVE_APP")) {
+            if (appiumParallelTest.getMobilePlatform() == MobilePlatform.ANDROID && !context
+                    .equals("NATIVE_APP")) {
                 getDriver().context("NATIVE_APP");
                 contextChanged = true;
             }
@@ -96,13 +95,14 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             if (contextChanged) {
                 getDriver().context(context);
             }
-            if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
+            if (appiumParallelTest.getMobilePlatform() == MobilePlatform.ANDROID) {
                 deviceModel = androidDevice.getDeviceModel(appiumParallelTest.device_udid);
                 screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (getDriver().toString().split(":")[0].trim().equals("IOSDriver")) {
+            } else if (appiumParallelTest.getMobilePlatform() == MobilePlatform.IOS) {
                 try {
                     deviceModel =
-                        iosDevice.getIOSDeviceProductTypeAndVersion(appiumParallelTest.device_udid);
+                            iosDevice.getIOSDeviceProductTypeAndVersion(
+                                    appiumParallelTest.device_udid);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -110,12 +110,15 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 }
                 screenShotAndFrame(failed_StepName, scrFile, "iPhone");
             }
-            attachScreenShotToReport(failed_StepName);
+            try {
+                attachScreenShotToReport(failed_StepName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else if ("skipped".equals(result.getStatus())) {
-            ExtentTestManager.getTest().log(LogStatus.SKIP, testSteps.poll().getName(), "SKIPPED");
+            ExtentTestManager.getTest().log(Status.SKIP, testSteps.poll().getName());
         } else if ("undefined".equals(result.getStatus())) {
-            ExtentTestManager.getTest()
-                .log(LogStatus.UNKNOWN, testSteps.poll().getName(), "UNDEFINED");
+            ExtentTestManager.getTest().log(Status.UNKNOWN, testSteps.poll().getName());
         }
     }
 
@@ -149,9 +152,10 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             e.printStackTrace();
         }
         for (Tag tag : feature.getTags()) {
-            parent = ExtentTestManager.startTest(feature.getName()).assignCategory(
-                appiumParallelTest.category + appiumParallelTest.device_udid.replaceAll("\\W", "_"),
-                tag.getName());
+            parent = ExtentTestManager.createTest(feature.getName()).assignCategory(
+                    appiumParallelTest.category
+                            + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                            + tag.getName());
         }
         parentContext.put(Thread.currentThread().getId(), parent);
     }
@@ -173,8 +177,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         }
         this.testSteps = new LinkedList<Step>();
         System.out.println(testSteps);
-        child = ExtentTestManager.startTest(scenario.getName()).assignCategory(
-            appiumParallelTest.category + appiumParallelTest.device_udid.replaceAll("\\W", "_"));
+        child = ExtentTestManager.createTest(scenario.getName()).assignCategory(
+                appiumParallelTest.category
+                        + appiumParallelTest.device_udid.replaceAll("\\W", "_"));
 
     }
 
@@ -191,8 +196,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     }
 
     public void endOfScenarioLifeCycle(Scenario scenario) {
-        parentContext.get(Thread.currentThread().getId()).appendChild(child);
-        ExtentManager.getInstance().flush();
+        //parentContext.get(Thread.currentThread().getId()).appendChild(child);
+        ExtentManager.getExtent().flush();
         getDriver().quit();
     }
 
@@ -205,8 +210,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     }
 
     public void eof() {
-        ExtentManager.getInstance().endTest(parent);
-        ExtentManager.getInstance().flush();
+        //ExtentManager.getInstance().endTest(parent);
+        ExtentManager.getExtent().flush();
         try {
             appiumParallelTest.killAppiumServer();
         } catch (InterruptedException e) {
@@ -220,11 +225,12 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public void screenShotAndFrame(String failed_StepName, File scrFile, String device) {
         try {
             File framePath =
-                new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
+                    new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
-                System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
-                    + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
-                    + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".png"));
+                    System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
+                            + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/"
+                            + deviceModel + "/failed_" + failed_StepName.replaceAll(" ", "_")
+                            + ".png"));
             File[] files1 = framePath.listFiles();
             if (framePath.exists()) {
                 for (int i = 0; i < files1.length; i++) {
@@ -232,17 +238,22 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                         Path p = Paths.get(files1[i].toString());
                         String fileName = p.getFileName().toString().toLowerCase();
                         if (deviceModel.toString().toLowerCase()
-                            .contains(fileName.split(".png")[0].toLowerCase())) {
+                                .contains(fileName.split(".png")[0].toLowerCase())) {
                             try {
                                 imageUtils.wrapDeviceFrames(files1[i].toString(),
-                                    System.getProperty("user.dir") + "/target/screenshot/" + device
-                                        + "/" + appiumParallelTest.device_udid
-                                        .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_"
-                                        + failed_StepName.replaceAll(" ", "_") + ".png",
-                                    System.getProperty("user.dir") + "/target/screenshot/" + device
-                                        + "/" + appiumParallelTest.device_udid
-                                        .replaceAll("\\W", "_") + "/" + deviceModel + "/failed_"
-                                        + failed_StepName.replaceAll(" ", "_") + "_framed.png");
+                                        System.getProperty("user.dir") + "/target/screenshot/"
+                                                + device + "/"
+                                                + appiumParallelTest.device_udid
+                                                .replaceAll("\\W", "_")
+                                                + "/" + deviceModel + "/failed_"
+                                                + failed_StepName.replaceAll(" ", "_")
+                                                + ".png",
+                                        System.getProperty("user.dir") + "/target/screenshot/"
+                                                + device
+                                                + "/" + appiumParallelTest.device_udid
+                                                .replaceAll("\\W", "_") + "/" + deviceModel
+                                                + "/failed_" + failed_StepName.replaceAll(" ", "_")
+                                                + "_framed.png");
                                 break;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -260,7 +271,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         }
     }
 
-    public void attachScreenShotToReport(String stepName) {
+    public void attachScreenShotToReport(String stepName) throws IOException {
         String platform = null;
         if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
             platform = "android";
@@ -270,21 +281,27 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             platform = "android";
         }
         File framedImageAndroid = new File(
-            System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
-                + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png");
+                System.getProperty("user.dir") + "/target/screenshot/"
+                        + platform + "/"
+                        + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                        + "/" + deviceModel + "/failed_"
+                        + stepName.replaceAll(" ", "_") + "_framed.png");
         if (framedImageAndroid.exists()) {
-            ExtentTestManager.getTest().log(LogStatus.INFO, stepName,
-                "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-                    System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
-                        + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png"));
+            ExtentTestManager.getTest().log(Status.INFO,
+                    "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/"
+                                    + platform + "/"
+                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                                    + "/" + deviceModel + "/failed_"
+                                    + stepName.replaceAll(" ", "_") + "_framed.png"));
         } else {
-            ExtentTestManager.getTest().log(LogStatus.INFO, stepName,
-                "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-                    System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
-                        + "/failed_" + stepName.replaceAll(" ", "_") + ".png"));
+            ExtentTestManager.getTest().log(Status.INFO,
+                    "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/"
+                                    + platform + "/"
+                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                                    + "/" + deviceModel + "/failed_"
+                                    + stepName.replaceAll(" ", "_") + ".png"));
         }
     }
 

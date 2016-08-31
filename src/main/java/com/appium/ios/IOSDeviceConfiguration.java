@@ -1,8 +1,7 @@
 package com.appium.ios;
 
-import com.appium.manager.AvailabelPorts;
+import com.appium.manager.AvailablePorts;
 import com.appium.utils.CommandPrompt;
-import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,9 +18,9 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {
-    public ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
+    public static ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
     CommandPrompt commandPrompt = new CommandPrompt();
-    AvailabelPorts ap = new AvailabelPorts();
+    AvailablePorts ap = new AvailablePorts();
     public HashMap<String, String> deviceMap = new HashMap<String, String>();
     Map<String, String> devices = new HashMap<>();
     public Process p;
@@ -254,18 +253,5 @@ public class IOSDeviceConfiguration {
                 System.out.println("iOSWebKitProxyLauncher File already has access to execute");
             }
         }
-    }
-
-    @Test
-    public void testApp() {
-        IOSDeviceConfiguration iosDeviceConfiguration = new IOSDeviceConfiguration();
-        try {
-            commandPrompt.runCommandThruProcessBuilder("");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        iosDeviceConfiguration.getIOSUDID();
     }
 }

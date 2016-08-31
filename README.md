@@ -2,16 +2,35 @@
 
 [![Join the chat at https://gitter.im/saikrishna321/AppiumTestDistribution](https://badges.gitter.im/saikrishna321/AppiumTestDistribution.svg)](https://gitter.im/saikrishna321/AppiumTestDistribution?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/saikrishna321/AppiumTestDistribution.svg?branch=master)](https://travis-ci.org/saikrishna321/AppiumTestDistribution/builds/)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/96c555bd567240999e89dba531fe9802)](https://www.codacy.com/app/saikrishna321/AppiumTestDistribution?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saikrishna321/AppiumTestDistribution&amp;utm_campaign=Badge_Grade)
 
 ![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/Network-2.gif)
 
-Add the below dependencies in your pom.xml
+Add the below dependencies in your pom.xml (Release)
 
 ```
 <dependency>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
     <version>5.0.0</version>
+</dependency>
+```
+
+```
+<repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+</repositories>
+```
+Add the below dependencies in your pom.xml (Master)
+
+```
+<dependency>
+    <groupId>com.github.saikrishna321</groupId>
+    <artifactId>AppiumTestDistribution</artifactId>
+    <version>a98e7c425a</version>
 </dependency>
 ```
 
@@ -40,6 +59,19 @@ Add the below dependencies in your pom.xml
 ##[Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
 ##[Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
+
+##Video log Prerequisites
+* Install ffmpeg. [OSX](https://trac.ffmpeg.org/wiki/CompilationGuide/MacOSX)
+	* ```$ brew update```
+	* ```$ brew install ffmpeg```
+* Install mp4box. [OSX](http://hunterford.me/compiling-mp4box-on-mac-os-x/)
+	* ```$ brew install mp4box```
+* Install ffmpeg. [windows]( https://ffmpeg.org/download.html#build-windows)
+* Install mp4box. [windows] (https://gpac.wp.mines-telecom.fr/downloads/)
+
+## Runner
+    ##Videos will be logged for failure tests
+    VIDEO_LOGS="true" mvn clean -Dtest=Runner test 
 
 ##Credits
 Thanks to

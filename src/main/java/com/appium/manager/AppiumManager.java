@@ -20,8 +20,8 @@ import java.util.Properties;
  */
 public class AppiumManager {
 
-    CommandPrompt cp = new CommandPrompt();
-    AvailabelPorts ap = new AvailabelPorts();
+    private CommandPrompt cp = new CommandPrompt();
+    private AvailablePorts ap = new AvailablePorts();
     public AppiumDriverLocalService appiumDriverLocalService;
     public Properties prop = new Properties();
     public InputStream input = null;

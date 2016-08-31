@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 
 public class TestWriteUtils {
-    private static final Pattern SERIAL_VALIDATION = Pattern.compile("[^a-zA-Z0-9_-]");
     static final Gson GSON = new GsonBuilder() //
         .registerTypeAdapter(File.class, new TypeAdapter<File>() {
             @Override public void write(JsonWriter jsonWriter, File file) throws IOException {

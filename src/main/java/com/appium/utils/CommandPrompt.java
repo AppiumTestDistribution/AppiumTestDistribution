@@ -36,26 +36,37 @@ public class CommandPrompt {
     }
 
     public String runCommandThruProcessBuilder(String command)
-        throws InterruptedException, IOException {
+            throws InterruptedException, IOException {
         BufferedReader br = getBufferedReader(command);
         String line;
         String allLine = "";
+        String result;
+
         while ((line = br.readLine()) != null) {
             allLine = allLine + "" + line + "\n";
             System.out.println(allLine);
         }
-        return allLine.split(":")[1].replace("\n", "").trim();
+
+        if (allLine.contains(":")) {
+            result = allLine.split(":")[1].replace("\n", "").trim();
+        } else {
+            result = allLine.replace("\n", "").trim();
+        }
+
+        return result;
     }
 
     public String runProcessCommandToGetDeviceID(String command)
-        throws InterruptedException, IOException {
+            throws InterruptedException, IOException {
         BufferedReader br = getBufferedReader(command);
         String line;
         String allLine = "";
+
         while ((line = br.readLine()) != null) {
             allLine = allLine.trim() + "" + line.trim() + "\n";
             System.out.println(allLine);
         }
+
         return allLine.trim();
     }
 
@@ -71,5 +82,16 @@ public class CommandPrompt {
         InputStream is = process.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         return new BufferedReader(isr);
+    }
+
+    public void runCommandThruProcess(String command)
+        throws InterruptedException, IOException {
+        BufferedReader br = getBufferedReader(command);
+        String line;
+        String allLine = "";
+        while ((line = br.readLine()) != null) {
+            allLine = allLine + "" + line + "\n";
+            System.out.println(allLine);
+        }
     }
 }
