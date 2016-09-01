@@ -5,16 +5,14 @@ import com.dd.plist.NSDictionary;
 import com.dd.plist.NSObject;
 import com.dd.plist.PropertyListParser;
 import net.lingala.zip4j.core.ZipFile;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.imageio.ImageIO;
 
 /**
  * Created by AnsonLiao on 26/8/2016.
@@ -41,20 +39,21 @@ public class IpaParser {
             ipa.setBundleName(rootDict.objectForKey("CFBundleName").toString());
             if (rootDict.objectForKey("CFBundleDisplayName") != null) {
                 ipa.setBundleDisplayName(rootDict.objectForKey("CFBundleDisplayName").toString());
-            }
-            else {
+            } else {
                 ipa.setBundleDisplayName(ipa.getBundleName());
             }
 
-            ipa.setBundleIdentifier(rootDict.objectForKey("CFBundleIdentifier").toString());
-            ipa.setBundleShortVersionString(rootDict.objectForKey("CFBundleShortVersionString").toString());
+            ipa.setBundleIdentifier(
+                    rootDict.objectForKey("CFBundleIdentifier").toString());
+            ipa.setBundleShortVersionString(
+                    rootDict.objectForKey("CFBundleShortVersionString").toString());
 
             File iconFile;
             if (rootDict.objectForKey("CFBundleIconFiles") != null) {
-                NSObject[] iconFiles = ((NSArray) rootDict.objectForKey("CFBundleIconFiles")).getArray();
+                NSObject[] iconFiles =
+                        ((NSArray) rootDict.objectForKey("CFBundleIconFiles")).getArray();
                 iconFile = new File(appFolder + File.separator + iconFiles[0].toString());
-            }
-            else {
+            } else {
                 iconFile = new File(appFolder + File.separator + "iTunesArtwork");
             }
 

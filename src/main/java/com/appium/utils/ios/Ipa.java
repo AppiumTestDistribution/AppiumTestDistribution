@@ -59,11 +59,11 @@ public class Ipa {
 
     @Override
     public String toString() {
-        return "Ipa{" +
-                "bundleName='" + bundleName + '\'' +
-                ", bundleDisplayName='" + bundleDisplayName + '\'' +
-                ", bundleIdentifier='" + bundleIdentifier + '\'' +
-                ", bundleShortVersionString='" + bundleShortVersionString + '\'' +
-                '}';
+        return "Ipa{"
+                + "bundleName='" + bundleName + '\''
+                + ", bundleDisplayName='" + bundleDisplayName + '\''
+                + ", bundleIdentifier='" + bundleIdentifier + '\''
+                + ", bundleShortVersionString='" + bundleShortVersionString + '\''
+                + '}';
     }
 }

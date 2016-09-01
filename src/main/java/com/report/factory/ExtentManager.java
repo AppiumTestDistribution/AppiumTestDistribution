@@ -16,7 +16,6 @@ public class ExtentManager {
                 new ExtentReports(System.getProperty("user.dir") + "/target/ExtentReport.html");
             try {
                 prop.load(new FileInputStream("config.properties"));
-//                if (System.getenv("ExtentX").equalsIgnoreCase("true")) {
                 if (System.getProperty("ExtentX").equalsIgnoreCase("true")) {
                     instance.x(prop.getProperty("MONGODB_SERVER"),
                         Integer.parseInt(prop.getProperty("MONGODB_PORT")));

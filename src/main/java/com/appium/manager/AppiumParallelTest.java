@@ -4,8 +4,8 @@ import com.annotation.values.Author;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.utils.android.AndroidUtils;
 import com.appium.utils.ImageUtils;
+import com.appium.utils.android.AndroidUtils;
 import com.appium.utils.ios.Ipa;
 import com.appium.utils.ios.IpaParser;
 import com.relevantcodes.extentreports.ExtentTest;
@@ -499,23 +499,23 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
             System.out.println("Parsing APK for getting APK information:::: " + apkFilePath);
 
-            try(ApkParser apkParser = new ApkParser(new File(apkFilePath))) {
+            try (ApkParser apkParser = new ApkParser(new File(apkFilePath))) {
                 apkPackageName = apkParser.getApkMeta().getPackageName();
-                apkLaunchActivity = AndroidUtils.getAPKInfo(apkFilePath).get(AndroidUtils.APK_LAUNCH_ACTIVITY);
+                apkLaunchActivity = AndroidUtils.getAPKInfo(apkFilePath)
+                        .get(AndroidUtils.APK_LAUNCH_ACTIVITY);
             }
             catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-//        String packageName = AndroidUtils.getAPKInfo(apkFilePath).get(AndroidUtils.APK_PACKAGE_KEY_NAME).trim();
-//        String launchActivity = AndroidUtils.getAPKInfo(apkFilePath).get(AndroidUtils.APK_LAUNCH_ACTIVITY).trim();
-
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
-        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, apkLaunchActivity);
-        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, apkPackageName);
+        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,
+                apkLaunchActivity);
+        androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
+                apkPackageName);
         androidCapabilities.setCapability("browserName", "");
         checkSelendroid(androidCapabilities);
         androidCapabilities.setCapability(MobileCapabilityType.APP, apkFilePath);
@@ -546,8 +546,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             ipa = ipaParser.parse(new File(ipaFilePath));
             ipaBundleId = ipa.getBundleIdentifier();
         }
-
-//        String bundleID = IOSUtils.getIPAInfo(ipaFilePath).get(IOSUtils.IPA_BUNDLE_ID).trim();
 
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
@@ -747,14 +745,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         if (appFilePath.trim().length() == 0 || appFilePath == null) {
             try {
-                throw new IOException(":::: Parsed App file path, but the provided App path is empty or null.");
+                throw new IOException(
+                        ":::: Parsed App file path, but the provided App path is empty or null.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        if ((appFilePath.trim().toUpperCase().startsWith("HTTP") || appFilePath.trim().toUpperCase().startsWith("FTP")) &&
-                (appFilePath.trim().toUpperCase().endsWith(".APK") || appFilePath.trim().toUpperCase().endsWith(".IPA"))) {
+        String appFilePathString = appFilePath.trim().toUpperCase();
+        if ((appFilePathString.startsWith("HTTP") || appFilePathString.startsWith("FTP"))
+                && (appFilePathString.endsWith(".APK") || appFilePathString.endsWith(".IPA"))) {
             String[] strings = appFilePath.trim().split("/");
             String appName = strings[strings.length - 1];
             String destAppRelatedPath = "build/" + appName;
@@ -762,22 +762,21 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
             if (!(new File(appAbsPath).exists())) {
                 copyFileFromURL(appFilePath.trim(), appAbsPath);
-            }
-            else{
-                System.out.println(":::: Local App file was found, no need to download: " + new File(destAppRelatedPath).getAbsolutePath());
+            } else {
+                System.out.println(":::: Local App file was found, no need to download: "
+                        + new File(destAppRelatedPath).getAbsolutePath());
             }
 
 //            appAbsPath =  new File(destAppRelatedPath).getAbsolutePath();
-        }
-        else {
+        } else {
             if (!(new File(appFilePath.trim())).exists()) {
                 try {
-                    throw new FileNotFoundException("App file was not found, path:: " + appFilePath.trim());
+                    throw new FileNotFoundException(
+                            "App file was not found, path:: " + appFilePath.trim());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-            }
-            else {
+            } else {
                 appAbsPath =  appFilePath.trim();
             }
         }
@@ -786,7 +785,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     private static synchronized void copyFileFromURL(String url, String destDirectory) {
-        int TIME_OUT = 5*1000*60;   // 5 mins
+        int TIME_OUT = 5 * 1000 * 60;   // 5 mins
 
         try {
             FileUtils.copyURLToFile(new URL(url), new File(destDirectory), TIME_OUT, TIME_OUT);

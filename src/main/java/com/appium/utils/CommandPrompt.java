@@ -37,7 +37,8 @@ public class CommandPrompt {
 
     }
 
-    public String runCommandThruProcessBuilder(String command) throws InterruptedException, IOException {
+    public String runCommandThruProcessBuilder(String command)
+            throws InterruptedException, IOException {
         BufferedReader br = getBufferedReader(command);
         String line;
         String allLine = "";
@@ -50,15 +51,15 @@ public class CommandPrompt {
 
         if (allLine.contains(":")) {
             result = allLine.split(":")[1].replace("\n", "").trim();
-        }
-        else {
+        } else {
             result = allLine.replace("\n", "").trim();
         }
 
         return result;
     }
 
-    public String runProcessCommandToGetDeviceID(String command) throws InterruptedException, IOException {
+    public String runProcessCommandToGetDeviceID(String command)
+            throws InterruptedException, IOException {
         BufferedReader br = getBufferedReader(command);
         String line;
         String allLine = "";

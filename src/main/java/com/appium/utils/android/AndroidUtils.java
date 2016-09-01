@@ -23,7 +23,8 @@ public class AndroidUtils {
         String brandName = "";
 
         try {
-            brandName = commandPrompt.runCommand("adb -s "+ deviceId +" shell getprop ro.product.brand").replaceAll("\\s+", "");
+            brandName = commandPrompt.runCommand("adb -s " + deviceId
+                    + " shell getprop ro.product.brand").replaceAll("\\s+", "");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -37,7 +38,8 @@ public class AndroidUtils {
         String model = "";
 
         try {
-            model = commandPrompt.runCommand("adb -s "+ deviceId +" shell getprop ro.product.model").replaceAll("\\s+", "").replaceAll("\\s+", "");
+            model = commandPrompt.runCommand("adb -s " + deviceId
+                    + " shell getprop ro.product.model").replaceAll("\\s + ", "");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -51,7 +53,8 @@ public class AndroidUtils {
         String version = "";
 
         try {
-            version = commandPrompt.runCommand("adb -s " + deviceId + " shell getprop ro.build.version.release").replaceAll("\\s+", "");
+            version = commandPrompt.runCommand("adb -s " + deviceId
+                    + " shell getprop ro.build.version.release").replaceAll("\\s+", "");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -65,7 +68,8 @@ public class AndroidUtils {
         String osLevel = "";
 
         try {
-            osLevel = commandPrompt.runCommand("adb -s " + deviceId + " shell getprop ro.build.version.sdk").replaceAll("\\s+", "");
+            osLevel = commandPrompt.runCommand("adb -s " + deviceId
+                    + " shell getprop ro.build.version.sdk").replaceAll("\\s+", "");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -75,11 +79,11 @@ public class AndroidUtils {
         return osLevel;
     }
 
-    public static synchronized void adbShellInput(String device_udid, MobileElement element, String value) {
-        String command = "adb -s " + device_udid + " shell input text " + value;
+    public static synchronized void adbShellInput(String udid, MobileElement el, String value) {
+        String command = "adb -s " + udid + " shell input text " + value;
 
         try {
-            element.click();
+            el.click();
             commandPrompt.runCommand(command);
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -92,15 +96,19 @@ public class AndroidUtils {
     public static synchronized Map<String, String> getAPKInfo(String apkFilePath) {
         Properties properties = new Properties();
         String configProperties = "config.properties";
-        String getPackageCmd = " dump badging " +  apkFilePath + " | awk '/package/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
-        String getLaunchActivityCmd = " dump badging " +  apkFilePath + " | awk '/activity/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
+        String getPackageCmd = " dump badging " +  apkFilePath
+                + " | awk '/package/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
+        String getLaunchActivityCmd = " dump badging " +  apkFilePath
+                + " | awk '/activity/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
         Map<String, String> apkInfoMap = new HashMap<>();
 
         try {
             properties.load(new FileInputStream(configProperties));
             String aaptToolPath = properties.getProperty("AAPT_PATH").trim();
-            String packageName = commandPrompt.getBufferedReader(aaptToolPath + getPackageCmd).readLine();
-            String launchActivity = commandPrompt.getBufferedReader(aaptToolPath + getLaunchActivityCmd).readLine();
+            String packageName = commandPrompt
+                    .getBufferedReader(aaptToolPath + getPackageCmd).readLine();
+            String launchActivity = commandPrompt
+                    .getBufferedReader(aaptToolPath + getLaunchActivityCmd).readLine();
             apkInfoMap.put(APK_PACKAGE_KEY_NAME, packageName);
             apkInfoMap.put(APK_LAUNCH_ACTIVITY, launchActivity);
         } catch (IOException e) {
@@ -110,9 +118,10 @@ public class AndroidUtils {
         return apkInfoMap;
     }
 
-    public static synchronized int getNetworkdConnectionStatus(AndroidDriver<MobileElement> driver) {
-        return driver.getNetworkConnection().value;
-    }
+//    public static synchronized int
+//    getNetworkdConnectionStatus(AndroidDriver<MobileElement> driver) {
+//        return driver.getNetworkConnection().value;
+//    }
 
 //    @Test
 //    public void getAPKInfoTest() {
