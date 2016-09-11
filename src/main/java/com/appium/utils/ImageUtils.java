@@ -95,7 +95,7 @@ public class ImageUtils {
                                             testMethod.setGifPath(sFile.getCanonicalPath());
                                         }
                                     }
-                                    testMethod.setScrenShots(screenShotList);
+                                    testMethod.setScreenShots(screenShotList);
                                 }
 
                                 testMethodList.add(testMethod);

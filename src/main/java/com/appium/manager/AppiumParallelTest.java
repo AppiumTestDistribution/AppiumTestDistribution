@@ -30,6 +30,9 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.TestListenerAdapter;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 
 
 import java.awt.Image;
@@ -136,13 +139,21 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         deviceMapping.put(deviceId, true);
     }
 
-    public synchronized AppiumServiceBuilder startAppiumServer(String methodName) throws Exception {
+    @BeforeClass
+    @Parameters({"device"})
+    private synchronized AppiumServiceBuilder startAppiumServer(String device) throws Exception {
+        String methodName = getClass().getSimpleName();
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
             CI_BASE_URI = System.getProperty("user.dir");
         }
-        device_udid = getNextAvailableDeviceId();
+        if (device.isEmpty()) {
+            device_udid = getNextAvailableDeviceId();
+        } else {
+            device_udid = device;
+        }
+
         if (device_udid == null) {
             System.out.println("No devices are free to run test or Failed to run test");
             return null;
@@ -287,6 +298,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public DesiredCapabilities checkSelendroid(DesiredCapabilities androidCaps) {
         int android_api = 0;
         try {
+            System.out.println("System API Level" + androidDevice.getDevices().get(device_udid));
             String deviceAPI = androidDevice.getDevices().get(device_udid);
             android_api = Integer.parseInt(deviceAPI);
         } catch (Exception e) {
@@ -305,7 +317,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void startLogResults(String methodName)
-        throws FileNotFoundException, FileNotFoundException {
+        throws FileNotFoundException {
         if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
@@ -437,7 +449,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         ExtentManager.getInstance().flush();
     }
 
-    public synchronized void killAppiumServer() throws InterruptedException, IOException {
+    @AfterClass private synchronized void killAppiumServer()
+        throws InterruptedException, IOException {
         System.out.println(
             "**************ClosingAppiumSession****************" + Thread.currentThread().getId());
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
@@ -579,11 +592,11 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void captureScreenShot(String screenShotName, int status, String className,
-            String methodName) throws IOException, InterruptedException {
+        String methodName) throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")
-                && !context.equals("NATIVE_APP")) {
+        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
+            .equals("NATIVE_APP")) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;
         }

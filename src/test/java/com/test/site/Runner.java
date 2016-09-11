@@ -12,6 +12,7 @@ public class Runner {
         ParallelThread parallelThread = new ParallelThread();
         List<String> tests = new ArrayList<>();
         tests.add("HomePageTest2");
+        tests.add("HomePageTest3");
         parallelThread.runner("com.test.site");
     }
 }

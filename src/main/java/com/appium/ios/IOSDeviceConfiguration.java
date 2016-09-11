@@ -255,17 +255,4 @@ public class IOSDeviceConfiguration {
             }
         }
     }
-
-    @Test
-    public void testApp() {
-        IOSDeviceConfiguration iosDeviceConfiguration = new IOSDeviceConfiguration();
-        try {
-            commandPrompt.runCommandThruProcessBuilder("");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        iosDeviceConfiguration.getIOSUDID();
-    }
 }

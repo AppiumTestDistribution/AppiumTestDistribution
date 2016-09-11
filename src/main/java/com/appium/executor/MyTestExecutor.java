@@ -132,7 +132,7 @@ public class MyTestExecutor {
 
 
     public void runMethodParallelAppium(List<String> test, String pack, int devicecount,
-        String executionType) throws Exception {
+        ArrayList<String> devices, String executionType) throws Exception {
         URL newUrl = null;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
@@ -154,11 +154,11 @@ public class MyTestExecutor {
         if (executionType.equalsIgnoreCase("distribute")) {
             runMethodParallel(
                 constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
-                    devicecount), devicecount);
+                    devicecount));
         } else {
             runMethodParallel(
-                constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount),
-                devicecount);
+                constructXmlSuiteForParallel(pack, test,
+                    createTestsMap(resources), devicecount,devices));
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
@@ -172,14 +172,14 @@ public class MyTestExecutor {
         test.run();
     }
 
-    public void runMethodParallel(XmlSuite suite, int threadCount) {
+    public void runMethodParallel(XmlSuite suite) {
         TestNG testNG = new TestNG();
         testNG.setXmlSuites(asList(suite));
         testNG.run();
     }
 
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
-        Map<String, List<Method>> methods, int deviceCount) {
+        Map<String, List<Method>> methods,int deviceCount,ArrayList<String> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
         try {
             prop.load(new FileInputStream("config.properties"));
@@ -204,6 +204,7 @@ public class MyTestExecutor {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
             test.setPreserveOrder("false");
+            test.addParameter("device",deviceSerail.get(i));
             List<XmlClass> xmlClasses = new ArrayList<>();
             for (String className : methods.keySet()) {
                 if (className.contains("Test")) {
@@ -224,6 +225,7 @@ public class MyTestExecutor {
             }
             test.setXmlClasses(xmlClasses);
         }
+        System.out.println(suite.toXml());
         return suite;
     }
 
@@ -251,6 +253,7 @@ public class MyTestExecutor {
         }
         XmlTest test = new XmlTest(suite);
         test.setName("TestNG Test");
+        test.addParameter("device","");
         List<XmlClass> xmlClasses = new ArrayList<>();
         for (String className : methods.keySet()) {
             if (className.contains("Test")) {

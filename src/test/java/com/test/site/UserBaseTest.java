@@ -39,12 +39,14 @@ public class UserBaseTest extends AppiumParallelTest {
     @BeforeClass() public void beforeClass() throws Exception {
         System.out.println("Before Class called" + Thread.currentThread().getId());
         System.out.println(getClass().getName());
-        startAppiumServer(getClass().getSimpleName());
+        //Moving the method inside the dependency in the next release
+        //startAppiumServer(getClass().getSimpleName());
     }
 
     @AfterClass() public void afterClass() throws InterruptedException, IOException {
         System.out.println("After Class" + Thread.currentThread().getId());
-        killAppiumServer();
+        //Moving the method inside the dependency in the next release
+        //killAppiumServer();
     }
 
     public void getUserName() {
