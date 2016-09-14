@@ -47,6 +47,9 @@ public class MyTestExecutor {
     public List<Class> testcases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
     public ArrayList<String> items = new ArrayList<String>();
+    ArrayList<String> listeners = new ArrayList<>();
+    ArrayList<String> groupsInclude = new ArrayList<>();
+    ArrayList<String> groupsExclude = new ArrayList<>();
 
     @SuppressWarnings("rawtypes")
     public void distributeTests(int deviceCount) {
@@ -188,9 +191,9 @@ public class MyTestExecutor {
         }
         listeners.add("com.appium.manager.AppiumParallelTest");
         listeners.add("com.appium.utils.RetryListener");
-        if (prop.getProperty("LISTENERS") != null) {
-            Collections.addAll(listeners, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
-        }
+        include(listeners, "LISTENERS");
+        include(groupsInclude,"INCLUDE_GROUPS");
+        include(groupsExclude,"EXCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
@@ -205,6 +208,8 @@ public class MyTestExecutor {
             test.setName("TestNG Test" + i);
             test.setPreserveOrder("false");
             test.addParameter("device",deviceSerail.get(i));
+            test.setIncludedGroups(groupsInclude);
+            test.setExcludedGroups(groupsExclude);
             List<XmlClass> xmlClasses = new ArrayList<>();
             for (String className : methods.keySet()) {
                 if (className.contains("Test")) {
@@ -225,21 +230,18 @@ public class MyTestExecutor {
             }
             test.setXmlClasses(xmlClasses);
         }
-        System.out.println(suite.toXml());
         return suite;
     }
 
     public XmlSuite constructXmlSuiteForDistribution(String pack, List<String> tests,
         Map<String, List<Method>> methods, int deviceCount) {
-        ArrayList<String> listeners = new ArrayList<>();
         try {
             prop.load(new FileInputStream("config.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (prop.getProperty("LISTENERS") != null) {
-            Collections.addAll(listeners, prop.getProperty("LISTENERS").split("\\s*,\\s*"));
-        }
+        include(listeners, "LISTENERS");
+        include(groupsInclude, "INCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
@@ -254,6 +256,9 @@ public class MyTestExecutor {
         XmlTest test = new XmlTest(suite);
         test.setName("TestNG Test");
         test.addParameter("device","");
+        include(groupsExclude,"EXCLUDE_GROUPS");
+        test.setIncludedGroups(groupsInclude);
+        test.setExcludedGroups(groupsExclude);
         List<XmlClass> xmlClasses = new ArrayList<>();
         for (String className : methods.keySet()) {
             if (className.contains("Test")) {
@@ -274,6 +279,14 @@ public class MyTestExecutor {
         }
         test.setXmlClasses(xmlClasses);
         return suite;
+    }
+
+    public void include(ArrayList<String> groupsInclude, String include) {
+        if (prop.getProperty(include) != null) {
+            Collections.addAll(groupsInclude, prop.getProperty(include).split("\\s*,\\s*"));
+        } else if (System.getenv(include) != null){
+            Collections.addAll(groupsInclude,System.getenv(include).split("\\s*,\\s*"));
+        }
     }
 
 

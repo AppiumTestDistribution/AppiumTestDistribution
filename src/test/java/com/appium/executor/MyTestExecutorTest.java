@@ -3,7 +3,8 @@ package com.appium.executor;
 
 import static junit.framework.TestCase.assertTrue;
 
-import org.junit.Test;
+
+import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
 
 import java.lang.reflect.Method;

@@ -139,9 +139,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         deviceMapping.put(deviceId, true);
     }
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     @Parameters({"device"})
-    private synchronized AppiumServiceBuilder startAppiumServer(String device) throws Exception {
+    public synchronized AppiumServiceBuilder startAppiumServer(String device) throws Exception {
         String methodName = getClass().getSimpleName();
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
@@ -449,7 +449,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         ExtentManager.getInstance().flush();
     }
 
-    @AfterClass private synchronized void killAppiumServer()
+    @AfterClass(alwaysRun = true) public synchronized void killAppiumServer()
         throws InterruptedException, IOException {
         System.out.println(
             "**************ClosingAppiumSession****************" + Thread.currentThread().getId());
