@@ -541,7 +541,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (ipaFilePath == null) {
             ipaFilePath = getAppFilePath(prop.getProperty("IOS_APP_PATH"));
 
-            System.out.println("Parsing IPA for getting IPA information:::: " + ipaFilePath);
             ipa = ipaParser.parse(new File(ipaFilePath));
             ipaBundleId = ipa.getBundleIdentifier();
         }
