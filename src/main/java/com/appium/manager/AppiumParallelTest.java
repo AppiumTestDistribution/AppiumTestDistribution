@@ -791,11 +791,4 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
-//    @Test
-//    public void getAppFilePathTest() {
-//        String appPath = getAppFilePath("http://jenkins.dev.maaii.com:8080/job/wispi/job/wispi-ios-merge/lastSuccessfulBuild/artifact/build/wispi-testbed-1.0.70.110.ipa");
-//        System.out.println(appPath);
-////        getAppFilePath("");
-//    }
-
 }
