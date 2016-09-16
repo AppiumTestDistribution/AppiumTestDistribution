@@ -5,7 +5,6 @@ import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.ImageUtils;
-import com.appium.utils.android.AndroidUtils;
 import com.appium.utils.ios.Ipa;
 import com.appium.utils.ios.IpaParser;
 import com.relevantcodes.extentreports.ExtentTest;
@@ -501,8 +500,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
             try (ApkParser apkParser = new ApkParser(new File(apkFilePath))) {
                 apkPackageName = apkParser.getApkMeta().getPackageName();
-                apkLaunchActivity = AndroidUtils.getAPKInfo(apkFilePath)
-                        .get(AndroidUtils.APK_LAUNCH_ACTIVITY);
+                apkLaunchActivity = androidDevice.getAPKInfo(apkFilePath)
+                        .get(androidDevice.APK_LAUNCH_ACTIVITY);
             }
             catch (IOException e) {
                 e.printStackTrace();

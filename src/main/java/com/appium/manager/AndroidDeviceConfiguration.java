@@ -2,10 +2,12 @@ package com.appium.manager;
 
 import com.appium.utils.CommandPrompt;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class AndroidDeviceConfiguration {
 
@@ -13,6 +15,9 @@ public class AndroidDeviceConfiguration {
     Map<String, String> devices = new HashMap<String, String>();
     ArrayList<String> deviceSerail = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
+
+    public static final String APK_PACKAGE_KEY_NAME = "PackageName";
+    public static final String APK_LAUNCH_ACTIVITY = "LaunchActivity";
 
     /**
      * This method start adb server
@@ -186,5 +191,30 @@ public class AndroidDeviceConfiguration {
 
     public void removeApkFromDevices(String deviceID, String app_package) throws Exception {
         cmd.runCommand("adb -s " + deviceID + " uninstall " + app_package);
+    }
+
+    public Map<String, String> getAPKInfo(String apkFilePath) {
+        Properties properties = new Properties();
+        String configProperties = "config.properties";
+        String getPackageCmd = " dump badging " +  apkFilePath
+                + " | awk '/package/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
+        String getLaunchActivityCmd = " dump badging " +  apkFilePath
+                + " | awk '/activity/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
+        Map<String, String> apkInfoMap = new HashMap<>();
+
+        try {
+            properties.load(new FileInputStream(configProperties));
+            String aaptToolPath = properties.getProperty("AAPT_PATH").trim();
+            String packageName = cmd
+                    .getBufferedReader(aaptToolPath + getPackageCmd).readLine();
+            String launchActivity = cmd
+                    .getBufferedReader(aaptToolPath + getLaunchActivityCmd).readLine();
+            apkInfoMap.put(APK_PACKAGE_KEY_NAME, packageName);
+            apkInfoMap.put(APK_LAUNCH_ACTIVITY, launchActivity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return apkInfoMap;
     }
 }
