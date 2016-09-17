@@ -6,26 +6,12 @@ import com.github.lalyos.jfiglet.FigletFont;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-
-
-
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /*
  * This class picks the devices connected
@@ -80,23 +66,25 @@ public class ParallelThread {
             }
         }
 
-
-        if (deviceConf.getDevices() != null) {
-            devices = deviceConf.getDevices();
-            deviceCount = devices.size() / 4;
-            File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
-            if (!adb_logs.exists()) {
-                System.out.println("creating directory: " + "ADBLogs");
-                boolean result = false;
-                try {
-                    adb_logs.mkdir();
-                    result = true;
-                } catch (SecurityException se) {
-                    se.printStackTrace();
+        if (prop.getProperty("ANDROID_APP_PATH") != null) {
+            if (deviceConf.getDevices() != null) {
+                devices = deviceConf.getDevices();
+                deviceCount = devices.size() / 4;
+                File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+                if (!adb_logs.exists()) {
+                    System.out.println("creating directory: " + "ADBLogs");
+                    boolean result = false;
+                    try {
+                        adb_logs.mkdir();
+                        result = true;
+                    } catch (SecurityException se) {
+                        se.printStackTrace();
+                    }
                 }
+                createSnapshotFolderAndroid(deviceCount, "android");
             }
-            createSnapshotFolderAndroid(deviceCount, "android");
         }
+
         if (operSys.contains("mac")) {
             if (iosDevice.getIOSUDID() != null) {
                 iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
@@ -107,7 +95,7 @@ public class ParallelThread {
 
         }
         if (deviceCount == 0) {
-            figlet("No Android Devices Online");
+            figlet("No Devices Connected");
             System.exit(0);
         }
         System.out.println("***************************************************\n");
@@ -126,13 +114,15 @@ public class ParallelThread {
             });
 
             if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-                myTestExecutor.runMethodParallelAppium(tests, pack, deviceCount,
-                    deviceConf.getDeviceSerial(), "distribute");
+                myTestExecutor
+                    .runMethodParallelAppium(tests, pack, deviceCount, deviceConf.getDeviceSerial(),
+                        "distribute");
 
             }
             if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-                myTestExecutor.runMethodParallelAppium(tests, pack, deviceCount,
-                    deviceConf.getDeviceSerial(),"parallel");
+                myTestExecutor
+                    .runMethodParallelAppium(tests, pack, deviceCount, deviceConf.getDeviceSerial(),
+                        "parallel");
             }
         }
 
