@@ -47,9 +47,9 @@ public class MyTestExecutor {
     public List<Class> testcases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
     public ArrayList<String> items = new ArrayList<String>();
-    ArrayList<String> listeners = new ArrayList<>();
-    ArrayList<String> groupsInclude = new ArrayList<>();
-    ArrayList<String> groupsExclude = new ArrayList<>();
+    private ArrayList<String> listeners = new ArrayList<>();
+    private ArrayList<String> groupsInclude = new ArrayList<>();
+    private ArrayList<String> groupsExclude = new ArrayList<>();
 
     @SuppressWarnings("rawtypes")
     public void distributeTests(int deviceCount) {
@@ -284,7 +284,7 @@ public class MyTestExecutor {
     public void include(ArrayList<String> groupsInclude, String include) {
         if (prop.getProperty(include) != null) {
             Collections.addAll(groupsInclude, prop.getProperty(include).split("\\s*,\\s*"));
-        } else if (System.getenv(include) != null){
+        } else if (System.getenv(include) != null) {
             Collections.addAll(groupsInclude,System.getenv(include).split("\\s*,\\s*"));
         }
     }

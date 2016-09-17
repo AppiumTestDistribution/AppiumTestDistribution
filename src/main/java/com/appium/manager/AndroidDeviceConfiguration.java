@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class AndroidDeviceConfiguration {
 
-    CommandPrompt cmd = new CommandPrompt();
-    Map<String, String> devices = new HashMap<String, String>();
-    ArrayList<String> deviceSerail = new ArrayList<String>();
+    private CommandPrompt cmd = new CommandPrompt();
+    private Map<String, String> devices = new HashMap<String, String>();
+    private ArrayList<String> deviceSerail = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
 
     /**

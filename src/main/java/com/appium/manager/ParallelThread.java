@@ -6,12 +6,26 @@ import com.github.lalyos.jfiglet.FigletFont;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+
+
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /*
  * This class picks the devices connected
@@ -25,9 +39,9 @@ public class ParallelThread {
     protected int deviceCount = 0;
     Map<String, String> devices = new HashMap<String, String>();
     Map<String, String> iOSdevices = new HashMap<String, String>();
-    AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
-    IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
-    MyTestExecutor myTestExecutor = new MyTestExecutor();
+    private AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
+    private IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
+    private MyTestExecutor myTestExecutor = new MyTestExecutor();
     public Properties prop = new Properties();
     public InputStream input = null;
     List<Class> testcases;
@@ -66,23 +80,21 @@ public class ParallelThread {
             }
         }
 
-        if (prop.getProperty("ANDROID_APP_PATH") != null) {
-            if (deviceConf.getDevices() != null) {
-                devices = deviceConf.getDevices();
-                deviceCount = devices.size() / 4;
-                File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
-                if (!adb_logs.exists()) {
-                    System.out.println("creating directory: " + "ADBLogs");
-                    boolean result = false;
-                    try {
-                        adb_logs.mkdir();
-                        result = true;
-                    } catch (SecurityException se) {
-                        se.printStackTrace();
-                    }
+        if (prop.getProperty("ANDROID_APP_PATH") != null && deviceConf.getDevices() != null) {
+            devices = deviceConf.getDevices();
+            deviceCount = devices.size() / 4;
+            File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+            if (!adb_logs.exists()) {
+                System.out.println("creating directory: " + "ADBLogs");
+                boolean result = false;
+                try {
+                    adb_logs.mkdir();
+                    result = true;
+                } catch (SecurityException se) {
+                    se.printStackTrace();
                 }
-                createSnapshotFolderAndroid(deviceCount, "android");
             }
+            createSnapshotFolderAndroid(deviceCount, "android");
         }
 
         if (operSys.contains("mac")) {

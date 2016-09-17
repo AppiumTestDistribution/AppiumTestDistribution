@@ -126,7 +126,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             t.setName("Thread_" + i);
             System.out.println("Parallel Thread is::" + t.getName());
             i++;
-            if (deviceMapping.get(device) == true) {
+            if (deviceMapping.get(device)) {
                 deviceMapping.put(device, false);
                 return device;
             }

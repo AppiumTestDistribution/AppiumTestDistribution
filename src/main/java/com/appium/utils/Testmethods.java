@@ -6,6 +6,7 @@ public class Testmethods {
 
     private String methodName;
     private String gifPath;
+    private List<String> screenShots;
 
     public String getGifPath() {
         return gifPath;
@@ -14,8 +15,6 @@ public class Testmethods {
     public void setGifPath(String gifPath) {
         this.gifPath = gifPath;
     }
-
-    private List<String> screenShots;
 
     public String getMethodName() {
         return methodName;

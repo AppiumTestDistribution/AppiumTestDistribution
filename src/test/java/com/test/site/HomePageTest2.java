@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 public class HomePageTest2
     extends UserBaseTest {
 
-    @Test
+    @Test(groups = {"smoke"})
     @Author(name = "AnsonLiao,Sai") public void testMethodOne_2() throws Exception {
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
