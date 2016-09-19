@@ -37,10 +37,15 @@ import org.testng.annotations.Parameters;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -317,8 +322,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return androidCaps;
     }
 
-    public void startLogResults(String methodName)
-        throws FileNotFoundException {
+    public void startLogResults(String methodName) throws FileNotFoundException {
         if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
@@ -361,6 +365,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         }
         if (result.getStatus() == ITestResult.FAILURE) {
+            writeFailureToTxt();
             ExtentTestManager.getTest()
                 .log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
@@ -709,5 +714,46 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
         return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
+    }
+
+    public void writeFailureToTxt() {
+        try {
+            String content = "TestFailed";
+            File file = new File(System.getProperty("user.dir") + "/target/failed.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean buildStatus() {
+        BufferedReader br = null;
+        try {
+            String sCurrentLine;
+            br = new BufferedReader(
+                new FileReader(System.getProperty("user.dir") + "/target/failed.txt"));
+            while ((sCurrentLine = br.readLine()) != null) {
+                if (sCurrentLine.contains("TestFailed")) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
     }
 }
