@@ -79,7 +79,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     private String CI_BASE_URI = null;
 
     private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
-    private static ArrayList<String> devices = new ArrayList<String>();
+    public static ArrayList<String> devices = new ArrayList<String>();
     public static Properties prop = new Properties();
     public static IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
     public static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
@@ -91,18 +91,18 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         try {
             prop.load(new FileInputStream("config.properties"));
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (iosDevice.getIOSUDID() != null) {
+                if (IOSDeviceConfiguration.deviceUDIDiOS != null) {
                     System.out.println("Adding iOS devices");
-                    devices.addAll(iosDevice.getIOSUDID());
+                    devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
                 }
                 if (androidDevice.getDeviceSerial() != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(androidDevice.getDeviceSerial());
+                    devices.addAll(AndroidDeviceConfiguration.deviceSerail);
                 }
             } else {
                 if (androidDevice.getDeviceSerial() != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(androidDevice.getDeviceSerial());
+                    devices.addAll(AndroidDeviceConfiguration.deviceSerail);
                 }
             }
             for (String device : devices) {
@@ -158,6 +158,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             System.out.println("No devices are free to run test or Failed to run test");
             return null;
         }
+        System.out.println("****************Device*************" + device_udid);
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             if (iosDevice.checkiOSDevice(device_udid)) {
                 iosDevice.setIOSWebKitProxyPorts(device_udid);

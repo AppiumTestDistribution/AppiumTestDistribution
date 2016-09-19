@@ -3,6 +3,7 @@ package com.appium.executor;
 import static java.util.Arrays.asList;
 
 import com.appium.cucumber.report.HtmlReporter;
+import com.appium.manager.AppiumParallelTest;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
@@ -52,6 +53,7 @@ public class MyTestExecutor {
     private ArrayList<String> groupsExclude = new ArrayList<>();
 
     @SuppressWarnings("rawtypes")
+
     public void distributeTests(int deviceCount) {
         try {
             PackageUtil.getClasses("output").stream().forEach(s -> {
@@ -88,6 +90,7 @@ public class MyTestExecutor {
     }
 
     @SuppressWarnings("rawtypes")
+
     public void parallelTests(int deviceCount)
         throws InterruptedException {
         try {
@@ -135,7 +138,7 @@ public class MyTestExecutor {
 
 
     public void runMethodParallelAppium(List<String> test, String pack, int devicecount,
-        ArrayList<String> devices, String executionType) throws Exception {
+        String executionType) throws Exception {
         URL newUrl = null;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
@@ -160,8 +163,8 @@ public class MyTestExecutor {
                     devicecount));
         } else {
             runMethodParallel(
-                constructXmlSuiteForParallel(pack, test,
-                    createTestsMap(resources), devicecount,devices));
+                constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
+                    AppiumParallelTest.devices));
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
@@ -182,7 +185,7 @@ public class MyTestExecutor {
     }
 
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
-        Map<String, List<Method>> methods,int deviceCount,ArrayList<String> deviceSerail) {
+        Map<String, List<Method>> methods, int deviceCount, ArrayList<String> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
         try {
             prop.load(new FileInputStream("config.properties"));
@@ -192,8 +195,8 @@ public class MyTestExecutor {
         listeners.add("com.appium.manager.AppiumParallelTest");
         listeners.add("com.appium.utils.RetryListener");
         include(listeners, "LISTENERS");
-        include(groupsInclude,"INCLUDE_GROUPS");
-        include(groupsExclude,"EXCLUDE_GROUPS");
+        include(groupsInclude, "INCLUDE_GROUPS");
+        include(groupsExclude, "EXCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
@@ -207,7 +210,7 @@ public class MyTestExecutor {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
             test.setPreserveOrder("false");
-            test.addParameter("device",deviceSerail.get(i));
+            test.addParameter("device", deviceSerail.get(i));
             test.setIncludedGroups(groupsInclude);
             test.setExcludedGroups(groupsExclude);
             List<XmlClass> xmlClasses = new ArrayList<>();
@@ -230,6 +233,7 @@ public class MyTestExecutor {
             }
             test.setXmlClasses(xmlClasses);
         }
+        System.out.println(suite.toXml());
         return suite;
     }
 
@@ -255,8 +259,8 @@ public class MyTestExecutor {
         }
         XmlTest test = new XmlTest(suite);
         test.setName("TestNG Test");
-        test.addParameter("device","");
-        include(groupsExclude,"EXCLUDE_GROUPS");
+        test.addParameter("device", "");
+        include(groupsExclude, "EXCLUDE_GROUPS");
         test.setIncludedGroups(groupsInclude);
         test.setExcludedGroups(groupsExclude);
         List<XmlClass> xmlClasses = new ArrayList<>();
@@ -285,7 +289,7 @@ public class MyTestExecutor {
         if (prop.getProperty(include) != null) {
             Collections.addAll(groupsInclude, prop.getProperty(include).split("\\s*,\\s*"));
         } else if (System.getenv(include) != null) {
-            Collections.addAll(groupsInclude,System.getenv(include).split("\\s*,\\s*"));
+            Collections.addAll(groupsInclude, System.getenv(include).split("\\s*,\\s*"));
         }
     }
 

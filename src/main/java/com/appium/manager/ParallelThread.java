@@ -127,13 +127,13 @@ public class ParallelThread {
 
             if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
                 myTestExecutor
-                    .runMethodParallelAppium(tests, pack, deviceCount, deviceConf.getDeviceSerial(),
+                    .runMethodParallelAppium(tests, pack, deviceCount,
                         "distribute");
 
             }
             if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 myTestExecutor
-                    .runMethodParallelAppium(tests, pack, deviceCount, deviceConf.getDeviceSerial(),
+                    .runMethodParallelAppium(tests, pack, deviceCount,
                         "parallel");
             }
         }

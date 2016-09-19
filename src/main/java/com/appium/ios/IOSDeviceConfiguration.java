@@ -18,7 +18,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {
-    public ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
+    public static ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
     CommandPrompt commandPrompt = new CommandPrompt();
     AvailablePorts ap = new AvailablePorts();
     public HashMap<String, String> deviceMap = new HashMap<String, String>();
