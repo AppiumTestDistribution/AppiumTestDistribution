@@ -34,34 +34,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 
-
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
+import java.awt.*;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -144,8 +126,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         deviceMapping.put(deviceId, true);
     }
 
-    @BeforeClass(alwaysRun = true)
-    @Parameters({"device"})
+    @BeforeClass(alwaysRun = true) @Parameters({"device"})
     public synchronized AppiumServiceBuilder startAppiumServer(String device) throws Exception {
         String methodName = getClass().getSimpleName();
         if (prop.containsKey("CI_BASE_URI")) {
@@ -184,8 +165,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 category + "_" + device_udid.replaceAll("\\W", "_"));
             parentContext.put(Thread.currentThread().getId(), parent);
             ExtentTestManager.getTest().log(LogStatus.INFO, "AppiumServerLogs",
-                "<a href=" + "appiumlogs/" + device_udid
-                    .replaceAll("\\W", "_") + "__" + methodName + ".txt" + ">Logs</a>");
+                "<a href=" + "appiumlogs/" + device_udid.replaceAll("\\W", "_") + "__" + methodName
+                    + ".txt" + ">Logs</a>");
         }
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             if (iosDevice.checkiOSDevice(device_udid)) {
@@ -351,6 +332,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
 
         if (result.isSuccess()) {
+            writeFailureToTxt("TestPassed");
             ExtentTestManager.getTest()
                 .log(LogStatus.PASS, result.getMethod().getMethodName(), "Pass");
             if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
@@ -365,7 +347,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         }
         if (result.getStatus() == ITestResult.FAILURE) {
-            writeFailureToTxt();
+            writeFailureToTxt("TestFailed");
             ExtentTestManager.getTest()
                 .log(LogStatus.FAIL, result.getMethod().getMethodName(), result.getThrowable());
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
@@ -449,6 +431,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         }
         if (result.getStatus() == ITestResult.SKIP) {
+            writeFailureToTxt("TestSkipped");
             ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
         }
         parentContext.get(Thread.currentThread().getId()).appendChild(child);
@@ -716,9 +699,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
     }
 
-    public void writeFailureToTxt() {
+    public void writeFailureToTxt(String content) {
         try {
-            String content = "TestFailed";
             File file = new File(System.getProperty("user.dir") + "/target/failed.txt");
             if (!file.exists()) {
                 file.createNewFile();
