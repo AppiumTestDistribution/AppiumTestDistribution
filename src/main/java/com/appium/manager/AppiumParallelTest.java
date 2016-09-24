@@ -392,8 +392,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             }
 
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
-                File framedImageAndroid = new File(
-                    "screenshot/android/" + device_udid
+                File framedImageAndroid = new File(System.getProperty("user.dir")
+                    + "/target/screenshot/android/" + device_udid
                         .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp + deviceModel
                         + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
@@ -420,8 +420,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
             }
             if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
-                File framedImageIOS = new File(
-                    "screenshot/iOS/" + device_udid
+                File framedImageIOS = new File(System.getProperty("user.dir")
+                   + "/target/screenshot/iOS/" + device_udid
                         .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp + deviceModel
                         + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
@@ -429,7 +429,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     ExtentTestManager.getTest()
                         .log(LogStatus.INFO, result.getMethod().getMethodName(),
                             "Snapshot below: " + ExtentTestManager.getTest().addScreenCapture(
-                                "/screenshot/iOS/" + device_udid
+                                "screenshot/iOS/" + device_udid
                                     .replaceAll("\\W", "_") + "/" + className + "/" + result
                                     .getMethod().getMethodName() + "/" + screenShotNameWithTimeStamp
                                     + deviceModel + "_failed_" + result.getMethod().getMethodName()
