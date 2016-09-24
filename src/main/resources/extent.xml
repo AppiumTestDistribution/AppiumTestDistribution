@@ -32,11 +32,13 @@
 
         <!-- custom javascript -->
         <scripts>
+
             <![CDATA[
                 $(document).ready(function() {
-
+                $('#enableDashboard').click();
                 });
             ]]>
+
         </scripts>
 
         <!-- custom styles -->

@@ -9,6 +9,7 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
+import com.video.recorder.Flick;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -34,16 +35,34 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 
-import java.awt.*;
-import java.io.*;
+
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -73,6 +92,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
         new ConcurrentHashMap<String, Boolean>();
     public ImageUtils imageUtils = new ImageUtils();
+    private Flick videoRecording = new Flick();
 
     static {
         try {
@@ -304,6 +324,15 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
+        if(System.getenv("VIDEO_LOGS") != null) {
+            try {
+                videoRecording.startVideoRecording(device_udid,getClass().getSimpleName(),methodName,methodName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
@@ -434,6 +463,19 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             writeFailureToTxt("TestSkipped");
             ExtentTestManager.getTest().log(LogStatus.SKIP, "Test skipped");
         }
+
+        if(System.getenv("VIDEO_LOGS") != null) {
+            try {
+                videoRecording.stopVideoRecording(device_udid,getClass().getSimpleName(),
+                    result.getMethod().getMethodName(),result.getMethod().getMethodName());
+            } catch (IOException e) {
+                videoRecording.stopVideoRecording(device_udid,getClass().getSimpleName(),
+                    result.getMethod().getMethodName(),result.getMethod().getMethodName());
+            } catch (InterruptedException e) {
+
+            }
+        }
+
         parentContext.get(Thread.currentThread().getId()).appendChild(child);
         ExtentManager.getInstance().flush();
     }
