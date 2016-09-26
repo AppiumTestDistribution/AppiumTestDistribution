@@ -67,8 +67,10 @@ public class ExtentTestManager { // new
 
     public synchronized static void logVideo(String videoSrc, String headerName) {
         videoSrc = "<div class='col l4 m6 s12'><div class='card-panel'><h4 class='md-display-4'>"
-            + headerName + "</h4><img src=" + videoSrc
-            + " style=\"width:100%;height:100%;\"></div></div>";
+            + headerName + "</h4><video width=\"320\" height=\"240\" controls>"
+            + "<source src=" + videoSrc
+            + " style=\"width:100%;height:100%;\" type=\"video/mp4\">"
+            + "</video></div></div>";
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         extent.loadConfig(classLoader.getResource("extent.xml"));
         extent.setTestRunnerOutput(videoSrc);

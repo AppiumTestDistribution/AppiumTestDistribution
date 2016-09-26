@@ -187,4 +187,35 @@ public class AndroidDeviceConfiguration {
     public void removeApkFromDevices(String deviceID, String app_package) throws Exception {
         cmd.runCommand("adb -s " + deviceID + " uninstall " + app_package);
     }
+
+    public String screenRecord(String deviceID, String fileName)
+        throws IOException, InterruptedException {
+        return "adb -s " + deviceID + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
+            + ".mp4";
+    }
+
+    public boolean checkIfRecordable(String deviceID) throws IOException, InterruptedException {
+        String screenrecord =
+            cmd.runCommand("adb -s " + deviceID + " shell ls /system/bin/screenrecord");
+        if (screenrecord.trim().equals("/system/bin/screenrecord")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String getDeviceManufacturer(String deviceID) throws IOException, InterruptedException {
+        return cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.manufacturer")
+            .trim();
+    }
+
+    public void pullVideoFromDevice(String deviceID, String fileName, String destination)
+        throws IOException, InterruptedException {
+        ProcessBuilder pb =
+            new ProcessBuilder("adb", "-s", deviceID, "pull", "/sdcard/" + fileName + ".mp4",
+                destination);
+        Process pc = pb.start();
+        pc.waitFor();
+        System.out.println("Done");
+    }
 }
