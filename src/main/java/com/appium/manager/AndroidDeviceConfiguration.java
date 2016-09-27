@@ -216,6 +216,7 @@ public class AndroidDeviceConfiguration {
                 destination);
         Process pc = pb.start();
         pc.waitFor();
+        System.out.println("Exited with Code::" + pc.exitValue());
         System.out.println("Done");
     }
 }
