@@ -137,19 +137,22 @@ public class Flick extends CommandPrompt {
     }
 
     public void stopRecording() throws IOException {
-        if (androidScreenRecordProcess.get(Thread.currentThread().getId()) != -1) {
+        Integer processId = androidScreenRecordProcess.get(Thread.currentThread().getId());
+        if (processId != -1) {
             String process =
-                "pgrep -P " + androidScreenRecordProcess.get(Thread.currentThread().getId());
+                "pgrep -P " + processId;
             System.out.println(process);
             Process p2 = Runtime.getRuntime().exec(process);
             BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
             String command =
-                "kill -s SIGINT " + androidScreenRecordProcess.get(Thread.currentThread().getId());
+                "kill -s SIGINT " + processId;
             System.out.println("Stopping Video Recording");
             System.out.println("******************" + command);
-            Runtime.getRuntime().exec(command);
+            Process killProcess = Runtime.getRuntime().exec(command);
             try {
+                killProcess.waitFor();
                 Thread.sleep(5000);
+                System.out.println("Killed video recording with exit code :"+ killProcess.exitValue());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
