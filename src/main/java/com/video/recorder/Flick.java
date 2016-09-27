@@ -84,7 +84,12 @@ public class Flick extends CommandPrompt {
                 if (androidDeviceConfiguration.checkIfRecordable(device_udid)
                     && !androidDeviceConfiguration.getDeviceManufacturer(device_udid)
                     .equals("Genymotion")) {
-                    stopRecording();
+                    //stopRecording();
+                    screenRecord.destroy();
+                    screenRecord.waitFor();
+                    System.out.println(
+                        "Destroying the process::" + screenRecord.exitValue() + screenRecord
+                            .isAlive());
                     androidDeviceConfiguration
                         .pullVideoFromDevice(device_udid, methodName, videoLocationAndroid);
                     Thread.sleep(5000);
@@ -139,20 +144,20 @@ public class Flick extends CommandPrompt {
     public void stopRecording() throws IOException {
         Integer processId = androidScreenRecordProcess.get(Thread.currentThread().getId());
         if (processId != -1) {
-            String process =
-                "pgrep -P " + processId;
+            String process = "pgrep -P " + processId;
             System.out.println(process);
             Process p2 = Runtime.getRuntime().exec(process);
             BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-            String command =
-                "kill -s SIGINT " + processId;
+            String command = "kill -s SIGINT " + processId;
             System.out.println("Stopping Video Recording");
             System.out.println("******************" + command);
             Process killProcess = Runtime.getRuntime().exec(command);
             try {
                 killProcess.waitFor();
                 Thread.sleep(5000);
-                System.out.println("Killed video recording with exit code :"+ killProcess.exitValue());
+                System.out.println(
+                    "Killed video recording with exit code :" + killProcess.exitValue()
+                        + processId);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
