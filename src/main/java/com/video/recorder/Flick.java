@@ -84,9 +84,7 @@ public class Flick extends CommandPrompt {
                 if (androidDeviceConfiguration.checkIfRecordable(device_udid)
                     && !androidDeviceConfiguration.getDeviceManufacturer(device_udid)
                     .equals("Genymotion")) {
-                    //stopRecording();
-                    screenRecord.destroy();
-                    screenRecord.waitFor();
+                    stopRecording();
                     System.out.println(
                         "Destroying the process::" + screenRecord.exitValue() + screenRecord
                             .isAlive());
@@ -148,7 +146,7 @@ public class Flick extends CommandPrompt {
             System.out.println(process);
             Process p2 = Runtime.getRuntime().exec(process);
             BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-            String command = "kill -s SIGINT " + processId;
+            String command = "kill -s SIGTSTP " + processId;
             System.out.println("Stopping Video Recording");
             System.out.println("******************" + command);
             Process killProcess = Runtime.getRuntime().exec(command);
