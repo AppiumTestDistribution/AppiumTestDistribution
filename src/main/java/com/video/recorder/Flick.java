@@ -85,12 +85,9 @@ public class Flick extends CommandPrompt {
                     && !androidDeviceConfiguration.getDeviceManufacturer(device_udid)
                     .equals("Genymotion")) {
                     stopRecording();
-                    System.out.println(
-                        "Destroying the process::" + screenRecord.exitValue() + screenRecord
-                            .isAlive());
                     androidDeviceConfiguration
-                        .pullVideoFromDevice(device_udid, methodName, videoLocationAndroid);
-                    Thread.sleep(5000);
+                        .pullVideoFromDevice(device_udid, methodName, videoLocationAndroid)
+                        .removeVideoFileFromDevice(device_udid, methodName);
                 } else {
                     android = "flick video -a " + command + " -p android -o " + videoLocationAndroid
                         + " -n " + videoFileName + " -u " + device_udid + " --trace";
@@ -146,16 +143,13 @@ public class Flick extends CommandPrompt {
             System.out.println(process);
             Process p2 = Runtime.getRuntime().exec(process);
             BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-            String command = "kill -s SIGTSTP " + processId;
+            String command = "kill " + processId;
             System.out.println("Stopping Video Recording");
             System.out.println("******************" + command);
-            Process killProcess = Runtime.getRuntime().exec(command);
             try {
-                killProcess.waitFor();
-                Thread.sleep(5000);
-                System.out.println(
-                    "Killed video recording with exit code :" + killProcess.exitValue()
-                        + processId);
+                runCommandThruProcess(command);
+                Thread.sleep(10000);
+                System.out.println("Killed video recording with exit code :" + command);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

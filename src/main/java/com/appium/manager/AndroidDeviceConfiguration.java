@@ -209,8 +209,8 @@ public class AndroidDeviceConfiguration {
             .trim();
     }
 
-    public void pullVideoFromDevice(String deviceID, String fileName, String destination)
-        throws IOException, InterruptedException {
+    public AndroidDeviceConfiguration pullVideoFromDevice(String deviceID, String fileName,
+        String destination) throws IOException, InterruptedException {
         ProcessBuilder pb =
             new ProcessBuilder("adb", "-s", deviceID, "pull", "/sdcard/" + fileName + ".mp4",
                 destination);
@@ -218,5 +218,12 @@ public class AndroidDeviceConfiguration {
         pc.waitFor();
         System.out.println("Exited with Code::" + pc.exitValue());
         System.out.println("Done");
+        Thread.sleep(5000);
+        return new AndroidDeviceConfiguration();
+    }
+
+    public void removeVideoFileFromDevice(String deviceID, String fileName)
+        throws IOException, InterruptedException {
+        cmd.runCommand("adb -s " + deviceID + " shell rm -f /sdcard/" + fileName + ".mp4");
     }
 }
