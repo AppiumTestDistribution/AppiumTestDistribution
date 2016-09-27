@@ -87,7 +87,7 @@ public class Flick extends CommandPrompt {
                     stopRecording();
                     androidDeviceConfiguration
                         .pullVideoFromDevice(device_udid, methodName, videoLocationAndroid);
-                    Thread.sleep(1000);
+                    Thread.sleep(5000);
                 } else {
                     android = "flick video -a " + command + " -p android -o " + videoLocationAndroid
                         + " -n " + videoFileName + " -u " + device_udid + " --trace";
