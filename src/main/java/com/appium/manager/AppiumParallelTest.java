@@ -502,16 +502,30 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 System.out.println("");
             }
 
-            if (new File(
-                System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
-                    .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
-                    .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4")
-                .exists()) {
-                ExtentTestManager
-                    .logVideo("screenshot/android/" + device_udid.replaceAll("\\W", "_")
-                           + "/" + className + "/" + result.getMethod().getMethodName() + "/"
-                           + result.getMethod().getMethodName() + ".mp4",
-                        result.getMethod().getMethodName());
+            if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+                if (new File(
+                    System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
+                        .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
+                        .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4")
+                    .exists()) {
+                    ExtentTestManager
+                        .logVideo("screenshot/android/" + device_udid.replaceAll("\\W", "_")
+                                + "/" + className + "/" + result.getMethod().getMethodName() + "/"
+                                + result.getMethod().getMethodName() + ".mp4",
+                            result.getMethod().getMethodName());
+                }
+            } else if(driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+                if (new File(
+                    System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
+                        .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
+                        .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4")
+                    .exists()) {
+                    ExtentTestManager
+                        .logVideo("screenshot/iOS/" + device_udid.replaceAll("\\W", "_")
+                                + "/" + className + "/" + result.getMethod().getMethodName() + "/"
+                                + result.getMethod().getMethodName() + ".mp4",
+                            result.getMethod().getMethodName());
+                }
             }
         }
 
