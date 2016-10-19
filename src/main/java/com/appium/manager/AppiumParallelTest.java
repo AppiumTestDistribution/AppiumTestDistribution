@@ -569,7 +569,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     || currentPlatform == MobilePlatform.AndroidOnWindows) {
                 currentPlatform = MobilePlatform.ANDROID;
             }
-            if (currentPlatform == skipPlatform) {
+            if (currentPlatform.equals(skipPlatform)) {
                 System.out.println("skipping test");
                 throw new SkipException(
                         "Skipped because property was set to :::" + skipPlatform.platformName);
@@ -586,8 +586,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (!context.equals("NATIVE_APP")
-                && getMobilePlatform() == MobilePlatform.ANDROID) {
+        if (getMobilePlatform() == MobilePlatform.ANDROID
+                && !context.equals("NATIVE_APP")) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;
         }
