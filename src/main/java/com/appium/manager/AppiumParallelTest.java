@@ -496,13 +496,13 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,
-                apkInfoMap.get(APK_INFO_ACTIVITY_KEY));
+                getAPKInfo().get(APK_INFO_ACTIVITY_KEY));
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-                apkInfoMap.get(APK_INFO_PACKAGE_KEY));
+                getAPKInfo().get(APK_INFO_PACKAGE_KEY));
         androidCapabilities.setCapability("browserName", "");
         checkSelendroid(androidCapabilities);
         androidCapabilities.setCapability(
-                MobileCapabilityType.APP, apkInfoMap.get(APP_INFO_FILE_PATH_KEY));
+                MobileCapabilityType.APP, getAPKInfo().get(APP_INFO_FILE_PATH_KEY));
         androidCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
 
         return androidCapabilities;
@@ -526,9 +526,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
         iOSCapabilities.setCapability(
-                MobileCapabilityType.APP, ipaInfoMap.get(APP_INFO_FILE_PATH_KEY));
+                MobileCapabilityType.APP, getIPAInfo().get(APP_INFO_FILE_PATH_KEY));
         iOSCapabilities.setCapability(
-                IOSMobileCapabilityType.BUNDLE_ID, ipaInfoMap.get(IPA_INFO_BUNDLE_ID_KEY));
+                IOSMobileCapabilityType.BUNDLE_ID, getIPAInfo().get(IPA_INFO_BUNDLE_ID_KEY));
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
         iOSCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
