@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
  * Created by AnsonLiao on 26/8/2016.
  */
 public class IpaParser {
-    Logger log = LoggerFactory.getLogger(IpaParser.class);
+    private Logger log = LoggerFactory.getLogger(IpaParser.class);
 
     public Ipa parse(File ipaFile) {
 
