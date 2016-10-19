@@ -3,8 +3,6 @@ package com.appium.utils;
 /**
  * Command Prompt - this class contains method to run windows and mac commands
  */
-import org.testng.annotations.Test;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

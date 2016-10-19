@@ -586,8 +586,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (getMobilePlatform() == MobilePlatform.ANDROID && !context
-            .equals("NATIVE_APP")) {
+        if (!context.equals("NATIVE_APP")
+                && getMobilePlatform() == MobilePlatform.ANDROID) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;
         }
@@ -785,7 +785,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (getDriver().toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
             platform = MobilePlatform.AndroidOnLinux;
         }
-        //TODO: add AndroidDriver on Windows
+        //add AndroidDriver on Windows
 
         return platform;
 
