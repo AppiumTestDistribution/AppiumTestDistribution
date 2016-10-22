@@ -514,7 +514,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                 + result.getMethod().getMethodName() + ".mp4",
                             result.getMethod().getMethodName());
                 }
-            } else if(driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+            } else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
                 if (new File(
                     System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
                         .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()

@@ -61,7 +61,7 @@ public class ExtentTestManager { // new
             + " style=\"width:100%;height:100%;\"></div></div>";
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         extent.loadConfig(classLoader.getResource("extent.xml"));
-        extent.setTestRunnerOutput(imgSrc);
+        //extent.setTestRunnerOutput(imgSrc);
         //extent.setTestRunnerOutput(s);
     }
 
