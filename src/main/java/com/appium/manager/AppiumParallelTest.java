@@ -135,7 +135,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public String testDescription = "";
     public ImageUtils imageUtils = new ImageUtils();
     String screenShotNameWithTimeStamp;
-    private String CI_BASE_URI = null;
+    public String CI_BASE_URI = null;
     private Map<Long, ExtentTest> parentContext = new HashMap<Long, ExtentTest>();
     private Flick videoRecording = new Flick();
 
@@ -516,7 +516,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 System.out.println("");
             }
 
-            if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+            if (getMobilePlatform() == MobilePlatform.AndroidOnLinux) {
                 if (new File(
                     System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
                         .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
@@ -528,7 +528,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                                 + result.getMethod().getMethodName() + ".mp4",
                             result.getMethod().getMethodName());
                 }
-            } else if(driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+            } else if (getMobilePlatform() == MobilePlatform.IOS) {
                 if (new File(
                     System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
                         .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
