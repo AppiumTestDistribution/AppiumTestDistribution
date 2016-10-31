@@ -4,6 +4,7 @@ package com.test.site;
 
 import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
+import com.appium.utils.MobilePlatform;
 import com.appium.utils.Retry;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
@@ -15,7 +16,7 @@ public class HomePageTest1 extends UserBaseTest {
 
     @Test(retryAnalyzer = Retry.class)
     @RetryCount(maxRetryCount = 2)
-    @SkipIf(platform = "AndroidDriver") public void testMethodOne_1() throws Exception {
+    @SkipIf(platform = MobilePlatform.ANDROID) public void testMethodOne_1() throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
@@ -35,7 +36,7 @@ public class HomePageTest1 extends UserBaseTest {
 
     @Test(retryAnalyzer = Retry.class)
     @SkipIf
-        (platform = "IOSDriver") public void testMethodOne_6()
+        (platform = MobilePlatform.IOS) public void testMethodOne_6()
         throws Exception {
 
         System.out.println(
@@ -75,7 +76,7 @@ public class HomePageTest1 extends UserBaseTest {
 
 
     @Test(retryAnalyzer = Retry.class)
-    @SkipIf(platform = "IOSDriver") public void testMethodOne_8()
+    @SkipIf(platform = MobilePlatform.IOS) public void testMethodOne_8()
         throws Exception {
 
         System.out.println(
@@ -92,7 +93,7 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
     @Test(retryAnalyzer = Retry.class)
-    @SkipIf(platform = "IOSDriver") public void testMethodOne_9()
+    @SkipIf(platform = MobilePlatform.IOS) public void testMethodOne_9()
         throws Exception {
 
         System.out.println(
@@ -109,7 +110,7 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
     @Test(retryAnalyzer = Retry.class)
-    @SkipIf(platform = "AndroidDriver")
+    @SkipIf(platform = MobilePlatform.ANDROID)
     public void testMethodOne_10() throws Exception {
 
         System.out.println(
