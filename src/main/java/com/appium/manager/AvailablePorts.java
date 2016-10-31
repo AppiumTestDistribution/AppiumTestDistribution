@@ -2,7 +2,7 @@ package com.appium.manager;
 
 import java.net.ServerSocket;
 
-public class AvailabelPorts {
+public class AvailablePorts {
 
     /*
      * Generates Random ports

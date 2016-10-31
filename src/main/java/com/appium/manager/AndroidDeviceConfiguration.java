@@ -11,9 +11,9 @@ import java.util.Properties;
 
 public class AndroidDeviceConfiguration {
 
-    CommandPrompt cmd = new CommandPrompt();
-    Map<String, String> devices = new HashMap<String, String>();
-    ArrayList<String> deviceSerail = new ArrayList<String>();
+    private CommandPrompt cmd = new CommandPrompt();
+    private Map<String, String> devices = new HashMap<String, String>();
+    public static ArrayList<String> deviceSerail = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
 
     public static final String APK_PACKAGE_KEY_NAME = "PackageName";
@@ -216,5 +216,44 @@ public class AndroidDeviceConfiguration {
         }
 
         return apkInfoMap;
+    }
+
+    public String screenRecord(String deviceID, String fileName)
+            throws IOException, InterruptedException {
+        return "adb -s " + deviceID + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
+                + ".mp4";
+    }
+
+    public boolean checkIfRecordable(String deviceID) throws IOException, InterruptedException {
+        String screenrecord =
+                cmd.runCommand("adb -s " + deviceID + " shell ls /system/bin/screenrecord");
+        if (screenrecord.trim().equals("/system/bin/screenrecord")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String getDeviceManufacturer(String deviceID) throws IOException, InterruptedException {
+        return cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.manufacturer")
+                .trim();
+    }
+
+    public AndroidDeviceConfiguration pullVideoFromDevice(String deviceID, String fileName,
+                                                          String destination) throws IOException, InterruptedException {
+        ProcessBuilder pb =
+                new ProcessBuilder("adb", "-s", deviceID, "pull", "/sdcard/" + fileName + ".mp4",
+                        destination);
+        Process pc = pb.start();
+        pc.waitFor();
+        System.out.println("Exited with Code::" + pc.exitValue());
+        System.out.println("Done");
+        Thread.sleep(5000);
+        return new AndroidDeviceConfiguration();
+    }
+
+    public void removeVideoFileFromDevice(String deviceID, String fileName)
+            throws IOException, InterruptedException {
+        cmd.runCommand("adb -s " + deviceID + " shell rm -f /sdcard/" + fileName + ".mp4");
     }
 }

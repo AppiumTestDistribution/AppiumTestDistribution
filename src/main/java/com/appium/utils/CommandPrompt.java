@@ -84,4 +84,14 @@ public class CommandPrompt {
         return new BufferedReader(isr);
     }
 
+    public void runCommandThruProcess(String command)
+        throws InterruptedException, IOException {
+        BufferedReader br = getBufferedReader(command);
+        String line;
+        String allLine = "";
+        while ((line = br.readLine()) != null) {
+            allLine = allLine + "" + line + "\n";
+            System.out.println(allLine);
+        }
+    }
 }

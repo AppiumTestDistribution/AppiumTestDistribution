@@ -20,12 +20,12 @@ import java.lang.reflect.Method;
 public class UserBaseTest extends AppiumParallelTest {
     JSonParser jSonParser = new JSonParser();
 
-    @BeforeMethod() public void startApp(Method name) throws Exception {
+    @BeforeMethod(alwaysRun = true) public void startApp(Method name) throws Exception {
         driver = startAppiumServerInParallel(name.getName(), androidNative());
         startLogResults(name.getName());
     }
 
-    @AfterMethod() public void killServer(ITestResult result)
+    @AfterMethod(alwaysRun = true) public void killServer(ITestResult result)
         throws InterruptedException, IOException {
         endLogTestResults(result);
         getDriver().quit();
@@ -36,15 +36,18 @@ public class UserBaseTest extends AppiumParallelTest {
         return driver;
     }
 
-    @BeforeClass() public void beforeClass() throws Exception {
+    @BeforeClass(alwaysRun = true) public void beforeClass() throws Exception {
         System.out.println("Before Class called" + Thread.currentThread().getId());
         System.out.println(getClass().getName());
-        startAppiumServer(getClass().getSimpleName());
+        //Moving the method inside the dependency in the next release
+        //startAppiumServer(getClass().getSimpleName());
     }
 
-    @AfterClass() public void afterClass() throws InterruptedException, IOException {
+    @AfterClass(alwaysRun = true) public void afterClass()
+        throws InterruptedException, IOException {
         System.out.println("After Class" + Thread.currentThread().getId());
-        killAppiumServer();
+        //Moving the method inside the dependency in the next release
+        //killAppiumServer();
     }
 
     public void getUserName() {

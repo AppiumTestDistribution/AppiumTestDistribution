@@ -3,8 +3,15 @@
 <suite thread-count="1" verbose="2" name="TestNG Forum" parallel="classes">
     <listeners>
         <listener class-name="com.appium.manager.AppiumParallelTest"/>
+        <listener class-name="com.appium.utils.RetryListener"/>
     </listeners>
     <test name="TestNG Test">
+        <parameter name="device" value="192.168.68.102:5555"/>
+        <groups>
+        <run>
+            <include name="smoke"/>
+        </run>
+        </groups>
         <classes>
             <class name="com.test.site.HomePageTest3"/>
             <class name="com.test.site.HomePageTest2"/>

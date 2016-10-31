@@ -1,6 +1,8 @@
 package com.test.site;
 
+import com.appium.manager.AppiumParallelTest;
 import com.appium.manager.ParallelThread;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ public class Runner {
         ParallelThread parallelThread = new ParallelThread();
         List<String> tests = new ArrayList<>();
         tests.add("HomePageTest2");
-        parallelThread.runner("com.test.site");
+        parallelThread.runner("com.test.site",tests);
+        Assert.assertFalse(AppiumParallelTest.buildStatus());
     }
 }

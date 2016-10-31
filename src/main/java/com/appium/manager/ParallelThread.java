@@ -39,9 +39,9 @@ public class ParallelThread {
     protected int deviceCount = 0;
     Map<String, String> devices = new HashMap<String, String>();
     Map<String, String> iOSdevices = new HashMap<String, String>();
-    AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
-    IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
-    MyTestExecutor myTestExecutor = new MyTestExecutor();
+    private AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
+    private IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
+    private MyTestExecutor myTestExecutor = new MyTestExecutor();
     public Properties prop = new Properties();
     public InputStream input = null;
     List<Class> testcases;
@@ -80,8 +80,7 @@ public class ParallelThread {
             }
         }
 
-
-        if (deviceConf.getDevices() != null) {
+        if (prop.getProperty("ANDROID_APP_PATH") != null && deviceConf.getDevices() != null) {
             devices = deviceConf.getDevices();
             deviceCount = devices.size() / 4;
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
@@ -97,6 +96,7 @@ public class ParallelThread {
             }
             createSnapshotFolderAndroid(deviceCount, "android");
         }
+
         if (operSys.contains("mac")) {
             if (iosDevice.getIOSUDID() != null) {
                 iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
@@ -107,7 +107,7 @@ public class ParallelThread {
 
         }
         if (deviceCount == 0) {
-            figlet("No Android Devices Online");
+            figlet("No Devices Connected");
             System.exit(0);
         }
         System.out.println("***************************************************\n");
@@ -126,11 +126,15 @@ public class ParallelThread {
             });
 
             if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-                myTestExecutor.runMethodParallelAppium(tests, pack, deviceCount, "distribute");
+                myTestExecutor
+                    .runMethodParallelAppium(tests, pack, deviceCount,
+                        "distribute");
 
             }
             if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-                myTestExecutor.runMethodParallelAppium(tests, pack, deviceCount, "parallel");
+                myTestExecutor
+                    .runMethodParallelAppium(tests, pack, deviceCount,
+                        "parallel");
             }
         }
 
