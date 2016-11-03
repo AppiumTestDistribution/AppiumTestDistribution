@@ -14,10 +14,6 @@ public class AndroidDeviceConfiguration {
     public static ArrayList<String> deviceSerail = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
 
-    private static final String ANDROID_HOME = "ANDROID_HOME";
-    private static final String AAPT = "aapt";
-    private static final String AAPT_PARENT_FOLDER = "build-tools";
-
     public static final String APK_PACKAGE_KEY_NAME = "PackageName";
     public static final String APK_LAUNCH_ACTIVITY = "LaunchActivity";
 
@@ -260,8 +256,15 @@ public class AndroidDeviceConfiguration {
         cmd.runCommand("adb -s " + deviceID + " shell rm -f /sdcard/" + fileName + ".mp4");
     }
 
+    /**
+     * Get AAPT absolution path from Android Home setting, system variable
+     * @return the latest
+     */
     public String getAaptAbsPath() {
-        String androidHome = System.getenv("ANDROID_HOME");
+        final String AAPT_FILE_NAME = "aapt";
+        final String AAPT_PARENT_FOLDER = "build-tools";
+        final String ANDROID_HOME = "ANDROID_HOME";
+        String androidHome = System.getenv(ANDROID_HOME);
         String aaptParentDir;
 
         if (androidHome.endsWith(File.separator)) {
@@ -270,15 +273,15 @@ public class AndroidDeviceConfiguration {
             aaptParentDir = androidHome + File.separator + AAPT_PARENT_FOLDER;
         }
 
-        List<String> aaptList = findFile("aapt", new File(aaptParentDir));
+        List<String> aaptList = findFile(AAPT_FILE_NAME, new File(aaptParentDir));
         return aaptList.get(aaptList.size() - 1);
     }
 
     private List<String> findFile(String name, File root) {
-        List<String> fileList = null;
+        List<String> fileList = new LinkedList<>();
         File[] files = root.listFiles();
+
         if (files != null && files.length > 0) {
-            fileList = new LinkedList<>();
             for (File file : files) {
                 if (file.isDirectory()) {
                     fileList.addAll(findFile(name, new File(file.getAbsolutePath())));
