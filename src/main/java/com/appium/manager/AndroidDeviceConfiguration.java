@@ -2,12 +2,10 @@ package com.appium.manager;
 
 import com.appium.utils.CommandPrompt;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class AndroidDeviceConfiguration {
 
@@ -15,6 +13,10 @@ public class AndroidDeviceConfiguration {
     private Map<String, String> devices = new HashMap<String, String>();
     public static ArrayList<String> deviceSerail = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
+
+    private static final String ANDROID_HOME = "ANDROID_HOME";
+    private static final String AAPT = "aapt";
+    private static final String AAPT_PARENT_FOLDER = "build-tools";
 
     public static final String APK_PACKAGE_KEY_NAME = "PackageName";
     public static final String APK_LAUNCH_ACTIVITY = "LaunchActivity";
@@ -204,7 +206,7 @@ public class AndroidDeviceConfiguration {
 
         try {
             properties.load(new FileInputStream(configProperties));
-            String aaptToolPath = properties.getProperty("AAPT_PATH").trim();
+            String aaptToolPath = getAaptAbsPath();
             String packageName = cmd
                     .getBufferedReader(aaptToolPath + getPackageCmd).readLine();
             String launchActivity = cmd
@@ -256,5 +258,36 @@ public class AndroidDeviceConfiguration {
     public void removeVideoFileFromDevice(String deviceID, String fileName)
             throws IOException, InterruptedException {
         cmd.runCommand("adb -s " + deviceID + " shell rm -f /sdcard/" + fileName + ".mp4");
+    }
+
+    public String getAaptAbsPath() {
+        String androidHome = System.getenv("ANDROID_HOME");
+        String aaptParentDir;
+
+        if (androidHome.endsWith(File.separator)) {
+            aaptParentDir = androidHome + AAPT_PARENT_FOLDER;
+        } else {
+            aaptParentDir = androidHome + File.separator + AAPT_PARENT_FOLDER;
+        }
+
+        List<String> aaptList = findFile("aapt", new File(aaptParentDir));
+        return aaptList.get(aaptList.size() - 1);
+    }
+
+    private List<String> findFile(String name, File root) {
+        List<String> fileList = null;
+        File[] files = root.listFiles();
+        if (files != null && files.length > 0) {
+            fileList = new LinkedList<>();
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    fileList.addAll(findFile(name, new File(file.getAbsolutePath())));
+                } else if (name.equalsIgnoreCase(file.getName())) {
+                    fileList.add(file.getAbsolutePath());
+                }
+            }
+        }
+
+        return fileList;
     }
 }
