@@ -62,6 +62,7 @@ Add the below dependencies in your pom.xml (Master)
 
 ##Video log Prerequisites
 * Install ffmpeg. [OSX](https://trac.ffmpeg.org/wiki/CompilationGuide/MacOSX)
+	* ```$ brew update```
 	* ```$ brew install ffmpeg```
 * Install mp4box. [OSX](http://hunterford.me/compiling-mp4box-on-mac-os-x/)
 	* ```$ brew install mp4box```
