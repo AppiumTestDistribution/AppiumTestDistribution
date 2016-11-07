@@ -456,8 +456,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                         "screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                             + className + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + deviceModel + "_" + result
-                            .getMethod().getMethodName() + "_failed.png"
-                            + ">Failure Snapshot</a>");
+                            .getMethod().getMethodName() + "_failed.png");
                 }
 
 
