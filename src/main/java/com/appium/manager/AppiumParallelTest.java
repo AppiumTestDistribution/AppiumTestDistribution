@@ -504,7 +504,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
          */
         if (result.getStatus() == ITestResult.SKIP) {
             writeFailureToTxt("TestSkipped");
-            test.get().log(Status.UNKNOWN, "Test skipped");
+            test.get().log(Status.SKIP, "Test skipped");
         }
 
         if (System.getenv("VIDEO_LOGS") != null) {
