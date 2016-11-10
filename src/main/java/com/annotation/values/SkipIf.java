@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
  *
  * @author saikrisv
  */
-@Target(ElementType.METHOD) @Retention(RetentionPolicy.RUNTIME) public @interface SkipIf {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SkipIf {
     MobilePlatform platform();
 }

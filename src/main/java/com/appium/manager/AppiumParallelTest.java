@@ -72,12 +72,12 @@ import java.util.logging.Level;
 
 
 public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
-    public static ArrayList<String> devices = new ArrayList<String>();
+    public static ArrayList<String> devices = new ArrayList<>();
     public static Properties prop = new Properties();
     public static IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
     public static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
-            new ConcurrentHashMap<String, Boolean>();
+            new ConcurrentHashMap<>();
     public AppiumDriver<MobileElement> driver = null;
     public AppiumManager appiumMan = new AppiumManager();
     public String device_udid;
@@ -94,8 +94,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     String screenShotNameWithTimeStamp;
     private String CI_BASE_URI = null;
     private Flick videoRecording = new Flick();
-    public ThreadLocal<ExtentTest> parentTest = new ThreadLocal<ExtentTest>();
-    public ThreadLocal<ExtentTest> test = new ThreadLocal<ExtentTest>();
+    public ThreadLocal<ExtentTest> parentTest = new ThreadLocal<>();
+    public ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
     private static IpaParser ipaParser = new IpaParser();
     private static Ipa ipa;
@@ -284,13 +284,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (getClass().getMethod(methodName).getAnnotation(Author.class) != null) {
             authorName = getClass().getMethod(methodName).getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
-            child = parentTest.get()
-                    .createNode(methodName,
-                            category + "_" + device_udid.replaceAll("\\W", "_")).assignAuthor(
+            child = parentTest.get().createNode(
+                    methodName,
+                    category + "_" + device_udid.replaceAll("\\W", "_")).assignAuthor(
                             String.valueOf(listeners));
             test.set(child);
         } else {
-            child = parentTest.get().createNode(methodName,
+            child = parentTest.get().createNode(
+                    methodName,
                     category + "_" + device_udid.replaceAll("\\W", "_"));
             test.set(child);
         }
@@ -789,8 +790,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
                         Path p = Paths.get(files1[i].toString());
                         String fileName = p.getFileName().toString().toLowerCase();
-                        if (model.toString().toLowerCase()
-                                .contains(fileName.split(".png")[0].toLowerCase())) {
+                        if (model.toLowerCase().contains(fileName.split(".png")[0].toLowerCase())) {
                             try {
                                 if (status == ITestResult.FAILURE) {
                                     String screenToFrame = failedScreen;
