@@ -192,8 +192,6 @@ public class AndroidDeviceConfiguration {
     }
 
     public Map<String, String> getAPKInfo(String apkFilePath) {
-        Properties properties = new Properties();
-        String configProperties = "config.properties";
         String getPackageCmd = " dump badging " +  apkFilePath
                 + " | awk '/package/{gsub(\"name=|'\"'\"'\",\"\");  print $2}'";
         String getLaunchActivityCmd = " dump badging " +  apkFilePath
@@ -201,7 +199,6 @@ public class AndroidDeviceConfiguration {
         Map<String, String> apkInfoMap = new HashMap<>();
 
         try {
-            properties.load(new FileInputStream(configProperties));
             String aaptToolPath = getAaptAbsPath();
             String packageName = cmd
                     .getBufferedReader(aaptToolPath + getPackageCmd).readLine();
@@ -258,7 +255,7 @@ public class AndroidDeviceConfiguration {
 
     /**
      * Get AAPT absolution path from Android Home setting, system variable
-     * @return the latest
+     * @return the latest version of AAPT
      */
     public String getAaptAbsPath() {
         final String AAPT_FILE_NAME = "aapt";

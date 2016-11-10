@@ -14,7 +14,7 @@ public class HomePageTest3 extends UserBaseTest {
 
     @Test(retryAnalyzer = Retry.class)
     @Author(name = "AnsonLiao")
-    @RetryCount(maxRetryCount = 2) public void testMethodOne_3()
+    @RetryCount(maxRetryCount = 2) public void testMethodOne3()
         throws InterruptedException, IOException {
 
         System.out.println(

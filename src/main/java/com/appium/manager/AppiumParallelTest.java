@@ -879,7 +879,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         //add AndroidDriver on Windows
 
         return platform;
-
     }
 
     /**
