@@ -279,14 +279,16 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             ExtentTestManager.getTest().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png"));
+                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/"
+                                    + deviceModel + "/failed_" + stepName.replaceAll(" ", "_")
+                                    + "_framed.png"));
         } else {
             ExtentTestManager.getTest().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + ".png"));
+                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/"
+                                    + deviceModel + "/failed_" + stepName.replaceAll(" ", "_")
+                                    + ".png"));
         }
     }
 
