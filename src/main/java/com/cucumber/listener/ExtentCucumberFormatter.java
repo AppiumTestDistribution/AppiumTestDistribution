@@ -9,6 +9,7 @@ import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
 
+import com.video.recorder.XpathXML;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
@@ -53,6 +54,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public String deviceModel;
     public ImageUtils imageUtils = new ImageUtils();
     public static ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
+    public XpathXML xpathXML = new XpathXML();
 
     public static AppiumDriver getDriver() {
         return driver.get();
@@ -144,16 +146,22 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     }
 
     public void feature(Feature feature) {
+        AppiumParallelTest.getNextAvailableDeviceId();
+        String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
+        System.out.println(deviceThreadNumber);
+        System.out.println(Integer.parseInt(deviceThreadNumber[1]));
         try {
-            appiumParallelTest.startAppiumServer(feature.getName());
+            appiumParallelTest.startAppiumServer(
+                xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
+                feature.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
         for (Tag tag : feature.getTags()) {
-            parent = ExtentTestManager.createTest(feature.getName()).assignCategory(
-                appiumParallelTest.category
-                    + appiumParallelTest.device_udid.replaceAll("\\W", "_")
-                    + tag.getName());
+            parent = ExtentTestManager.createTest(feature.getName(),
+                "",
+                appiumParallelTest.device_udid.replaceAll("\\W", "_"))
+                .assignCategory(tag.getName());
         }
         parentContext.put(Thread.currentThread().getId(), parent);
     }
