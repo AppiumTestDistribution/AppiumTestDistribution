@@ -5,6 +5,7 @@ import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.ImageUtils;
+import com.appium.utils.MobilePlatform;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
@@ -131,6 +132,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             i++;
             if (deviceMapping.get(device)) {
                 deviceMapping.put(device, false);
+                System.out.println(device);
                 return device;
             }
         }
@@ -239,12 +241,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
             CI_BASE_URI = System.getProperty("user.dir");
         }
-        if (device == null) {
+        if (device.isEmpty()) {
+            System.out.println("Into Empty devices");
             device_udid = getNextAvailableDeviceId();
+            System.out.println("Into block" + device_udid);
         } else {
             device_udid = device;
         }
-
+        System.out.println("Devices*******" + device_udid);
         if (device_udid == null) {
             System.out.println("No devices are free to run test or Failed to run test");
             return null;
@@ -261,21 +265,15 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else {
             category = androidDevice.getDeviceModel(device_udid);
         }
+        parent = ExtentTestManager.createTest(methodName, "",
+            category
+                + device_udid.replaceAll("\\W", "_"));
+        parentTest.set(parent);
+        ExtentTestManager.getTest().log(Status.INFO,
+            "<a target=\"_parent\" href=" + "appiumlogs/"
+                + device_udid.replaceAll("\\W", "_") + "__" + methodName
+                + ".txt" + ">AppiumServerLogs</a>");
 
-        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            if (getClass().getAnnotation(Description.class) != null) {
-                testDescription = getClass().getAnnotation(Description.class).value();
-            }
-            //ExtentManager.createInstance();
-            //ExtentTestManager.setReporter(ExtentManager.getInstance());
-            parent = ExtentTestManager.createTest(methodName, testDescription,
-                category + "_" + device_udid.replaceAll("\\W", "_"));
-            parentTest.set(parent);
-            ExtentTestManager.getTest().log(Status.INFO,
-                "<a target=\"_parent\" href=" + "appiumlogs/"
-                    + device_udid.replaceAll("\\W", "_") + "__" + methodName
-                    + ".txt" + ">AppiumServerLogs</a>");
-        }
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             if (iosDevice.checkiOSDevice(device_udid)) {
                 String webKitPort = iosDevice.startIOSWebKit(device_udid);
@@ -293,6 +291,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         throws Exception {
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             setAuthorName(methodName);
+        } else {
+            child = parentTest.get().createNode(methodName, category
+                + device_udid.replaceAll("\\W", "_"));
+            test.set(child);
         }
         Thread.sleep(3000);
         startingServerInstance();
@@ -868,4 +870,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             e.printStackTrace();
         }
     }
+
+    public MobilePlatform getMobilePlatform(String device_udid) {
+        MobilePlatform platform = null;
+
+        if (device_udid.length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+            platform = MobilePlatform.IOS;
+        } else {
+            platform = MobilePlatform.ANDROID;
+        }
+        return platform;
+    }
+
 }

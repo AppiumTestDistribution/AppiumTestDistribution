@@ -20,7 +20,6 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -30,13 +29,18 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
 
 /**
  * Cucumber custom format listener which generates ExtentsReport html file
@@ -55,6 +59,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public ImageUtils imageUtils = new ImageUtils();
     public static ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
     public XpathXML xpathXML = new XpathXML();
+    public Properties prop = new Properties();
+    public InputStream input = null;
 
     public static AppiumDriver getDriver() {
         return driver.get();
@@ -81,10 +87,10 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void result(Result result) {
         if ("passed".equals(result.getStatus())) {
-            ExtentTestManager.getTest().log(Status.PASS, testSteps.poll().getName());
+            appiumParallelTest.test.get().log(Status.PASS, testSteps.poll().getName());
         } else if ("failed".equals(result.getStatus())) {
             String failed_StepName = testSteps.poll().getName();
-            ExtentTestManager.getTest().log(Status.FAIL, result.getError());
+            appiumParallelTest.test.get().log(Status.FAIL, result.getErrorMessage());
             String context = getDriver().getContext();
             boolean contextChanged = false;
             if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
@@ -116,9 +122,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 e.printStackTrace();
             }
         } else if ("skipped".equals(result.getStatus())) {
-            ExtentTestManager.getTest().log(Status.SKIP, testSteps.poll().getName());
+            appiumParallelTest.test.get().log(Status.SKIP, testSteps.poll().getName());
         } else if ("undefined".equals(result.getStatus())) {
-            ExtentTestManager.getTest().log(Status.UNKNOWN, testSteps.poll().getName());
+            appiumParallelTest.test.get().log(Status.WARNING, testSteps.poll().getName());
         }
     }
 
@@ -146,24 +152,45 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     }
 
     public void feature(Feature feature) {
-        AppiumParallelTest.getNextAvailableDeviceId();
-        String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
-        System.out.println(deviceThreadNumber);
-        System.out.println(Integer.parseInt(deviceThreadNumber[1]));
         try {
-            appiumParallelTest.startAppiumServer(
-                xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
-                feature.getName());
-        } catch (Exception e) {
+            input = new FileInputStream("config.properties");
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        for (Tag tag : feature.getTags()) {
+        try {
+            prop.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+            AppiumParallelTest.getNextAvailableDeviceId();
+            String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
+            System.out.println(deviceThreadNumber);
+            System.out.println(Integer.parseInt(deviceThreadNumber[1])
+                + prop.getProperty("RUNNER"));
+            try {
+                appiumParallelTest.startAppiumServer(
+                    xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
+                    feature.getName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                appiumParallelTest.startAppiumServer("",feature.getName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+/*        for (Tag tag : feature.getTags()) {
             parent = ExtentTestManager.createTest(feature.getName(),
                 "",
                 appiumParallelTest.device_udid.replaceAll("\\W", "_"))
                 .assignCategory(tag.getName());
-        }
-        parentContext.put(Thread.currentThread().getId(), parent);
+            parentTest.set(parent);
+        }*/
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
@@ -183,9 +210,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         }
         this.testSteps = new LinkedList<Step>();
         System.out.println(testSteps);
-        child = ExtentTestManager.createTest(scenario.getName()).assignCategory(
-            appiumParallelTest.category + appiumParallelTest.device_udid.replaceAll("\\W", "_"));
-
     }
 
     public void background(Background background) {
@@ -284,13 +308,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
                 + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png");
         if (framedImageAndroid.exists()) {
-            ExtentTestManager.getTest().log(Status.INFO,
+            appiumParallelTest.test.get().log(Status.INFO,
                 "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                     System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
                         + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png"));
         } else {
-            ExtentTestManager.getTest().log(Status.INFO,
+            appiumParallelTest.test.get().log(Status.INFO,
                 "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                     System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
                         + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel

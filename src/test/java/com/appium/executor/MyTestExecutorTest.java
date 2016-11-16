@@ -4,6 +4,8 @@ package com.appium.executor;
 import static junit.framework.TestCase.assertTrue;
 
 
+import com.appium.manager.AppiumParallelTest;
+import com.appium.utils.MobilePlatform;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
 
@@ -96,5 +98,12 @@ public class MyTestExecutorTest {
             e.printStackTrace();
         }
         assertTrue(true);
+    }
+
+    @Test
+    public void testapp() throws Exception {
+        AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
+        MobilePlatform mobilePlatform = appiumParallelTest.getMobilePlatform("57656757656757");
+        System.out.println(mobilePlatform.toString());
     }
 }

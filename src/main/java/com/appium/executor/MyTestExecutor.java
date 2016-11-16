@@ -72,7 +72,7 @@ public class MyTestExecutor {
             executorService.submit(new Runnable() {
                 public void run() {
                     System.out.println("Running test file: " + testFile.getName());
-                    runTestCase(testFile);
+                    testRunnerTestNg(testFile);
 
                 }
             });
