@@ -40,7 +40,7 @@ public class ExtentManager {
             extent = new ExtentReports();
             extent.attachReporter(getHtmlReporter());
             if (System.getenv("ExtentX") != null && System.getenv("ExtentX")
-                .equalsIgnoreCase("true")) {
+                    .equalsIgnoreCase("true")) {
                 extent.attachReporter(getExtentXReporter());
             }
             extent.setSystemInfo("Selenium Java Version", "2.53.0");
