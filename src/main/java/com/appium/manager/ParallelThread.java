@@ -51,22 +51,22 @@ public class ParallelThread {
         prop.load(input);
     }
 
-    public void runner(String pack, List<String> tests) throws Exception {
+    public boolean runner(String pack, List<String> tests) throws Exception {
         figlet(prop.getProperty("RUNNER"));
-        triggerTest(pack, tests);
+        return triggerTest(pack, tests);
     }
 
-    public void runner(String pack) throws Exception {
+    public boolean runner(String pack) throws Exception {
         figlet(prop.getProperty("RUNNER"));
         List<String> test = new ArrayList<>();
-        triggerTest(pack, test);
+        return triggerTest(pack, test);
     }
 
-    public void triggerTest(String pack, List<String> tests) throws Exception {
-        parallelExecution(pack, tests);
+    public boolean triggerTest(String pack, List<String> tests) throws Exception {
+        return parallelExecution(pack, tests);
     }
 
-    public void parallelExecution(String pack, List<String> tests) throws Exception {
+    public boolean parallelExecution(String pack, List<String> tests) throws Exception {
         String operSys = System.getProperty("os.name").toLowerCase();
         File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
         if (!f.exists()) {
@@ -117,6 +117,7 @@ public class ParallelThread {
 
         testcases = new ArrayList<Class>();
 
+        boolean hasFailures = false;
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             // final String pack = "com.paralle.tests"; // Or any other package
             PackageUtil.getClasses(pack).stream().forEach(s -> {
@@ -126,13 +127,13 @@ public class ParallelThread {
             });
 
             if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-                myTestExecutor
+                hasFailures = myTestExecutor
                     .runMethodParallelAppium(tests, pack, deviceCount,
                         "distribute");
 
             }
             if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-                myTestExecutor
+                hasFailures = myTestExecutor
                     .runMethodParallelAppium(tests, pack, deviceCount,
                         "parallel");
             }
@@ -147,6 +148,7 @@ public class ParallelThread {
                 myTestExecutor.parallelTests(deviceCount);
             }
         }
+        return hasFailures;
     }
 
     public void createSnapshotFolderAndroid(int deviceCount, String platform) throws Exception {

@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Runner {
-    @Test public static void testApp() throws Exception {
+    @Test
+    public static void testApp() throws Exception {
 
         ParallelThread parallelThread = new ParallelThread();
         List<String> tests = new ArrayList<>();
         //tests.add("HomePageTest1");
         tests.add("HomePageTest2");
-        parallelThread.runner("com.test.site",tests);
-        Assert.assertFalse(AppiumParallelTest.buildStatus());
+        boolean hasFailures = parallelThread.runner("com.test.site", tests);
+        Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
     }
 }

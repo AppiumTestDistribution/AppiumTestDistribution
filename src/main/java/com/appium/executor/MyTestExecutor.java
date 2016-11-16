@@ -137,8 +137,8 @@ public class MyTestExecutor {
     }
 
 
-    public void runMethodParallelAppium(List<String> test, String pack, int devicecount,
-        String executionType) throws Exception {
+    public boolean runMethodParallelAppium(List<String> test, String pack, int devicecount,
+                                           String executionType) throws Exception {
         URL newUrl = null;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
@@ -157,18 +157,20 @@ public class MyTestExecutor {
             .setScanners(new MethodAnnotationsScanner()));
         Set<Method> resources =
             reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
+        boolean hasFailure = false;
         if (executionType.equalsIgnoreCase("distribute")) {
-            runMethodParallel(
+            hasFailure = runMethodParallel(
                 constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
                     devicecount));
         } else {
-            runMethodParallel(
+            hasFailure = runMethodParallel(
                 constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
                     AppiumParallelTest.devices));
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
         ImageUtils.creatResultsSet();
+        return hasFailure;
     }
 
     public static void testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
@@ -178,10 +180,11 @@ public class MyTestExecutor {
         test.run();
     }
 
-    public void runMethodParallel(XmlSuite suite) {
+    public boolean runMethodParallel(XmlSuite suite) {
         TestNG testNG = new TestNG();
         testNG.setXmlSuites(asList(suite));
         testNG.run();
+        return testNG.hasFailure();
     }
 
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
