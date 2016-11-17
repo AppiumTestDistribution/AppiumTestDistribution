@@ -5,6 +5,7 @@ import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.ImageUtils;
+import com.appium.utils.MobilePlatform;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
@@ -810,4 +811,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             e.printStackTrace();
         }
     }
+
+    public MobilePlatform getMobilePlatform(String device_udid) {
+        MobilePlatform platform = null;
+
+        if (device_udid.length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+            platform = MobilePlatform.IOS;
+        } else {
+            platform = MobilePlatform.ANDROID;
+        }
+        return platform;
+    }
+
 }
