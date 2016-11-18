@@ -46,7 +46,7 @@ public class ParallelThread {
     public Properties prop = new Properties();
     public InputStream input = null;
     List<Class> testcases;
-    HtmlReporter htmlReporter = new HtmlReporter();
+    private HtmlReporter htmlReporter = new HtmlReporter();
 
     public ParallelThread() throws IOException {
         input = new FileInputStream("config.properties");

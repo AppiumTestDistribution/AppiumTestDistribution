@@ -1,7 +1,5 @@
 package com.test.site;
 
-import java.util.Random;
-
 /**
  * Created with IntelliJ IDEA.
  * User: haoji

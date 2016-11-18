@@ -74,8 +74,6 @@ public class MyTestExecutorTest {
         for (Method m : otherMethods1) {
             methods.add(m);
         }
-        List<String> tc = new ArrayList<>();
-
         XmlSuite xmlSuite =
             ex1.constructXmlSuiteForParallelCucumber(devices.size(), devices);
         System.out.println("xml:" + xmlSuite.toXml());
