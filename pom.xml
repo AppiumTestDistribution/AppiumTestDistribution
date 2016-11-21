@@ -37,6 +37,7 @@
         </developer>
     </developers>
 
+
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -138,11 +139,7 @@
             <artifactId>jfiglet</artifactId>
             <version>0.0.7</version>
         </dependency>
-        <dependency>
-            <groupId>com.googlecode.plist</groupId>
-            <artifactId>dd-plist</artifactId>
-            <version>1.16</version>
-        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.dongliu/apk-parser -->
         <dependency>
             <groupId>net.dongliu</groupId>
             <artifactId>apk-parser</artifactId>
