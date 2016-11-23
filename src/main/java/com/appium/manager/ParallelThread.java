@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.github.lalyos.jfiglet.FigletFont;
@@ -45,6 +46,7 @@ public class ParallelThread {
     public Properties prop = new Properties();
     public InputStream input = null;
     List<Class> testcases;
+    private HtmlReporter htmlReporter = new HtmlReporter();
 
     public ParallelThread() throws IOException {
         input = new FileInputStream("config.properties");
@@ -145,7 +147,10 @@ public class ParallelThread {
                 myTestExecutor.distributeTests(deviceCount);
             } else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
-                myTestExecutor.parallelTests(deviceCount);
+                myTestExecutor.runMethodParallel(myTestExecutor
+                    .constructXmlSuiteForParallelCucumber(deviceCount,
+                        AppiumParallelTest.devices));
+                htmlReporter.generateReports();
             }
         }
         return hasFailures;

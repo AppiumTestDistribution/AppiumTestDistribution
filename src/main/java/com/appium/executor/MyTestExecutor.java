@@ -17,12 +17,15 @@ import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
+import org.testng.xml.XmlPackage;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -69,7 +72,7 @@ public class MyTestExecutor {
             executorService.submit(new Runnable() {
                 public void run() {
                     System.out.println("Running test file: " + testFile.getName());
-                    runTestCase(testFile);
+                    testRunnerTestNg(testFile);
 
                 }
             });
@@ -342,6 +345,54 @@ public class MyTestExecutor {
         for (File file : files) {
             file.delete();
         }
+    }
+
+    public XmlSuite constructXmlSuiteForParallelCucumber(
+        int deviceCount, ArrayList<String> deviceSerail) {
+        try {
+            prop.load(new FileInputStream("config.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        XmlSuite suite = new XmlSuite();
+        suite.setName("TestNG Forum");
+        suite.setThreadCount(deviceCount);
+        suite.setParallel(ParallelMode.TESTS);
+        suite.setVerbose(2);
+        for (int i = 0; i < deviceCount; i++) {
+            XmlTest test = new XmlTest(suite);
+            test.setName("TestNG Test" + i);
+            test.setPreserveOrder("false");
+            test.addParameter("device", deviceSerail.get(i));
+            test.setPackages(getPackages());
+        }
+        File file = new File(System.getProperty("user.dir") + "/target/parallelCucumber.xml");
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(file.getAbsoluteFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BufferedWriter bw = new BufferedWriter(fw);
+        try {
+            bw.write(suite.toXml());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return suite;
+    }
+
+    public static List<XmlPackage> getPackages() {
+        List<XmlPackage> allPackages = new ArrayList<>();
+        XmlPackage eachPackage = new XmlPackage();
+        eachPackage.setName("output");
+        allPackages.add(eachPackage);
+        return allPackages;
     }
 
 }
