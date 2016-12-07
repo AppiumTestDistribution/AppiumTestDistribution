@@ -100,12 +100,15 @@ public class ParallelThread {
         }
 
         if (operSys.contains("mac")) {
-            if (iosDevice.getIOSUDID() != null) {
-                iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-                iOSdevices = iosDevice.getIOSUDIDHash();
-                deviceCount += iOSdevices.size();
-                createSnapshotFolderiOS(deviceCount, "iPhone");
+            if (prop.getProperty("IOS_APP_PATH") != null ) {
+                if (iosDevice.getIOSUDID() != null) {
+                    iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
+                    iOSdevices = iosDevice.getIOSUDIDHash();
+                    deviceCount += iOSdevices.size();
+                    createSnapshotFolderiOS(deviceCount, "iPhone");
+                }
             }
+
 
         }
         if (deviceCount == 0) {
