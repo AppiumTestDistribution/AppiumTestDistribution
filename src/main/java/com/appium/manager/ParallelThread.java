@@ -144,10 +144,12 @@ public class ParallelThread {
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")) {
             //addPluginToCucumberRunner();
             if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-                myTestExecutor.distributeTests(deviceCount);
+                hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
+                        .constructXmlSuiteDistributeCucumber(deviceCount,
+                                AppiumParallelTest.devices));
             } else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
-                myTestExecutor.runMethodParallel(myTestExecutor
+                hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
                     .constructXmlSuiteForParallelCucumber(deviceCount,
                         AppiumParallelTest.devices));
                 htmlReporter.generateReports();

@@ -57,7 +57,8 @@ public class MyTestExecutor {
 
     @SuppressWarnings("rawtypes")
 
-    public void distributeTests(int deviceCount) {
+    public boolean[] distributeTests(int deviceCount) {
+        final boolean[] hasFailures = {false};
         try {
             PackageUtil.getClasses("output").stream().forEach(s -> {
                 if (s.toString().contains("IT")) {
@@ -67,19 +68,19 @@ public class MyTestExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ExecutorService executorService = Executors.newFixedThreadPool(deviceCount);
+        final ExecutorService[] executorService = {Executors.newFixedThreadPool(deviceCount)};
         for (final Class testFile : testcases) {
-            executorService.submit(new Runnable() {
+            executorService[0].submit(new Runnable() {
                 public void run() {
                     System.out.println("Running test file: " + testFile.getName());
-                    testRunnerTestNg(testFile);
+                    hasFailures[0] = testRunnerTestNg(testFile);
 
                 }
             });
         }
-        executorService.shutdown();
+        executorService[0].shutdown();
         try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            executorService[0].awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -90,55 +91,8 @@ public class MyTestExecutor {
             e.printStackTrace();
         }
         System.out.println("ending");
+        return hasFailures;
     }
-
-    @SuppressWarnings("rawtypes")
-
-    public void parallelTests(int deviceCount)
-        throws InterruptedException {
-        try {
-            PackageUtil.getClasses("output").stream().forEach(s -> {
-                if (s.toString().contains("IT")) {
-                    System.out.println("forEach: " + testcases.add((Class) s));
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < deviceCount; i++) {
-            final int x = i;
-            Thread t = new Thread(new Runnable() {
-
-                public void run() {
-                    // TODO Auto-generated method stub
-                    runTests(testcases);
-                }
-
-                private void runTests(List<Class> testCases) {
-                    for (Class test : testCases) {
-                        System.out.println(
-                            "*****CurrentRunningThread" + Thread.currentThread().getId() + test);
-                        runTestCase(test);
-                    }
-                }
-            });
-
-            threads.add(t);
-            t.start();
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-        deleteOutputDirectory();
-        try {
-            reporter.generateReports();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Finally complete");
-    }
-
 
     public boolean runMethodParallelAppium(List<String> test, String pack, int devicecount,
                                            String executionType) throws Exception {
@@ -176,11 +130,13 @@ public class MyTestExecutor {
         return hasFailure;
     }
 
-    public static void testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
+    public boolean testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
         TestNG test = new TestNG();
         test.setTestClasses(new Class[] {arg});
         System.out.println("Into TestNGRunner");
         test.run();
+        return test.hasFailure();
+
     }
 
     public boolean runMethodParallel(XmlSuite suite) {
@@ -220,27 +176,32 @@ public class MyTestExecutor {
             test.setIncludedGroups(groupsInclude);
             test.setExcludedGroups(groupsExclude);
             List<XmlClass> xmlClasses = new ArrayList<>();
-            for (String className : methods.keySet()) {
-                if (className.contains("Test")) {
-                    if (testcases.size() == 0) {
-                        xmlClasses.add(createClass(className, methods.get(className)));
-                    } else {
-                        for (String s : testcases) {
-                            for (int j = 0; j < items.size(); j++) {
-                                String testName = items.get(j).concat("." + s).toString();
-                                if (testName.equals(className)) {
-                                    xmlClasses.add(createClass(className, methods.get(className)));
-                                }
-                            }
-                        }
-                    }
-
-                }
-            }
+            writeXmlClass(testcases, methods, xmlClasses);
             test.setXmlClasses(xmlClasses);
         }
         System.out.println(suite.toXml());
         return suite;
+    }
+
+    public void writeXmlClass(List<String> testcases, Map<String,
+            List<Method>> methods, List<XmlClass> xmlClasses) {
+        for (String className : methods.keySet()) {
+            if (className.contains("Test")) {
+                if (testcases.size() == 0) {
+                    xmlClasses.add(createClass(className, methods.get(className)));
+                } else {
+                    for (String s : testcases) {
+                        for (int j = 0; j < items.size(); j++) {
+                            String testName = items.get(j).concat("." + s).toString();
+                            if (testName.equals(className)) {
+                                xmlClasses.add(createClass(className, methods.get(className)));
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     public XmlSuite constructXmlSuiteForDistribution(String pack, List<String> tests,
@@ -270,23 +231,7 @@ public class MyTestExecutor {
         test.setIncludedGroups(groupsInclude);
         test.setExcludedGroups(groupsExclude);
         List<XmlClass> xmlClasses = new ArrayList<>();
-        for (String className : methods.keySet()) {
-            if (className.contains("Test")) {
-                if (tests.size() == 0) {
-                    xmlClasses.add(createClass(className, methods.get(className)));
-                } else {
-                    for (String s : tests) {
-                        for (int i = 0; i < items.size(); i++) {
-                            String testName = items.get(i).concat("." + s).toString();
-                            if (testName.equals(className)) {
-                                xmlClasses.add(createClass(className, methods.get(className)));
-                            }
-                        }
-                    }
-                }
-
-            }
-        }
+        writeXmlClass(tests, methods, xmlClasses);
         test.setXmlClasses(xmlClasses);
         return suite;
     }
@@ -366,6 +311,43 @@ public class MyTestExecutor {
             test.addParameter("device", deviceSerail.get(i));
             test.setPackages(getPackages());
         }
+        File file = new File(System.getProperty("user.dir") + "/target/parallelCucumber.xml");
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(file.getAbsoluteFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BufferedWriter bw = new BufferedWriter(fw);
+        try {
+            bw.write(suite.toXml());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return suite;
+    }
+
+    public XmlSuite constructXmlSuiteDistributeCucumber(
+            int deviceCount, ArrayList<String> deviceSerail) {
+        try {
+            prop.load(new FileInputStream("config.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        XmlSuite suite = new XmlSuite();
+        suite.setName("TestNG Forum");
+        suite.setThreadCount(deviceCount);
+        suite.setParallel(ParallelMode.CLASSES);
+        suite.setVerbose(2);
+        XmlTest test = new XmlTest(suite);
+        test.setName("TestNG Test");
+        test.addParameter("device", "");
+        test.setPackages(getPackages());
         File file = new File(System.getProperty("user.dir") + "/target/parallelCucumber.xml");
         FileWriter fw = null;
         try {
