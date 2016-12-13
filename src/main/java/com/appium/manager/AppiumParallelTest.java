@@ -428,8 +428,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
-            logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + device_udid
-                .replaceAll("\\W", "_") + "__" + methodName + ".txt");
+            new File(System.getProperty("user.dir") + "/target/adblogs/").mkdir();
+            logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + device_udid.replaceAll("\\W", "_") 
+                + "__" + methodName + ".txt");
             log_file_writer = new PrintWriter(logFile);
         }
     }
