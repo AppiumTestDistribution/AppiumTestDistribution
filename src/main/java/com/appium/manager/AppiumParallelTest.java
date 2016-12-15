@@ -442,15 +442,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (result.isSuccess()) {
             writeFailureToTxt("TestPassed");
             test.get().log(Status.PASS, result.getMethod().getMethodName());
-            if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
-                log_file_writer.println(logEntries);
-                log_file_writer.flush();
-                test.get().log(Status.INFO,
-                    "<a target=\"_parent\" href=" + "adblogs/" + device_udid.replaceAll("\\W", "_")
-                        + "__"
-                        + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
-                System.out.println(driver.getSessionId() + ": Saving device log - Done.");
-            }
+            getAdbLogs(result);
             File videoFile = new File(System.getProperty("user.dir") + "/target/screenshot/android/"
                 + device_udid.replaceAll("\\W", "_") + "/"
                 + className + "/" + result.getMethod().getMethodName()
@@ -527,15 +519,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             }
 
 
-            if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
-                log_file_writer.println(logEntries);
-                log_file_writer.flush();
-                test.get().log(Status.INFO,
-                    "<a target=\"_parent\" href=" + "adblogs/" + device_udid.replaceAll("\\W", "_")
-                        + "__"
-                        + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
-                System.out.println(driver.getSessionId() + ": Saving device log - Done.");
-            }
+            getAdbLogs(result);
 
         }
         /*
@@ -575,6 +559,18 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             }
         }
         ExtentManager.getExtent().flush();
+    }
+
+    public void getAdbLogs(ITestResult result) {
+        if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+            log_file_writer.println(logEntries);
+            log_file_writer.flush();
+            test.get().log(Status.INFO,
+                "<a target=\"_parent\" href=" + "adblogs/" + device_udid.replaceAll("\\W", "_")
+                    + "__"
+                    + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
+            System.out.println(driver.getSessionId() + ": Saving device log - Done.");
+        }
     }
 
     @AfterClass(alwaysRun = true) public synchronized void killAppiumServer()
