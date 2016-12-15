@@ -1,8 +1,5 @@
 package com.appium.utils;
 
-/**
- * Created by ansonliao on 19/10/2016.
- */
 public enum MobilePlatform {
 
     IOS("IOS"),
@@ -14,5 +11,4 @@ public enum MobilePlatform {
     MobilePlatform(String platformName) {
         this.platformName = platformName;
     }
-
 }

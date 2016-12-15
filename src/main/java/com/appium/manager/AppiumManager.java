@@ -53,6 +53,7 @@ public class AppiumManager {
                 .withArgument(AndroidServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
                 .withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER,
                     Integer.toString(bootstrapPort))
+                .withIPAddress("127.0.0.1")
                 .withArgument(GeneralServerFlag.SESSION_OVERRIDE)
                 .withArgument(AndroidServerFlag.SUPPRESS_ADB_KILL_SERVER)
                 .withArgument(AndroidServerFlag.SELENDROID_PORT, Integer.toString(selendroidPort))
@@ -92,6 +93,7 @@ public class AppiumManager {
                 System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID
                     .replaceAll("\\W", "_") + "__" + methodName + ".txt"))
                 .withArgument(webKitProxy, webKitPort)
+                .withIPAddress("127.0.0.1")
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "debug")
                 .withArgument(GeneralServerFlag.TEMP_DIRECTORY,
                     new File(String.valueOf(classPathRoot)).getAbsolutePath() + "/target/" + "tmp_"

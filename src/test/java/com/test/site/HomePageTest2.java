@@ -7,6 +7,7 @@ import com.annotation.values.Description;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.SwipeElementDirection;
 import org.openqa.selenium.By;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
@@ -15,16 +16,8 @@ public class HomePageTest2
     extends UserBaseTest {
 
     @Test(groups = {"smoke"})
-    @Author(name = "AnsonLiao,Sai") public void testMethodOne2() throws Exception {
-        System.out.println(
-            "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
-                .getStackTrace()[1].getClassName());
-        Thread.sleep(3000);
-        getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
-        MobileElement el = getDriver().findElement(By.id("com.android2.calculator3:id/equal"));
-        el.swipe(SwipeElementDirection.LEFT, 10000);
+    @Author(name = "AnsonLiao,Sai") public void testMethodOne_2() throws Exception {
+        MyClass c = new MyClass();
+        Assert.assertEquals(c.sum(2, 3), 5);
     }
 }

@@ -4,9 +4,15 @@ package com.appium.executor;
 import static junit.framework.TestCase.assertTrue;
 
 
+import com.appium.manager.AppiumParallelTest;
+import com.appium.utils.MobilePlatform;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,5 +51,57 @@ public class MyTestExecutorTest {
                 devices.size());
         System.out.println("xml:" + xmlSuite.toXml());
         assertTrue(true);
+    }
+
+    @Test public void testXmlSuiteCreationCucumber() {
+        Set<Method> methods = new HashSet<>();
+        ArrayList<String> devices = new ArrayList<>();
+        devices.add("192.168.0.1");
+        devices.add("192.168.0.2");
+        devices.add("192.168.0.3");
+        devices.add("192.168.0.4");
+        Method[] thizMethods = MyTestExecutorTest.class.getMethods();
+        for (Method m : thizMethods) {
+            methods.add(m);
+        }
+
+        Method[] otherMethods = OtherTests.class.getMethods();
+        for (Method m : otherMethods) {
+            methods.add(m);
+        }
+
+        Method[] otherMethods1 = OtherTests1.class.getMethods();
+        for (Method m : otherMethods1) {
+            methods.add(m);
+        }
+        XmlSuite xmlSuite =
+            ex1.constructXmlSuiteForParallelCucumber(devices.size(), devices);
+        System.out.println("xml:" + xmlSuite.toXml());
+        File file = new File(System.getProperty("user.dir") + "/target/parallelCucumber.xml");
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(file.getAbsoluteFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BufferedWriter bw = new BufferedWriter(fw);
+        try {
+            bw.write(xmlSuite.toXml());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertTrue(true);
+    }
+
+    @Test
+    public void testapp() throws Exception {
+        AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
+        MobilePlatform mobilePlatform = appiumParallelTest.getMobilePlatform("57656757656757");
+        System.out.println(mobilePlatform.toString());
     }
 }
