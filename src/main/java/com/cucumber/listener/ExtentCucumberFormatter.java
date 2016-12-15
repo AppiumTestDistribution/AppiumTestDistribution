@@ -27,6 +27,7 @@ import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,7 +62,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public XpathXML xpathXML = new XpathXML();
     public Properties prop = new Properties();
     public InputStream input = null;
-
+    protected DesiredCapabilities iosCapabilities;
+    protected DesiredCapabilities androidCapabilities;
+    
     public static AppiumDriver getDriver() {
         return driver.get();
     }
@@ -203,7 +206,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void startOfScenarioLifeCycle(Scenario scenario) {
         try {
-            appium_driver = appiumParallelTest.startAppiumServerInParallel(scenario.getName());
+            appium_driver = appiumParallelTest.startAppiumServerInParallel(scenario.getName(), 
+                iosCapabilities, androidCapabilities);
             setWebDriver(appium_driver);
         } catch (Exception e) {
             e.printStackTrace();

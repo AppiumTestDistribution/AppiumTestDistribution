@@ -290,8 +290,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 + ".txt" + ">AppiumServerLogs</a>");
     }
 
-    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName)
-        throws Exception {
+    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName,
+        DesiredCapabilities iosCaps, DesiredCapabilities androidCaps) throws Exception {
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             setAuthorName(methodName);
         } else {
@@ -300,27 +300,18 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             test.set(child);
         }
         Thread.sleep(3000);
-        startingServerInstance();
-        return driver;
-    }
-
-    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName,
-        DesiredCapabilities iosCaps, DesiredCapabilities androidCaps) throws Exception {
-        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            setAuthorName(methodName);
-        }
-        Thread.sleep(3000);
         startingServerInstance(iosCaps, androidCaps);
         return driver;
+    }
+    
+    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName)
+        throws Exception {
+        return startAppiumServerInParallel(methodName, null, null);
     }
 
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName,
         DesiredCapabilities caps) throws Exception {
-        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            setAuthorName(methodName);
-        }
-        startingServerInstance(caps);
-        return driver;
+        return startAppiumServerInParallel(methodName, caps, caps);
     }
 
     public void setAuthorName(String methodName) throws NoSuchMethodException {
@@ -341,58 +332,43 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
-    public void startingServerInstance() throws Exception {
-        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
-        } else {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (iosDevice.checkiOSDevice(device_udid)) {
-                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosNative());
-                } else if (!iosDevice.checkiOSDevice(device_udid)) {
-                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
-                }
-            } else {
-                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidNative());
-            }
-        }
-    }
-
-    public void startingServerInstance(DesiredCapabilities caps) throws Exception {
-        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
-        } else {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (caps.asMap().get("bundleId") != null) {
-                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(), caps);
-                } else {
-                    checkSelendroid(caps);
-                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), caps);
-                }
-            } else {
-                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), caps);
-            }
-        }
-    }
-
     public void startingServerInstance(DesiredCapabilities iosCaps, DesiredCapabilities androidCaps)
         throws Exception {
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidWeb());
         } else {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (iosDevice.checkiOSDevice(device_udid)) {
+                if (prop.getProperty("IOS_APP_PATH") != null 
+                    && iosDevice.checkiOSDevice(device_udid)) {
+                    if (iosCaps == null) {
+                        iosCaps = iosNative();
+                    }
                     driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
                 } else if (!iosDevice.checkiOSDevice(device_udid)) {
+                    if (androidCaps == null) {
+                        androidCaps = androidNative();
+                    }
                     checkSelendroid(androidCaps);
                     driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
                 }
             } else {
+                if (androidCaps == null) {
+                    androidCaps = androidNative();
+                }
                 checkSelendroid(androidCaps);
                 driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
             }
         }
     }
 
+    public void startingServerInstance() throws Exception {
+        startingServerInstance(null, null);
+    }
+
+    public void startingServerInstance(DesiredCapabilities caps) throws Exception {
+        startingServerInstance(caps, caps);
+    }
+    
     public DesiredCapabilities checkSelendroid(DesiredCapabilities androidCaps) {
         int android_api = 0;
         try {
@@ -669,15 +645,17 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return androidWebCapabilities;
     }
 
-    public synchronized DesiredCapabilities iosNative() {
+    public synchronized DesiredCapabilities iosNative() throws InterruptedException, IOException {
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
-        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
+        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, 
+            iosDevice.getIOSDeviceProductVersion(device_udid));
         iOSCapabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("IOS_APP_PATH"));
         iOSCapabilities
             .setCapability(IOSMobileCapabilityType.BUNDLE_ID, prop.getProperty("BUNDLE_ID"));
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
-        iOSCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
+        iOSCapabilities
+            .setCapability(MobileCapabilityType.DEVICE_NAME, iosDevice.getDeviceName(device_udid));
         iOSCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
         return iOSCapabilities;
     }
