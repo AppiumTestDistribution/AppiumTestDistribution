@@ -150,23 +150,13 @@ public class IOSDeviceConfiguration {
 
     public String getIOSDeviceProductVersion(String udid) throws InterruptedException, IOException {
         return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid 
-                + " | grep ProductVersion");
+                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid
+                        + " | grep ProductVersion");
     }
-    
+
     public boolean checkiOSDevice(String UDID) throws Exception {
-        try {
-            String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
-            boolean checkDeviceExists = getIOSDeviceID.contains(UDID);
-            if (checkDeviceExists) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
+        return getIOSDeviceID.contains(UDID);
     }
 
     public HashMap<String, String> setIOSWebKitProxyPorts(String device_udid) throws Exception {
