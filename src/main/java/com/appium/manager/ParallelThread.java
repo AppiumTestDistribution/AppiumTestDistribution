@@ -9,12 +9,9 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-
 
 
 import java.nio.charset.StandardCharsets;
@@ -26,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /*
  * This class picks the devices connected
@@ -37,24 +33,22 @@ import java.util.Properties;
 
 
 public class ParallelThread {
+    private final ConfigurationManager configurationManager;
     protected int deviceCount = 0;
     Map<String, String> devices = new HashMap<String, String>();
     Map<String, String> iOSdevices = new HashMap<String, String>();
     private AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
     private IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
     private MyTestExecutor myTestExecutor = new MyTestExecutor();
-    public Properties prop = new Properties();
-    public InputStream input = null;
     List<Class> testcases;
     private HtmlReporter htmlReporter = new HtmlReporter();
 
     public ParallelThread() throws IOException {
-        input = new FileInputStream("config.properties");
-        prop.load(input);
+        configurationManager = ConfigurationManager.getInstance();
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
-        figlet(prop.getProperty("RUNNER"));
+        figlet(configurationManager.getProperty("RUNNER"));
         return triggerTest(pack, tests);
     }
 
@@ -80,7 +74,7 @@ public class ParallelThread {
             }
         }
 
-        if (prop.getProperty("ANDROID_APP_PATH") != null && deviceConf.getDevices() != null) {
+        if (configurationManager.getProperty("ANDROID_APP_PATH") != null && deviceConf.getDevices() != null) {
             devices = deviceConf.getDevices();
             deviceCount = devices.size() / 4;
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
@@ -98,7 +92,7 @@ public class ParallelThread {
         }
 
         if (operSys.contains("mac")) {
-            if (prop.getProperty("IOS_APP_PATH") != null ) {
+            if (configurationManager.getProperty("IOS_APP_PATH") != null ) {
                 if (iosDevice.getIOSUDID() != null) {
                     iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
                     iOSdevices = iosDevice.getIOSUDIDHash();
@@ -121,7 +115,7 @@ public class ParallelThread {
         testcases = new ArrayList<Class>();
 
         boolean hasFailures = false;
-        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
+        if (configurationManager.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             // final String pack = "com.paralle.tests"; // Or any other package
             PackageUtil.getClasses(pack).stream().forEach(s -> {
                 if (s.toString().contains("Test")) {
@@ -129,26 +123,26 @@ public class ParallelThread {
                 }
             });
 
-            if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+            if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
                 hasFailures = myTestExecutor
                     .runMethodParallelAppium(tests, pack, deviceCount,
                         "distribute");
 
             }
-            if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+            if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 hasFailures = myTestExecutor
                     .runMethodParallelAppium(tests, pack, deviceCount,
                         "parallel");
             }
         }
 
-        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")) {
+        if (configurationManager.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")) {
             //addPluginToCucumberRunner();
-            if (prop.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+            if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
                 hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
                         .constructXmlSuiteDistributeCucumber(deviceCount,
                                 AppiumParallelTest.devices));
-            } else if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+            } else if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
                 hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
                     .constructXmlSuiteForParallelCucumber(deviceCount,

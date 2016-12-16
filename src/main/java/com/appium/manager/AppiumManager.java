@@ -9,9 +9,8 @@ import io.appium.java_client.service.local.flags.ServerArgument;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
-import java.util.Properties;
 
 /**
  * Appium Manager - this class contains method to start and stops appium server
@@ -23,9 +22,13 @@ public class AppiumManager {
     private CommandPrompt cp = new CommandPrompt();
     private AvailablePorts ap = new AvailablePorts();
     public AppiumDriverLocalService appiumDriverLocalService;
-    public Properties prop = new Properties();
-    public InputStream input = null;
     public AppiumServiceBuilder builder = new AppiumServiceBuilder();
+    private ConfigurationManager prop;
+
+
+    AppiumManager() throws IOException {
+        prop = ConfigurationManager.getInstance();
+    }
 
     /**
      * start appium with auto generated ports : appium port, chrome port,
@@ -39,8 +42,6 @@ public class AppiumManager {
         System.out.println("Starting Appium Server to handle Android Device::" + deviceID + "\n");
         System.out.println(
             "**************************************************************************\n");
-        input = new FileInputStream("config.properties");
-        prop.load(input);
         int port = ap.getPort();
         int chromePort = ap.getPort();
         int bootstrapPort = ap.getPort();
@@ -84,8 +85,6 @@ public class AppiumManager {
         System.out
             .println("**********************************************************************\n");
         File classPathRoot = new File(System.getProperty("user.dir"));
-        input = new FileInputStream("config.properties");
-        prop.load(input);
         int port = ap.getPort();
         AppiumServiceBuilder builder =
             new AppiumServiceBuilder().withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))

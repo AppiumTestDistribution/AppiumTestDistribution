@@ -1,5 +1,6 @@
 package com.report.factory;
 
+import com.appium.manager.ConfigurationManager;
 import com.appium.utils.CommandPrompt;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
@@ -18,46 +19,40 @@ import java.net.URL;
 import java.util.Properties;
 
 public class ExtentManager {
-    public static Properties prop = new Properties();
 
-    public static ExtentReports extent;
-    public static String filePath = System.getProperty("user.dir") + "/target/ExtentReports.html";
-    public static CommandPrompt commandPrompt = new CommandPrompt();
-    public static InputStream input = null;
+    private static ConfigurationManager configurationManager;
+    private static ExtentReports extent;
+    private static String filePath = System.getProperty("user.dir") + "/target/ExtentReports.html";
+    private static CommandPrompt commandPrompt = new CommandPrompt();
 
     public synchronized static ExtentReports getExtent() {
         if (extent == null) {
             try {
-                input = new FileInputStream("config.properties");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            try {
-                prop.load(input);
+                configurationManager = ConfigurationManager.getInstance();
+                extent = new ExtentReports();
+                extent.attachReporter(getHtmlReporter());
+                if (System.getenv("ExtentX") != null && System.getenv("ExtentX")
+                        .equalsIgnoreCase("true")) {
+                    extent.attachReporter(getExtentXReporter());
+                }
+                extent.setSystemInfo("Selenium Java Version", "2.53.0");
+                extent.setSystemInfo("Environment", "Prod");
+                String appiumVersion = null;
+                try {
+                    appiumVersion = commandPrompt.runCommand("appium -v");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                extent.setSystemInfo("AppiumClient", "4.1.2");
+                extent.setSystemInfo("AppiumServer", appiumVersion.replace("\n", ""));
+                extent.setSystemInfo("Runner", configurationManager.getProperty("RUNNER"));
+                return extent;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            extent = new ExtentReports();
-            extent.attachReporter(getHtmlReporter());
-            if (System.getenv("ExtentX") != null && System.getenv("ExtentX")
-                .equalsIgnoreCase("true")) {
-                extent.attachReporter(getExtentXReporter());
-            }
-            extent.setSystemInfo("Selenium Java Version", "2.53.0");
-            extent.setSystemInfo("Environment", "Prod");
-            String appiumVersion = null;
-            try {
-                appiumVersion = commandPrompt.runCommand("appium -v");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            extent.setSystemInfo("AppiumClient", "4.1.2");
-            extent.setSystemInfo("AppiumServer", appiumVersion.replace("\n", ""));
-            extent.setSystemInfo("Runner", prop.getProperty("RUNNER"));
         }
         return extent;
+
     }
 
     private static ExtentHtmlReporter getHtmlReporter() {
@@ -88,16 +83,16 @@ public class ExtentManager {
     }
 
     private static ExtentXReporter getExtentXReporter() {
-        String host = prop.getProperty("MONGODB_SERVER");
-        Integer port = Integer.parseInt(prop.getProperty("MONGODB_PORT"));
+        String host = configurationManager.getProperty("MONGODB_SERVER");
+        Integer port = Integer.parseInt(configurationManager.getProperty("MONGODB_PORT"));
         ExtentXReporter extentx = new ExtentXReporter(host, port);
 
         // project name
-        String projectName = prop.getProperty("projectName", "ExtentReports");
+        String projectName = configurationManager.getProperty("projectName", "ExtentReports");
         extentx.config().setProjectName(projectName);
 
         // report or build name
-        String reportName = prop.getProperty("reportName", "ExtentReports");
+        String reportName = configurationManager.getProperty("reportName", "ExtentReports");
         extentx.config().setReportName(reportName);
 
         // server URL

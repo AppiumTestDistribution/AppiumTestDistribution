@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.Set;
 
 public class MyTestExecutorTest {
-    MyTestExecutor ex1 = new MyTestExecutor();
+    MyTestExecutor ex1 ;
+
+    public MyTestExecutorTest() throws IOException {
+        ex1 = new MyTestExecutor();
+    }
 
     @Test public void testXmlSuiteCreation() {
         Set<Method> methods = new HashSet<>();

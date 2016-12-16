@@ -42,7 +42,6 @@ import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -60,20 +59,21 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+
+import static junit.framework.TestCase.fail;
 
 
 public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
     public static ArrayList<String> devices = new ArrayList<String>();
-    public static Properties prop = new Properties();
-    public static IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
+    public ConfigurationManager prop;
+    public IOSDeviceConfiguration iosDevice;
     public static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
         new ConcurrentHashMap<String, Boolean>();
     public AppiumDriver<MobileElement> driver = null;
-    public AppiumManager appiumMan = new AppiumManager();
+    public AppiumManager appiumMan;
     public String device_udid;
     public List<LogEntry> logEntries;
     public File logFile;
@@ -93,7 +93,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
     static {
         try {
-            prop.load(new FileInputStream("config.properties"));
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 if (IOSDeviceConfiguration.deviceUDIDiOS != null) {
                     System.out.println("Adding iOS devices");
@@ -119,6 +118,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to initialize framework");
+        }
+    }
+
+    public AppiumParallelTest() {
+        try {
+            iosDevice = new IOSDeviceConfiguration();
+            appiumMan = new AppiumManager();
+            prop = ConfigurationManager.getInstance();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

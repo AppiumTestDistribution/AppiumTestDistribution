@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.manager.AppiumParallelTest;
+import com.appium.manager.ConfigurationManager;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
@@ -46,14 +47,18 @@ import java.util.concurrent.TimeUnit;
 
 
 public class MyTestExecutor {
+    private final ConfigurationManager prop;
     List<Thread> threads = new ArrayList<Thread>();
-    public static Properties prop = new Properties();
     public List<Class> testcases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
     public ArrayList<String> items = new ArrayList<String>();
     private ArrayList<String> listeners = new ArrayList<>();
     private ArrayList<String> groupsInclude = new ArrayList<>();
     private ArrayList<String> groupsExclude = new ArrayList<>();
+
+    public MyTestExecutor() throws IOException {
+        prop = ConfigurationManager.getInstance();
+    }
 
     @SuppressWarnings("rawtypes")
 
@@ -74,7 +79,6 @@ public class MyTestExecutor {
                 public void run() {
                     System.out.println("Running test file: " + testFile.getName());
                     hasFailures[0] = testRunnerTestNg(testFile);
-
                 }
             });
         }
@@ -114,7 +118,7 @@ public class MyTestExecutor {
             .setScanners(new MethodAnnotationsScanner()));
         Set<Method> resources =
             reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
-        boolean hasFailure = false;
+        boolean hasFailure;
         if (executionType.equalsIgnoreCase("distribute")) {
             hasFailure = runMethodParallel(
                 constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
@@ -149,11 +153,6 @@ public class MyTestExecutor {
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
         Map<String, List<Method>> methods, int deviceCount, ArrayList<String> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
-        try {
-            prop.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         listeners.add("com.appium.manager.AppiumParallelTest");
         listeners.add("com.appium.utils.RetryListener");
         include(listeners, "LISTENERS");
@@ -206,11 +205,6 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForDistribution(String pack, List<String> tests,
         Map<String, List<Method>> methods, int deviceCount) {
-        try {
-            prop.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
@@ -294,11 +288,6 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForParallelCucumber(
         int deviceCount, ArrayList<String> deviceSerail) {
-        try {
-            prop.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
@@ -334,11 +323,6 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteDistributeCucumber(
             int deviceCount, ArrayList<String> deviceSerail) {
-        try {
-            prop.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);

@@ -14,9 +14,9 @@ public class Runner {
 
         ParallelThread parallelThread = new ParallelThread();
         List<String> tests = new ArrayList<>();
-        //tests.add("HomePageTest1");
-        //tests.add("HomePageTest2");
-        boolean hasFailures = parallelThread.runner("com.test.site");
+        tests.add("HomePageTest3");
+        tests.add("HomePageTest2");
+        boolean hasFailures = parallelThread.runner("com.test.site",tests);
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
     }
 }
