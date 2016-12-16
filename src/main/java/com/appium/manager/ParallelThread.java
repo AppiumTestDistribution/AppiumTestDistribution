@@ -59,9 +59,7 @@ public class ParallelThread {
     }
 
     public boolean runner(String pack) throws Exception {
-        figlet(prop.getProperty("RUNNER"));
-        List<String> test = new ArrayList<>();
-        return triggerTest(pack, test);
+        return runner(pack, new ArrayList<String>());
     }
 
     public boolean triggerTest(String pack, List<String> tests) throws Exception {

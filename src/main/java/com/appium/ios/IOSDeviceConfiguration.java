@@ -143,6 +143,12 @@ public class IOSDeviceConfiguration {
         return deviceName;
     }
 
+    public String getIOSDeviceProductVersion(String udid) throws InterruptedException, IOException {
+        return commandPrompt
+                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid 
+                + " | grep ProductVersion");
+    }
+    
     public boolean checkiOSDevice(String UDID) throws Exception {
         try {
             String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
