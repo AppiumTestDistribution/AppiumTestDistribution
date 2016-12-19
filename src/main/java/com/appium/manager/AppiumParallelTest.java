@@ -158,31 +158,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return Toolkit.getDefaultToolkit().getImage(url);
     }
 
-    public static boolean buildStatus() {
-        BufferedReader br = null;
-        try {
-            String sCurrentLine;
-            br = new BufferedReader(
-                new FileReader(System.getProperty("user.dir") + "/target/failed.txt"));
-            while ((sCurrentLine = br.readLine()) != null) {
-                if (sCurrentLine.contains("TestFailed")) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (br != null) {
-                    br.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return false;
-    }
-
     public synchronized AppiumServiceBuilder startAppiumServer(
         String device, String methodName) throws Exception {
         if (prop.containsKey("CI_BASE_URI")) {
@@ -237,6 +212,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (device.isEmpty()) {
             device_udid = getNextAvailableDeviceId();
         } else {
+            getNextAvailableDeviceId();
             device_udid = device;
         }
 
