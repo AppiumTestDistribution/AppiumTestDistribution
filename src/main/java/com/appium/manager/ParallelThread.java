@@ -74,7 +74,8 @@ public class ParallelThread {
             }
         }
 
-        if (configurationManager.getProperty("ANDROID_APP_PATH") != null && deviceConf.getDevices() != null) {
+        if (configurationManager.getProperty("ANDROID_APP_PATH") != null
+                && deviceConf.getDevices() != null) {
             devices = deviceConf.getDevices();
             deviceCount = devices.size() / 4;
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
