@@ -39,11 +39,9 @@ import org.testng.annotations.Parameters;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -156,7 +154,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized AppiumServiceBuilder startAppiumServer(
-            String device, String methodName) throws Exception {
+            String device, String methodName,String tag) throws Exception {
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
@@ -180,13 +178,19 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else {
             category = androidDevice.getDeviceModel(device_udid);
         }
-        createParentNodeExtent(methodName, "", category
-                + device_udid.replaceAll("\\W", "_"));
+        System.out.println("******" + tag.isEmpty() + "::::" + tag);
+        ExtentTest extentTest = tag.isEmpty()
+                ? createParentNodeExtent(methodName, "", category
+                + device_udid.replaceAll("\\W", "_")) :
+
+                createParentNodeExtent(methodName, "", category
+                        + device_udid.replaceAll("\\W", "_")).assignCategory(tag);
 
         AppiumServiceBuilder appiumServiceBuilder = checkOSAndStartServer(methodName);
         if (appiumServiceBuilder != null) {
             return appiumServiceBuilder;
         }
+
         return null;
     }
 
@@ -263,7 +267,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
-    public void createParentNodeExtent(String methodName, String testDescription, String deviceId) {
+    public ExtentTest createParentNodeExtent(String methodName, String testDescription,
+                                             String deviceId) {
         parent = ExtentTestManager.createTest(methodName, testDescription,
                 deviceId);
         parentTest.set(parent);
@@ -271,6 +276,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 "<a target=\"_parent\" href=" + "appiumlogs/"
                         + device_udid.replaceAll("\\W", "_") + "__" + methodName
                         + ".txt" + ">AppiumServerLogs</a>");
+        return parent;
     }
 
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(
@@ -279,6 +285,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             setAuthorName(methodName);
         } else {
+            System.out.println(category);
+            System.out.println(device_udid);
             child = parentTest.get().createNode(methodName, category
                     + device_udid.replaceAll("\\W", "_"));
             test.set(child);

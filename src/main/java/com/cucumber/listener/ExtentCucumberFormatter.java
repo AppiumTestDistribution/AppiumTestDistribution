@@ -21,6 +21,7 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -164,21 +165,57 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             System.out.println(deviceThreadNumber);
             System.out.println(Integer.parseInt(deviceThreadNumber[1])
                     + prop.getProperty("RUNNER"));
-            try {
-                appiumParallelTest.startAppiumServer(
-                        xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
-                        feature.getName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                appiumParallelTest.startAppiumServer("", feature.getName());
-            } catch (Exception e) {
-                e.printStackTrace();
+            System.out.println("Feature Tag Name::" + feature.getTags());
+            if (!feature.getTags().isEmpty()) {
+                for (Tag tag : feature.getTags()) {
+                    System.out.println("TagName::" + getTagName(tag));
+                    try {
+                        appiumParallelTest.startAppiumServer(
+                                xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
+                                feature.getName(), getTagName(tag));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                try {
+                    appiumParallelTest.startAppiumServer(
+                            xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
+                            feature.getName(), "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
+        } else {
+            if (!feature.getTags().isEmpty()) {
+                for (Tag tag : feature.getTags()) {
+                    try {
+                        appiumParallelTest.startAppiumServer("", feature.getName(),
+                                getTagName(tag));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                try {
+                    appiumParallelTest.startAppiumServer("", feature.getName(),
+                            "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
+    }
+
+    public String getTagName(Tag tag) {
+        String tagName;
+        if (tag.getName().isEmpty()) {
+            tagName = "";
+        } else {
+            tagName = tag.getName();
+        }
+        return tagName;
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
