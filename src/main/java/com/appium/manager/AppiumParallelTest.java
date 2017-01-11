@@ -284,12 +284,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             DesiredCapabilities androidCaps) throws Exception {
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             setAuthorName(methodName);
-        } else {
-            System.out.println(category);
-            System.out.println(device_udid);
-            child = parentTest.get().createNode(methodName, category
-                    + device_udid.replaceAll("\\W", "_"));
-            test.set(child);
         }
         Thread.sleep(3000);
         startingServerInstance(iosCaps, androidCaps);
@@ -304,6 +298,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(
             String methodName, DesiredCapabilities caps) throws Exception {
         return startAppiumServerInParallel(methodName, caps, caps);
+    }
+
+    public AppiumParallelTest createChildNodeWithCategory(String methodName,
+                                                          String tag) {
+        child = tag.isEmpty() ? parentTest.get().createNode(methodName, category
+                + device_udid.replaceAll("\\W", "_")) :
+                parentTest.get().createNode(methodName, category
+                        + device_udid.replaceAll("\\W", "_")).assignCategory(tag);
+        test.set(child);
+        return this;
     }
 
     public void setAuthorName(String methodName) throws NoSuchMethodException {
