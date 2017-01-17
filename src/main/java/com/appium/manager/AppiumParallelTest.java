@@ -614,7 +614,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         System.out.println("Setting Android Desired Capabilities:");
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
-        androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
+        androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
+            androidDevice.deviceVersion(device_udid));
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,
                 prop.getProperty("APP_ACTIVITY"));
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
@@ -630,7 +631,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public synchronized DesiredCapabilities androidWeb() {
         DesiredCapabilities androidWebCapabilities = new DesiredCapabilities();
         androidWebCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
-        androidWebCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.0.X");
+        androidWebCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
+            androidDevice.deviceVersion(device_udid));
         // If you want the tests on real device, make sure chrome browser is
         // installed
         androidWebCapabilities

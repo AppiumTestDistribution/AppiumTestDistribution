@@ -153,6 +153,23 @@ public class AndroidDeviceConfiguration {
 
     }
 
+    /*
+ * This method gets the device OS version
+ */
+    public String deviceVersion(String deviceID) {
+        String deviceOSVersion = null;
+        try {
+            deviceOSVersion =
+                    cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release")
+                            .replaceAll("\\W", "");
+        } catch (InterruptedException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return deviceOSVersion;
+
+    }
+
     /**
      * This method will close the running app
      *
