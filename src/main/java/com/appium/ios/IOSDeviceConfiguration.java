@@ -3,6 +3,7 @@ package com.appium.ios;
 import com.appium.manager.AvailablePorts;
 import com.appium.manager.ConfigurationManager;
 import com.appium.utils.CommandPrompt;
+import org.testng.annotations.Test;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -4,6 +4,7 @@ import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AndroidDeviceConfiguration;
 import com.appium.manager.AppiumParallelTest;
 import com.appium.manager.ConfigurationManager;
+import com.appium.manager.DeviceManager;
 import com.appium.utils.ImageUtils;
 
 import com.aventstack.extentreports.Status;
@@ -46,6 +47,7 @@ import java.util.Map;
  */
 public class ExtentCucumberFormatter implements Reporter, Formatter {
 
+    private final DeviceManager deviceManager;
     public LinkedList<Step> testSteps;
     public AppiumDriver<MobileElement> appium_driver;
     public AppiumParallelTest appiumParallelTest;
@@ -80,6 +82,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public ExtentCucumberFormatter()  {
         appiumParallelTest = new AppiumParallelTest();
+        deviceManager = DeviceManager.getInstance();
         try {
             iosDevice = new IOSDeviceConfiguration();
             androidDevice = new AndroidDeviceConfiguration();
@@ -163,7 +166,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     
     public void feature(Feature feature) {
         if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-            AppiumParallelTest.getNextAvailableDeviceId();
+            deviceManager.getNextAvailableDeviceId();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
             String[] tagsArray = getTagArray(feature.getTags());
             System.out.println(deviceThreadNumber);

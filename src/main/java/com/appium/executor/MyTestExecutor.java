@@ -3,10 +3,7 @@ package com.appium.executor;
 import static java.util.Arrays.asList;
 
 import com.appium.cucumber.report.HtmlReporter;
-import com.appium.manager.AppiumParallelTest;
-import com.appium.manager.ConfigurationManager;
-import com.appium.manager.PackageUtil;
-import com.appium.manager.ParallelThread;
+import com.appium.manager.*;
 import com.appium.utils.ImageUtils;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -48,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MyTestExecutor {
     private final ConfigurationManager prop;
+    private final DeviceManager deviceManager;
     List<Thread> threads = new ArrayList<Thread>();
     public List<Class> testcases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
@@ -57,6 +55,7 @@ public class MyTestExecutor {
     private ArrayList<String> groupsExclude = new ArrayList<>();
 
     public MyTestExecutor() throws IOException {
+        deviceManager = DeviceManager.getInstance();
         prop = ConfigurationManager.getInstance();
     }
 
@@ -126,7 +125,7 @@ public class MyTestExecutor {
         } else {
             hasFailure = runMethodParallel(
                 constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
-                    AppiumParallelTest.devices));
+                    deviceManager.getDevices()));
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
