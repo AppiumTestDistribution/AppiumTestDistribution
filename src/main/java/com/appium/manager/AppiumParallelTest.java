@@ -330,9 +330,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void endLogTestResults(ITestResult result) throws IOException, InterruptedException {
-        if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
+        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
             deviceModel = androidDevice.getDeviceModel(device_udid);
-        }else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+        }else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
             deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
         }
 
@@ -349,7 +349,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             ExtentManager.getExtent().flush();
         }
         appiumMan.destroyAppiumNode();
-        if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+        if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
             iosDevice.destroyIOSWebKitProxy();
         }
         deviceManager.freeDevice(device_udid);
@@ -413,7 +413,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
+        if (getDriver().getSessionDetails().get("platformName").toString().equals("Android") && !context
                 .equals("NATIVE_APP")) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;

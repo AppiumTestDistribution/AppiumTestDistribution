@@ -46,7 +46,7 @@ class TestLogger {
     void startLogging(String methodName, AppiumDriver<MobileElement> driver,
                       String device_udid) throws FileNotFoundException {
         startVideoRecording(methodName, device_udid);
-        if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + device_udid
@@ -105,7 +105,7 @@ class TestLogger {
         }
 
         if (System.getenv("VIDEO_LOGS") != null) {
-            if (appiumParallelTest.driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+            if (appiumParallelTest.driver.getSessionDetails().get("platformName").toString().equals("Android")) {
                 if (new File(System.getProperty("user.dir")
                         + "/target/screenshot/android/" + appiumParallelTest.device_udid
                         .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
@@ -118,7 +118,7 @@ class TestLogger {
                             + "/" + result.getMethod()
                             .getMethodName() + ".mp4" + ">Videologs</a>");
                 }
-            } else if (appiumParallelTest.driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+            } else if (appiumParallelTest.driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
                 if (new File(System.getProperty("user.dir")
                         + "/target/screenshot/iOS/" + appiumParallelTest.device_udid
                         .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
@@ -166,7 +166,7 @@ class TestLogger {
 
     public void getAdbLogs(ITestResult result, AppiumDriver<MobileElement> driver,
                            ThreadLocal<ExtentTest> test, String device_udid) {
-        if (driver.toString().split("\\(")[0].trim().equals("AndroidDriver:  on LINUX")) {
+        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
             log_file_writer.println(logEntries);
             log_file_writer.flush();
             test.get().log(Status.INFO,
@@ -209,7 +209,7 @@ class TestLogger {
 
 
             }
-            if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+            if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
                 File framedImageIOS = new File(
                         System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
                                 .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
@@ -254,7 +254,7 @@ class TestLogger {
                                   String device_udid) throws IOException, InterruptedException {
         String context = driver.getContext();
         boolean contextChanged = false;
-        if (driver.toString().split(":")[0].trim().equals("AndroidDriver") && !context
+        if (driver.getSessionDetails().get("platformName").toString().equals("Android") && !context
                 .equals("NATIVE_APP")) {
             driver.context("NATIVE_APP");
             contextChanged = true;
@@ -265,11 +265,11 @@ class TestLogger {
         }
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         screenShotNameWithTimeStamp = currentDateAndTime();
-        if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
+        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
             String androidModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(screenShotName, status, scrFile, methodName, className, androidModel,
                     "android", device_udid, deviceModel);
-        } else if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+        } else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
             String iosModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(screenShotName, status, scrFile, methodName, className, iosModel,
                     "iOS", device_udid, deviceModel);

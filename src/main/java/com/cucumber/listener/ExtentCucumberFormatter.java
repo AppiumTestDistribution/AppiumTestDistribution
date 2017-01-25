@@ -103,7 +103,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             appiumParallelTest.test.get().log(Status.FAIL, result.getErrorMessage());
             String context = getDriver().getContext();
             boolean contextChanged = false;
-            if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
+            if (getDriver().getSessionDetails().get("platformName").toString().equals("Android") && !context
                     .equals("NATIVE_APP")) {
                 getDriver().context("NATIVE_APP");
                 contextChanged = true;
@@ -112,10 +112,10 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             if (contextChanged) {
                 getDriver().context(context);
             }
-            if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
+            if (getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
                 deviceModel = androidDevice.getDeviceModel(appiumParallelTest.device_udid);
                 screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (getDriver().toString().split(":")[0].trim().equals("IOSDriver")) {
+            } else if (getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
                 try {
                     deviceModel =
                             iosDevice.getIOSDeviceProductTypeAndVersion(
@@ -318,9 +318,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void attachScreenShotToReport(String stepName) throws IOException {
         String platform = null;
-        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
+        if (getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
             platform = "android";
-        } else if (getDriver().toString().split(":")[0].trim().equals("IOSDriver")) {
+        } else if (getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
             platform = "iPhone";
         } else {
             platform = "android";
