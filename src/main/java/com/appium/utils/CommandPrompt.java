@@ -13,9 +13,8 @@ import java.util.Map;
 
 public class CommandPrompt {
 
-    static Process p;
+    Process p;
     ProcessBuilder builder;
-
 
     public String runCommand(String command) throws InterruptedException, IOException {
         p = Runtime.getRuntime().exec(command);

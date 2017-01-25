@@ -64,7 +64,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public static ArrayList<String> devices = new ArrayList<String>();
     public ConfigurationManager prop;
     public IOSDeviceConfiguration iosDevice;
-    public static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+    public AndroidDeviceConfiguration androidDevice;
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
             new ConcurrentHashMap<String, Boolean>();
     public AppiumDriver<MobileElement> driver = null;
@@ -93,23 +93,20 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     System.out.println("Adding iOS devices");
                     devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
                 }
-                if (androidDevice.getDeviceSerial() != null) {
+                if (AndroidDeviceConfiguration.deviceSerial != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(AndroidDeviceConfiguration.deviceSerail);
+                    devices.addAll(AndroidDeviceConfiguration.deviceSerial);
                 }
             } else {
-                if (androidDevice.getDeviceSerial() != null) {
+                if (AndroidDeviceConfiguration.deviceSerial != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(AndroidDeviceConfiguration.deviceSerail);
+                    devices.addAll(AndroidDeviceConfiguration.deviceSerial);
                 }
             }
             for (String device : devices) {
                 deviceMapping.put(device, true);
             }
             System.out.println(deviceMapping);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Failed to initialize framework");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to initialize framework");
@@ -119,6 +116,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public AppiumParallelTest() {
         try {
             iosDevice = new IOSDeviceConfiguration();
+            androidDevice = new AndroidDeviceConfiguration();
             appiumMan = new AppiumManager();
             prop = ConfigurationManager.getInstance();
         } catch (IOException e) {
@@ -620,7 +618,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
                 prop.getProperty("APP_PACKAGE"));
         androidCapabilities.setCapability("browserName", "");
-        checkSelendroid(androidCapabilities);
         androidCapabilities
                 .setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
         androidCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);

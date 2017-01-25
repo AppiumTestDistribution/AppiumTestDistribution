@@ -18,8 +18,6 @@ import java.io.IOException;
 public class Hooks extends ExtentCucumberFormatter {
     @Before public void beforeClass(Scenario scenario) throws Exception {
         System.out.println("Inside Before" + Thread.currentThread().getId());
-        iosCapabilities = appiumParallelTest.iosNative();
-        androidCapabilities = appiumParallelTest.androidNative();
     }
 
     @After public void afterClass(Scenario scenario) throws InterruptedException, IOException {

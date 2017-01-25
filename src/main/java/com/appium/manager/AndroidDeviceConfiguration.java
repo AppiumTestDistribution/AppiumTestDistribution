@@ -5,15 +5,17 @@ import com.appium.utils.CommandPrompt;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AndroidDeviceConfiguration {
 
     private CommandPrompt cmd = new CommandPrompt();
     private Map<String, String> devices = new HashMap<String, String>();
-    public static ArrayList<String> deviceSerail = new ArrayList<String>();
+    public static ArrayList<String> deviceSerial = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
-
+    private List<String> validDeviceIds;
+    
     /**
      * This method start adb server
      */
@@ -44,7 +46,7 @@ public class AndroidDeviceConfiguration {
         String[] lines = output.split("\n");
 
         if (lines.length <= 1) {
-            System.out.println("No Device Connected");
+            System.out.println("No Android Device Connected");
             stopADB();
             return null;
         } else {
@@ -54,24 +56,32 @@ public class AndroidDeviceConfiguration {
                 if (lines[i].contains("device")) {
                     lines[i] = lines[i].replaceAll("device", "");
                     String deviceID = lines[i];
-                    String model =
-                        cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
-                            .replaceAll("\\s+", "");
-                    String brand =
-                        cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand")
-                            .replaceAll("\\s+", "");
-                    String osVersion = cmd.runCommand(
-                        "adb -s " + deviceID + " shell getprop ro.build.version.release")
-                        .replaceAll("\\s+", "");
-                    String deviceName = brand + " " + model;
-                    String apiLevel =
-                        cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.sdk")
-                            .replaceAll("\n", "");
+                    
+                    if (validDeviceIds == null 
+                            || (validDeviceIds != null && validDeviceIds.contains(deviceID))) {
+                        String model =
+                                cmd.runCommand("adb -s " + deviceID 
+                                        + " shell getprop ro.product.model")
+                                .replaceAll("\\s+", "");
+                        String brand =
+                                cmd.runCommand("adb -s " + deviceID 
+                                        + " shell getprop ro.product.brand")
+                                .replaceAll("\\s+", "");
+                        String osVersion = cmd.runCommand(
+                                "adb -s " + deviceID + " shell getprop ro.build.version.release")
+                                .replaceAll("\\s+", "");
+                        String deviceName = brand + " " + model;
+                        String apiLevel =
+                                cmd.runCommand("adb -s " + deviceID 
+                                        + " shell getprop ro.build.version.sdk")
+                                .replaceAll("\n", "");
 
-                    devices.put("deviceID" + i, deviceID);
-                    devices.put("deviceName" + i, deviceName);
-                    devices.put("osVersion" + i, osVersion);
-                    devices.put(deviceID, apiLevel);
+                        devices.put("deviceID" + i, deviceID);
+                        devices.put("deviceName" + i, deviceName);
+                        devices.put("osVersion" + i, osVersion);
+                        devices.put(deviceID, apiLevel);        
+                        deviceSerial.add(deviceID);
+                    }
                 } else if (lines[i].contains("unauthorized")) {
                     lines[i] = lines[i].replaceAll("unauthorized", "");
                     String deviceID = lines[i];
@@ -91,7 +101,7 @@ public class AndroidDeviceConfiguration {
         String[] lines = output.split("\n");
 
         if (lines.length <= 1) {
-            System.out.println("No Device Connected");
+            System.out.println("No Android Device Connected");
             return null;
         } else {
             for (int i = 1; i < lines.length; i++) {
@@ -100,7 +110,14 @@ public class AndroidDeviceConfiguration {
                 if (lines[i].contains("device")) {
                     lines[i] = lines[i].replaceAll("device", "");
                     String deviceID = lines[i];
-                    deviceSerail.add(deviceID);
+                    if (validDeviceIds == null 
+                            || (validDeviceIds != null && validDeviceIds.contains(deviceID))) {
+                        if (validDeviceIds == null) {
+                            System.out.println("validDeviceIds is null!!!");
+                        }
+                        System.out.println("Adding device: " + deviceID);
+                        deviceSerial.add(deviceID);
+                    }
                 } else if (lines[i].contains("unauthorized")) {
                     lines[i] = lines[i].replaceAll("unauthorized", "");
                     String deviceID = lines[i];
@@ -109,7 +126,7 @@ public class AndroidDeviceConfiguration {
                     String deviceID = lines[i];
                 }
             }
-            return deviceSerail;
+            return deviceSerial;
         }
     }
 
@@ -225,5 +242,9 @@ public class AndroidDeviceConfiguration {
     public void removeVideoFileFromDevice(String deviceID, String fileName)
         throws IOException, InterruptedException {
         cmd.runCommand("adb -s " + deviceID + " shell rm -f /sdcard/" + fileName + ".mp4");
+    }
+
+    public void setValidDevices(List<String> validDeviceIds) {
+        this.validDeviceIds = validDeviceIds;
     }
 }

@@ -49,7 +49,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public LinkedList<Step> testSteps;
     public AppiumDriver<MobileElement> appium_driver;
     public AppiumParallelTest appiumParallelTest;
-    private AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+    private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
     public String deviceModel;
     public ImageUtils imageUtils = new ImageUtils();
@@ -82,6 +82,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         appiumParallelTest = new AppiumParallelTest();
         try {
             iosDevice = new IOSDeviceConfiguration();
+            androidDevice = new AndroidDeviceConfiguration();
             prop = ConfigurationManager.getInstance();
         } catch (IOException e) {
             e.printStackTrace();
