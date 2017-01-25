@@ -21,7 +21,7 @@ public class UserBaseTest extends AppiumParallelTest {
     JSonParser jSonParser = new JSonParser();
 
     @BeforeMethod(alwaysRun = true) public void startApp(Method name) throws Exception {
-        driver = startAppiumServerInParallel(name.getName(),iosNative(), androidNative());
+        driver = startAppiumServerInParallel(name.getName());
         startLogResults(name.getName());
     }
 
@@ -57,7 +57,7 @@ public class UserBaseTest extends AppiumParallelTest {
         System.out.println(user.get("userName"));
     }
 
-    public DesiredCapabilities iosNative() {
+    public DesiredCapabilities iosNative1() {
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
@@ -70,7 +70,7 @@ public class UserBaseTest extends AppiumParallelTest {
         return iOSCapabilities;
     }
 
-    public synchronized DesiredCapabilities androidNative() {
+    public synchronized DesiredCapabilities androidNative1() {
         System.out.println("Setting Android Desired Capabilities:");
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
