@@ -22,11 +22,13 @@ public class UserBaseTest extends AppiumParallelTest {
 
     @BeforeMethod(alwaysRun = true) public void startApp(Method name) throws Exception {
         driver = startAppiumServerInParallel(name.getName());
+        //Moving the method inside the dependency in the next release
         startLogResults(name.getName());
     }
 
     @AfterMethod(alwaysRun = true) public void killServer(ITestResult result)
         throws InterruptedException, IOException {
+        //Moving the method inside the dependency in the next release
         endLogTestResults(result);
         getDriver().quit();
         //deleteAppIOS("com.tesco.sample");

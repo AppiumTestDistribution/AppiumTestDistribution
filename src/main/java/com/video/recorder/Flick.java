@@ -51,7 +51,7 @@ public class Flick extends CommandPrompt {
     public void flickRecordingCommand(String command, String device_udid, String className,
         String methodName, String videoFileName) throws IOException, InterruptedException {
         String videoPath = System.getProperty("user.dir");
-        String android = null;
+        String android;
         String ios;
         if (device_udid.length() != 40) {
             String videoLocationAndroid =
@@ -60,9 +60,9 @@ public class Flick extends CommandPrompt {
             fileDirectoryCheck(videoLocationAndroid);
             if (command.equals("start")) {
                 try {
-                    if (androidDeviceConfiguration.checkIfRecordable(device_udid)
-                        && !androidDeviceConfiguration.getDeviceManufacturer(device_udid)
-                        .equals("Genymotion")) {
+                    if (!androidDeviceConfiguration.getDeviceManufacturer(device_udid)
+                            .equals("unknown") && androidDeviceConfiguration
+                            .checkIfRecordable(device_udid)) {
                         screenRecord = Runtime.getRuntime()
                             .exec(androidDeviceConfiguration.screenRecord(device_udid, methodName));
                         System.out.println(
@@ -81,9 +81,9 @@ public class Flick extends CommandPrompt {
                     e.printStackTrace();
                 }
             } else {
-                if (androidDeviceConfiguration.checkIfRecordable(device_udid)
-                    && !androidDeviceConfiguration.getDeviceManufacturer(device_udid)
-                    .equals("Genymotion")) {
+                if (!androidDeviceConfiguration.getDeviceManufacturer(device_udid)
+                        .equals("unknown")
+                    && androidDeviceConfiguration.checkIfRecordable(device_udid)) {
                     stopRecording();
                     androidDeviceConfiguration
                         .pullVideoFromDevice(device_udid, methodName, videoLocationAndroid)
@@ -92,6 +92,8 @@ public class Flick extends CommandPrompt {
                     android = "flick video -a " + command + " -p android -o " + videoLocationAndroid
                         + " -n " + videoFileName + " -u " + device_udid + " --trace";
                     runCommandThruProcess(android);
+                    System.out.println("Stopping Video recording on Emulator");
+                    Thread.sleep(10000);
                 }
             }
         } else {

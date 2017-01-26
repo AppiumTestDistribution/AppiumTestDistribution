@@ -3,7 +3,10 @@ package com.appium.executor;
 import static java.util.Arrays.asList;
 
 import com.appium.cucumber.report.HtmlReporter;
-import com.appium.manager.*;
+import com.appium.manager.ConfigurationManager;
+import com.appium.manager.DeviceManager;
+import com.appium.manager.PackageUtil;
+import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -22,7 +25,6 @@ import org.testng.xml.XmlTest;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -35,7 +37,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import java.util.concurrent.ExecutorService;

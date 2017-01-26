@@ -31,7 +31,8 @@ public class DeviceCapabilityManager {
         androidCapabilities.setCapability("browserName", "");
         //checkSelendroid(androidCapabilities);
         androidCapabilities
-                .setCapability(MobileCapabilityType.APP, configurationManager.getProperty("ANDROID_APP_PATH"));
+                .setCapability(MobileCapabilityType.APP,
+                        configurationManager.getProperty("ANDROID_APP_PATH"));
         androidCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
         return androidCapabilities;
     }
@@ -44,21 +45,25 @@ public class DeviceCapabilityManager {
         // If you want the tests on real device, make sure chrome browser is
         // installed
         androidWebCapabilities
-                .setCapability(MobileCapabilityType.BROWSER_NAME, configurationManager.getProperty("BROWSER_TYPE"));
+                .setCapability(MobileCapabilityType.BROWSER_NAME,
+                        configurationManager.getProperty("BROWSER_TYPE"));
         androidWebCapabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
         return androidWebCapabilities;
     }
 
-    public synchronized DesiredCapabilities iosNative(String device_udid) throws InterruptedException, IOException {
+    public synchronized DesiredCapabilities iosNative(String device_udid)
+            throws InterruptedException,IOException {
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME,
             "iOS");
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                  "6.0");
-        iOSCapabilities.setCapability(MobileCapabilityType.APP, configurationManager.getProperty("IOS_APP_PATH"));
+        iOSCapabilities.setCapability(MobileCapabilityType.APP,
+                configurationManager.getProperty("IOS_APP_PATH"));
         iOSCapabilities
-                .setCapability(IOSMobileCapabilityType.BUNDLE_ID, configurationManager.getProperty("BUNDLE_ID"));
+                .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
+                        configurationManager.getProperty("BUNDLE_ID"));
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities
                 .setCapability(MobileCapabilityType.DEVICE_NAME,"iPhone");
