@@ -3,13 +3,10 @@ package com.appium.ios;
 import com.appium.manager.AvailablePorts;
 import com.appium.manager.ConfigurationManager;
 import com.appium.utils.CommandPrompt;
-import org.testng.annotations.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.lang.reflect.Field;
@@ -17,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {

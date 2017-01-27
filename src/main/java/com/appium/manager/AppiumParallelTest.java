@@ -72,7 +72,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public ExtentTest parent;
     public ExtentTest child;
     private AndroidDeviceConfiguration androidDevice;
-    private String className;
 
     public AppiumParallelTest() {
         try {
@@ -327,12 +326,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void endLogTestResults(ITestResult result) throws IOException, InterruptedException {
+        testLogger.endLog(result, device_udid, getDeviceModel(), test, driver);
+    }
+
+    private String getDeviceModel() throws InterruptedException, IOException {
         if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
             deviceModel = androidDevice.getDeviceModel(device_udid);
         }else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
             deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
         }
-        testLogger.endLog(result, device_udid, deviceModel, test, driver);
+        return deviceModel;
     }
 
     @AfterClass(alwaysRun = true)
@@ -393,8 +396,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
     public void onTestStart(ITestResult result) {
         Object currentClass = result.getInstance();
-        className = result.getTestClass().getRealClass().getSimpleName();
-        System.out.println("on test start:::" + className);
         AppiumDriver<MobileElement> driver = ((AppiumParallelTest) currentClass).getDriver();
         SkipIf skip =
                 result.getMethod().getConstructorOrMethod().getMethod().getAnnotation(SkipIf.class);
@@ -411,8 +412,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             throws IOException, InterruptedException {
         String context = getDriver().getContext();
         boolean contextChanged = false;
-        if (getDriver().getSessionDetails().get("platformName").toString().equals("Android") && !context
-                .equals("NATIVE_APP")) {
+        if ("Android".equals(getDriver().getSessionDetails().get("platformName").toString())
+                && !"NATIVE_APP".equals(context)) {
             getDriver().context("NATIVE_APP");
             contextChanged = true;
         }
@@ -436,7 +437,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public void captureScreenShot(String screenShotName) throws InterruptedException, IOException {
         String methodName = new Exception().getStackTrace()[1].getMethodName();
         String className = new Exception().getStackTrace()[1].getClassName();
-        //testLogger.captureScreenShot(screenShotName, 1, className, methodName, this);
+        testLogger.captureScreenShot(screenShotName, 1, className,
+                driver , getDeviceModel(), device_udid);
     }
 
     public MobilePlatform getMobilePlatform(String device_udid) {

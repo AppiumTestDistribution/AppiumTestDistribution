@@ -103,8 +103,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             appiumParallelTest.test.get().log(Status.FAIL, result.getErrorMessage());
             String context = getDriver().getContext();
             boolean contextChanged = false;
-            if (getDriver().getSessionDetails().get("platformName").toString().equals("Android") && !context
-                    .equals("NATIVE_APP")) {
+            if ("Android".equals(getDriver().getSessionDetails().get("platformName")
+                    .toString())
+                    && !"NATIVE_APP".equals(context)) {
                 getDriver().context("NATIVE_APP");
                 contextChanged = true;
             }
@@ -115,7 +116,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             if (getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
                 deviceModel = androidDevice.getDeviceModel(appiumParallelTest.device_udid);
                 screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
+            } else if (getDriver().getSessionDetails().get("platformName")
+                    .toString().equals("iOS")) {
                 try {
                     deviceModel =
                             iosDevice.getIOSDeviceProductTypeAndVersion(
