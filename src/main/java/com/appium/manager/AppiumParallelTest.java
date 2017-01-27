@@ -35,16 +35,14 @@ import org.testng.annotations.Parameters;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -347,7 +345,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             ExtentManager.getExtent().flush();
         }
         appiumMan.destroyAppiumNode();
-        if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
+        if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
             iosDevice.destroyIOSWebKitProxy();
         }
         deviceManager.freeDevice(device_udid);
