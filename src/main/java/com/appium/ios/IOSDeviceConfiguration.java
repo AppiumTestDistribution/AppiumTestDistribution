@@ -28,6 +28,8 @@ public class IOSDeviceConfiguration {
     private List<String> validDeviceIds;
     
     public final static int IOS_UDID_LENGTH = 40;
+    String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/,"
+            + "/Serial/s/ Serial Number: (.+)/\\1/p'";
 
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
 
@@ -53,8 +55,6 @@ public class IOSDeviceConfiguration {
         try {
             int startPos = 0;
             int endPos = IOS_UDID_LENGTH - 1;
-            String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/,"
-                    + "/Serial/s/ Serial Number: (.+)/\\1/p'";
             String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
@@ -80,7 +80,7 @@ public class IOSDeviceConfiguration {
 
     public Map<String, String> getIOSUDIDHash() {
         try {
-            String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
+            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
                 return null;
@@ -179,9 +179,9 @@ public class IOSDeviceConfiguration {
     public String startIOSWebKit(String udid) throws IOException, InterruptedException {
         String serverPath = prop.getProperty("APPIUM_JS_PATH");
         File file = new File(serverPath);
-        File curentPath = new File(file.getParent());
-        System.out.println(curentPath);
-        file = new File(curentPath + "/.." + "/..");
+        File currentPath = new File(file.getParent());
+        System.out.println(currentPath);
+        file = new File(currentPath + "/.." + "/..");
         String ios_web_lit_proxy_runner =
                 file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
         String webkitRunner =
@@ -244,9 +244,9 @@ public class IOSDeviceConfiguration {
     public void checkExecutePermissionForIOSDebugProxyLauncher() throws IOException {
         String serverPath = prop.getProperty("APPIUM_JS_PATH");
         File file = new File(serverPath);
-        File curentPath = new File(file.getParent());
-        System.out.println(curentPath);
-        file = new File(curentPath + "/.." + "/..");
+        File currentPath = new File(file.getParent());
+        System.out.println(currentPath);
+        file = new File(currentPath + "/.." + "/..");
         File executePermission =
                 new File(file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js");
         if (executePermission.exists()) {

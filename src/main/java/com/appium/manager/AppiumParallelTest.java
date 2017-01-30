@@ -14,7 +14,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -39,9 +38,6 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -172,7 +168,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return null;
     }
 
-    public AppiumServiceBuilder checkOSAndStartServer(String methodName) throws Exception {
+    private AppiumServiceBuilder checkOSAndStartServer(String methodName) throws Exception {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             if (getMobilePlatform(device_udid).equals(MobilePlatform.IOS)) {
                 AppiumServiceBuilder webKitPort = getAppiumServiceBuilder(methodName);
@@ -188,7 +184,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return null;
     }
 
-    public AppiumServiceBuilder getAppiumServiceBuilder(String methodName) throws Exception {
+    private AppiumServiceBuilder getAppiumServiceBuilder(String methodName) throws Exception {
         String webKitPort = iosDevice.startIOSWebKit(device_udid);
         return appiumMan.appiumServerForIOS(device_udid, methodName, webKitPort);
     }
@@ -279,14 +275,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     if (androidCaps == null) {
                         androidCaps = deviceCapabilityManager.androidNative(device_udid);
                     }
-                    //checkSelendroid(androidCaps);
                     driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
                 }
             } else {
                 if (androidCaps == null) {
                     androidCaps = deviceCapabilityManager.androidNative(device_udid);
                 }
-                //checkSelendroid(androidCaps);
                 driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
             }
         }
@@ -298,27 +292,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
     public void startingServerInstance(DesiredCapabilities caps) throws Exception {
         startingServerInstance(caps, caps);
-    }
-
-    public DesiredCapabilities checkSelendroid(DesiredCapabilities androidCaps) {
-        int android_api = 0;
-        try {
-            System.out.println("System API Level" + androidDevice.getDevices().get(device_udid));
-            String deviceAPI = androidDevice.getDevices().get(device_udid);
-            android_api = Integer.parseInt(deviceAPI);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Android API Level::" + android_api);
-        if (android_api <= 16) {
-            androidCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
-        }
-        return androidCaps;
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
@@ -354,40 +327,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         deviceManager.freeDevice(device_udid);
     }
 
-    protected String getStackTrace(Throwable t) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        t.printStackTrace(pw);
-        return sw.toString();
-    }
-
     public void waitForElement(By id, int time) {
         WebDriverWait wait = new WebDriverWait(driver, 20);
         wait.until(ExpectedConditions.elementToBeClickable((id)));
-    }
-
-    public void resetAppData() throws InterruptedException, IOException {
-        androidDevice.clearAppData(device_udid, prop.getProperty("APP_PACKAGE"));
-    }
-
-    public void closeOpenApp() throws InterruptedException, IOException {
-        androidDevice.closeRunningApp(device_udid, prop.getProperty("APP_PACKAGE"));
-    }
-
-    public void removeApkFromDevice(String app_package) throws Exception {
-        androidDevice.removeApkFromDevices(device_udid, app_package);
-    }
-
-    public void deleteAppIOS(String bundleID) throws InterruptedException, IOException {
-        iosDevice.unInstallApp(device_udid, bundleID);
-    }
-
-    public void installAppIOS(String appPath) throws InterruptedException, IOException {
-        iosDevice.installApp(device_udid, appPath);
-    }
-
-    public Boolean checkAppIsInstalled(String bundleID) throws InterruptedException, IOException {
-        return iosDevice.checkIfAppIsInstalled(bundleID);
     }
 
     public AppiumDriver<MobileElement> getDriver() {
@@ -430,9 +372,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         Thread.sleep(3000);
     }
 
-    public void logger(String message) {
-        ExtentTestManager.logger(message);
-    }
 
     public void captureScreenShot(String screenShotName) throws InterruptedException, IOException {
         String methodName = new Exception().getStackTrace()[1].getMethodName();
