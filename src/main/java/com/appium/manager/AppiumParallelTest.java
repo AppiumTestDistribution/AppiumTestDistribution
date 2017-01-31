@@ -116,7 +116,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         System.out.println("******Tags::::" + Arrays.toString(tags));
         //System.out.println("******" + tag.isEmpty() + "::::" + tag);
         ExtentTest extentTest = createParentNodeExtent(methodName, "", category
-                        + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
+                        + device_udid.replaceAll("\\W", "_")).assignCategory("");
 
         AppiumServiceBuilder appiumServiceBuilder = checkOSAndStartServer(methodName);
         if (appiumServiceBuilder != null) {
@@ -235,7 +235,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public AppiumParallelTest createChildNodeWithCategory(String methodName,
                                                           String[] tags) {
         child = parentTest.get().createNode(methodName, category
-                        + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
+                        + device_udid.replaceAll("\\W", "_")).assignCategory("");
         test.set(child);
         return this;
     }
