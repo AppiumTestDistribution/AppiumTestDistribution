@@ -114,7 +114,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             category = androidDevice.getDeviceModel(device_udid);
         }
         System.out.println("******Tags::::" + Arrays.toString(tags));
-        //System.out.println("******" + tag.isEmpty() + "::::" + tag);
+        //Will fix the tag once extent-report issue
+        //https://github.com/anshooarora/extentreports-java/issues/757
         ExtentTest extentTest = createParentNodeExtent(methodName, "", category
                         + device_udid.replaceAll("\\W", "_")).assignCategory("");
 
@@ -305,7 +306,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     private String getDeviceModel() throws InterruptedException, IOException {
         if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
             deviceModel = androidDevice.getDeviceModel(device_udid);
-        }else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
+        } else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
             deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
         }
         return deviceModel;
