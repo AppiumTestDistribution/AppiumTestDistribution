@@ -55,6 +55,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,7 +65,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public static ArrayList<String> devices = new ArrayList<String>();
     public ConfigurationManager prop;
     public IOSDeviceConfiguration iosDevice;
-    public static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+    public AndroidDeviceConfiguration androidDevice;
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
             new ConcurrentHashMap<String, Boolean>();
     public AppiumDriver<MobileElement> driver = null;
@@ -93,23 +94,20 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                     System.out.println("Adding iOS devices");
                     devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
                 }
-                if (androidDevice.getDeviceSerial() != null) {
+                if (AndroidDeviceConfiguration.deviceSerial != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(AndroidDeviceConfiguration.deviceSerail);
+                    devices.addAll(AndroidDeviceConfiguration.deviceSerial);
                 }
             } else {
-                if (androidDevice.getDeviceSerial() != null) {
+                if (AndroidDeviceConfiguration.deviceSerial != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(AndroidDeviceConfiguration.deviceSerail);
+                    devices.addAll(AndroidDeviceConfiguration.deviceSerial);
                 }
             }
             for (String device : devices) {
                 deviceMapping.put(device, true);
             }
             System.out.println(deviceMapping);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Failed to initialize framework");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to initialize framework");
@@ -119,6 +117,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public AppiumParallelTest() {
         try {
             iosDevice = new IOSDeviceConfiguration();
+            androidDevice = new AndroidDeviceConfiguration();
             appiumMan = new AppiumManager();
             prop = ConfigurationManager.getInstance();
         } catch (IOException e) {
@@ -154,7 +153,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized AppiumServiceBuilder startAppiumServer(
-            String device, String methodName,String tag) throws Exception {
+            String device, String methodName,String[] tags) throws Exception {
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
@@ -178,13 +177,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else {
             category = androidDevice.getDeviceModel(device_udid);
         }
-        System.out.println("******" + tag.isEmpty() + "::::" + tag);
-        ExtentTest extentTest = tag.isEmpty()
-                ? createParentNodeExtent(methodName, "", category
-                + device_udid.replaceAll("\\W", "_")) :
-
-                createParentNodeExtent(methodName, "", category
-                        + device_udid.replaceAll("\\W", "_")).assignCategory(tag);
+        System.out.println("******Tags::::" + Arrays.toString(tags));
+        //System.out.println("******" + tag.isEmpty() + "::::" + tag);
+        ExtentTest extentTest = createParentNodeExtent(methodName, "", category
+                        + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
 
         AppiumServiceBuilder appiumServiceBuilder = checkOSAndStartServer(methodName);
         if (appiumServiceBuilder != null) {
@@ -301,11 +297,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public AppiumParallelTest createChildNodeWithCategory(String methodName,
-                                                          String tag) {
-        child = tag.isEmpty() ? parentTest.get().createNode(methodName, category
-                + device_udid.replaceAll("\\W", "_")) :
-                parentTest.get().createNode(methodName, category
-                        + device_udid.replaceAll("\\W", "_")).assignCategory(tag);
+                                                          String[] tags) {
+        child = parentTest.get().createNode(methodName, category
+                        + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
         test.set(child);
         return this;
     }
@@ -620,7 +614,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
                 prop.getProperty("APP_PACKAGE"));
         androidCapabilities.setCapability("browserName", "");
-        checkSelendroid(androidCapabilities);
         androidCapabilities
                 .setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
         androidCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);

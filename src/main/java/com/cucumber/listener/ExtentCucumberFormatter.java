@@ -49,7 +49,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public LinkedList<Step> testSteps;
     public AppiumDriver<MobileElement> appium_driver;
     public AppiumParallelTest appiumParallelTest;
-    private AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+    private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
     public String deviceModel;
     public ImageUtils imageUtils = new ImageUtils();
@@ -82,6 +82,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         appiumParallelTest = new AppiumParallelTest();
         try {
             iosDevice = new IOSDeviceConfiguration();
+            androidDevice = new AndroidDeviceConfiguration();
             prop = ConfigurationManager.getInstance();
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,66 +159,43 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     }
 
+
+    
     public void feature(Feature feature) {
         if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
             AppiumParallelTest.getNextAvailableDeviceId();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
+            String[] tagsArray = getTagArray(feature.getTags());
             System.out.println(deviceThreadNumber);
             System.out.println(Integer.parseInt(deviceThreadNumber[1])
                     + prop.getProperty("RUNNER"));
             System.out.println("Feature Tag Name::" + feature.getTags());
-            if (!feature.getTags().isEmpty()) {
-                for (Tag tag : feature.getTags()) {
-                    System.out.println("TagName::" + getTagName(tag));
-                    try {
-                        appiumParallelTest.startAppiumServer(
-                                xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
-                                feature.getName(), getTagName(tag));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                try {
-                    appiumParallelTest.startAppiumServer(
-                            xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
-                            feature.getName(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                appiumParallelTest.startAppiumServer(
+                        xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])), 
+                        feature.getName(),
+                        tagsArray);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
         } else {
-            if (!feature.getTags().isEmpty()) {
-                for (Tag tag : feature.getTags()) {
-                    try {
-                        appiumParallelTest.startAppiumServer("", feature.getName(),
-                                getTagName(tag));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                try {
-                    appiumParallelTest.startAppiumServer("", feature.getName(),
-                            "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            String[] tagsArray = getTagArray(feature.getTags());
+            try {
+                appiumParallelTest.startAppiumServer("", feature.getName(), tagsArray);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
-    public String getTagName(Tag tag) {
-        String tagName;
-        if (tag.getName().isEmpty()) {
-            tagName = "";
-        } else {
-            tagName = tag.getName();
+    private String[] getTagArray(List<Tag> tags) {
+        String[] tagArray = new String[tags.size()];
+        for (int i = 0; i < tags.size(); i++) {
+            tagArray[i] = tags.get(i).getName();
         }
-        return tagName;
+        return tagArray;
     }
-
+    
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
 
     }
@@ -233,26 +211,16 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     }
 
     public void createAppiumInstance(Scenario scenario) {
-        if (!scenario.getTags().isEmpty()) {
-            for (Tag tag : scenario.getTags()) {
-                try {
-                    startAppiumServer(scenario, tag.getName());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-        } else {
-            try {
-                startAppiumServer(scenario, "");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        String[] tagsArray = getTagArray(scenario.getTags());
+        try {
+            startAppiumServer(scenario, tagsArray);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void startAppiumServer(Scenario scenario, String tag) throws Exception {
-        appium_driver = appiumParallelTest.createChildNodeWithCategory(scenario.getName(),tag)
+    public void startAppiumServer(Scenario scenario, String[] tags) throws Exception {
+        appium_driver = appiumParallelTest.createChildNodeWithCategory(scenario.getName(), tags)
                 .startAppiumServerInParallel("",
                         iosCapabilities, androidCapabilities);
         setWebDriver(appium_driver);

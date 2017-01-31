@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +28,8 @@ public class IOSDeviceConfiguration {
     Map<String, String> devices = new HashMap<>();
     public Process p;
     public Process p1;
-
+    private List<String> validDeviceIds;
+    
     public final static int IOS_UDID_LENGTH = 40;
 
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
@@ -62,7 +64,12 @@ public class IOSDeviceConfiguration {
                 return null;
             } else {
                 while (endPos < getIOSDeviceID.length()) {
-                    deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1));
+                    if (validDeviceIds == null 
+                            || (validDeviceIds != null 
+                            && validDeviceIds.contains(
+                                    getIOSDeviceID.substring(startPos, endPos + 1)))) {
+                        deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1));
+                    }
                     startPos += IOS_UDID_LENGTH;
                     endPos += IOS_UDID_LENGTH;
                 }
@@ -84,7 +91,10 @@ public class IOSDeviceConfiguration {
                 String[] lines = getIOSDeviceID.split("\n");
                 for (int i = 0; i < lines.length; i++) {
                     lines[i] = lines[i].replaceAll("\\s+", "");
-                    devices.put("deviceID" + i, lines[i]);
+                    if (validDeviceIds == null 
+                            || (validDeviceIds != null && validDeviceIds.contains(lines[i]))) {
+                        devices.put("deviceID" + i, lines[i]);
+                    }
                 }
                 return devices;
             }
@@ -250,5 +260,9 @@ public class IOSDeviceConfiguration {
                 System.out.println("iOSWebKitProxyLauncher File already has access to execute");
             }
         }
+    }
+
+    public void setValidDevices(List<String> validDeviceIds) {
+        this.validDeviceIds = validDeviceIds;
     }
 }

@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,11 +41,17 @@ public class ParallelThread {
     private MyTestExecutor myTestExecutor = new MyTestExecutor();
     List<Class> testcases;
     private HtmlReporter htmlReporter = new HtmlReporter();
-
+    
     public ParallelThread() throws IOException {
         configurationManager = ConfigurationManager.getInstance();
     }
 
+    public ParallelThread(List<String> validDeviceIds) throws IOException {
+        configurationManager = ConfigurationManager.getInstance();
+        deviceConf.setValidDevices(validDeviceIds);
+        iosDevice.setValidDevices(validDeviceIds);
+    }
+    
     public boolean runner(String pack, List<String> tests) throws Exception {
         figlet(configurationManager.getProperty("RUNNER"));
         return triggerTest(pack, tests);
