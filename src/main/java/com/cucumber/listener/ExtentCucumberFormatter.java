@@ -167,10 +167,11 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     
     public void feature(Feature feature) {
+        String[] tagsArray = getTagArray(feature.getTags());
+        String tags = String.join(",", tagsArray);
         if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
             deviceManager.getNextAvailableDeviceId();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
-            String[] tagsArray = getTagArray(feature.getTags());
             System.out.println(deviceThreadNumber);
             System.out.println(Integer.parseInt(deviceThreadNumber[1])
                     + prop.getProperty("RUNNER"));
@@ -179,14 +180,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 appiumParallelTest.startAppiumServer(
                         xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])), 
                         feature.getName(),
-                        tagsArray);
+                        tags);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            String[] tagsArray = getTagArray(feature.getTags());
             try {
-                appiumParallelTest.startAppiumServer("", feature.getName(), tagsArray);
+                appiumParallelTest.startAppiumServer("", feature.getName(), tags);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -217,14 +217,15 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void createAppiumInstance(Scenario scenario) {
         String[] tagsArray = getTagArray(scenario.getTags());
+        String tags = String.join(",", tagsArray);
         try {
-            startAppiumServer(scenario, tagsArray);
+            startAppiumServer(scenario, tags);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void startAppiumServer(Scenario scenario, String[] tags) throws Exception {
+    public void startAppiumServer(Scenario scenario, String tags) throws Exception {
         appium_driver = appiumParallelTest.createChildNodeWithCategory(scenario.getName(), tags)
                 .startAppiumServerInParallel("",
                         iosCapabilities, androidCapabilities);

@@ -89,7 +89,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized AppiumServiceBuilder startAppiumServer(
-            String device, String methodName,String[] tags) throws Exception {
+            String device, String methodName, String tags) throws Exception {
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
@@ -113,11 +113,11 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else {
             category = androidDevice.getDeviceModel(device_udid);
         }
-        System.out.println("******Tags::::" + Arrays.toString(tags));
+        //System.out.println("******Tags::::" + Arrays.toString(tags));
         //Will fix the tag once extent-report issue
         //https://github.com/anshooarora/extentreports-java/issues/757
         ExtentTest extentTest = createParentNodeExtent(methodName, "", category
-                        + device_udid.replaceAll("\\W", "_")).assignCategory("");
+                + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
 
         AppiumServiceBuilder appiumServiceBuilder = checkOSAndStartServer(methodName);
         if (appiumServiceBuilder != null) {
@@ -234,17 +234,24 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public AppiumParallelTest createChildNodeWithCategory(String methodName,
-                                                          String[] tags) {
+                                                          String tags) {
         child = parentTest.get().createNode(methodName, category
-                        + device_udid.replaceAll("\\W", "_")).assignCategory("");
+                + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
         test.set(child);
         return this;
     }
 
     public void setAuthorName(String methodName) throws NoSuchMethodException {
         String authorName;
+        boolean methodNamePresent;
         ArrayList<String> listeners = new ArrayList<>();
-        if (getClass().getMethod(methodName).getAnnotation(Author.class) != null) {
+        try {
+            getClass().getMethod(methodName).getAnnotation(Author.class);
+            methodNamePresent = true;
+        } catch (Exception e) {
+            methodNamePresent = false;
+        }
+        if (methodNamePresent){
             authorName = getClass().getMethod(methodName).getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
@@ -252,7 +259,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                             category + "_" + device_udid.replaceAll("\\W", "_")).assignAuthor(
                             String.valueOf(listeners));
             test.set(child);
-        } else {
+        } else{
             child = parentTest.get().createNode(methodName,
                     category + "_" + device_udid.replaceAll("\\W", "_"));
             test.set(child);
@@ -296,7 +303,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public void startLogResults(String methodName) throws FileNotFoundException {
-        testLogger.startLogging(methodName, driver, device_udid,getClass().getName());
+        testLogger.startLogging(methodName, driver, device_udid, getClass().getName());
     }
 
     public void endLogTestResults(ITestResult result) throws IOException, InterruptedException {
@@ -378,7 +385,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         String methodName = new Exception().getStackTrace()[1].getMethodName();
         String className = new Exception().getStackTrace()[1].getClassName();
         testLogger.captureScreenShot(screenShotName, 1, className,
-                driver , getDeviceModel(), device_udid);
+                driver, getDeviceModel(), device_udid);
     }
 
     public MobilePlatform getMobilePlatform(String device_udid) {
