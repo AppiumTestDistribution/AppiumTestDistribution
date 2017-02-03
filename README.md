@@ -30,7 +30,7 @@ Add the below dependencies in your pom.xml (Master)
 <dependency>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>a98e7c425a</version>
+    <version>a7fe0c9</version>
 </dependency>
 ```
 
