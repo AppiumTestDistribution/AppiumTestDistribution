@@ -18,6 +18,6 @@ public class HomePageTest2
     @Test(groups = {"smoke"})
     @Author(name = "AnsonLiao,Sai") public void testMethodOne_2() throws Exception {
         MyClass c = new MyClass();
-        Assert.assertEquals(c.sum(2, 3), 5);
+        Assert.assertEquals(c.sum(2, 3), 6);
     }
 }

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>6.0.2-SNAPSHOT</version>
+    <version>6.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AppiumTestDistribution</name>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>4.1.2</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>com.github.saikrishna321</groupId>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
-            <version>3.0.1</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>

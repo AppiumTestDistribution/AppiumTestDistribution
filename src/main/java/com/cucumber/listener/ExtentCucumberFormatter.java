@@ -4,6 +4,7 @@ import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AndroidDeviceConfiguration;
 import com.appium.manager.AppiumParallelTest;
 import com.appium.manager.ConfigurationManager;
+import com.appium.manager.DeviceManager;
 import com.appium.utils.ImageUtils;
 
 import com.aventstack.extentreports.Status;
@@ -46,6 +47,7 @@ import java.util.Map;
  */
 public class ExtentCucumberFormatter implements Reporter, Formatter {
 
+    private final DeviceManager deviceManager;
     public LinkedList<Step> testSteps;
     public AppiumDriver<MobileElement> appium_driver;
     public AppiumParallelTest appiumParallelTest;
@@ -80,6 +82,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public ExtentCucumberFormatter()  {
         appiumParallelTest = new AppiumParallelTest();
+        deviceManager = DeviceManager.getInstance();
         try {
             iosDevice = new IOSDeviceConfiguration();
             androidDevice = new AndroidDeviceConfiguration();
@@ -100,8 +103,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             appiumParallelTest.test.get().log(Status.FAIL, result.getErrorMessage());
             String context = getDriver().getContext();
             boolean contextChanged = false;
-            if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver") && !context
-                    .equals("NATIVE_APP")) {
+            if ("Android".equals(getDriver().getSessionDetails().get("platformName")
+                    .toString())
+                    && !"NATIVE_APP".equals(context)) {
                 getDriver().context("NATIVE_APP");
                 contextChanged = true;
             }
@@ -109,10 +113,11 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             if (contextChanged) {
                 getDriver().context(context);
             }
-            if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
+            if (getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
                 deviceModel = androidDevice.getDeviceModel(appiumParallelTest.device_udid);
                 screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (getDriver().toString().split(":")[0].trim().equals("IOSDriver")) {
+            } else if (getDriver().getSessionDetails().get("platformName")
+                    .toString().equals("iOS")) {
                 try {
                     deviceModel =
                             iosDevice.getIOSDeviceProductTypeAndVersion(
@@ -162,10 +167,11 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     
     public void feature(Feature feature) {
+        String[] tagsArray = getTagArray(feature.getTags());
+        String tags = String.join(",", tagsArray);
         if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-            AppiumParallelTest.getNextAvailableDeviceId();
+            deviceManager.getNextAvailableDeviceId();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
-            String[] tagsArray = getTagArray(feature.getTags());
             System.out.println(deviceThreadNumber);
             System.out.println(Integer.parseInt(deviceThreadNumber[1])
                     + prop.getProperty("RUNNER"));
@@ -174,14 +180,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 appiumParallelTest.startAppiumServer(
                         xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])), 
                         feature.getName(),
-                        tagsArray);
+                        tags);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            String[] tagsArray = getTagArray(feature.getTags());
             try {
-                appiumParallelTest.startAppiumServer("", feature.getName(), tagsArray);
+                appiumParallelTest.startAppiumServer("", feature.getName(), tags);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -212,14 +217,15 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void createAppiumInstance(Scenario scenario) {
         String[] tagsArray = getTagArray(scenario.getTags());
+        String tags = String.join(",", tagsArray);
         try {
-            startAppiumServer(scenario, tagsArray);
+            startAppiumServer(scenario, tags);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void startAppiumServer(Scenario scenario, String[] tags) throws Exception {
+    public void startAppiumServer(Scenario scenario, String tags) throws Exception {
         appium_driver = appiumParallelTest.createChildNodeWithCategory(scenario.getName(), tags)
                 .startAppiumServerInParallel("",
                         iosCapabilities, androidCapabilities);
@@ -315,9 +321,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void attachScreenShotToReport(String stepName) throws IOException {
         String platform = null;
-        if (getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
+        if (getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
             platform = "android";
-        } else if (getDriver().toString().split(":")[0].trim().equals("IOSDriver")) {
+        } else if (getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
             platform = "iPhone";
         } else {
             platform = "android";

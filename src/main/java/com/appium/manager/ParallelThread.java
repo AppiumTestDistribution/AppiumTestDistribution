@@ -32,7 +32,8 @@ import java.util.Map;
 
 
 public class ParallelThread {
-    private final ConfigurationManager configurationManager;
+    private ConfigurationManager configurationManager;
+    private DeviceManager deviceManager;
     protected int deviceCount = 0;
     Map<String, String> devices = new HashMap<String, String>();
     Map<String, String> iOSdevices = new HashMap<String, String>();
@@ -43,6 +44,7 @@ public class ParallelThread {
     private HtmlReporter htmlReporter = new HtmlReporter();
     
     public ParallelThread() throws IOException {
+        deviceManager = DeviceManager.getInstance();
         configurationManager = ConfigurationManager.getInstance();
     }
 
@@ -147,12 +149,12 @@ public class ParallelThread {
             if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
                 hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
                         .constructXmlSuiteDistributeCucumber(deviceCount,
-                                AppiumParallelTest.devices));
+                                deviceManager.getDevices()));
             } else if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
                 hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
                     .constructXmlSuiteForParallelCucumber(deviceCount,
-                        AppiumParallelTest.devices));
+                            deviceManager.getDevices()));
                 htmlReporter.generateReports();
             }
         }

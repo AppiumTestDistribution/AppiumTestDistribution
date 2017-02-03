@@ -4,20 +4,20 @@ import com.cucumber.listener.ExtentCucumberFormatter;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import io.appium.java_client.remote.AndroidMobileCapabilityType;
-import io.appium.java_client.remote.IOSMobileCapabilityType;
-import io.appium.java_client.remote.MobileCapabilityType;
 
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 
 public class Hooks extends ExtentCucumberFormatter {
     @Before public void beforeClass(Scenario scenario) throws Exception {
         System.out.println("Inside Before" + Thread.currentThread().getId());
+        iosCapabilities = appiumParallelTest.deviceCapabilityManager.iosNative(
+                appiumParallelTest.device_udid);
+        androidCapabilities = appiumParallelTest.deviceCapabilityManager.androidNative(
+                appiumParallelTest.device_udid);
     }
 
     @After public void afterClass(Scenario scenario) throws InterruptedException, IOException {

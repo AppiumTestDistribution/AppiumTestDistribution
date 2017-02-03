@@ -26,7 +26,7 @@ public class HomePageTest3 extends UserBaseTest {
         getDriver().findElement(By.id("com.android2.calculator3:id/digit4")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+        getDriver().findElement(By.id("com.android2.calculator3:id/equall")).click();
         //getDriver().close();
     }
 }

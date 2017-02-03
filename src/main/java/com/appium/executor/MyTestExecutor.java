@@ -3,8 +3,8 @@ package com.appium.executor;
 import static java.util.Arrays.asList;
 
 import com.appium.cucumber.report.HtmlReporter;
-import com.appium.manager.AppiumParallelTest;
 import com.appium.manager.ConfigurationManager;
+import com.appium.manager.DeviceManager;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
@@ -25,7 +25,6 @@ import org.testng.xml.XmlTest;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -38,7 +37,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import java.util.concurrent.ExecutorService;
@@ -48,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MyTestExecutor {
     private final ConfigurationManager prop;
+    private final DeviceManager deviceManager;
     List<Thread> threads = new ArrayList<Thread>();
     public List<Class> testcases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
@@ -57,6 +56,7 @@ public class MyTestExecutor {
     private ArrayList<String> groupsExclude = new ArrayList<>();
 
     public MyTestExecutor() throws IOException {
+        deviceManager = DeviceManager.getInstance();
         prop = ConfigurationManager.getInstance();
     }
 
@@ -126,7 +126,7 @@ public class MyTestExecutor {
         } else {
             hasFailure = runMethodParallel(
                 constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
-                    AppiumParallelTest.devices));
+                    deviceManager.getDevices()));
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
