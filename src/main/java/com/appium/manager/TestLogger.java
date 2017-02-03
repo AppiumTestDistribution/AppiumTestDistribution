@@ -208,16 +208,16 @@ class TestLogger {
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
                 if (framedImageAndroid.exists()) {
                     log.addScreenCaptureFromPath(
-                            System.getProperty("user.dir") 
-                            + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                            System.getProperty("user.dir") + "/target/screenshot/android/" 
+                            + device_udid.replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
                                     + deviceModel + "_failed_" + result
                                     .getMethod().getMethodName() + "_framed.png");
                 } else {
                     log.addScreenCaptureFromPath(
-                            System.getProperty("user.dir") 
-                            + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                            System.getProperty("user.dir") + "/target/screenshot/android/" 
+                            + device_udid.replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
                                     + screenShotNameWithTimeStamp + deviceModel + "_" + result
                                     .getMethod().getMethodName() + "_failed.png");
