@@ -251,7 +251,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } catch (Exception e) {
             methodNamePresent = false;
         }
-        if (methodNamePresent){
+        if (methodNamePresent) {
             authorName = getClass().getMethod(methodName).getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
@@ -259,7 +259,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                             category + "_" + device_udid.replaceAll("\\W", "_")).assignAuthor(
                             String.valueOf(listeners));
             test.set(child);
-        } else{
+        } else {
             child = parentTest.get().createNode(methodName,
                     category + "_" + device_udid.replaceAll("\\W", "_"));
             test.set(child);
