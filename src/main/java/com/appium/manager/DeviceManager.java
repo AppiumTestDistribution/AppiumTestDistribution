@@ -23,7 +23,7 @@ public class DeviceManager {
         initializeDevices();
     }
 
-    public static DeviceManager getInstance(){
+    public static DeviceManager getInstance() {
         if (instance == null) {
             instance = new DeviceManager();
         }
@@ -33,7 +33,7 @@ public class DeviceManager {
     private void initializeDevices() {
         try {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if ( iosDevice.getIOSUDID()!= null) {
+                if (iosDevice.getIOSUDID() != null) {
                     System.out.println("Adding iOS devices");
                     devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
                 }

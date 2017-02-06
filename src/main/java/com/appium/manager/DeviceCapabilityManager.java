@@ -58,12 +58,9 @@ public class DeviceCapabilityManager {
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME,
             "iOS");
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                 "6.0");
+                 "10.0");
         iOSCapabilities.setCapability(MobileCapabilityType.APP,
                 configurationManager.getProperty("IOS_APP_PATH"));
-        iOSCapabilities
-                .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
-                        configurationManager.getProperty("BUNDLE_ID"));
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities
                 .setCapability(MobileCapabilityType.DEVICE_NAME,"iPhone");

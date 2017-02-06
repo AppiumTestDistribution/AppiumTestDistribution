@@ -9,17 +9,19 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
-import com.video.recorder.Flick;
+
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.remote.AutomationName;
+import io.appium.java_client.remote.IOSMobileCapabilityType;
+import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -41,9 +43,7 @@ import java.io.IOException;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
@@ -68,6 +68,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public ExtentTest parent;
     public ExtentTest child;
     private AndroidDeviceConfiguration androidDevice;
+    public AvailablePorts ports;
 
     public AppiumParallelTest() {
         try {
@@ -78,6 +79,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             deviceManager = DeviceManager.getInstance();
             testLogger = new TestLogger();
             deviceCapabilityManager = new DeviceCapabilityManager();
+            ports = new AvailablePorts();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -277,6 +279,13 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                         && iosDevice.checkiOSDevice(device_udid)) {
                     if (iosCaps == null) {
                         iosCaps = deviceCapabilityManager.iosNative(device_udid);
+                        if (iosDevice.getIOSDeviceProductVersion(device_udid)
+                                .contains("10")) {
+                            iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                                    AutomationName.IOS_XCUI_TEST);
+                            iosCaps.setCapability(IOSMobileCapabilityType
+                                    .WDA_LOCAL_PORT,ports.getPort());
+                        }
                     }
                     driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
                 } else if (!iosDevice.checkiOSDevice(device_udid)) {

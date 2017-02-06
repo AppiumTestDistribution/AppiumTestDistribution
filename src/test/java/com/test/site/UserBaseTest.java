@@ -4,6 +4,7 @@ import com.appium.manager.AppiumParallelTest;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
+import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.json.simple.JSONObject;
@@ -59,15 +60,16 @@ public class UserBaseTest extends AppiumParallelTest {
         System.out.println(user.get("userName"));
     }
 
-    public DesiredCapabilities iosNative1() {
+    public DesiredCapabilities iosNative1() throws Exception {
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
-        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
+        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10.0");
         iOSCapabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("IOS_APP_PATH"));
-        iOSCapabilities
-            .setCapability(IOSMobileCapabilityType.BUNDLE_ID, prop.getProperty("BUNDLE_ID"));
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
+        iOSCapabilities.setCapability(IOSMobileCapabilityType.WDA_LOCAL_PORT,ports.getPort());
+        iOSCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                AutomationName.IOS_XCUI_TEST);
         iOSCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
         return iOSCapabilities;
     }

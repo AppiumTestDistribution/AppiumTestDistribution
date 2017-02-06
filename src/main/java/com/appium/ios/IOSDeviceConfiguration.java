@@ -28,8 +28,8 @@ public class IOSDeviceConfiguration {
     private List<String> validDeviceIds;
     
     public final static int IOS_UDID_LENGTH = 40;
-    String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/,/Serial/s/ " +
-            "*Serial Number: *(.+)/\\1/p'\n";
+    String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
+            + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'\n";
 
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
 
