@@ -37,20 +37,24 @@ public class ParallelThread {
     protected int deviceCount = 0;
     Map<String, String> devices = new HashMap<String, String>();
     Map<String, String> iOSdevices = new HashMap<String, String>();
-    private AndroidDeviceConfiguration deviceConf = new AndroidDeviceConfiguration();
-    private IOSDeviceConfiguration iosDevice = new IOSDeviceConfiguration();
-    private MyTestExecutor myTestExecutor = new MyTestExecutor();
+    private AndroidDeviceConfiguration androidDevice;
+    private IOSDeviceConfiguration iosDevice;
+    private MyTestExecutor myTestExecutor;
     List<Class> testcases;
-    private HtmlReporter htmlReporter = new HtmlReporter();
+    private HtmlReporter htmlReporter;
     
     public ParallelThread() throws IOException {
         deviceManager = DeviceManager.getInstance();
         configurationManager = ConfigurationManager.getInstance();
+        iosDevice = new IOSDeviceConfiguration();
+        androidDevice = new AndroidDeviceConfiguration();
+        myTestExecutor = new MyTestExecutor();
+        htmlReporter = new HtmlReporter();
     }
 
     public ParallelThread(List<String> validDeviceIds) throws IOException {
         configurationManager = ConfigurationManager.getInstance();
-        deviceConf.setValidDevices(validDeviceIds);
+        androidDevice.setValidDevices(validDeviceIds);
         iosDevice.setValidDevices(validDeviceIds);
     }
     
@@ -82,8 +86,8 @@ public class ParallelThread {
         }
 
         if (configurationManager.getProperty("ANDROID_APP_PATH") != null
-                && deviceConf.getDevices() != null) {
-            devices = deviceConf.getDevices();
+                && androidDevice.getDevices() != null) {
+            devices = androidDevice.getDevices();
             deviceCount = devices.size() / 4;
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
             if (!adb_logs.exists()) {
@@ -101,7 +105,7 @@ public class ParallelThread {
 
         if (operSys.contains("mac")) {
             if (configurationManager.getProperty("IOS_APP_PATH") != null ) {
-                if (iosDevice.getIOSUDID() != null) {
+                if (IOSDeviceConfiguration.deviceUDIDiOS != null) {
                     iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
                     iOSdevices = iosDevice.getIOSUDIDHash();
                     deviceCount += iOSdevices.size();

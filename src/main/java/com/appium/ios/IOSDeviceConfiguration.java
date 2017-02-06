@@ -28,8 +28,8 @@ public class IOSDeviceConfiguration {
     private List<String> validDeviceIds;
     
     public final static int IOS_UDID_LENGTH = 40;
-    String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/,"
-            + "/Serial/s/ Serial Number: (.+)/\\1/p'";
+    String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/,/Serial/s/ " +
+            "*Serial Number: *(.+)/\\1/p'\n";
 
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
 
@@ -65,7 +65,9 @@ public class IOSDeviceConfiguration {
                             || (validDeviceIds != null 
                             && validDeviceIds.contains(
                                     getIOSDeviceID.substring(startPos, endPos + 1)))) {
-                        deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1));
+                        if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
+                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1));
+                        }
                     }
                     startPos += IOS_UDID_LENGTH;
                     endPos += IOS_UDID_LENGTH;

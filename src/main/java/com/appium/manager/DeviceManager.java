@@ -12,12 +12,18 @@ public class DeviceManager {
             new ConcurrentHashMap<String, Boolean>();
     private static DeviceManager instance;
     private static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+    private static IOSDeviceConfiguration iosDevice;
 
     private DeviceManager() {
+        try {
+            iosDevice = new IOSDeviceConfiguration();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         initializeDevices();
     }
 
-    public static DeviceManager getInstance() {
+    public static DeviceManager getInstance(){
         if (instance == null) {
             instance = new DeviceManager();
         }
@@ -27,7 +33,7 @@ public class DeviceManager {
     private void initializeDevices() {
         try {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (IOSDeviceConfiguration.deviceUDIDiOS != null) {
+                if ( iosDevice.getIOSUDID()!= null) {
                     System.out.println("Adding iOS devices");
                     devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
                 }
