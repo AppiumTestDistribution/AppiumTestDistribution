@@ -247,10 +247,9 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         String authorName;
         boolean methodNamePresent;
         ArrayList<String> listeners = new ArrayList<>();
-        try {
-            getClass().getMethod(methodName).getAnnotation(Author.class);
+        if (getClass().getMethod(methodName).getAnnotation(Author.class) != null) {
             methodNamePresent = true;
-        } catch (Exception e) {
+        } else {
             methodNamePresent = false;
         }
         if (methodNamePresent) {
