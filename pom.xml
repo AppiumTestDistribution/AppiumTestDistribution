@@ -52,7 +52,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>5.0.0-BETA4</version>
+            <version>5.0.0-BETA6</version>
         </dependency>
         <dependency>
             <groupId>com.github.saikrishna321</groupId>
