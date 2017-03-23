@@ -53,6 +53,17 @@
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
             <version>5.0.0-BETA6</version>
+            <exclusions>
+                <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.saikrishna321</groupId>
