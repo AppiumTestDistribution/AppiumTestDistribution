@@ -90,8 +90,7 @@ public class IOSDeviceConfiguration {
                 String[] lines = getIOSDeviceID.split("\n");
                 for (int i = 0; i < lines.length; i++) {
                     lines[i] = lines[i].replaceAll("\\s+", "");
-                    if (validDeviceIds == null 
-                            || (validDeviceIds != null && validDeviceIds.contains(lines[i]))) {
+                    if (deviceIdValidation(lines[i])) {
                         devices.put("deviceID" + i, lines[i]);
                     }
                 }
@@ -102,6 +101,12 @@ public class IOSDeviceConfiguration {
             return null;
         }
     }
+    
+    private boolean deviceIdValidation(String searchString) {
+ return validDeviceIds == null
+         || (validDeviceIds != null && validDeviceIds.contains(searchString));
+}
+
 
     /**
      * @param UDID    - Device Serial ID
