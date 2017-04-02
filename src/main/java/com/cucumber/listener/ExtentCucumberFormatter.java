@@ -257,7 +257,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     }
 
-    public void eof() {
+    public void endOfFile() {
         ExtentManager.getExtent().flush();
         try {
             appiumParallelTest.killAppiumServer();
