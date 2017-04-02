@@ -267,40 +267,46 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
-    public void startingServerInstance(DesiredCapabilities iosCaps, DesiredCapabilities androidCaps)
-            throws Exception {
-        if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(),
-                    deviceCapabilityManager.androidWeb());
-        } else {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (prop.getProperty("IOS_APP_PATH") != null
-                        && iosDevice.checkiOSDevice(device_udid)) {
-                    if (iosCaps == null) {
-                        iosCaps = deviceCapabilityManager.iosNative(device_udid);
-                        if (iosDevice.getIOSDeviceProductVersion(device_udid)
-                                .contains("10")) {
-                            iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                                    AutomationName.IOS_XCUI_TEST);
-                            iosCaps.setCapability(IOSMobileCapabilityType
-                                    .WDA_LOCAL_PORT,ports.getPort());
-                        }
-                    }
-                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
-                } else if (!iosDevice.checkiOSDevice(device_udid)) {
-                    if (androidCaps == null) {
-                        androidCaps = deviceCapabilityManager.androidNative(device_udid);
-                    }
-                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
-                }
-            } else {
-                if (androidCaps == null) {
-                    androidCaps = deviceCapabilityManager.androidNative(device_udid);
-                }
-                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
-            }
-        }
-    }
+    
+public void startingServerInstance(DesiredCapabilities iosCaps, DesiredCapabilities androidCaps)
+           throws Exception {
+       if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
+           driver = new AndroidDriver<>(appiumMan.getAppiumUrl(),
+                   deviceCapabilityManager.androidWeb());
+       } else {
+           if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+// created variable to check whether the IOS path is null
+  final boolean isIOSAPPPathNull = prop.getProperty("IOS_APP_PATH");
+// created variable to check whether the device is an IOS device
+  final boolean isIOSDevice = iosDevice.checkiOSDevice(device_udid));
+// replaced expressions with variable
+               if (isIOSAPPPathNull && isIOSDevice) {
+                   if (iosCaps == null) {
+                       iosCaps = deviceCapabilityManager.iosNative(device_udid);
+                       if (iosDevice.getIOSDeviceProductVersion(device_udid)
+                               .contains("10")) {
+                           iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                                   AutomationName.IOS_XCUI_TEST);
+                           iosCaps.setCapability(IOSMobileCapabilityType
+                                   .WDA_LOCAL_PORT,ports.getPort());
+                       }
+                   }
+                   driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
+// replaced expressions with variable
+               } else if (!isIOSDevice) {
+                   if (androidCaps == null) {
+                       androidCaps = deviceCapabilityManager.androidNative(device_udid);
+                   }
+                   driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+               }
+           } else {
+               if (androidCaps == null) {
+                   androidCaps = deviceCapabilityManager.androidNative(device_udid);
+               }
+               driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+           }
+       }
+    }
 
     public void startingServerInstance() throws Exception {
         startingServerInstance(null, null);
