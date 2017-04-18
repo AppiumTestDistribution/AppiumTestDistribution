@@ -23,8 +23,6 @@ public class UserBaseTest extends AppiumParallelTest {
 
     @BeforeMethod(alwaysRun = true) public void startApp(Method name) throws Exception {
         driver = startAppiumServerInParallel(name.getName());
-        //Moving the method inside the dependency in the next release
-        startLogResults(name.getName());
     }
 
     @AfterMethod(alwaysRun = true) public void killServer(ITestResult result)
@@ -40,10 +38,7 @@ public class UserBaseTest extends AppiumParallelTest {
     }
 
     @BeforeClass(alwaysRun = true) public void beforeClass() throws Exception {
-        System.out.println("Before Class called" + Thread.currentThread().getId());
-        System.out.println(getClass().getName());
-        //Moving the method inside the dependency in the next release
-        //startAppiumServer(getClass().getSimpleName());
+        System.out.println("Before Class" + Thread.currentThread().getId());
     }
 
     @AfterClass(alwaysRun = true) public void afterClass()

@@ -25,7 +25,7 @@ public class IOSDeviceConfiguration {
     Map<String, String> devices = new HashMap<>();
     public Process p;
     public Process p1;
-    private List<String> validDeviceIds;
+    public static List<String> validDeviceIds;
     
     public final static int IOS_UDID_LENGTH = 40;
     String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"

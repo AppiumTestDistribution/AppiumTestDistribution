@@ -15,8 +15,8 @@ import org.testng.annotations.Test;
 public class HomePageTest2
     extends UserBaseTest {
 
-    @Test(groups = {"smoke"})
-    @Author(name = "AnsonLiao,Sai") public void testMethodOne_2() throws Exception {
+    @Test(groups = {"smoke"},description = "Testing")
+    public void testMethodOne_2() throws Exception {
         MyClass c = new MyClass();
         Assert.assertEquals(c.sum(2, 3), 6);
     }

@@ -14,7 +14,7 @@ public class AndroidDeviceConfiguration {
     private Map<String, String> devices = new HashMap<String, String>();
     public static ArrayList<String> deviceSerial = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
-    private List<String> validDeviceIds;
+    public static List<String> validDeviceIds;
     
     /**
      * This method start adb server

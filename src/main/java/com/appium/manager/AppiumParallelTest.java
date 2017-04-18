@@ -19,12 +19,9 @@ import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.SkipException;
@@ -32,6 +29,7 @@ import org.testng.TestListenerAdapter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 
 import java.awt.Image;
@@ -222,6 +220,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
         Thread.sleep(3000);
         startingServerInstance(iosCaps, androidCaps);
+        startLogResults(getClass().getMethod(methodName).getName());
         return driver;
     }
 
@@ -247,6 +246,13 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         String authorName;
         boolean methodNamePresent;
         ArrayList<String> listeners = new ArrayList<>();
+        String descriptionMethodName;
+        if (getClass().getMethod(methodName).getAnnotation(Test.class).description().isEmpty()) {
+            descriptionMethodName = methodName;
+        } else {
+            descriptionMethodName = getClass().getMethod(methodName)
+                    .getAnnotation(Test.class).description();
+        }
         if (getClass().getMethod(methodName).getAnnotation(Author.class) != null) {
             methodNamePresent = true;
         } else {
@@ -256,12 +262,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             authorName = getClass().getMethod(methodName).getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
-                    .createNode(methodName,
+                    .createNode(descriptionMethodName,
                             category + "_" + device_udid.replaceAll("\\W", "_")).assignAuthor(
                             String.valueOf(listeners));
             test.set(child);
         } else {
-            child = parentTest.get().createNode(methodName,
+            child = parentTest.get().createNode(descriptionMethodName,
                     category + "_" + device_udid.replaceAll("\\W", "_"));
             test.set(child);
         }
@@ -275,17 +281,17 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 if (prop.getProperty("IOS_APP_PATH") != null
-                        && iosDevice.checkiOSDevice(device_udid)) {
-                    if (iosCaps == null) {
-                        iosCaps = deviceCapabilityManager.iosNative(device_udid);
-                        if (iosDevice.getIOSDeviceProductVersion(device_udid)
-                                .contains("10")) {
-                            iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                                    AutomationName.IOS_XCUI_TEST);
-                            iosCaps.setCapability(IOSMobileCapabilityType
-                                    .WDA_LOCAL_PORT,ports.getPort());
-                        }
+                        && iosDevice.checkiOSDevice(device_udid)
+                        && iosCaps == null) {
+                    iosCaps = deviceCapabilityManager.iosNative(device_udid);
+                    if (iosDevice.getIOSDeviceProductVersion(device_udid)
+                            .contains("10")) {
+                        iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                                AutomationName.IOS_XCUI_TEST);
+                        iosCaps.setCapability(IOSMobileCapabilityType
+                                .WDA_LOCAL_PORT, ports.getPort());
                     }
+
                     driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
                 } else if (!iosDevice.checkiOSDevice(device_udid)) {
                     if (androidCaps == null) {
@@ -310,7 +316,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         startingServerInstance(caps, caps);
     }
 
-    public void startLogResults(String methodName) throws FileNotFoundException {
+    private void startLogResults(String methodName) throws FileNotFoundException {
         testLogger.startLogging(methodName, driver, device_udid, getClass().getName());
     }
 
@@ -327,9 +333,18 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return deviceModel;
     }
 
+    public synchronized void stopServerCucumber()
+            throws IOException, InterruptedException {
+        stopAppiumServerAndCloseReport();
+    }
+
     @AfterClass(alwaysRun = true)
     public synchronized void killAppiumServer()
             throws InterruptedException, IOException {
+        stopAppiumServerAndCloseReport();
+    }
+
+    public void stopAppiumServerAndCloseReport() throws IOException, InterruptedException {
         System.out.println("**************ClosingAppiumSession****************"
                 + Thread.currentThread().getId());
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
@@ -337,15 +352,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             ExtentManager.getExtent().flush();
         }
         appiumMan.destroyAppiumNode();
-        if (driver.toString().split(":")[0].trim().equals("IOSDriver")) {
+        if (getMobilePlatform(device_udid).equals(MobilePlatform.IOS)) {
             iosDevice.destroyIOSWebKitProxy();
         }
         deviceManager.freeDevice(device_udid);
-    }
-
-    public void waitForElement(By id, int time) {
-        WebDriverWait wait = new WebDriverWait(driver, 20);
-        wait.until(ExpectedConditions.elementToBeClickable((id)));
     }
 
     public AppiumDriver<MobileElement> getDriver() {

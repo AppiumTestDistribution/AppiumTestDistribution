@@ -35,15 +35,27 @@ public class DeviceManager {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 if (iosDevice.getIOSUDID() != null) {
                     System.out.println("Adding iOS devices");
-                    devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
+                    if (IOSDeviceConfiguration.validDeviceIds != null) {
+                        devices.addAll(IOSDeviceConfiguration.validDeviceIds);
+                    } else {
+                        devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
+                    }
                 }
                 if (androidDevice.getDeviceSerial() != null) {
                     System.out.println("Adding Android devices");
-                    devices.addAll(AndroidDeviceConfiguration.deviceSerial);
+                    if (AndroidDeviceConfiguration.validDeviceIds != null) {
+                        System.out.println("Adding Devices from DeviceList Provided");
+                        devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
+                    } else {
+                        devices.addAll(AndroidDeviceConfiguration.deviceSerial);
+                    }
+
                 }
             } else {
-                if (androidDevice.getDeviceSerial() != null) {
-                    System.out.println("Adding Android devices");
+                if (AndroidDeviceConfiguration.validDeviceIds != null) {
+                    System.out.println("Adding Devices from DeviceList Provided");
+                    devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
+                } else {
                     devices.addAll(AndroidDeviceConfiguration.deviceSerial);
                 }
             }
