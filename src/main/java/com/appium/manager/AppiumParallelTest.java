@@ -281,15 +281,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         } else {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 if (prop.getProperty("IOS_APP_PATH") != null
-                        && iosDevice.checkiOSDevice(device_udid)
-                        && iosCaps == null) {
-                    iosCaps = deviceCapabilityManager.iosNative(device_udid);
-                    if (iosDevice.getIOSDeviceProductVersion(device_udid)
-                            .contains("10")) {
-                        iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                                AutomationName.IOS_XCUI_TEST);
-                        iosCaps.setCapability(IOSMobileCapabilityType
-                                .WDA_LOCAL_PORT, ports.getPort());
+                        && iosDevice.checkiOSDevice(device_udid)) {
+                    if (iosCaps == null) {
+                        iosCaps = deviceCapabilityManager.iosNative(device_udid);
+                        if (iosDevice.getIOSDeviceProductVersion(device_udid)
+                                .contains("10")) {
+                            iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                                    AutomationName.IOS_XCUI_TEST);
+                            iosCaps.setCapability(IOSMobileCapabilityType
+                                    .WDA_LOCAL_PORT,ports.getPort());
+                        }
                     }
 
                     driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
