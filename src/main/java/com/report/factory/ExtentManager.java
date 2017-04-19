@@ -3,6 +3,7 @@ package com.report.factory;
 import com.appium.manager.ConfigurationManager;
 import com.appium.utils.CommandPrompt;
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.aventstack.extentreports.reporter.ExtentXReporter;
 import com.aventstack.extentreports.reporter.configuration.ChartLocation;
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class ExtentManager {
@@ -35,7 +38,7 @@ public class ExtentManager {
                         .equalsIgnoreCase("true")) {
                     extent.attachReporter(getExtentXReporter());
                 }
-                extent.setSystemInfo("Selenium Java Version", "2.53.0");
+                extent.setSystemInfo("Selenium Java Version", "3.3.1");
                 extent.setSystemInfo("Environment", "Prod");
                 String appiumVersion = null;
                 try {
@@ -43,9 +46,20 @@ public class ExtentManager {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                extent.setSystemInfo("AppiumClient", "4.1.2");
+                extent.setSystemInfo("AppiumClient", "5.0.0-BETA6");
                 extent.setSystemInfo("AppiumServer", appiumVersion.replace("\n", ""));
                 extent.setSystemInfo("Runner", configurationManager.getProperty("RUNNER"));
+                List statusHierarchy = Arrays.asList(
+                        Status.FATAL,
+                        Status.FAIL,
+                        Status.ERROR,
+                        Status.WARNING,
+                        Status.PASS,
+                        Status.SKIP,
+                        Status.DEBUG,
+                        Status.INFO
+                );
+                extent.config().statusConfigurator().setStatusHierarchy(statusHierarchy);
                 return extent;
             } catch (IOException e) {
                 e.printStackTrace();
