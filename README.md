@@ -12,7 +12,7 @@ Add the below dependencies in your pom.xml (Release)
 <dependency>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>5.0.0</version>
+    <version>6.0.1</version>
 </dependency>
 ```
 
