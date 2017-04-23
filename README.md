@@ -43,7 +43,7 @@ Add the below dependencies in your pom.xml (Master)
 </repositories>
 ```
 
-##[Prerequisites](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Prerequisites)
+## [Prerequisites](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Prerequisites)
 
 
 ### Sample Tests
@@ -52,15 +52,15 @@ Add the below dependencies in your pom.xml (Master)
  
  (e.g. If you have 3 Android and 3 iOS devices connected to the same machine, you will be able to execute these test parallel on both platforms)
 
-##[Configure-tests-for-TestNG](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-tests-for-TestNG)
+## [Configure-tests-for-TestNG](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-tests-for-TestNG)
 
-##[Configure-tests-for-Cucumber](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-test-for-Cucumber)
+## [Configure-tests-for-Cucumber](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-test-for-Cucumber)
 
-##[Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
+## [Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
-##[Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
+## [Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
 
-##Video log Prerequisites
+## Video log Prerequisites
 * Install ffmpeg. [OSX](https://trac.ffmpeg.org/wiki/CompilationGuide/MacOSX)
 	* ```$ brew update```
 	* ```$ brew install ffmpeg```
@@ -73,14 +73,14 @@ Add the below dependencies in your pom.xml (Master)
     ##Videos will be logged for failure tests
     VIDEO_LOGS="true" mvn clean -Dtest=Runner test 
 
-##Credits
+## Credits
 Thanks to
 * [@thote](https://github.com/thote) and [@jaydeepc](https://github.com/jaydeepc) for the motivation.
 * [@SrinivasanTarget](https://github.com/SrinivasanTarget) for contributing on iOS parallel.
 * [@temyers](https://github.com/temyers) for letting us use the cucumber-jvm-parallel-plugin(https://github.com/temyers/cucumber-jvm-parallel-plugin) 
 as part of framework which helps generating a Cucumber JUnit or TestNG runner for each feature file.
 
-###Reports
+### Reports
 
 Your should see report file generated as ExtentReport.html under the target folder.
 
@@ -88,10 +88,10 @@ Your should see report file generated as ExtentReport.html under the target fold
 
 [![ScreenShot](http://s29.postimg.org/uln15acdz/Screen_Shot_2016_01_10_at_12_02_10_pm.png)](https://www.youtube.com/watch?v=KfMoJ6dSC3g)
 
-##WIP
+## WIP
 iOS WebTest using Safari
 
-##FAQ
+## FAQ
 **Q. Can I automate application which I already have installed/ downloaded from App store?**
 
 A. No, Appium can only instruments application which is in debug mode, it will not work with any application which is not in debug mode. Read more about it [here](https://discuss.appium.io/t/appium-ios-app-testing/105/8)
