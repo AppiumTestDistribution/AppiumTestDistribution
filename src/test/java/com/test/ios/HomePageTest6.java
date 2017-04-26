@@ -2,6 +2,7 @@ package com.test.ios;
 
 
 
+import com.appium.utils.ScreenShotManager;
 import com.test.site.UserBaseTest;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.SwipeElementDirection;
@@ -20,10 +21,9 @@ public class HomePageTest6 extends UserBaseTest {
                 .getStackTrace()[1].getClassName());
         Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-        captureScreenShot("TestMethod1");
+        new ScreenShotManager().captureScreenShot(driver,"TestSampler");
         getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
-        captureScreenShot("TestMethod1");
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
         MobileElement el = getDriver().findElement(By.id("com.android2.calculator3:id/equal"));
         el.swipe(SwipeElementDirection.LEFT, 10000);

@@ -1,17 +1,12 @@
 package com.appium.manager;
 
-import com.appium.utils.ImageUtils;
+import com.appium.utils.ScreenShotManager;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
-import com.report.factory.ExtentTestManager;
 import com.video.recorder.Flick;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import org.apache.commons.io.FileUtils;
-import org.im4java.core.IM4JavaException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 
@@ -19,11 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -35,16 +25,15 @@ class TestLogger {
     public File logFile;
     public List<LogEntry> logEntries;
     public PrintWriter log_file_writer;
-    private String screenShotNameWithTimeStamp;
-    public ImageUtils imageUtils;
+    private ScreenShotManager screenShotManager;
 
     public TestLogger() {
         this.videoRecording = new Flick();
-        imageUtils = new ImageUtils();
+        screenShotManager = new ScreenShotManager();
     }
 
     public void startLogging(String methodName, AppiumDriver<MobileElement> driver,
-                      String device_udid, String className) throws FileNotFoundException {
+                             String device_udid, String className) throws FileNotFoundException {
         startVideoRecording(methodName, device_udid, className);
         if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
             startVideoRecording(methodName, device_udid, className);
@@ -197,27 +186,29 @@ class TestLogger {
         if (result.getStatus() == ITestResult.FAILURE) {
             ExtentTest log = test.get()
                     .log(Status.FAIL, "<pre>" + result.getThrowable() + "</pre>");
-            captureScreenShot(result.getMethod().getMethodName(), result.getStatus(),
-                    result.getTestClass().getName(), driver, deviceModel, device_udid);
+            String screenShotNameWithTimeStamp = screenShotManager
+                    .captureScreenShot(result.getStatus(),
+                            result.getTestClass().getName(), result.getMethod().getMethodName(),
+                            driver, deviceModel, device_udid);
 
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
                 File framedImageAndroid = new File(
                         System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
                                 .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
-                                .getMethodName() + "/" + screenShotNameWithTimeStamp + deviceModel
+                                .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
                 if (framedImageAndroid.exists()) {
                     log.addScreenCaptureFromPath(
                             "screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
-                                    + deviceModel + "_failed_" + result
+                                    + "_failed_" + result
                                     .getMethod().getMethodName() + "_framed.png");
                 } else {
                     log.addScreenCaptureFromPath(
                             "screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
-                                    + screenShotNameWithTimeStamp + deviceModel + "_" + result
+                                    + screenShotNameWithTimeStamp + "_" + result
                                     .getMethod().getMethodName() + "_failed.png");
                 }
 
@@ -227,7 +218,7 @@ class TestLogger {
                 File framedImageIOS = new File(
                         System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
                                 .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
-                                .getMethodName() + "/" + screenShotNameWithTimeStamp + deviceModel
+                                .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
                 System.out.println("************************" + framedImageIOS.exists()
                         + "***********************");
@@ -236,14 +227,14 @@ class TestLogger {
                             + device_udid.replaceAll("\\W", "_")
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
-                            + screenShotNameWithTimeStamp + deviceModel + "_failed_" + result
+                            + screenShotNameWithTimeStamp + "_failed_" + result
                             .getMethod().getMethodName() + "_framed.png");
                 } else {
                     log.addScreenCaptureFromPath("screenshot/iOS/"
                             + device_udid.replaceAll("\\W", "_")
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
-                            + screenShotNameWithTimeStamp + deviceModel + "_" + result
+                            + screenShotNameWithTimeStamp + "_" + result
                             .getMethod().getMethodName() + "_failed.png");
                 }
 
@@ -252,137 +243,6 @@ class TestLogger {
 
             getAdbLogs(result, driver, test, device_udid);
 
-        }
-    }
-
-    public void captureScreenShot(String screenShotName, int status, String screenClassName,
-                                  AppiumDriver<MobileElement> driver,
-                                  String deviceModel, String device_udid)
-            throws IOException, InterruptedException {
-        captureScreenShot(screenShotName, status, screenClassName, screenShotName,
-                driver, deviceModel, device_udid);
-    }
-
-    public void captureScreenShot(String screenShotName, int status, String className,
-                                  String methodName, AppiumDriver<MobileElement> driver,
-                                  String deviceModel,
-                                  String device_udid) throws IOException, InterruptedException {
-        String context = driver.getContext();
-        boolean contextChanged = false;
-        if ("Android".equals(driver.getSessionDetails().get("platformName").toString()) && !context
-                .equals("NATIVE_APP")) {
-            driver.context("NATIVE_APP");
-            contextChanged = true;
-        }
-        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        if (contextChanged) {
-            driver.context(context);
-        }
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        screenShotNameWithTimeStamp = currentDateAndTime();
-        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
-            String androidModel = screenShotNameWithTimeStamp + deviceModel;
-            screenShotAndFrame(screenShotName, status, scrFile, methodName, className, androidModel,
-                    "android", device_udid, deviceModel);
-        } else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
-            String iosModel = screenShotNameWithTimeStamp + deviceModel;
-            screenShotAndFrame(screenShotName, status, scrFile, methodName, className, iosModel,
-                    "iOS", device_udid, deviceModel);
-        }
-    }
-
-    public String currentDateAndTime() {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
-        return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
-    }
-
-    public void screenShotAndFrame(String screenShotName, int status,
-                                   File scrFile, String methodName,
-                                   String className, String model, String platform,
-                                   String device_udid, String deviceModel) {
-        String failedScreen =
-                System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/"
-                        + className + "/" + methodName + "/"
-                        + screenShotNameWithTimeStamp + deviceModel + "_"
-                        + methodName + "_failed" + ".png";
-        String capturedScreen =
-                System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className
-                        + "/" + methodName + "/" + screenShotName
-                        + ".png";
-        String framedCapturedScreen =
-                System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className
-                        + "/" + methodName + "/" + model + "_"
-                        + screenShotName + "_results.png";
-        String framedFailedScreen =
-                System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/" + model
-                        + "_failed_" + methodName + "_framed.png";
-
-        try {
-            File framePath =
-                    new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
-            if (status == ITestResult.FAILURE) {
-                FileUtils.copyFile(scrFile, new File(failedScreen));
-            } else {
-                FileUtils.copyFile(scrFile, new File(capturedScreen));
-            }
-
-            File[] files1 = framePath.listFiles();
-            if (framePath.exists()) {
-                for (int i = 0; i < files1.length; i++) {
-                    if (files1[i].isFile()) { //this line weeds out other directories/folders
-                        System.out.println(files1[i]);
-
-                        Path p = Paths.get(files1[i].toString());
-                        String fileName = p.getFileName().toString().toLowerCase();
-                        if (model.toLowerCase()
-                                .contains(fileName.split(".png")[0].toLowerCase())) {
-                            try {
-                                if (status == ITestResult.FAILURE) {
-                                    String screenToFrame = failedScreen;
-                                    imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
-                                            framedFailedScreen);
-                                    ExtentTestManager.logOutPut(framedFailedScreen,
-                                            screenShotName.toUpperCase());
-                                    deleteFile(screenToFrame);
-                                } else {
-                                    String screenToFrame = capturedScreen;
-                                    imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
-                                            framedCapturedScreen);
-                                    ExtentTestManager.logOutPut(framedCapturedScreen,
-                                            screenShotName.toUpperCase());
-                                    deleteFile(screenToFrame);
-                                }
-
-                                break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (IM4JavaException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteFile(String screenToFrame) {
-        File fileToDelete = new File(screenToFrame);
-        if (fileToDelete.exists()) {
-            fileToDelete.delete();
         }
     }
 }

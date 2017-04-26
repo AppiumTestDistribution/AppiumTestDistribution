@@ -131,7 +131,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     @BeforeClass(alwaysRun = true)
     @Parameters({"device"})
     public synchronized AppiumServiceBuilder startAppiumServer(String device) throws Exception {
-        String methodName = getClass().getSimpleName();
+        String className = getClass().getSimpleName();
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
@@ -159,10 +159,10 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
-            createParentNodeExtent(methodName, testDescription,
+            createParentNodeExtent(className, testDescription,
                     category + "_" + device_udid.replaceAll("\\W", "_"));
         }
-        AppiumServiceBuilder webKitPort = checkOSAndStartServer(methodName);
+        AppiumServiceBuilder webKitPort = checkOSAndStartServer(className);
         if (webKitPort != null) {
             return webKitPort;
         }
@@ -399,14 +399,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         Thread.sleep(3000);
     }
 
-
-    public void captureScreenShot(String screenShotName) throws InterruptedException, IOException {
-        String methodName = new Exception().getStackTrace()[1].getMethodName();
-        String className = new Exception().getStackTrace()[1].getClassName();
-        testLogger.captureScreenShot(screenShotName, 1, className,
-                driver, getDeviceModel(), device_udid);
-    }
-
     public MobilePlatform getMobilePlatform(String device_udid) {
         MobilePlatform platform = null;
 
@@ -417,5 +409,4 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
         return platform;
     }
-
 }

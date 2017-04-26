@@ -15,6 +15,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
@@ -58,13 +59,23 @@ public class UserBaseTest extends AppiumParallelTest {
     public DesiredCapabilities iosNative1() throws Exception {
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
-        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10.0");
-        iOSCapabilities.setCapability(MobileCapabilityType.APP, prop.getProperty("IOS_APP_PATH"));
-        iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
+        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
+
+        File iosAppFile = new File(prop.getProperty("IOS_APP_PATH"));
+        String ipaPath = iosAppFile.getAbsolutePath();
+        System.out.println("Using IPA from " + ipaPath);
+        if (!iosAppFile.exists()) {
+            System.out.println("********************  ERROR ********************");
+            System.out
+                    .println("iOS: Unable to find the IPA at location "
+                            + iosAppFile.getAbsolutePath());
+            System.out.println("********************  ERROR ********************");
+        }
+
+        iOSCapabilities.setCapability(MobileCapabilityType.APP, iosAppFile);
+        iOSCapabilities.setCapability(IOSMobileCapabilityType.BUNDLE_ID,
+                prop.getProperty("BUNDLE_ID"));
         iOSCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
-        iOSCapabilities.setCapability(IOSMobileCapabilityType.WDA_LOCAL_PORT,ports.getPort());
-        iOSCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                AutomationName.IOS_XCUI_TEST);
         iOSCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
         return iOSCapabilities;
     }
