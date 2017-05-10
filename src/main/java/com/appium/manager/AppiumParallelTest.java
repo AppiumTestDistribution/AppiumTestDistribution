@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
@@ -219,7 +220,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             setAuthorName(methodName);
         }
         Thread.sleep(3000);
-        startingServerInstance(iosCaps, androidCaps);
+        startingServerInstance(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
         startLogResults(getClass().getMethod(methodName).getName());
         return driver;
     }
@@ -273,7 +274,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
-    public void startingServerInstance(DesiredCapabilities iosCaps, DesiredCapabilities androidCaps)
+    public void startingServerInstance(Optional<DesiredCapabilities> iosCaps, Optional<DesiredCapabilities> androidCaps)
             throws Exception {
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             driver = new AndroidDriver<>(appiumMan.getAppiumUrl(),
@@ -282,39 +283,34 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 if (prop.getProperty("IOS_APP_PATH") != null
                         && iosDevice.checkiOSDevice(device_udid)) {
-                    if (iosCaps == null) {
-                        iosCaps = deviceCapabilityManager.iosNative(device_udid);
-                        if (iosDevice.getIOSDeviceProductVersion(device_udid)
-                                .contains("10")) {
-                            iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                                    AutomationName.IOS_XCUI_TEST);
-                            iosCaps.setCapability(IOSMobileCapabilityType
-                                    .WDA_LOCAL_PORT,ports.getPort());
-                        }
+                    iosCaps.orElse(deviceCapabilityManager.iosNative(device_udid));
+                    if (iosDevice.getIOSDeviceProductVersion(device_udid)
+                        .contains("10")) {
+                        iosCaps.get().setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                            AutomationName.IOS_XCUI_TEST);
+                        iosCaps.get().setCapability(IOSMobileCapabilityType
+                            .WDA_LOCAL_PORT,ports.getPort());
                     }
-
                     driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
                 } else if (!iosDevice.checkiOSDevice(device_udid)) {
-                    if (androidCaps == null) {
-                        androidCaps = deviceCapabilityManager.androidNative(device_udid);
-                    }
+                    androidCaps.orElse(deviceCapabilityManager.androidNative(device_udid));
+                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps.get());
                     driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
                 }
             } else {
-                if (androidCaps == null) {
-                    androidCaps = deviceCapabilityManager.androidNative(device_udid);
-                }
+                androidCaps.orElse(deviceCapabilityManager.androidNative(device_udid));
+                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps.get());
                 driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
             }
         }
     }
 
     public void startingServerInstance() throws Exception {
-        startingServerInstance(null, null);
+        startingServerInstance(Optional.empty(), Optional.empty());
     }
 
     public void startingServerInstance(DesiredCapabilities caps) throws Exception {
-        startingServerInstance(caps, caps);
+        startingServerInstance(Optional.ofNullable(caps), Optional.ofNullable(caps));
     }
 
     private void startLogResults(String methodName) throws FileNotFoundException {
