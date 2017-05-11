@@ -12,4 +12,5 @@ testng.xml
 *.html
 *.iml
 !webContent/app/package.json
+!webContent/app/public/index.html
 /target/
