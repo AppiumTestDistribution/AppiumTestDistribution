@@ -11,4 +11,5 @@ testng.xml
 *.json
 *.html
 *.iml
+!webContent/app/package.json
 /target/
