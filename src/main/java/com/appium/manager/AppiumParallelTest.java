@@ -117,7 +117,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         //Will fix the tag once extent-report issue
         //https://github.com/anshooarora/extentreports-java/issues/757
         ExtentTest extentTest = createParentNodeExtent(methodName, "", category
-                + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
+                + device_udid).assignCategory(tags);
 
         AppiumServiceBuilder appiumServiceBuilder = checkOSAndStartServer(methodName);
         if (appiumServiceBuilder != null) {
@@ -160,7 +160,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
             createParentNodeExtent(className, testDescription,
-                    category + "_" + device_udid.replaceAll("\\W", "_"));
+                    category + "_" + device_udid);
         }
         AppiumServiceBuilder webKitPort = checkOSAndStartServer(className);
         if (webKitPort != null) {
@@ -207,7 +207,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         parentTest.set(parent);
         ExtentTestManager.getTest().log(Status.INFO,
                 "<a target=\"_parent\" href=" + "appiumlogs/"
-                        + device_udid.replaceAll("\\W", "_") + "__" + methodName
+                        + device_udid + "__" + methodName
                         + ".txt" + ">AppiumServerLogs</a>");
         return parent;
     }
@@ -237,7 +237,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public AppiumParallelTest createChildNodeWithCategory(String methodName,
                                                           String tags) {
         child = parentTest.get().createNode(methodName, category
-                + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
+                + device_udid).assignCategory(tags);
         test.set(child);
         return this;
     }
@@ -263,12 +263,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
                     .createNode(descriptionMethodName,
-                            category + "_" + device_udid.replaceAll("\\W", "_")).assignAuthor(
+                            category + "_" + device_udid).assignAuthor(
                             String.valueOf(listeners));
             test.set(child);
         } else {
             child = parentTest.get().createNode(descriptionMethodName,
-                    category + "_" + device_udid.replaceAll("\\W", "_"));
+                    category + "_" + device_udid);
             test.set(child);
         }
     }
@@ -392,7 +392,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
         FileUtils.copyFile(scrFile, new File(
                 "screenshot/" + device + "/"
-                        + device_udid.replaceAll("\\W", "_")
+                        + device_udid
                         + "/" + className
                         + "/" + methodName + "/" + deviceModel + "_"
                         + methodName + "_failed" + ".png"));

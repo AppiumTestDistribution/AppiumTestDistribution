@@ -7,6 +7,16 @@ public class TestResults {
     private String deviceName;
     private String deviceModel;
     private String deviceUDID;
+
+    public String getDeviceOS() {
+        return deviceOS;
+    }
+
+    public void setDeviceOS(String deviceOS) {
+        this.deviceOS = deviceOS;
+    }
+
+    private String deviceOS;
     private List<TestCases> testCases;
 
 

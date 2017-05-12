@@ -70,7 +70,7 @@ public class ScreenShotManager {
         } else if (platformName.equals("iOS")) {
             deviceModel = new IOSDeviceConfiguration().getIOSDeviceProductTypeAndVersion(udid);
         }
-        captureScreenShot(1, screenShotName, className,
+        captureScreenShot(1, className, screenShotName,
                 driver, deviceModel, udid);
     }
 
@@ -89,26 +89,27 @@ public class ScreenShotManager {
         String failedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/"
-                        + className + "/" + methodName + "/"
+                        + "/" + className + "/"
+                        + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
                         + methodName + "_failed" + ".png";
         String capturedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className
+                        + "/" + className
                         + "/" + methodName + "/" + methodName
                         + ".png";
         String framedCapturedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className
+                        + "/" + className
                         + "/" + methodName + "/" + model + "_"
                         + methodName + "_results.png";
         String framedFailedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className + "/" + methodName + "/" + model
+                        + "/" + className
+                        + "/" + methodName + "/" + model
                         + "_failed_" + methodName + "_framed.png";
 
         try {

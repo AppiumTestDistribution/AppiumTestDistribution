@@ -55,7 +55,7 @@ public class Flick extends CommandPrompt {
         String ios;
         if (device_udid.length() != 40) {
             String videoLocationAndroid =
-                videoPath + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                videoPath + "/target/screenshot/android/" + device_udid + "/"
                     + className + "/" + methodName;
             fileDirectoryCheck(videoLocationAndroid);
             if (command.equals("start")) {
@@ -98,8 +98,8 @@ public class Flick extends CommandPrompt {
             }
         } else {
             String videoLocationIOS =
-                videoPath + "/target/screenshot/iOS/" + device_udid.replaceAll("\\W", "_") + "/"
-                    + className + "/" + methodName;
+                videoPath + "/target/screenshot/iOS/" + device_udid
+                        + "/" + className + "/" + methodName;
             fileDirectoryCheck(videoLocationIOS);
             if (command.equals("start")) {
                 ios = "flick video -a " + command + " -p ios -u " + device_udid;

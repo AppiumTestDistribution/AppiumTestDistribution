@@ -275,7 +275,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
-                            + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                            + appiumParallelTest.device_udid
                             + "/" + deviceModel
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".png"));
             File[] files1 = framePath.listFiles();
@@ -330,7 +330,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         }
         File framedImageAndroid = new File(
                 System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + appiumParallelTest.device_udid.replaceAll("\\W", "_") + "/" + deviceModel
+                        + appiumParallelTest.device_udid + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png");
         if (framedImageAndroid.exists()) {
             appiumParallelTest.test.get().log(Status.INFO,
@@ -338,7 +338,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                             System.getProperty("user.dir")
                                     + "/target/screenshot/"
                                     + platform + "/"
-                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                                    + appiumParallelTest.device_udid
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png"));
         } else {
@@ -346,7 +346,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir") + "/target/screenshot/"
                                     + platform + "/"
-                                    + appiumParallelTest.device_udid.replaceAll("\\W", "_")
+                                    + appiumParallelTest.device_udid
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + ".png"));
         }

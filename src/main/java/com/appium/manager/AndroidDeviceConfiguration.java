@@ -15,7 +15,7 @@ public class AndroidDeviceConfiguration {
     public static ArrayList<String> deviceSerial = new ArrayList<String>();
     ArrayList<String> deviceModel = new ArrayList<String>();
     public static List<String> validDeviceIds;
-    
+
     /**
      * This method start adb server
      */
@@ -56,30 +56,30 @@ public class AndroidDeviceConfiguration {
                 if (lines[i].contains("device")) {
                     lines[i] = lines[i].replaceAll("device", "");
                     String deviceID = lines[i];
-                    
-                    if (validDeviceIds == null 
+
+                    if (validDeviceIds == null
                             || (validDeviceIds != null && validDeviceIds.contains(deviceID))) {
                         String model =
-                                cmd.runCommand("adb -s " + deviceID 
+                                cmd.runCommand("adb -s " + deviceID
                                         + " shell getprop ro.product.model")
-                                .replaceAll("\\s+", "");
+                                        .replaceAll("\\s+", "");
                         String brand =
-                                cmd.runCommand("adb -s " + deviceID 
+                                cmd.runCommand("adb -s " + deviceID
                                         + " shell getprop ro.product.brand")
-                                .replaceAll("\\s+", "");
+                                        .replaceAll("\\s+", "");
                         String osVersion = cmd.runCommand(
                                 "adb -s " + deviceID + " shell getprop ro.build.version.release")
                                 .replaceAll("\\s+", "");
                         String deviceName = brand + " " + model;
                         String apiLevel =
-                                cmd.runCommand("adb -s " + deviceID 
+                                cmd.runCommand("adb -s " + deviceID
                                         + " shell getprop ro.build.version.sdk")
-                                .replaceAll("\n", "");
+                                        .replaceAll("\n", "");
 
                         devices.put("deviceID" + i, deviceID);
                         devices.put("deviceName" + i, deviceName);
                         devices.put("osVersion" + i, osVersion);
-                        devices.put(deviceID, apiLevel);        
+                        devices.put(deviceID, apiLevel);
                         deviceSerial.add(deviceID);
                     }
                 } else if (lines[i].contains("unauthorized")) {
@@ -110,7 +110,7 @@ public class AndroidDeviceConfiguration {
                 if (lines[i].contains("device")) {
                     lines[i] = lines[i].replaceAll("device", "");
                     String deviceID = lines[i];
-                    if (validDeviceIds == null 
+                    if (validDeviceIds == null
                             || (validDeviceIds != null && validDeviceIds.contains(deviceID))) {
                         if (validDeviceIds == null) {
                             System.out.println("validDeviceIds is null!!!");
@@ -139,8 +139,8 @@ public class AndroidDeviceConfiguration {
         String deviceModel = null;
         try {
             deviceModelName =
-                cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
-                    .replaceAll("\\W", "");
+                    cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
+                            .replaceAll("\\W", "");
 
             brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand");
         } catch (InterruptedException | IOException e) {
@@ -160,8 +160,8 @@ public class AndroidDeviceConfiguration {
         String deviceOSLevel = null;
         try {
             deviceOSLevel =
-                cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.sdk")
-                    .replaceAll("\\W", "");
+                    cmd.runCommand("adb -s " + deviceID + " shell getprop ro.build.version.release")
+                            .replace("\n", "");
         } catch (InterruptedException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -177,7 +177,7 @@ public class AndroidDeviceConfiguration {
      * @throws InterruptedException
      */
     public void closeRunningApp(String deviceID, String app_package)
-        throws InterruptedException, IOException {
+            throws InterruptedException, IOException {
         // adb -s 192.168.56.101:5555 com.android2.calculator3
         cmd.runCommand("adb -s " + deviceID + " shell am force-stop " + app_package);
     }
@@ -189,7 +189,7 @@ public class AndroidDeviceConfiguration {
      * @throws InterruptedException
      */
     public void clearAppData(String deviceID, String app_package)
-        throws InterruptedException, IOException {
+            throws InterruptedException, IOException {
         // adb -s 192.168.56.101:5555 com.android2.calculator3
         cmd.runCommand("adb -s " + deviceID + " shell pm clear " + app_package);
     }
@@ -206,14 +206,14 @@ public class AndroidDeviceConfiguration {
     }
 
     public String screenRecord(String deviceID, String fileName)
-        throws IOException, InterruptedException {
+            throws IOException, InterruptedException {
         return "adb -s " + deviceID + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
-            + ".mp4";
+                + ".mp4";
     }
 
     public boolean checkIfRecordable(String deviceID) throws IOException, InterruptedException {
         String screenrecord =
-            cmd.runCommand("adb -s " + deviceID + " shell ls /system/bin/screenrecord");
+                cmd.runCommand("adb -s " + deviceID + " shell ls /system/bin/screenrecord");
         if (screenrecord.trim().equals("/system/bin/screenrecord")) {
             return true;
         } else {
@@ -223,14 +223,14 @@ public class AndroidDeviceConfiguration {
 
     public String getDeviceManufacturer(String deviceID) throws IOException, InterruptedException {
         return cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.manufacturer")
-            .trim();
+                .trim();
     }
 
     public AndroidDeviceConfiguration pullVideoFromDevice(String deviceID, String fileName,
-        String destination) throws IOException, InterruptedException {
+                                                          String destination) throws IOException, InterruptedException {
         ProcessBuilder pb =
-            new ProcessBuilder("adb", "-s", deviceID, "pull", "/sdcard/" + fileName + ".mp4",
-                destination);
+                new ProcessBuilder("adb", "-s", deviceID, "pull", "/sdcard/" + fileName + ".mp4",
+                        destination);
         Process pc = pb.start();
         pc.waitFor();
         System.out.println("Exited with Code::" + pc.exitValue());
@@ -240,7 +240,7 @@ public class AndroidDeviceConfiguration {
     }
 
     public void removeVideoFileFromDevice(String deviceID, String fileName)
-        throws IOException, InterruptedException {
+            throws IOException, InterruptedException {
         cmd.runCommand("adb -s " + deviceID + " shell rm -f /sdcard/" + fileName + ".mp4");
     }
 

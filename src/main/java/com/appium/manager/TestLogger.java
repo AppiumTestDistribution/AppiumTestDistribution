@@ -85,14 +85,14 @@ class TestLogger {
             if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
                 String videoFilePath = System.getProperty("user.dir")
                         + "/target/screenshot/android/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
+                        + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4";
                 boolean exists = new File(videoFilePath)
                         .exists();
                 System.out.println("****************" + exists + videoFilePath);
                 if (exists) {
                     test.get().log(Status.INFO, "<a target=\"_parent\" href="
-                            + "screenshot/android/" + device_udid.replaceAll("\\W", "_")
+                            + "screenshot/android/" + device_udid
                             + "/" + className
                             + "/" + result.getMethod().getMethodName()
                             + "/" + result.getMethod()
@@ -103,12 +103,12 @@ class TestLogger {
 
                 String iosVideoFilePath = System.getProperty("user.dir")
                         + "/target/screenshot/iOS/" + device_udid
-                        .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
+                        + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4";
                 if (new File(iosVideoFilePath)
                         .exists()) {
                     test.get().log(Status.INFO, "<a target=\"_parent\" href="
-                            + "screenshot/iOS/" + device_udid.replaceAll("\\W", "_")
+                            + "screenshot/iOS/" + device_udid
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/" + result.getMethod()
                             .getMethodName() + ".mp4" + ">Videologs</a>");
@@ -156,7 +156,7 @@ class TestLogger {
     private void deleteSuccessVideos(ITestResult result, String className, String device_udid) {
         if (result.isSuccess()) {
             File videoFile = new File(System.getProperty("user.dir") + "/target/screenshot/android/"
-                    + device_udid.replaceAll("\\W", "_") + "/"
+                    + device_udid + "/"
                     + className + "/" + result.getMethod().getMethodName()
                     + "/" + result.getMethod().getMethodName() + ".mp4");
             System.out.println(videoFile);
@@ -172,7 +172,7 @@ class TestLogger {
             log_file_writer.println(logEntries);
             log_file_writer.flush();
             test.get().log(Status.INFO,
-                    "<a target=\"_parent\" href=" + "adblogs/" + device_udid.replaceAll("\\W", "_")
+                    "<a target=\"_parent\" href=" + "adblogs/" + device_udid
                             + "__"
                             + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
             System.out.println(driver.getSessionId() + ": Saving device log - Done.");
@@ -194,19 +194,19 @@ class TestLogger {
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
                 File framedImageAndroid = new File(
                         System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
-                                .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
+                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
                 if (framedImageAndroid.exists()) {
                     log.addScreenCaptureFromPath(
-                            "screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                            "screenshot/android/" + device_udid + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
                                     + "_failed_" + result
                                     .getMethod().getMethodName() + "_framed.png");
                 } else {
                     log.addScreenCaptureFromPath(
-                            "screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                            "screenshot/android/" + device_udid + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
                                     + screenShotNameWithTimeStamp + "_" + result
                                     .getMethod().getMethodName() + "_failed.png");
@@ -217,21 +217,21 @@ class TestLogger {
             if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
                 File framedImageIOS = new File(
                         System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
-                                .replaceAll("\\W", "_") + "/" + className + "/" + result.getMethod()
+                                + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
                 System.out.println("************************" + framedImageIOS.exists()
                         + "***********************");
                 if (framedImageIOS.exists()) {
                     log.addScreenCaptureFromPath("screenshot/iOS/"
-                            + device_udid.replaceAll("\\W", "_")
+                            + device_udid
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_failed_" + result
                             .getMethod().getMethodName() + "_framed.png");
                 } else {
                     log.addScreenCaptureFromPath("screenshot/iOS/"
-                            + device_udid.replaceAll("\\W", "_")
+                            + device_udid
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_" + result

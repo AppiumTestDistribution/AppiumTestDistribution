@@ -176,7 +176,7 @@ public class ParallelThread {
                 createPlatformDirectory(platform);
                 File file = new File(
                     System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + deviceSerial.replaceAll("\\W", "_"));
+                        + deviceSerial);
                 if (!file.exists()) {
                     if (file.mkdir()) {
                         System.out.println("Android " + deviceSerial + " Directory is created!");
