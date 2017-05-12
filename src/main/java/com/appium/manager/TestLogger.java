@@ -207,18 +207,22 @@ class TestLogger {
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp + deviceModel
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
                 if (framedImageAndroid.exists()) {
-                    log.addScreenCaptureFromPath(
-                            "screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                    test.get().log(Status.FAIL,"Snapshot below: " 
+                        + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/android/" 
+                            + device_udid.replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
                                     + deviceModel + "_failed_" + result
-                                    .getMethod().getMethodName() + "_framed.png");
+                                    .getMethod().getMethodName() + "_framed.png"));
                 } else {
-                    log.addScreenCaptureFromPath(
-                            "screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                    test.get().log(Status.FAIL,"Snapshot below: " 
+                        + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/android/" 
+                            + device_udid.replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
                                     + screenShotNameWithTimeStamp + deviceModel + "_" + result
-                                    .getMethod().getMethodName() + "_failed.png");
+                                    .getMethod().getMethodName() + "_failed.png"));
                 }
 
 
@@ -232,19 +236,23 @@ class TestLogger {
                 System.out.println("************************" + framedImageIOS.exists()
                         + "***********************");
                 if (framedImageIOS.exists()) {
-                    log.addScreenCaptureFromPath("screenshot/iOS/"
+                    test.get().log(Status.FAIL,"Snapshot below: " 
+                        + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/iOS/"
                             + device_udid.replaceAll("\\W", "_")
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + deviceModel + "_failed_" + result
-                            .getMethod().getMethodName() + "_framed.png");
+                            .getMethod().getMethodName() + "_framed.png"));
                 } else {
-                    log.addScreenCaptureFromPath("screenshot/iOS/"
+                    test.get().log(Status.FAIL,"Snapshot below: " 
+                        + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/iOS/"
                             + device_udid.replaceAll("\\W", "_")
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + deviceModel + "_" + result
-                            .getMethod().getMethodName() + "_failed.png");
+                            .getMethod().getMethodName() + "_failed.png"));
                 }
 
             }
