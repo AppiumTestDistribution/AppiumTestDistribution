@@ -85,7 +85,7 @@ public class IOSDeviceConfiguration {
             String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
-                return null;
+                return new HashMap<String, String>();
             } else {
                 String[] lines = getIOSDeviceID.split("\n");
                 for (int i = 0; i < lines.length; i++) {
@@ -99,7 +99,7 @@ public class IOSDeviceConfiguration {
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
-            return null;
+            return new HashMap<String, String>();
         }
     }
 
