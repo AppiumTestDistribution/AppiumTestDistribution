@@ -277,7 +277,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
                             + appiumParallelTest.device_udid
                             + "/" + deviceModel
-                            + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".png"));
+                            + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
             File[] files1 = framePath.listFiles();
             if (framePath.exists()) {
                 for (int i = 0; i < files1.length; i++) {
@@ -294,14 +294,14 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                                                 + "/" + appiumParallelTest.device_udid
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
-                                                + failed_StepName.replaceAll(" ", "_") + ".png",
+                                                + failed_StepName.replaceAll(" ", "_") + ".jpeg",
                                         System.getProperty("user.dir")
                                                 + "/target/screenshot/" + device
                                                 + "/" + appiumParallelTest.device_udid
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_")
-                                                + "_framed.png");
+                                                + "_framed.jpeg");
                                 break;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -331,7 +331,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         File framedImageAndroid = new File(
                 System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
                         + appiumParallelTest.device_udid + "/" + deviceModel
-                        + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png");
+                        + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
         if (framedImageAndroid.exists()) {
             appiumParallelTest.test.get().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
@@ -340,7 +340,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                                     + platform + "/"
                                     + appiumParallelTest.device_udid
                                     + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.png"));
+                                    + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg"));
         } else {
             appiumParallelTest.test.get().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
@@ -348,7 +348,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                                     + platform + "/"
                                     + appiumParallelTest.device_udid
                                     + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + ".png"));
+                                    + "/failed_" + stepName.replaceAll(" ", "_") + ".jpeg"));
         }
     }
 

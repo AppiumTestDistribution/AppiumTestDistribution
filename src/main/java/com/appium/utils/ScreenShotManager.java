@@ -92,25 +92,26 @@ public class ScreenShotManager {
                         + "/" + className + "/"
                         + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
-                        + methodName + "_failed" + ".png";
+                        + methodName + "_failed" + ".jpeg";
         String capturedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
                         + "/" + className
-                        + "/" + methodName + "/" + methodName
-                        + ".png";
+                        + "/" + methodName + "/" +
+                        screenShotNameWithTimeStamp + deviceModel + "_"
+                        + methodName + "_results.jpeg";
         String framedCapturedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
                         + "/" + className
                         + "/" + methodName + "/" + model + "_"
-                        + methodName + "_results.png";
+                        + methodName + "_results_framed.jpeg";
         String framedFailedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
                         + "/" + className
                         + "/" + methodName + "/" + model
-                        + "_failed_" + methodName + "_framed.png";
+                        + "_failed_" + methodName + "_framed.jpeg";
 
         try {
             File framePath =

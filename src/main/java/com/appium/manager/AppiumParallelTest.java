@@ -283,7 +283,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 if (prop.getProperty("IOS_APP_PATH") != null
                         && iosDevice.checkiOSDevice(device_udid)) {
-                    iosCaps.orElse(deviceCapabilityManager.iosNative(device_udid));
                     if (iosDevice.getIOSDeviceProductVersion(device_udid)
                         .contains("10")) {
                         iosCaps.get().setCapability(MobileCapabilityType.AUTOMATION_NAME,
@@ -291,16 +290,17 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                         iosCaps.get().setCapability(IOSMobileCapabilityType
                             .WDA_LOCAL_PORT,ports.getPort());
                     }
-                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
+                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(),
+                            iosCaps.orElse(deviceCapabilityManager.iosNative(device_udid)));
                 } else if (!iosDevice.checkiOSDevice(device_udid)) {
-                    androidCaps.orElse(deviceCapabilityManager.androidNative(device_udid));
-                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps.get());
-                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(),
+                            androidCaps
+                                    .orElse(deviceCapabilityManager.androidNative(device_udid)));
                 }
             } else {
-                androidCaps.orElse(deviceCapabilityManager.androidNative(device_udid));
-                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps.get());
-                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(),
+                        androidCaps
+                                .orElse(deviceCapabilityManager.androidNative(device_udid)));
             }
         }
     }
@@ -391,7 +391,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
                         + device_udid
                         + "/" + className
                         + "/" + methodName + "/" + deviceModel + "_"
-                        + methodName + "_failed" + ".png"));
+                        + methodName + "_failed" + ".jpeg"));
         Thread.sleep(3000);
     }
 

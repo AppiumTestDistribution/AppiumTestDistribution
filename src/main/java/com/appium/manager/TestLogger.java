@@ -196,20 +196,20 @@ class TestLogger {
                         System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
                                  + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
-                                + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
+                                + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 if (framedImageAndroid.exists()) {
                     log.addScreenCaptureFromPath(
                             "screenshot/android/" + device_udid + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
                                     + "_failed_" + result
-                                    .getMethod().getMethodName() + "_framed.png");
+                                    .getMethod().getMethodName() + "_framed.jpeg");
                 } else {
                     log.addScreenCaptureFromPath(
                             "screenshot/android/" + device_udid + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
                                     + screenShotNameWithTimeStamp + "_" + result
-                                    .getMethod().getMethodName() + "_failed.png");
+                                    .getMethod().getMethodName() + "_failed.jpeg");
                 }
 
 
@@ -219,7 +219,7 @@ class TestLogger {
                         System.getProperty("user.dir") + "/target/screenshot/iOS/" + device_udid
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
-                                + "_failed_" + result.getMethod().getMethodName() + "_framed.png");
+                                + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 System.out.println("************************" + framedImageIOS.exists()
                         + "***********************");
                 if (framedImageIOS.exists()) {
@@ -228,14 +228,14 @@ class TestLogger {
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_failed_" + result
-                            .getMethod().getMethodName() + "_framed.png");
+                            .getMethod().getMethodName() + "_framed.jpeg");
                 } else {
                     log.addScreenCaptureFromPath("screenshot/iOS/"
                             + device_udid
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_" + result
-                            .getMethod().getMethodName() + "_failed.png");
+                            .getMethod().getMethodName() + "_failed.jpeg");
                 }
 
             }
