@@ -2,7 +2,7 @@ import _ from 'lodash'
 import parse from '../AppiumReportParser'
 
 describe('Appium report parser', () => {
-    
+
     it('should return test name as the testcase value', () => {
         let testData = [{
             "deviceName": "2017-04-26T14: 59: 16PREVIEWGoogleNexus6P700API241440x2560",
@@ -43,6 +43,6 @@ describe('Appium report parser', () => {
         let result = parse(testData)
         expect(result[0].testMethods[0].methodName).toBeTruthy()
         expect(result[0].testMethods[0].info).toBeTruthy()
-        expect(result[0].testMethods[0].screenShot).toBeTruthy()
+        expect(result[0].testMethods[0].screenShots).toBeTruthy()
     })
 })

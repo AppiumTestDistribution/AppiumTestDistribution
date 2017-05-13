@@ -18,9 +18,10 @@ export default function parse(testData) {
                             "info": {
                                 "deviceName": data.deviceName,
                                 "deviceModel": data.deviceModel,
-                                "deviceUDID": data.deviceUDID
+                                "deviceUDID": data.deviceUDID,
+                                "deviceOS":data.deviceOS
                             },
-                            "screenShot": method.screenShots
+                            "screenShots": method.screenShots
                         }
                     )
                 })
@@ -33,9 +34,10 @@ export default function parse(testData) {
                             "info": {
                                 "deviceName": data.deviceName,
                                 "deviceModel": data.deviceModel,
-                                "deviceUDID": data.deviceUDID
+                                "deviceUDID": data.deviceUDID,
+                                 "deviceOS":data.deviceOS
                             },
-                            "screenShot": method.screenShots
+                            "screenShots": method.screenShots
                         }
                     )
                 })
