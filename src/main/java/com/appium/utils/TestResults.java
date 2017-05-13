@@ -8,6 +8,16 @@ public class TestResults {
     private String deviceModel;
     private String deviceUDID;
 
+    public String getScreensShotPath() {
+        return screensShotPath;
+    }
+
+    public void setScreensShotPath(String screensShotPath) {
+        this.screensShotPath = screensShotPath;
+    }
+
+    private String screensShotPath;
+
     public String getDeviceOS() {
         return deviceOS;
     }

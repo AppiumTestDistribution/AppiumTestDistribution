@@ -1,24 +1,19 @@
 package com.appium.utils;
 
-import static com.appium.utils.TestWriteUtils.GSON;
-
 import com.appium.manager.AndroidDeviceConfiguration;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import com.madgag.gif.fmsware.AnimatedGifEncoder;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.testng.annotations.Test;
 
-import java.awt.Color;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,13 +21,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.imageio.ImageIO;
+import static com.appium.utils.TestWriteUtils.GSON;
 
 /**
  * Created by saikrisv on 17/03/16.
  */
 public class ImageUtils {
-
 
 
     public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed,
@@ -83,32 +77,35 @@ public class ImageUtils {
                                 testMethod.setMethodName(mFile.getName());
                                 if (mFile.isDirectory()) {
                                     File[] sList = mFile.listFiles();
-                                    List<String> screenShotList = new ArrayList<String>();
+                                    String filePath = null;
                                     for (File sFile : sList) {
                                         if (sFile.isFile() && sFile.getCanonicalPath()
                                                 .contains("result")) {
-                                            screenShotList.add(sFile.getCanonicalPath());
+                                            filePath = sFile.getCanonicalPath();
+                                            //testResult.setScreensShotPath(sFile.getCanonicalPath());
                                             //Set the Name and Model
                                             testResult.setDeviceName(sFile.getName().split("_")[1]);
                                             testResult
-                                                    .setDeviceModel(sFile.getName().split("_")[2]);
+                                                    .setDeviceModel(new AndroidDeviceConfiguration()
+                                                            .getDeviceModel(testResult.getDeviceUDID())
+                                                    .split("_")[0]);
                                             testResult.setDeviceOS(new AndroidDeviceConfiguration()
                                                     .deviceOS(testResult.getDeviceUDID()));
 
                                         }
                                     }
-                                    testMethod.setScreenShots(screenShotList);
+                                    testMethod.setScreenShots(filePath);
                                 }
-
-                                testMethodList.add(testMethod);
+                                if (testMethod.getScreenShots() != null)
+                                    testMethodList.add(testMethod);
                             }
 
-
-                            testCase.setTestMethod(testMethodList);
+                            if (testMethodList.size() > 0)
+                                testCase.setTestMethod(testMethodList);
 
                         }
-
-                        testCaseList.add(testCase);
+                        if (testCase.testMethod != null)
+                            testCaseList.add(testCase);
 
                     }
 
