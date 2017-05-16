@@ -39,11 +39,7 @@ public class DeviceCapabilityManager {
 
     public synchronized DesiredCapabilities androidWeb() {
         DesiredCapabilities androidWebCapabilities = new DesiredCapabilities();
-        androidWebCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
         androidWebCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
-        androidWebCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.0.X");
-        // If you want the tests on real device, make sure chrome browser is
-        // installed
         androidWebCapabilities
                 .setCapability(MobileCapabilityType.BROWSER_NAME,
                         configurationManager.getProperty("BROWSER_TYPE"));

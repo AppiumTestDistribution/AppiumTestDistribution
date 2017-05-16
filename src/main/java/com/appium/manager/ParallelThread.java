@@ -7,17 +7,11 @@ import com.github.lalyos.jfiglet.FigletFont;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +36,7 @@ public class ParallelThread {
     private MyTestExecutor myTestExecutor;
     List<Class> testcases;
     private HtmlReporter htmlReporter;
-    
+
     public ParallelThread() throws IOException {
         deviceManager = DeviceManager.getInstance();
         configurationManager = ConfigurationManager.getInstance();
@@ -61,7 +55,7 @@ public class ParallelThread {
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
     }
-    
+
     public boolean runner(String pack, List<String> tests) throws Exception {
         figlet(configurationManager.getProperty("RUNNER"));
         return triggerTest(pack, tests);
@@ -89,8 +83,7 @@ public class ParallelThread {
             }
         }
 
-        if (configurationManager.getProperty("ANDROID_APP_PATH") != null
-                && androidDevice.getDevices() != null) {
+        if (androidDevice.getDevices() != null) {
             devices = androidDevice.getDevices();
             deviceCount = devices.size() / 4;
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
@@ -108,16 +101,12 @@ public class ParallelThread {
         }
 
         if (operSys.contains("mac")) {
-            if (configurationManager.getProperty("IOS_APP_PATH") != null ) {
-                if (IOSDeviceConfiguration.deviceUDIDiOS != null) {
-                    iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-                    iOSdevices = iosDevice.getIOSUDIDHash();
-                    deviceCount += iOSdevices.size();
-                    createSnapshotFolderiOS(deviceCount, "iPhone");
-                }
+            if (IOSDeviceConfiguration.deviceUDIDiOS.size() > 0) {
+                iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
+                iOSdevices = iosDevice.getIOSUDIDHash();
+                deviceCount += iOSdevices.size();
+                createSnapshotFolderiOS(deviceCount, "iPhone");
             }
-
-
         }
         if (deviceCount == 0) {
             figlet("No Devices Connected");
@@ -141,14 +130,14 @@ public class ParallelThread {
 
             if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
                 hasFailures = myTestExecutor
-                    .runMethodParallelAppium(tests, pack, deviceCount,
-                        "distribute");
+                        .runMethodParallelAppium(tests, pack, deviceCount,
+                                "distribute");
 
             }
             if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 hasFailures = myTestExecutor
-                    .runMethodParallelAppium(tests, pack, deviceCount,
-                        "parallel");
+                        .runMethodParallelAppium(tests, pack, deviceCount,
+                                "parallel");
             }
         }
 
@@ -161,8 +150,8 @@ public class ParallelThread {
             } else if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
                 hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
-                    .constructXmlSuiteForParallelCucumber(deviceCount,
-                            deviceManager.getDevices()));
+                        .constructXmlSuiteForParallelCucumber(deviceCount,
+                                deviceManager.getDevices()));
                 htmlReporter.generateReports();
             }
         }
@@ -175,8 +164,8 @@ public class ParallelThread {
             if (deviceSerial != null) {
                 createPlatformDirectory(platform);
                 File file = new File(
-                    System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + deviceSerial);
+                        System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                                + deviceSerial);
                 if (!file.exists()) {
                     if (file.mkdir()) {
                         System.out.println("Android " + deviceSerial + " Directory is created!");
@@ -193,8 +182,8 @@ public class ParallelThread {
             String deviceSerial = iOSdevices.get("deviceID" + i);
             createPlatformDirectory(platform);
             File file = new File(
-                System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                    + deviceSerial);
+                    System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                            + deviceSerial);
             if (!file.exists()) {
                 if (file.mkdir()) {
                     System.out.println("IOS " + deviceSerial + " Directory is created!");
@@ -221,9 +210,9 @@ public class ParallelThread {
     public void addPluginToCucumberRunner() throws IOException {
         File dir = new File(System.getProperty("user.dir") + "/src/test/java/output/");
         System.out.println("Getting all files in " + dir.getCanonicalPath()
-            + " including those in subdirectories");
+                + " including those in subdirectories");
         List<File> files =
-            (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+                (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (File file : files) {
             BufferedReader read = new BufferedReader(new FileReader(file.getAbsoluteFile()));
             ArrayList list = new ArrayList();
@@ -235,7 +224,7 @@ public class ParallelThread {
             }
 
             FileWriter writer = new FileWriter(
-                file.getAbsoluteFile()); //same as your file name above so that it will replace it
+                    file.getAbsoluteFile()); //same as your file name above so that it will replace it
             writer.append("package output;");
 
             for (int i = 0; i < list.size(); i++) {

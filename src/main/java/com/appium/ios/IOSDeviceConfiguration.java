@@ -36,6 +36,7 @@ public class IOSDeviceConfiguration {
 
     public IOSDeviceConfiguration() throws IOException {
         prop = ConfigurationManager.getInstance();
+        getIOSUDID();
     }
 
     public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {

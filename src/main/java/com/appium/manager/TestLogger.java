@@ -7,6 +7,7 @@ import com.report.factory.ExtentManager;
 import com.video.recorder.Flick;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 
@@ -35,7 +36,10 @@ class TestLogger {
     public void startLogging(String methodName, AppiumDriver<MobileElement> driver,
                              String device_udid, String className) throws FileNotFoundException {
         startVideoRecording(methodName, device_udid, className);
-        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
+        Capabilities capabilities = driver.getCapabilities();
+        if (capabilities.getCapability("platformName")
+                .toString().equals("Android") &&
+                capabilities.getCapability("browserName") == null) {
             startVideoRecording(methodName, device_udid, className);
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
@@ -194,7 +198,7 @@ class TestLogger {
             if (driver.toString().split(":")[0].trim().equals("AndroidDriver")) {
                 File framedImageAndroid = new File(
                         System.getProperty("user.dir") + "/target/screenshot/android/" + device_udid
-                                 + "/" + className + "/" + result.getMethod()
+                                + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 if (framedImageAndroid.exists()) {
