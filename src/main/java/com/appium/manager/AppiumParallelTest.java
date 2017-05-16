@@ -216,12 +216,16 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(
             String methodName, DesiredCapabilities iosCaps,
             DesiredCapabilities androidCaps) throws Exception {
+        String currentMethodName = null;
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             setAuthorName(methodName);
+            currentMethodName = getClass().getMethod(methodName).getName();
+        } else {
+            currentMethodName = methodName;
         }
         Thread.sleep(3000);
         startingServerInstance(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
-        startLogResults(getClass().getMethod(methodName).getName());
+        startLogResults(currentMethodName);
         return driver;
     }
 
@@ -274,7 +278,8 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
-    public void startingServerInstance(Optional<DesiredCapabilities> iosCaps, Optional<DesiredCapabilities> androidCaps)
+    public void startingServerInstance(Optional<DesiredCapabilities> iosCaps,
+                                       Optional<DesiredCapabilities> androidCaps)
             throws Exception {
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
             driver = new AndroidDriver<>(appiumMan.getAppiumUrl(),

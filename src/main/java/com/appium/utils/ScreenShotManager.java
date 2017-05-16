@@ -97,8 +97,8 @@ public class ScreenShotManager {
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + device_udid
                         + "/" + className
-                        + "/" + methodName + "/" +
-                        screenShotNameWithTimeStamp + deviceModel + "_"
+                        + "/" + methodName + "/"
+                        + screenShotNameWithTimeStamp + deviceModel + "_"
                         + methodName + "_results.jpeg";
         String framedCapturedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"

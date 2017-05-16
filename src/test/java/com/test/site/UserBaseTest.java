@@ -23,7 +23,7 @@ public class UserBaseTest extends AppiumParallelTest {
     JSonParser jSonParser = new JSonParser();
 
     @BeforeMethod(alwaysRun = true) public void startApp(Method name) throws Exception {
-        driver = startAppiumServerInParallel(name.getName());
+        driver = startAppiumServerInParallel(name.getName(),iosNative1());
     }
 
     @AfterMethod(alwaysRun = true) public void killServer(ITestResult result)
@@ -59,7 +59,7 @@ public class UserBaseTest extends AppiumParallelTest {
     public DesiredCapabilities iosNative1() throws Exception {
         DesiredCapabilities iOSCapabilities = new DesiredCapabilities();
         System.out.println("Setting iOS Desired Capabilities:");
-        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
+        iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10.0");
 
         File iosAppFile = new File(prop.getProperty("IOS_APP_PATH"));
         String ipaPath = iosAppFile.getAbsolutePath();
@@ -73,10 +73,13 @@ public class UserBaseTest extends AppiumParallelTest {
         }
 
         iOSCapabilities.setCapability(MobileCapabilityType.APP, iosAppFile);
-        iOSCapabilities.setCapability(IOSMobileCapabilityType.BUNDLE_ID,
-                prop.getProperty("BUNDLE_ID"));
         iOSCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
         iOSCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
+        iOSCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                AutomationName.IOS_XCUI_TEST);
+        iOSCapabilities.setCapability(IOSMobileCapabilityType.USE_NEW_WDA,"false");
+        iOSCapabilities.setCapability(IOSMobileCapabilityType.USE_PREBUILT_WDA,"true");
+        iOSCapabilities.setCapability(IOSMobileCapabilityType.WDA_LOCAL_PORT,ports.getPort());
         return iOSCapabilities;
     }
 

@@ -227,7 +227,8 @@ public class AndroidDeviceConfiguration {
     }
 
     public AndroidDeviceConfiguration pullVideoFromDevice(String deviceID, String fileName,
-                                                          String destination) throws IOException, InterruptedException {
+                                                          String destination)
+            throws IOException, InterruptedException {
         ProcessBuilder pb =
                 new ProcessBuilder("adb", "-s", deviceID, "pull", "/sdcard/" + fileName + ".mp4",
                         destination);

@@ -3,6 +3,7 @@ package com.appium.utils;
 import com.appium.manager.AndroidDeviceConfiguration;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import com.madgag.gif.fmsware.AnimatedGifEncoder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -11,8 +12,7 @@ import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.testng.annotations.Test;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 import static com.appium.utils.TestWriteUtils.GSON;
 
@@ -30,7 +31,8 @@ public class ImageUtils {
 
 
     public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed,
-                                 String framedDeviceScreen) throws InterruptedException, IOException, IM4JavaException {
+                                 String framedDeviceScreen)
+            throws InterruptedException, IOException, IM4JavaException {
         IMOperation op = new IMOperation();
         op.addImage(deviceFrame);
         op.addImage(deviceScreenToBeFramed);
@@ -82,12 +84,11 @@ public class ImageUtils {
                                         if (sFile.isFile() && sFile.getCanonicalPath()
                                                 .contains("result")) {
                                             filePath = sFile.getCanonicalPath();
-                                            //testResult.setScreensShotPath(sFile.getCanonicalPath());
-                                            //Set the Name and Model
                                             testResult.setDeviceName(sFile.getName().split("_")[1]);
                                             testResult
                                                     .setDeviceModel(new AndroidDeviceConfiguration()
-                                                            .getDeviceModel(testResult.getDeviceUDID())
+                                                            .getDeviceModel(testResult
+                                                                    .getDeviceUDID())
                                                     .split("_")[0]);
                                             testResult.setDeviceOS(new AndroidDeviceConfiguration()
                                                     .deviceOS(testResult.getDeviceUDID()));
@@ -96,16 +97,18 @@ public class ImageUtils {
                                     }
                                     testMethod.setScreenShots(filePath);
                                 }
-                                if (testMethod.getScreenShots() != null)
+                                if (testMethod.getScreenShots() != null) {
                                     testMethodList.add(testMethod);
+                                }
                             }
 
-                            if (testMethodList.size() > 0)
+                            if (testMethodList.size() > 0) {
                                 testCase.setTestMethod(testMethodList);
-
+                            }
                         }
-                        if (testCase.testMethod != null)
+                        if (testCase.testMethod != null) {
                             testCaseList.add(testCase);
+                        }
 
                     }
 
@@ -131,7 +134,8 @@ public class ImageUtils {
         System.out.println("Getting all files in " + dir.getCanonicalPath()
                 + " including those in subdirectories");
         List<File> files =
-                (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+                (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE,
+                        TrueFileFilter.INSTANCE);
 
         JsonArray mainObj = new JsonArray();
 

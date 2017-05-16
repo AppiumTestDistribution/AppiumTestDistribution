@@ -26,7 +26,7 @@ public class IOSDeviceConfiguration {
     public Process p;
     public Process p1;
     public static List<String> validDeviceIds;
-    
+
     public final static int IOS_UDID_LENGTH = 40;
     String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
             + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'\n";
@@ -55,18 +55,19 @@ public class IOSDeviceConfiguration {
         try {
             int startPos = 0;
             int endPos = IOS_UDID_LENGTH - 1;
-            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
+            String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
                 return null;
             } else {
                 while (endPos < getIOSDeviceID.length()) {
-                    if (validDeviceIds == null 
-                            || (validDeviceIds != null 
+                    if (validDeviceIds == null
+                            || (validDeviceIds != null
                             && validDeviceIds.contains(
-                                    getIOSDeviceID.substring(startPos, endPos + 1)))) {
+                            getIOSDeviceID.substring(startPos, endPos + 1)))) {
                         if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
-                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1));
+                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 2)
+                                    .replace("\n", ""));
                         }
                     }
                     startPos += IOS_UDID_LENGTH;
@@ -82,7 +83,7 @@ public class IOSDeviceConfiguration {
 
     public Map<String, String> getIOSUDIDHash() {
         try {
-            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
+            String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
                 return null;
@@ -90,7 +91,7 @@ public class IOSDeviceConfiguration {
                 String[] lines = getIOSDeviceID.split("\n");
                 for (int i = 0; i < lines.length; i++) {
                     lines[i] = lines[i].replaceAll("\\s+", "");
-                    if (validDeviceIds == null 
+                    if (validDeviceIds == null
                             || (validDeviceIds != null && validDeviceIds.contains(lines[i]))) {
                         devices.put("deviceID" + i, lines[i]);
                     }
