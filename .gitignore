@@ -14,3 +14,4 @@ testng.xml
 !webContent/app/package.json
 !webContent/app/public/index.html
 /target/
+webContent/app/screenshot
