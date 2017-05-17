@@ -23,7 +23,7 @@ public class UserBaseTest extends AppiumParallelTest {
     JSonParser jSonParser = new JSonParser();
 
     @BeforeMethod(alwaysRun = true) public void startApp(Method name) throws Exception {
-        driver = startAppiumServerInParallel(name.getName(),iosNative1());
+        driver = startAppiumServerInParallel(name.getName(),androidNative1());
     }
 
     @AfterMethod(alwaysRun = true) public void killServer(ITestResult result)
@@ -83,7 +83,7 @@ public class UserBaseTest extends AppiumParallelTest {
         return iOSCapabilities;
     }
 
-    public synchronized DesiredCapabilities androidNative1() {
+    public DesiredCapabilities androidNative1() {
         System.out.println("Setting Android Desired Capabilities:");
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");

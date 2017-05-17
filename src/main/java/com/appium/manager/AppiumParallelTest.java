@@ -19,6 +19,7 @@ import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -327,9 +328,12 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     private String getDeviceModel() throws InterruptedException, IOException {
-        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
+        Capabilities capabilities = driver.getCapabilities();
+        if (capabilities.getCapability("platformName")
+                .toString().equals("Android")
+                && capabilities.getCapability("browserName") == null) {
             deviceModel = androidDevice.getDeviceModel(device_udid);
-        } else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
+        } else if (capabilities.getCapability("platformName").toString().equals("iOS")) {
             deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
         }
         return deviceModel;

@@ -7,7 +7,12 @@ import com.github.lalyos.jfiglet.FigletFont;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -212,7 +217,8 @@ public class ParallelThread {
         System.out.println("Getting all files in " + dir.getCanonicalPath()
                 + " including those in subdirectories");
         List<File> files =
-                (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+                (List<File>) FileUtils.listFiles(dir,
+                        TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (File file : files) {
             BufferedReader read = new BufferedReader(new FileReader(file.getAbsoluteFile()));
             ArrayList list = new ArrayList();
@@ -224,7 +230,7 @@ public class ParallelThread {
             }
 
             FileWriter writer = new FileWriter(
-                    file.getAbsoluteFile()); //same as your file name above so that it will replace it
+                    file.getAbsoluteFile());
             writer.append("package output;");
 
             for (int i = 0; i < list.size(); i++) {

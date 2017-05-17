@@ -38,13 +38,13 @@ class TestLogger {
         startVideoRecording(methodName, device_udid, className);
         Capabilities capabilities = driver.getCapabilities();
         if (capabilities.getCapability("platformName")
-                .toString().equals("Android") &&
-                capabilities.getCapability("browserName") == null) {
+                .toString().equals("Android")
+                && capabilities.getCapability("browserName").toString().isEmpty()) {
             startVideoRecording(methodName, device_udid, className);
             System.out.println("Starting ADB logs" + device_udid);
             logEntries = driver.manage().logs().get("logcat").filter(Level.ALL);
             logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + device_udid
-                    .replaceAll("\\W", "_") + "__" + methodName + ".txt");
+                    + "__" + methodName + ".txt");
             log_file_writer = new PrintWriter(logFile);
         }
     }
