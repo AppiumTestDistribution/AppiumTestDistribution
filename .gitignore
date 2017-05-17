@@ -12,6 +12,7 @@ testng.xml
 *.html
 *.iml
 !webContent/app/package.json
+!webContent/**/**/**/*.json
 !webContent/app/public/index.html
 /target/
 webContent/app/screenshot
