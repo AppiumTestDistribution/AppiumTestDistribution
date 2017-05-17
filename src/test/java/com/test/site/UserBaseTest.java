@@ -19,17 +19,24 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-public class UserBaseTest extends AppiumParallelTest {
+public class UserBaseTest {
     JSonParser jSonParser = new JSonParser();
+    public AppiumDriver<MobileElement> driver;
+    public AppiumParallelTest appiumParallelTest;
+
+    public UserBaseTest() {
+        appiumParallelTest = new AppiumParallelTest();
+    }
 
     @BeforeMethod(alwaysRun = true) public void startApp(Method name) throws Exception {
-        driver = startAppiumServerInParallel(name.getName(),androidNative1());
+
+        driver = appiumParallelTest.startAppiumServerInParallel(name.getName(),androidNative1());
     }
 
     @AfterMethod(alwaysRun = true) public void killServer(ITestResult result)
         throws InterruptedException, IOException {
         //Moving the method inside the dependency in the next release
-        endLogTestResults(result);
+//        endLogTestResults(result);
         getDriver().quit();
         //deleteAppIOS("com.tesco.sample");
     }
@@ -61,7 +68,7 @@ public class UserBaseTest extends AppiumParallelTest {
         System.out.println("Setting iOS Desired Capabilities:");
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10.0");
 
-        File iosAppFile = new File(prop.getProperty("IOS_APP_PATH"));
+        File iosAppFile = new File(appiumParallelTest.prop.getProperty("IOS_APP_PATH"));
         String ipaPath = iosAppFile.getAbsolutePath();
         System.out.println("Using IPA from " + ipaPath);
         if (!iosAppFile.exists()) {
@@ -74,12 +81,12 @@ public class UserBaseTest extends AppiumParallelTest {
 
         iOSCapabilities.setCapability(MobileCapabilityType.APP, iosAppFile);
         iOSCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
-        iOSCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
+        iOSCapabilities.setCapability(MobileCapabilityType.UDID, appiumParallelTest.device_udid);
         iOSCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                 AutomationName.IOS_XCUI_TEST);
         iOSCapabilities.setCapability(IOSMobileCapabilityType.USE_NEW_WDA,"false");
         iOSCapabilities.setCapability(IOSMobileCapabilityType.USE_PREBUILT_WDA,"true");
-        iOSCapabilities.setCapability(IOSMobileCapabilityType.WDA_LOCAL_PORT,ports.getPort());
+        iOSCapabilities.setCapability(IOSMobileCapabilityType.WDA_LOCAL_PORT,appiumParallelTest.ports.getPort());
         return iOSCapabilities;
     }
 
@@ -89,13 +96,13 @@ public class UserBaseTest extends AppiumParallelTest {
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "5.X");
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,
-            prop.getProperty("APP_ACTIVITY"));
+                appiumParallelTest.prop.getProperty("APP_ACTIVITY"));
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-            prop.getProperty("APP_PACKAGE"));
+                appiumParallelTest.prop.getProperty("APP_PACKAGE"));
         androidCapabilities.setCapability("browserName", "");
         androidCapabilities
-            .setCapability(MobileCapabilityType.APP, prop.getProperty("ANDROID_APP_PATH"));
-        androidCapabilities.setCapability(MobileCapabilityType.UDID, device_udid);
+            .setCapability(MobileCapabilityType.APP, appiumParallelTest.prop.getProperty("ANDROID_APP_PATH"));
+        androidCapabilities.setCapability(MobileCapabilityType.UDID, appiumParallelTest.device_udid);
         return androidCapabilities;
     }
 }

@@ -23,10 +23,7 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
-import org.testng.SkipException;
-import org.testng.TestListenerAdapter;
+import org.testng.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -46,7 +43,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
+public class AppiumParallelTest implements ITestListener, IClassListener, IInvokedMethodListener {
 
     public DeviceCapabilityManager deviceCapabilityManager;
     private TestLogger testLogger;
@@ -69,6 +66,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public ExtentTest child;
     private AndroidDeviceConfiguration androidDevice;
     public AvailablePorts ports;
+    private String currentMethodName = null;
 
     public AppiumParallelTest() {
         try {
@@ -90,7 +88,7 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return Toolkit.getDefaultToolkit().getImage(url);
     }
 
-    public synchronized AppiumServiceBuilder startAppiumServer(
+    public synchronized void startAppiumServer(
             String device, String methodName, String tags) throws Exception {
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
@@ -107,7 +105,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         System.out.println("Devices*******" + device_udid);
         if (device_udid == null) {
             System.out.println("No devices are free to run test or Failed to run test");
-            return null;
         }
         System.out.println("****************Device*************" + device_udid);
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
@@ -121,18 +118,11 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         ExtentTest extentTest = createParentNodeExtent(methodName, "", category
                 + device_udid).assignCategory(tags);
 
-        AppiumServiceBuilder appiumServiceBuilder = checkOSAndStartServer(methodName);
-        if (appiumServiceBuilder != null) {
-            return appiumServiceBuilder;
-        }
-
-        return null;
+        checkOSAndStartServer(methodName);
     }
 
 
-    @BeforeClass(alwaysRun = true)
-    @Parameters({"device"})
-    public synchronized AppiumServiceBuilder startAppiumServer(String device) throws Exception {
+    public synchronized void startAppiumServer(String device) throws Exception {
         String className = getClass().getSimpleName();
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
@@ -148,7 +138,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
 
         if (device_udid == null) {
             System.out.println("No devices are free to run test or Failed to run test");
-            return null;
         }
         System.out.println("****************Device*************" + device_udid);
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
@@ -164,32 +153,19 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             createParentNodeExtent(className, testDescription,
                     category + "_" + device_udid);
         }
-        AppiumServiceBuilder webKitPort = checkOSAndStartServer(className);
-        if (webKitPort != null) {
-            return webKitPort;
-        }
-        return null;
+        checkOSAndStartServer(className);
     }
 
-    private AppiumServiceBuilder checkOSAndStartServer(String methodName) throws Exception {
+    private void checkOSAndStartServer(String methodName) throws Exception {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             if (getMobilePlatform(device_udid).equals(MobilePlatform.IOS)) {
-                AppiumServiceBuilder webKitPort = getAppiumServiceBuilder(methodName);
-                if (webKitPort != null) {
-                    return webKitPort;
-                }
+                appiumMan.appiumServerForIOS(device_udid, methodName);
             } else {
-                return appiumMan.appiumServerForAndroid(device_udid, methodName);
+                appiumMan.appiumServerForAndroid(device_udid, methodName);
             }
         } else {
-            return appiumMan.appiumServerForAndroid(device_udid, methodName);
+            appiumMan.appiumServerForAndroid(device_udid, methodName);
         }
-        return null;
-    }
-
-    private AppiumServiceBuilder getAppiumServiceBuilder(String methodName) throws Exception {
-        String webKitPort = iosDevice.startIOSWebKit(device_udid);
-        return appiumMan.appiumServerForIOS(device_udid, methodName, webKitPort);
     }
 
     public void getDeviceCategory() throws Exception {
@@ -215,13 +191,18 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     }
 
     public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(
+            DesiredCapabilities iosCaps,
+            DesiredCapabilities androidCaps) throws Exception {
+        Thread.sleep(3000);
+        startingServerInstance(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
+        startLogResults(currentMethodName);
+        return driver;
+    }
+
+    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(
             String methodName, DesiredCapabilities iosCaps,
             DesiredCapabilities androidCaps) throws Exception {
-        String currentMethodName = null;
-        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            setAuthorName(methodName);
-            currentMethodName = getClass().getMethod(methodName).getName();
-        } else {
+        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")) {
             currentMethodName = methodName;
         }
         Thread.sleep(3000);
@@ -248,24 +229,24 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         return this;
     }
 
-    public void setAuthorName(String methodName) throws NoSuchMethodException {
+    public void setAuthorName(IInvokedMethod methodName) throws NoSuchMethodException {
         String authorName;
         boolean methodNamePresent;
         ArrayList<String> listeners = new ArrayList<>();
         String descriptionMethodName;
-        if (getClass().getMethod(methodName).getAnnotation(Test.class).description().isEmpty()) {
-            descriptionMethodName = methodName;
+        String description = methodName.getTestMethod().getConstructorOrMethod().getMethod().getAnnotation(Test.class).description();
+        if (description.isEmpty()) {
+            descriptionMethodName = methodName.getTestMethod().getMethodName();
         } else {
-            descriptionMethodName = getClass().getMethod(methodName)
-                    .getAnnotation(Test.class).description();
+            descriptionMethodName = description;
         }
-        if (getClass().getMethod(methodName).getAnnotation(Author.class) != null) {
+        if (methodName.getTestMethod().getConstructorOrMethod().getMethod().getAnnotation(Author.class) != null) {
             methodNamePresent = true;
         } else {
             methodNamePresent = false;
         }
         if (methodNamePresent) {
-            authorName = getClass().getMethod(methodName).getAnnotation(Author.class).name();
+            authorName = methodName.getTestMethod().getConstructorOrMethod().getMethod().getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
                     .createNode(descriptionMethodName,
@@ -344,7 +325,6 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         stopAppiumServerAndCloseReport();
     }
 
-    @AfterClass(alwaysRun = true)
     public synchronized void killAppiumServer()
             throws InterruptedException, IOException {
         stopAppiumServerAndCloseReport();
@@ -382,6 +362,36 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         }
     }
 
+    @Override
+    public void onTestSuccess(ITestResult result) {
+
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result) {
+
+    }
+
+    @Override
+    public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
+
+    }
+
+    @Override
+    public void onStart(ITestContext context) {
+
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+
+    }
+
     public void captureScreenshot(String methodName, String device, String className)
             throws IOException, InterruptedException {
         String context = getDriver().getContext();
@@ -413,5 +423,42 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             platform = MobilePlatform.ANDROID;
         }
         return platform;
+    }
+
+    @Override
+    public void onBeforeClass(ITestClass testClass, IMethodInstance mi) {
+        try {
+            System.out.printf("hi");
+            startAppiumServer(testClass.getXmlClass().getAllParameters().get("device").toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onAfterClass(ITestClass testClass, IMethodInstance mi) {
+        try {
+            killAppiumServer();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        try {
+            setAuthorName(method);
+            currentMethodName = method.getTestMethod().getMethodName();
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+
     }
 }

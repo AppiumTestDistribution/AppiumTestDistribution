@@ -1,6 +1,6 @@
 package com.appium.manager;
 
-import com.appium.utils.CommandPrompt;
+import com.appium.ios.IOSDeviceConfiguration;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.AndroidServerFlag;
@@ -8,7 +8,6 @@ import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import io.appium.java_client.service.local.flags.ServerArgument;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -19,15 +18,16 @@ import java.net.URL;
  */
 public class AppiumManager {
 
-    private CommandPrompt cp = new CommandPrompt();
-    private AvailablePorts ap = new AvailablePorts();
+    private AvailablePorts ap;
     public AppiumDriverLocalService appiumDriverLocalService;
-    public AppiumServiceBuilder builder = new AppiumServiceBuilder();
     private ConfigurationManager prop;
+    private IOSDeviceConfiguration iosDeviceConfiguration;
 
 
     AppiumManager() throws IOException {
         prop = ConfigurationManager.getInstance();
+        iosDeviceConfiguration = new IOSDeviceConfiguration();
+        ap = new AvailablePorts();
     }
 
     /**
@@ -35,7 +35,7 @@ public class AppiumManager {
      * bootstrap port and device UDID
      */
 
-    public AppiumServiceBuilder appiumServerForAndroid(String deviceID, String methodName)
+    public void appiumServerForAndroid(String deviceID, String methodName)
         throws Exception {
         System.out.println(
             "**************************************************************************\n");
@@ -63,8 +63,6 @@ public class AppiumManager {
         ;
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
-        return builder;
-
     }
 
     /**
@@ -77,8 +75,9 @@ public class AppiumManager {
         }
     };
 
-    public AppiumServiceBuilder appiumServerForIOS(String deviceID, String methodName,
-        String webKitPort) throws Exception {
+    public void appiumServerForIOS(String deviceID, String methodName)
+            throws Exception {
+        String webKitPort = iosDeviceConfiguration.startIOSWebKit(deviceID);
         System.out
             .println("**********************************************************************\n");
         System.out.println("Starting Appium Server to handle IOS::" + deviceID + "\n");
@@ -90,7 +89,7 @@ public class AppiumManager {
             new AppiumServiceBuilder().withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
                 System.getProperty("user.dir") + "/target/appiumlogs/" + deviceID
-                    .replaceAll("\\W", "_") + "__" + methodName + ".txt"))
+                        + "__" + methodName + ".txt"))
                 .withArgument(webKitProxy, webKitPort)
                 .withIPAddress("127.0.0.1")
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "debug")
@@ -99,8 +98,6 @@ public class AppiumManager {
                         + port).withArgument(GeneralServerFlag.SESSION_OVERRIDE).usingPort(port);
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
-        return builder;
-
     }
 
     public URL getAppiumUrl() {

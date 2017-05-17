@@ -149,14 +149,16 @@ public class ParallelThread {
         if (configurationManager.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")) {
             //addPluginToCucumberRunner();
             if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-                hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
+                myTestExecutor
                         .constructXmlSuiteDistributeCucumber(deviceCount,
-                                deviceManager.getDevices()));
+                                deviceManager.getDevices());
+                hasFailures = myTestExecutor.runMethodParallel();
             } else if (configurationManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
-                hasFailures = myTestExecutor.runMethodParallel(myTestExecutor
+                myTestExecutor
                         .constructXmlSuiteForParallelCucumber(deviceCount,
-                                deviceManager.getDevices()));
+                                deviceManager.getDevices());
+                hasFailures = myTestExecutor.runMethodParallel();
                 htmlReporter.generateReports();
             }
         }

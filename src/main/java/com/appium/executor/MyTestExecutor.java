@@ -8,6 +8,7 @@ import com.appium.manager.DeviceManager;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
+import com.beust.jcommander.internal.Lists;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -120,13 +121,13 @@ public class MyTestExecutor {
             reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
         boolean hasFailure;
         if (executionType.equalsIgnoreCase("distribute")) {
-            hasFailure = runMethodParallel(
-                constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
-                    devicecount));
+            constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
+                    devicecount);
+            hasFailure = runMethodParallel();
         } else {
-            hasFailure = runMethodParallel(
-                constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
-                    deviceManager.getDevices()));
+            constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
+                    deviceManager.getDevices());
+            hasFailure = runMethodParallel();
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
@@ -144,9 +145,11 @@ public class MyTestExecutor {
 
     }
 
-    public boolean runMethodParallel(XmlSuite suite) {
+    public boolean runMethodParallel() {
         TestNG testNG = new TestNG();
-        testNG.setXmlSuites(asList(suite));
+        List<String> suites = Lists.newArrayList();
+        suites.add(System.getProperty("user.dir") + "/target/parallel.xml");
+        testNG.setTestSuites(suites);
         testNG.run();
         return testNG.hasFailure();
     }
@@ -180,6 +183,7 @@ public class MyTestExecutor {
             test.setXmlClasses(xmlClasses);
         }
         System.out.println(suite.toXml());
+        writeTestNGFile(suite);
         return suite;
     }
 
@@ -228,7 +232,19 @@ public class MyTestExecutor {
         List<XmlClass> xmlClasses = new ArrayList<>();
         writeXmlClass(tests, methods, xmlClasses);
         test.setXmlClasses(xmlClasses);
+        writeTestNGFile(suite);
         return suite;
+    }
+
+    private void writeTestNGFile(XmlSuite suite) {
+        try {
+            FileWriter writer = new FileWriter(new File(System.getProperty("user.dir") + "/target/parallel.xml"));
+            writer.write(suite.toXml());
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void include(ArrayList<String> groupsInclude, String include) {

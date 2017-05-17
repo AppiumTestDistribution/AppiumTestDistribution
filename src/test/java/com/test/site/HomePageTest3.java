@@ -13,7 +13,7 @@ import java.io.IOException;
 public class HomePageTest3 extends UserBaseTest {
 
 
-    @Test(retryAnalyzer = Retry.class)
+    @Test(retryAnalyzer = Retry.class, groups = "smoke")
     @Author(name = "AnsonLiao")
     @RetryCount(maxRetryCount = 2) public void testMethodOne_3()
         throws InterruptedException, IOException {
