@@ -21,7 +21,7 @@ export default function parse(testData) {
                                 "deviceUDID": data.deviceUDID,
                                 "deviceOS":data.deviceOS
                             },
-                            "screenShots": method.screenShots
+                            "screenShot": method.screenShots
                         }
                     )
                 })
@@ -37,7 +37,7 @@ export default function parse(testData) {
                                 "deviceUDID": data.deviceUDID,
                                  "deviceOS":data.deviceOS
                             },
-                            "screenShots": method.screenShots
+                            "screenShot": method.screenShots
                         }
                     )
                 })

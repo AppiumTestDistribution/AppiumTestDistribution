@@ -12,7 +12,7 @@ const styles = {
 }
 
 const ReportCard = ({ content }) => {
-  console.log(content)
+  let screenShotPath = content.screenShot.split('/target')[1]
   return (
     <Col sm={12} md={6} lg={4}>
       <Card style={styles.card}>
@@ -21,7 +21,7 @@ const ReportCard = ({ content }) => {
           subtitle={content.info.deviceModel}
         />
         <div style={styles.image}>
-          <img src="https://placeimg.com/340/420/animals" alt="screenshot" />
+          <img src={screenShotPath} alt="screenshot" />
         </div>
         <CardTitle title="Card title" subtitle="Card subtitle" />
         <CardText>

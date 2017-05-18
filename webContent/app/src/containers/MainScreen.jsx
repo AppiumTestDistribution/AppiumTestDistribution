@@ -3,8 +3,9 @@ import Header from '../components/header/Header.jsx'
 import Drawer from '../components/drawer/Drawer.jsx'
 import ReportScreen from './ReportScreen.jsx'
 import { Row, Col } from 'react-flexbox-grid';
-import data from '../data/MockData.json'
-
+import data from '../data/Report.json'
+import parse from '../Parser/AppiumReportParser'
+ 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
 injectTapEventPlugin();
@@ -18,9 +19,12 @@ class MainScreen extends Component {
             isDrawerActive: true,
             item: []
         }
+        this.parsedData={}
     }
     componentWillMount() {
-        this.setState({item:data[0]})
+        this.parsedData= parse(data)
+
+        this.setState({item:this.parsedData[0]})
     }
 
     handleDrawerState = () => this.setState({ isDrawerActive: !this.state.isDrawerActive })
@@ -38,7 +42,7 @@ class MainScreen extends Component {
                     <Col sm={2}>
                         <Drawer open={this.state.isDrawerActive}
                             handleReportContent={(item)=>this.handleReportContent(item)}
-                            content={data} />
+                            content={this.parsedData} />
                     </Col>
                     <Col  sm={10}>
                         <ReportScreen testMethods={this.state.item.testMethods}/>

@@ -11,8 +11,10 @@ testng.xml
 *.json
 *.html
 *.iml
+*.log
 !webContent/app/package.json
 !webContent/**/**/**/*.json
 !webContent/app/public/index.html
 /target/
-webContent/app/screenshot
+webContent/app/public/screenshot
+webContent/app/src/data/Report.json

@@ -14,7 +14,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 },
@@ -23,7 +23,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_3",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 }
@@ -39,19 +39,18 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 },
                 ]
         }]
         let result = parse(testData)
-        console.log(JSON.stringify(result))
         expect(result[0].name).toBe(testData[0].testCases[0].testCase)
 
     })
 
-    it('should return testmethods with method name, device info and screenshots', () => {
+    it('should return testmethods with method name, device info and screenShot', () => {
         let testData = [{
             "deviceName": "2017-04-26T14: 59: 16PREVIEWGoogleNexus6P700API241440x2560",
             "deviceModel": "Android",
@@ -62,7 +61,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": "something"
                         }
                     ]
                 }]
@@ -70,7 +69,7 @@ describe('Appium report parser', () => {
         let result = parse(testData)
         expect(result[0].testMethods[0].methodName).toBeTruthy()
         expect(result[0].testMethods[0].info).toBeTruthy()
-        expect(result[0].testMethods[0].screenShots).toBeTruthy()
+        expect(result[0].testMethods[0].screenShot).toBeTruthy()
     })
 
     it('should return device uuid in device info', () => {
@@ -84,7 +83,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 }]
@@ -105,7 +104,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 }]
@@ -127,7 +126,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 }]
@@ -149,7 +148,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 }]
@@ -170,7 +169,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 },
@@ -179,9 +178,9 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "com.test.site.HomePageTest3",
-                            "screenShots": [
+                            "screenShots": 
                                 "/Users/saikrisv/git/new_appium_parallel/AppiumTestDistribution/target/screenshot/android/192_168_56_102_5555/LoginPage/com.test.site.HomePageTest3/2017-04-26T14: 58: 56GoogleNexus5_generic_com.test.site.HomePageTest3_results.png"
-                            ]
+                            
                         }
                     ]
                 }
@@ -205,7 +204,7 @@ describe('Appium report parser', () => {
                     "testMethod": [
                         {
                             "methodName": "testMethodOne_2",
-                            "screenShots": []
+                            "screenShots": ""
                         }
                     ]
                 }
@@ -220,9 +219,9 @@ describe('Appium report parser', () => {
                 "testMethod": [
                     {
                         "methodName": "com.test.site.HomePageTest3",
-                        "screenShots": [
+                        "screenShots": 
                             "/Users/saikrisv/git/new_appium_parallel/AppiumTestDistribution/target/screenshot/android/192_168_56_102_5555/LoginPage/com.test.site.HomePageTest3/2017-04-26T14: 58: 56GoogleNexus5_generic_com.test.site.HomePageTest3_results.png"
-                        ]
+                        
                     }
                 ]
             }]

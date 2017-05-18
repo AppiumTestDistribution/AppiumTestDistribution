@@ -5,4 +5,4 @@ if [ -d "$DIR" ]; then
     rm -rf "$DIR"
 fi
 echo "Copying screenshot in target inside webContent->app"
-cp -R ./target/screenshot ./webContent/app/
+cp -R ./target/screenshot ./webContent/app/public
