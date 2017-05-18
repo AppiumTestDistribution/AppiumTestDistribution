@@ -42,7 +42,9 @@ public class ExtentManager {
                 extent.setSystemInfo("Environment", "Prod");
                 String appiumVersion = null;
                 try {
-                    appiumVersion = commandPrompt.runCommand("appium -v");
+                    String command = "node " 
+                        + configurationManager.getProperty("APPIUM_JS_PATH") + " -v";
+                    appiumVersion = commandPrompt.runCommand(command);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
