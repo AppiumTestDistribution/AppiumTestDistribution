@@ -410,7 +410,11 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
             String device = testClass.getXmlClass().getAllParameters().get("device").toString();
             System.out.println("Current Thread:" + Thread.currentThread().getId() + "::" + device);
             String className = testClass.getRealClass().getSimpleName();
-            DeviceUDIDManager.setDeviceUDID(device);
+            if(device.isEmpty()) {
+                DeviceUDIDManager.setDeviceUDID(deviceManager.getNextAvailableDeviceId());
+            } else {
+                DeviceUDIDManager.setDeviceUDID(device);
+            }
             getCatAndStartServer(className);
         } catch (Exception e) {
             e.printStackTrace();

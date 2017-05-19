@@ -74,7 +74,7 @@ class TestLogger {
         /*
          * Failure Block
          */
-        //handleTestFailure(result, className, test, deviceModel);
+        handleTestFailure(result, className, test, deviceModel);
         /*
          * Skip block
          */
