@@ -105,7 +105,7 @@ public class MyTestExecutorTest {
     @Test
     public void testapp() throws Exception {
         AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
-        MobilePlatform mobilePlatform = appiumParallelTest.getMobilePlatform("57656757656757");
+        MobilePlatform mobilePlatform = appiumParallelTest.getMobilePlatform();
         System.out.println(mobilePlatform.toString());
     }
 }

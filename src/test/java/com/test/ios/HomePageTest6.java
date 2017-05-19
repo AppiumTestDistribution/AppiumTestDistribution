@@ -21,7 +21,7 @@ public class HomePageTest6 extends UserBaseTest {
                 .getStackTrace()[1].getClassName());
         Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-        new ScreenShotManager().captureScreenShot(driver,"TestSampler");
+        new ScreenShotManager().captureScreenShot("TestSampler");
         getDriver().findElement(By.id("com.android2.calculator3:id/digit3")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();

@@ -94,7 +94,7 @@ public class DeviceManager {
     }
 
 
-    public void freeDevice(String deviceId) {
-        deviceMapping.put(deviceId, true);
+    public void freeDevice() {
+        deviceMapping.put(DeviceUDIDManager.getDeviceUDID(), true);
     }
 }

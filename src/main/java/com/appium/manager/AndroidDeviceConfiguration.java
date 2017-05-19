@@ -133,16 +133,15 @@ public class AndroidDeviceConfiguration {
     /*
      * This method gets the device model name
      */
-    public String getDeviceModel(String deviceID) {
+    public String getDeviceModel() {
         String deviceModelName = null;
         String brand = null;
         String deviceModel = null;
         try {
             deviceModelName =
-                    cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.model")
-                            .replaceAll("\\W", "");
+                    cmd.runCommand("adb -s " + DeviceUDIDManager.getDeviceUDID() + " shell getprop ro.product.model");
 
-            brand = cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.brand");
+            brand = cmd.runCommand("adb -s " + DeviceUDIDManager.getDeviceUDID() + " shell getprop ro.product.brand");
         } catch (InterruptedException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -205,15 +204,15 @@ public class AndroidDeviceConfiguration {
         cmd.runCommand("adb -s " + deviceID + " uninstall " + app_package);
     }
 
-    public String screenRecord(String deviceID, String fileName)
+    public String screenRecord(String fileName)
             throws IOException, InterruptedException {
-        return "adb -s " + deviceID + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
+        return "adb -s " + DeviceUDIDManager.getDeviceUDID() + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
                 + ".mp4";
     }
 
-    public boolean checkIfRecordable(String deviceID) throws IOException, InterruptedException {
+    public boolean checkIfRecordable() throws IOException, InterruptedException {
         String screenrecord =
-                cmd.runCommand("adb -s " + deviceID + " shell ls /system/bin/screenrecord");
+                cmd.runCommand("adb -s " + DeviceUDIDManager.getDeviceUDID() + " shell ls /system/bin/screenrecord");
         if (screenrecord.trim().equals("/system/bin/screenrecord")) {
             return true;
         } else {
@@ -221,16 +220,15 @@ public class AndroidDeviceConfiguration {
         }
     }
 
-    public String getDeviceManufacturer(String deviceID) throws IOException, InterruptedException {
-        return cmd.runCommand("adb -s " + deviceID + " shell getprop ro.product.manufacturer")
+    public String getDeviceManufacturer() throws IOException, InterruptedException {
+        return cmd.runCommand("adb -s " + DeviceUDIDManager.getDeviceUDID() + " shell getprop ro.product.manufacturer")
                 .trim();
     }
 
-    public AndroidDeviceConfiguration pullVideoFromDevice(String deviceID, String fileName,
-                                                          String destination)
+    public AndroidDeviceConfiguration pullVideoFromDevice(String fileName, String destination)
             throws IOException, InterruptedException {
         ProcessBuilder pb =
-                new ProcessBuilder("adb", "-s", deviceID, "pull", "/sdcard/" + fileName + ".mp4",
+                new ProcessBuilder("adb", "-s", DeviceUDIDManager.getDeviceUDID(), "pull", "/sdcard/" + fileName + ".mp4",
                         destination);
         Process pc = pb.start();
         pc.waitFor();
@@ -240,9 +238,9 @@ public class AndroidDeviceConfiguration {
         return new AndroidDeviceConfiguration();
     }
 
-    public void removeVideoFileFromDevice(String deviceID, String fileName)
+    public void removeVideoFileFromDevice(String fileName)
             throws IOException, InterruptedException {
-        cmd.runCommand("adb -s " + deviceID + " shell rm -f /sdcard/" + fileName + ".mp4");
+        cmd.runCommand("adb -s " + DeviceUDIDManager.getDeviceUDID() + " shell rm -f /sdcard/" + fileName + ".mp4");
     }
 
     public void setValidDevices(List<String> validDeviceIds) {

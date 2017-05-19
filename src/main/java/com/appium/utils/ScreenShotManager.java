@@ -2,6 +2,8 @@ package com.appium.utils;
 
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AndroidDeviceConfiguration;
+import com.appium.manager.DeviceUDIDManager;
+import com.appium.manager.DriverManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.apache.commons.io.FileUtils;
@@ -30,48 +32,46 @@ public class ScreenShotManager {
         imageUtils = new ImageUtils();
     }
 
-    public String captureScreenShot(int status, String className,
-                                    String methodName, AppiumDriver<MobileElement> driver,
-                                    String deviceModel,
-                                    String device_udid) throws IOException, InterruptedException {
-        String context = driver.getContext();
+    public String captureScreenShot(int status, String className, String methodName, String deviceModel)
+            throws IOException, InterruptedException {
+
         String getDeviceModel = null;
         boolean contextChanged = false;
-        if ("Android".equals(driver.getSessionDetails().get("platformName").toString()) && !context
-                .equals("NATIVE_APP")) {
-            driver.context("NATIVE_APP");
-            contextChanged = true;
-        }
-        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        if (contextChanged) {
-            driver.context(context);
-        }
+//        if ("Android".equals(DriverManager.getDriver().getSessionDetails().get("platformName").toString())
+//                && !DriverManager.getDriver().getContext()
+//                .equals("NATIVE_APP")) {
+//            DriverManager.getDriver().context("NATIVE_APP");
+//            contextChanged = true;
+//        }
+        System.out.println("Current Running Thread Status" + DriverManager.getDriver().getSessionId());
+        File scrFile = ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.FILE);
+//        if (contextChanged) {
+//            driver.context(context);
+//        }
         screenShotNameWithTimeStamp = currentDateAndTime();
-        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
+        if (DriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
             getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "android", device_udid, deviceModel);
-        } else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
+                    "android", deviceModel);
+        } else if (DriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
             getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "iOS", device_udid, deviceModel);
+                    "iOS", deviceModel);
         }
         return getDeviceModel;
     }
 
-    public void captureScreenShot(AppiumDriver driver, String screenShotName)
+    public void captureScreenShot(String screenShotName)
             throws InterruptedException, IOException {
         String className = new Exception().getStackTrace()[1].getClassName();
-        String udid = driver.getSessionDetails().get("udid").toString();
-        String platformName = driver.getSessionDetails().get("platformName").toString();
+        String platformName = DriverManager.getDriver().getSessionDetails().get("platformName").toString();
         String deviceModel = null;
         if (platformName.equals("Android")) {
-            deviceModel = new AndroidDeviceConfiguration().getDeviceModel(udid);
+            deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
         } else if (platformName.equals("iOS")) {
-            deviceModel = new IOSDeviceConfiguration().getIOSDeviceProductTypeAndVersion(udid);
+            deviceModel = new IOSDeviceConfiguration().getIOSDeviceProductTypeAndVersion();
         }
-        captureScreenShot(1, className, screenShotName,
-                driver, deviceModel, udid);
+        captureScreenShot(1, className, screenShotName, deviceModel);
     }
 
 
@@ -84,31 +84,30 @@ public class ScreenShotManager {
 
     private void screenShotAndFrame(int status,
                                     File scrFile, String methodName,
-                                    String className, String model, String platform,
-                                    String device_udid, String deviceModel) {
+                                    String className, String model, String platform, String deviceModel) {
         String failedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
+                        + platform + "/" + DeviceUDIDManager.getDeviceUDID()
                         + "/" + className + "/"
                         + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
                         + methodName + "_failed" + ".jpeg";
         String capturedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
+                        + platform + "/" + DeviceUDIDManager.getDeviceUDID()
                         + "/" + className
                         + "/" + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
                         + methodName + "_results.jpeg";
         String framedCapturedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
+                        + platform + "/" + DeviceUDIDManager.getDeviceUDID()
                         + "/" + className
                         + "/" + methodName + "/" + model + "_"
                         + methodName + "_results_framed.jpeg";
         String framedFailedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
-                        + platform + "/" + device_udid
+                        + platform + "/" + DeviceUDIDManager.getDeviceUDID()
                         + "/" + className
                         + "/" + methodName + "/" + model
                         + "_failed_" + methodName + "_framed.jpeg";

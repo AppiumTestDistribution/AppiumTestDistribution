@@ -23,11 +23,11 @@ public class HomePageTest3 extends UserBaseTest {
                 .getStackTrace()[1].getClassName());
         Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-        new ScreenShotManager().captureScreenShot(driver,"LoginPage--1");
+        new ScreenShotManager().captureScreenShot("LoginPage--1");
         getDriver().findElement(By.id("com.android2.calculator3:id/digit4")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
-        new ScreenShotManager().captureScreenShot(driver,"LoginPage");
+        new ScreenShotManager().captureScreenShot("LoginPage");
         getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
     }
 
@@ -43,7 +43,7 @@ public class HomePageTest3 extends UserBaseTest {
         getDriver().findElement(By.id("com.android2.calculator3:id/digit4")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
-        new ScreenShotManager().captureScreenShot(driver,"LoginPage1");
+        new ScreenShotManager().captureScreenShot("LoginPage1");
         getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
         //getDriver().close();
     }

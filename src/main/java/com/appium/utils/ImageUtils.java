@@ -87,8 +87,7 @@ public class ImageUtils {
                                             testResult.setDeviceName(sFile.getName().split("_")[1]);
                                             testResult
                                                     .setDeviceModel(new AndroidDeviceConfiguration()
-                                                            .getDeviceModel(testResult
-                                                                    .getDeviceUDID())
+                                                            .getDeviceModel()
                                                     .split("_")[0]);
                                             testResult.setDeviceOS(new AndroidDeviceConfiguration()
                                                     .deviceOS(testResult.getDeviceUDID()));

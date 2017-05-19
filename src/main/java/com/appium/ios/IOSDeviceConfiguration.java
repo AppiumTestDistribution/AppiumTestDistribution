@@ -2,6 +2,7 @@ package com.appium.ios;
 
 import com.appium.manager.AvailablePorts;
 import com.appium.manager.ConfigurationManager;
+import com.appium.manager.DeviceUDIDManager;
 import com.appium.utils.CommandPrompt;
 
 import java.io.BufferedReader;
@@ -147,40 +148,40 @@ public class IOSDeviceConfiguration {
      *                              report category
      */
 
-    public String getIOSDeviceProductTypeAndVersion(String udid)
+    public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
         return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid + " | grep ProductType");
+                .runCommandThruProcessBuilder("ideviceinfo --udid " + DeviceUDIDManager.getDeviceUDID() + " | grep ProductType");
     }
 
-    public String getDeviceName(String udid) throws InterruptedException, IOException {
+    public String getDeviceName() throws InterruptedException, IOException {
         String deviceName =
-                commandPrompt.runCommand("idevicename --udid " + udid).replace("\\W", "_");
+                commandPrompt.runCommand("idevicename --udid " + DeviceUDIDManager.getDeviceUDID()).replace("\\W", "_");
         return deviceName;
     }
 
-    public String getIOSDeviceProductVersion(String udid) throws InterruptedException, IOException {
+    public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
         return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid
+                .runCommandThruProcessBuilder("ideviceinfo --udid " + DeviceUDIDManager.getDeviceUDID()
                         + " | grep ProductVersion");
     }
 
-    public boolean checkiOSDevice(String UDID) throws Exception {
+    public boolean checkiOSDevice() throws Exception {
         String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
-        return getIOSDeviceID.contains(UDID);
+        return getIOSDeviceID.contains(DeviceUDIDManager.getDeviceUDID());
     }
 
-    public HashMap<String, String> setIOSWebKitProxyPorts(String device_udid) throws Exception {
+    public HashMap<String, String> setIOSWebKitProxyPorts() throws Exception {
         try {
             int webkitproxyport = ap.getPort();
-            deviceMap.put(device_udid, Integer.toString(webkitproxyport));
+            deviceMap.put(DeviceUDIDManager.getDeviceUDID(), Integer.toString(webkitproxyport));
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
         return deviceMap;
     }
 
-    public String startIOSWebKit(String udid) throws IOException, InterruptedException {
+    public String startIOSWebKit() throws IOException, InterruptedException {
         String serverPath = prop.getProperty("APPIUM_JS_PATH");
         File file = new File(serverPath);
         File currentPath = new File(file.getParent());
@@ -189,17 +190,17 @@ public class IOSDeviceConfiguration {
         String ios_web_lit_proxy_runner =
                 file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
         String webkitRunner =
-                ios_web_lit_proxy_runner + " -c " + udid + ":" + deviceMap.get(udid) + " -d";
+                ios_web_lit_proxy_runner + " -c " + DeviceUDIDManager.getDeviceUDID() + ":" + deviceMap.get(DeviceUDIDManager.getDeviceUDID()) + " -d";
         System.out.println(webkitRunner);
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
-                "WebKit Proxy is started on device " + udid + " and with port number " + deviceMap
-                        .get(udid) + " and in thread " + Thread.currentThread().getId());
+                "WebKit Proxy is started on device " + DeviceUDIDManager.getDeviceUDID() + " and with port number " + deviceMap
+                        .get(DeviceUDIDManager.getDeviceUDID()) + " and in thread " + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         appiumServerProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + appiumServerProcess);
         Thread.sleep(1000);
-        return deviceMap.get(udid);
+        return deviceMap.get(DeviceUDIDManager.getDeviceUDID());
     }
 
     public long getPidOfProcess(Process p) {

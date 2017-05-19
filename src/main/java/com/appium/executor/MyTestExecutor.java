@@ -1,14 +1,12 @@
 package com.appium.executor;
 
-import static java.util.Arrays.asList;
-
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.manager.ConfigurationManager;
 import com.appium.manager.DeviceManager;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
-import com.beust.jcommander.internal.Lists;
+
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -17,6 +15,7 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
+import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlPackage;
@@ -238,7 +237,8 @@ public class MyTestExecutor {
 
     private void writeTestNGFile(XmlSuite suite) {
         try {
-            FileWriter writer = new FileWriter(new File(System.getProperty("user.dir") + "/target/parallel.xml"));
+            FileWriter writer = new FileWriter(new File(
+                    System.getProperty("user.dir") + "/target/parallel.xml"));
             writer.write(suite.toXml());
             writer.flush();
             writer.close();
