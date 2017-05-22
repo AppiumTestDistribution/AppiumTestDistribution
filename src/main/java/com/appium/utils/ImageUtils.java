@@ -1,30 +1,28 @@
 package com.appium.utils;
 
-import static com.appium.utils.TestWriteUtils.GSON;
-
+import com.appium.manager.AndroidDeviceConfiguration;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.madgag.gif.fmsware.AnimatedGifEncoder;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
+import org.testng.annotations.Test;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.imageio.ImageIO;
+
+import static com.appium.utils.TestWriteUtils.GSON;
 
 /**
  * Created by saikrisv on 17/03/16.
@@ -32,9 +30,9 @@ import javax.imageio.ImageIO;
 public class ImageUtils {
 
 
-
     public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed,
-        String framedDeviceScreen) throws InterruptedException, IOException, IM4JavaException {
+                                 String framedDeviceScreen)
+            throws InterruptedException, IOException, IM4JavaException {
         IMOperation op = new IMOperation();
         op.addImage(deviceFrame);
         op.addImage(deviceScreenToBeFramed);
@@ -81,34 +79,35 @@ public class ImageUtils {
                                 testMethod.setMethodName(mFile.getName());
                                 if (mFile.isDirectory()) {
                                     File[] sList = mFile.listFiles();
-                                    List<String> screenShotList = new ArrayList<String>();
+                                    String filePath = null;
                                     for (File sFile : sList) {
                                         if (sFile.isFile() && sFile.getCanonicalPath()
-                                            .contains("result")) {
-                                            screenShotList.add(sFile.getCanonicalPath());
-                                            //Set the Name and Model
-                                            testResult.setDeviceName(sFile.getName().split("_")[0]);
+                                                .contains("result")) {
+                                            filePath = sFile.getCanonicalPath();
+                                            testResult.setDeviceName(sFile.getName().split("_")[1]);
                                             testResult
-                                                .setDeviceModel(sFile.getName().split("_")[1]);
+                                                    .setDeviceModel(new AndroidDeviceConfiguration()
+                                                            .getDeviceModel()
+                                                    .split("_")[0]);
+                                            testResult.setDeviceOS(new AndroidDeviceConfiguration()
+                                                    .deviceOS(testResult.getDeviceUDID()));
 
-                                        } else if (sFile.getCanonicalPath().contains(".gif")) {
-                                            testMethod.setGifPath(sFile.getCanonicalPath());
                                         }
                                     }
-                                    testMethod.setScreenShots(screenShotList);
+                                    testMethod.setScreenShots(filePath);
                                 }
-
-                                testMethodList.add(testMethod);
+                                if (testMethod.getScreenShots() != null) {
+                                    testMethodList.add(testMethod);
+                                }
                             }
 
-
-                            testCase.setTestMethod(testMethodList);
-
+                            if (testMethodList.size() > 0) {
+                                testCase.setTestMethod(testMethodList);
+                            }
                         }
-
-                        testCaseList.add(testCase);
-
-
+                        if (testCase.testMethod != null) {
+                            testCaseList.add(testCase);
+                        }
 
                     }
 
@@ -128,13 +127,14 @@ public class ImageUtils {
         return testResultList;
     }
 
-    public void createJSonForHtml() throws IOException {
+    public static void createJSonForHtml() throws IOException {
         File dir = new File(System.getProperty("user.dir") + "/target/screenshot/");
 
         System.out.println("Getting all files in " + dir.getCanonicalPath()
-            + " including those in subdirectories");
+                + " including those in subdirectories");
         List<File> files =
-            (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+                (List<File>) FileUtils.listFiles(dir, TrueFileFilter.INSTANCE,
+                        TrueFileFilter.INSTANCE);
 
         JsonArray mainObj = new JsonArray();
 
@@ -167,7 +167,7 @@ public class ImageUtils {
     }
 
     public static void createAnimatedGif(List<File> testScreenshots, File animatedGif)
-        throws IOException {
+            throws IOException {
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
         encoder.start(animatedGif.getAbsolutePath());
         encoder.setDelay(1500 /* 1.5 seconds */);
@@ -206,16 +206,16 @@ public class ImageUtils {
             } else {
                 System.out.println("File: " + file.getName());
                 int length = stringContainsItemFromList("results",
-                    Arrays.asList(file.getParentFile().list()));
+                        Arrays.asList(file.getParentFile().list()));
                 if (file.getName().contains("results")) {
                     gifDevices.add(file);
                     imageAdded++;
                     if (imageAdded == length) {
                         System.out.println("Create Gif");
                         String GifFileName =
-                            file.getParent().substring(file.getParent().lastIndexOf("/") + 1);
+                                file.getParent().substring(file.getParent().lastIndexOf("/") + 1);
                         createAnimatedGif(gifDevices,
-                            new File(file.getParent() + "/" + GifFileName + ".gif"));
+                                new File(file.getParent() + "/" + GifFileName + ".gif"));
                     }
                 }
 
@@ -231,6 +231,11 @@ public class ImageUtils {
             }
         }
         return j;
+    }
+
+    @Test
+    public void testApp() throws IOException {
+        ImageUtils.createJSonForHtml();
     }
 }
 

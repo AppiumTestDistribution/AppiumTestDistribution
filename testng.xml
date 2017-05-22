@@ -14,11 +14,6 @@
         </groups>
         <classes>
             <class name="com.test.site.HomePageTest3"/>
-            <class name="com.test.site.HomePageTest2"/>
-            <class name="com.test.site.HomePageTest1"/>
-            <class name="com.test.site.HomePageTest6"/>
-            <class name="com.test.site.HomePageTest5"/>
-            <class name="com.test.site.HomePageTest4"/>
         </classes>
     </test> <!-- TestNG Test -->
 </suite> <!-- TestNG Forum -->

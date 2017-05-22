@@ -2,16 +2,17 @@ package com.appium.webtest;
 
 import static org.junit.Assert.assertNotNull;
 
+import com.test.site.UserBaseTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
 
-public class LoginTestFailure extends com.test.site.UserBaseTest {
+public class LoginFailure extends UserBaseTest {
 
 
     @Test public void loginTestFailure() throws InterruptedException {
-        getDriver().get("http://www.thoughtworks.com");
+        getDriver().get("https://www.thoughtworks.com");
         WebElement idElement = getDriver().findElement(By.id("mobile-menu-titleee"));
         assertNotNull(idElement);
         //elementHighlight(idElement);

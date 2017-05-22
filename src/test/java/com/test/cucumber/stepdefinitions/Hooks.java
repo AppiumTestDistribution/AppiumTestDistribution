@@ -1,6 +1,7 @@
 package com.test.cucumber.stepdefinitions;
 
-import com.cucumber.listener.ExtentCucumberFormatter;
+
+import com.appium.manager.DriverManager;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -11,20 +12,15 @@ import org.openqa.selenium.WebDriverException;
 
 import java.io.IOException;
 
-public class Hooks extends ExtentCucumberFormatter {
+public class Hooks  {
     @Before public void beforeClass(Scenario scenario) throws Exception {
-        System.out.println("Inside Before" + Thread.currentThread().getId());
-        iosCapabilities = appiumParallelTest.deviceCapabilityManager.iosNative(
-                appiumParallelTest.device_udid);
-        androidCapabilities = appiumParallelTest.deviceCapabilityManager.androidNative(
-                appiumParallelTest.device_udid);
-    }
+         }
 
     @After public void afterClass(Scenario scenario) throws InterruptedException, IOException {
         if (scenario.isFailed()) {
             try {
                 byte[] screenshot =
-                    ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BYTES);
+                    ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.BYTES);
                 scenario.embed(screenshot, "image/png");
             } catch (WebDriverException wde) {
                 System.err.println(wde.getMessage());
@@ -33,7 +29,7 @@ public class Hooks extends ExtentCucumberFormatter {
             }
             System.out.println("Inside After" + Thread.currentThread().getId());
         }
-        getDriver().quit();
+        DriverManager.getDriver().quit();
 
     }
 }

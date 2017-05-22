@@ -1,11 +1,8 @@
 package com.test.site;
 
 
-
-import com.annotation.values.Author;
 import com.annotation.values.Description;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.SwipeElementDirection;
+import com.appium.utils.ScreenShotManager;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -13,11 +10,17 @@ import org.testng.annotations.Test;
 
 @Description("This Test validates swipe scenarios")
 public class HomePageTest2
-    extends UserBaseTest {
+        extends UserBaseTest {
 
-    @Test(groups = {"smoke"},description = "Testing")
+    MyClass myClass;
+
+    @Test(groups = {"smoke"}, description = "Testing")
     public void testMethodOne_2() throws Exception {
-        MyClass c = new MyClass();
-        Assert.assertEquals(c.sum(2, 3), 6);
+        myClass = new MyClass();
+        getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+        getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
+        getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+        new ScreenShotManager().captureScreenShot("Second Test Screen");
+        Assert.assertEquals(myClass.sum(2, 3), 6,"Runing in Thread" + Thread.currentThread().getId());
     }
 }

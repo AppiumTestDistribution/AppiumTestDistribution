@@ -1,13 +1,12 @@
 package com.appium.executor;
 
-import static java.util.Arrays.asList;
-
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.manager.ConfigurationManager;
 import com.appium.manager.DeviceManager;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
 import com.appium.utils.ImageUtils;
+
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -16,6 +15,7 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
+import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlPackage;
@@ -120,17 +120,18 @@ public class MyTestExecutor {
             reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
         boolean hasFailure;
         if (executionType.equalsIgnoreCase("distribute")) {
-            hasFailure = runMethodParallel(
-                constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
-                    devicecount));
+            constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
+                    devicecount);
+            hasFailure = runMethodParallel();
         } else {
-            hasFailure = runMethodParallel(
-                constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
-                    deviceManager.getDevices()));
+            constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
+                    deviceManager.getDevices());
+            hasFailure = runMethodParallel();
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
         ImageUtils.creatResultsSet();
+        //ImageUtils.createJSonForHtml();
         return hasFailure;
     }
 
@@ -143,9 +144,11 @@ public class MyTestExecutor {
 
     }
 
-    public boolean runMethodParallel(XmlSuite suite) {
+    public boolean runMethodParallel() {
         TestNG testNG = new TestNG();
-        testNG.setXmlSuites(asList(suite));
+        List<String> suites = Lists.newArrayList();
+        suites.add(System.getProperty("user.dir") + "/target/parallel.xml");
+        testNG.setTestSuites(suites);
         testNG.run();
         return testNG.hasFailure();
     }
@@ -164,9 +167,9 @@ public class MyTestExecutor {
         suite.setParallel(ParallelMode.TESTS);
         suite.setVerbose(2);
         suite.setListeners(listeners);
-        if (prop.getProperty("LISTENERS") != null) {
-            suite.setListeners(listeners);
-        }
+//        if (prop.getProperty("LISTENERS") != null) {
+//            suite.setListeners(listeners);
+//        }
         for (int i = 0; i < deviceCount; i++) {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
@@ -179,6 +182,7 @@ public class MyTestExecutor {
             test.setXmlClasses(xmlClasses);
         }
         System.out.println(suite.toXml());
+        writeTestNGFile(suite);
         return suite;
     }
 
@@ -227,7 +231,20 @@ public class MyTestExecutor {
         List<XmlClass> xmlClasses = new ArrayList<>();
         writeXmlClass(tests, methods, xmlClasses);
         test.setXmlClasses(xmlClasses);
+        writeTestNGFile(suite);
         return suite;
+    }
+
+    private void writeTestNGFile(XmlSuite suite) {
+        try {
+            FileWriter writer = new FileWriter(new File(
+                    System.getProperty("user.dir") + "/target/parallel.xml"));
+            writer.write(suite.toXml());
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void include(ArrayList<String> groupsInclude, String include) {

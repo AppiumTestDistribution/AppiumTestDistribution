@@ -4,12 +4,13 @@ import com.annotation.values.Author;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.CapabilityBuilder;
+import com.appium.utils.GetDescriptionForChildNode;
 import com.appium.utils.MobilePlatform;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
-
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -17,48 +18,30 @@ import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
-import org.testng.SkipException;
-import org.testng.TestListenerAdapter;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
+import org.testng.*;
 import org.testng.annotations.Test;
 
-
-import java.awt.Image;
-import java.awt.Toolkit;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AppiumParallelTest extends TestListenerAdapter implements ITestListener {
+public class AppiumParallelTest implements ITestListener, IClassListener, IInvokedMethodListener {
 
-    public DeviceCapabilityManager deviceCapabilityManager;
+    private DeviceCapabilityManager deviceCapabilityManager;
     private TestLogger testLogger;
     private DeviceManager deviceManager;
-    public ConfigurationManager prop;
-    public IOSDeviceConfiguration iosDevice;
+    private ConfigurationManager prop;
+    private IOSDeviceConfiguration iosDevice;
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
             new ConcurrentHashMap<String, Boolean>();
     public AppiumDriver<MobileElement> driver = null;
     public AppiumManager appiumMan;
-    public String device_udid;
     public String category = null;
     public String deviceModel;
-    public File scrFile = null;
     public String testDescription = "";
     private String CI_BASE_URI = null;
     public ThreadLocal<ExtentTest> parentTest = new ThreadLocal<ExtentTest>();
@@ -66,7 +49,14 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
     public ExtentTest parent;
     public ExtentTest child;
     private AndroidDeviceConfiguration androidDevice;
-    public AvailablePorts ports;
+    private AvailablePorts ports;
+    private String currentMethodName = null;
+    private DeviceSingleton deviceSingleton;
+    private GetDescriptionForChildNode getDescriptionForChildNode;
+    private CapabilityBuilder capabilityBuilder;
+
+    private AppiumDriver<MobileElement> currentDriverSession;
+
 
     public AppiumParallelTest() {
         try {
@@ -78,269 +68,262 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
             testLogger = new TestLogger();
             deviceCapabilityManager = new DeviceCapabilityManager();
             ports = new AvailablePorts();
+            deviceSingleton = DeviceSingleton.getInstance();
+            capabilityBuilder = new CapabilityBuilder();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static Image getImage(final String pathAndFileName) {
-        final URL url = Thread.currentThread().getContextClassLoader().getResource(pathAndFileName);
-        return Toolkit.getDefaultToolkit().getImage(url);
-    }
-
-    public synchronized AppiumServiceBuilder startAppiumServer(
+    public void startAppiumServer(
             String device, String methodName, String tags) throws Exception {
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
             CI_BASE_URI = System.getProperty("user.dir");
         }
-        if (device.isEmpty()) {
-            System.out.println("Into Empty devices");
-            device_udid = deviceManager.getNextAvailableDeviceId();
-            System.out.println("Into block" + device_udid);
-        } else {
-            device_udid = device;
-        }
-        System.out.println("Devices*******" + device_udid);
-        if (device_udid == null) {
+        allocateDevice(device, deviceSingleton.getDeviceUDID());
+        if (DeviceUDIDManager.getDeviceUDID() == null) {
             System.out.println("No devices are free to run test or Failed to run test");
-            return null;
         }
-        System.out.println("****************Device*************" + device_udid);
+        System.out.println("****************Device*************" + DeviceUDIDManager.getDeviceUDID());
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             getDeviceCategory();
         } else {
-            category = androidDevice.getDeviceModel(device_udid);
+            category = androidDevice.getDeviceModel();
         }
-        //System.out.println("******Tags::::" + Arrays.toString(tags));
-        //Will fix the tag once extent-report issue
-        //https://github.com/anshooarora/extentreports-java/issues/757
-        ExtentTest extentTest = createParentNodeExtent(methodName, "", category
-                + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
+        createParentNodeExtent(methodName, "").assignCategory(tags);
 
-        AppiumServiceBuilder appiumServiceBuilder = checkOSAndStartServer(methodName);
-        if (appiumServiceBuilder != null) {
-            return appiumServiceBuilder;
+        checkOSAndStartServer(methodName);
+    }
+
+    public void allocateDevice(String device, String deviceUDID) {
+        if (device.isEmpty()) {
+            DeviceUDIDManager.setDeviceUDID(deviceUDID);
+        } else {
+            DeviceUDIDManager.setDeviceUDID(device);
         }
-
-        return null;
     }
 
 
-    @BeforeClass(alwaysRun = true)
-    @Parameters({"device"})
-    public synchronized AppiumServiceBuilder startAppiumServer(String device) throws Exception {
-        String methodName = getClass().getSimpleName();
+    public void startAppiumServer(String device) throws Exception {
         if (prop.containsKey("CI_BASE_URI")) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
             CI_BASE_URI = System.getProperty("user.dir");
         }
         if (device.isEmpty()) {
-            device_udid = deviceManager.getNextAvailableDeviceId();
+            DeviceUDIDManager.setDeviceUDID(deviceManager.getNextAvailableDeviceId());
         } else {
             deviceManager.getNextAvailableDeviceId();
-            device_udid = device;
+            DeviceUDIDManager.setDeviceUDID(device);
         }
 
-        if (device_udid == null) {
+        if (DeviceUDIDManager.getDeviceUDID() == null) {
             System.out.println("No devices are free to run test or Failed to run test");
-            return null;
         }
-        System.out.println("****************Device*************" + device_udid);
+        System.out.println("****************Device*************" + DeviceUDIDManager.getDeviceUDID());
+    }
+
+    public void getCatAndStartServer(String className) throws Exception {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             getDeviceCategory();
         } else {
-            category = androidDevice.getDeviceModel(device_udid);
+            category = androidDevice.getDeviceModel();
         }
-
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
-            createParentNodeExtent(methodName, testDescription,
-                    category + "_" + device_udid.replaceAll("\\W", "_"));
+            createParentNodeExtent(className, testDescription);
         }
-        AppiumServiceBuilder webKitPort = checkOSAndStartServer(methodName);
-        if (webKitPort != null) {
-            return webKitPort;
-        }
-        return null;
+        checkOSAndStartServer(className);
     }
 
-    private AppiumServiceBuilder checkOSAndStartServer(String methodName) throws Exception {
+    private void checkOSAndStartServer(String methodName) throws Exception {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            if (getMobilePlatform(device_udid).equals(MobilePlatform.IOS)) {
-                AppiumServiceBuilder webKitPort = getAppiumServiceBuilder(methodName);
-                if (webKitPort != null) {
-                    return webKitPort;
-                }
+            if (DeviceUDIDManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+                appiumMan.appiumServerForIOS(methodName);
             } else {
-                return appiumMan.appiumServerForAndroid(device_udid, methodName);
+                appiumMan.appiumServerForAndroid(methodName);
             }
         } else {
-            return appiumMan.appiumServerForAndroid(device_udid, methodName);
-        }
-        return null;
-    }
-
-    private AppiumServiceBuilder getAppiumServiceBuilder(String methodName) throws Exception {
-        String webKitPort = iosDevice.startIOSWebKit(device_udid);
-        return appiumMan.appiumServerForIOS(device_udid, methodName, webKitPort);
-    }
-
-    public void getDeviceCategory() throws Exception {
-        if (iosDevice.checkiOSDevice(device_udid)) {
-            iosDevice.setIOSWebKitProxyPorts(device_udid);
-            category = iosDevice.getDeviceName(device_udid).replace(" ", "_");
-        } else if (!iosDevice.checkiOSDevice(device_udid)) {
-            category = androidDevice.getDeviceModel(device_udid);
-            System.out.println(category);
+            appiumMan.appiumServerForAndroid(methodName);
         }
     }
 
-    public ExtentTest createParentNodeExtent(String methodName, String testDescription,
-                                             String deviceId) {
+    public synchronized void getDeviceCategory() throws Exception {
+        if (iosDevice.checkiOSDevice()) {
+            iosDevice.setIOSWebKitProxyPorts();
+            category = iosDevice.getDeviceName().replace(" ", "_");
+        } else {
+            category = androidDevice.getDeviceModel();
+            System.out.println(category + Thread.currentThread().getId());
+        }
+    }
+
+    public ExtentTest createParentNodeExtent(String methodName, String testDescription) {
         parent = ExtentTestManager.createTest(methodName, testDescription,
-                deviceId);
+                androidDevice.getDeviceModel() +
+                        DeviceUDIDManager.getDeviceUDID());
         parentTest.set(parent);
         ExtentTestManager.getTest().log(Status.INFO,
                 "<a target=\"_parent\" href=" + "appiumlogs/"
-                        + device_udid.replaceAll("\\W", "_") + "__" + methodName
+                        + DeviceUDIDManager.getDeviceUDID() + "__" + methodName
                         + ".txt" + ">AppiumServerLogs</a>");
         return parent;
     }
 
-    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(
+    public void startAppiumServerInParallel(
+            DesiredCapabilities iosCaps,
+            DesiredCapabilities androidCaps) throws Exception {
+        Thread.sleep(3000);
+        startingServerInstance(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
+        startLogResults(currentMethodName);
+    }
+
+    public void startAppiumServerInParallel(
             String methodName, DesiredCapabilities iosCaps,
             DesiredCapabilities androidCaps) throws Exception {
-        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            setAuthorName(methodName);
+        if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")) {
+            currentMethodName = methodName;
         }
         Thread.sleep(3000);
-        startingServerInstance(iosCaps, androidCaps);
-        startLogResults(getClass().getMethod(methodName).getName());
-        return driver;
+        startingServerInstance(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
+        startLogResults(currentMethodName);
     }
 
-    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(String methodName)
+    public void startAppiumServerInParallel(String methodName)
             throws Exception {
-        return startAppiumServerInParallel(methodName, null, null);
+        DesiredCapabilities iOS = null;
+        DesiredCapabilities android = null;
+        // Check if json file does not exists and pick the default caps
+        DesiredCapabilities desiredCapabilities = capabilityBuilder
+                .buildDeviceCapability(System.getProperty("user.dir")
+                        + "/caps/android.json");
+        // Check for web chrome appplication
+        if (desiredCapabilities.getCapability("automationName")
+                .equals("UIAutomator2")) {
+            android = CapabilityBuilder.getDesiredCapability();
+        } else {
+            iOS = CapabilityBuilder.getDesiredCapability();
+        }
+        System.out.println("Caps generated" + android + iOS);
+        startAppiumServerInParallel(methodName, iOS, android);
     }
 
-    public synchronized AppiumDriver<MobileElement> startAppiumServerInParallel(
+    public void startAppiumServerInParallel(
             String methodName, DesiredCapabilities caps) throws Exception {
-        return startAppiumServerInParallel(methodName, caps, caps);
+        startAppiumServerInParallel(methodName, caps, caps);
     }
 
     public AppiumParallelTest createChildNodeWithCategory(String methodName,
                                                           String tags) {
         child = parentTest.get().createNode(methodName, category
-                + device_udid.replaceAll("\\W", "_")).assignCategory(tags);
+                + DeviceUDIDManager.getDeviceUDID()).assignCategory(tags);
         test.set(child);
         return this;
     }
 
-    public void setAuthorName(String methodName) throws NoSuchMethodException {
+    public void setAuthorName(IInvokedMethod methodName) throws NoSuchMethodException {
         String authorName;
         boolean methodNamePresent;
         ArrayList<String> listeners = new ArrayList<>();
         String descriptionMethodName;
-        if (getClass().getMethod(methodName).getAnnotation(Test.class).description().isEmpty()) {
-            descriptionMethodName = methodName;
-        } else {
-            descriptionMethodName = getClass().getMethod(methodName)
-                    .getAnnotation(Test.class).description();
-        }
-        if (getClass().getMethod(methodName).getAnnotation(Author.class) != null) {
-            methodNamePresent = true;
-        } else {
-            methodNamePresent = false;
-        }
+        String description = methodName.getTestMethod()
+                .getConstructorOrMethod().getMethod()
+                .getAnnotation(Test.class).description();
+        getDescriptionForChildNode = new GetDescriptionForChildNode(methodName, description)
+                .invoke();
+        methodNamePresent = getDescriptionForChildNode.isMethodNamePresent();
+        descriptionMethodName = getDescriptionForChildNode.getDescriptionMethodName();
         if (methodNamePresent) {
-            authorName = getClass().getMethod(methodName).getAnnotation(Author.class).name();
+            authorName = methodName.getTestMethod()
+                    .getConstructorOrMethod().getMethod()
+                    .getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
                     .createNode(descriptionMethodName,
-                            category + "_" + device_udid.replaceAll("\\W", "_")).assignAuthor(
+                            category + "_" + DeviceUDIDManager.getDeviceUDID()).assignAuthor(
                             String.valueOf(listeners));
             test.set(child);
         } else {
             child = parentTest.get().createNode(descriptionMethodName,
-                    category + "_" + device_udid.replaceAll("\\W", "_"));
+                    category + "_" + DeviceUDIDManager.getDeviceUDID());
             test.set(child);
         }
     }
 
-    public void startingServerInstance(DesiredCapabilities iosCaps, DesiredCapabilities androidCaps)
+    public void startingServerInstance(Optional<DesiredCapabilities> iosCaps,
+                                       Optional<DesiredCapabilities> androidCaps)
             throws Exception {
         if (prop.getProperty("APP_TYPE").equalsIgnoreCase("web")) {
-            driver = new AndroidDriver<>(appiumMan.getAppiumUrl(),
+            currentDriverSession = new AndroidDriver<>(appiumMan.getAppiumUrl(),
                     deviceCapabilityManager.androidWeb());
+            DriverManager.setWebDriver(currentDriverSession);
         } else {
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 if (prop.getProperty("IOS_APP_PATH") != null
-                        && iosDevice.checkiOSDevice(device_udid)) {
-                    if (iosCaps == null) {
-                        iosCaps = deviceCapabilityManager.iosNative(device_udid);
-                        if (iosDevice.getIOSDeviceProductVersion(device_udid)
-                                .contains("10")) {
-                            iosCaps.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                                    AutomationName.IOS_XCUI_TEST);
-                            iosCaps.setCapability(IOSMobileCapabilityType
-                                    .WDA_LOCAL_PORT,ports.getPort());
-                        }
+                        && iosDevice.checkiOSDevice()) {
+                    if (iosDevice.getIOSDeviceProductVersion()
+                            .contains("10")) {
+                        iosCaps.get().setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                                AutomationName.IOS_XCUI_TEST);
+                        iosCaps.get().setCapability(IOSMobileCapabilityType
+                                .WDA_LOCAL_PORT, ports.getPort());
                     }
+                    currentDriverSession = new IOSDriver<>(appiumMan.getAppiumUrl(),
+                            iosCaps.orElse(deviceCapabilityManager.iosNative()));
+                    DriverManager.setWebDriver(currentDriverSession);
 
-                    driver = new IOSDriver<>(appiumMan.getAppiumUrl(), iosCaps);
-                } else if (!iosDevice.checkiOSDevice(device_udid)) {
-                    if (androidCaps == null) {
-                        androidCaps = deviceCapabilityManager.androidNative(device_udid);
-                    }
-                    driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+                } else if (!iosDevice.checkiOSDevice()) {
+                    currentDriverSession = new AndroidDriver<>(appiumMan.getAppiumUrl(),
+                            androidCaps.orElse(deviceCapabilityManager.androidNative()));
+                    DriverManager.setWebDriver(currentDriverSession);
                 }
             } else {
-                if (androidCaps == null) {
-                    androidCaps = deviceCapabilityManager.androidNative(device_udid);
-                }
-                driver = new AndroidDriver<>(appiumMan.getAppiumUrl(), androidCaps);
+                currentDriverSession = new AndroidDriver<>(appiumMan.getAppiumUrl(),
+                        androidCaps
+                                .orElse(deviceCapabilityManager.androidNative()));
+                DriverManager.setWebDriver(currentDriverSession);
             }
         }
     }
 
     public void startingServerInstance() throws Exception {
-        startingServerInstance(null, null);
+        startingServerInstance(Optional.empty(), Optional.empty());
     }
 
     public void startingServerInstance(DesiredCapabilities caps) throws Exception {
-        startingServerInstance(caps, caps);
+        startingServerInstance(Optional.ofNullable(caps), Optional.ofNullable(caps));
     }
 
     private void startLogResults(String methodName) throws FileNotFoundException {
-        testLogger.startLogging(methodName, driver, device_udid, getClass().getName());
+        testLogger.startLogging(methodName, getClass().getName());
     }
 
     public void endLogTestResults(ITestResult result) throws IOException, InterruptedException {
-        testLogger.endLog(result, device_udid, getDeviceModel(), test, driver);
+        testLogger.endLog(result, getDeviceModel(), test);
     }
 
     private String getDeviceModel() throws InterruptedException, IOException {
-        if (driver.getSessionDetails().get("platformName").toString().equals("Android")) {
-            deviceModel = androidDevice.getDeviceModel(device_udid);
-        } else if (driver.getSessionDetails().get("platformName").toString().equals("iOS")) {
-            deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion(device_udid);
+        if (DriverManager.getDriver().getCapabilities().getCapability("platformName")
+                .toString().equals("Android")
+                && DriverManager.getDriver().getCapabilities().getCapability("browserName")
+                .toString().isEmpty()) {
+            deviceModel = androidDevice.getDeviceModel();
+        } else if (DriverManager.getDriver().getCapabilities().getCapability("platformName").toString().equals("iOS")) {
+            deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion();
         }
         return deviceModel;
     }
 
-    public synchronized void stopServerCucumber()
+    public void stopServerCucumber()
             throws IOException, InterruptedException {
         stopAppiumServerAndCloseReport();
     }
 
-    @AfterClass(alwaysRun = true)
-    public synchronized void killAppiumServer()
+    private void killAppiumServer()
             throws InterruptedException, IOException {
         stopAppiumServerAndCloseReport();
     }
@@ -349,73 +332,108 @@ public class AppiumParallelTest extends TestListenerAdapter implements ITestList
         System.out.println("**************ClosingAppiumSession****************"
                 + Thread.currentThread().getId());
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            //ExtentManager.getInstance().endTest(parent);
             ExtentManager.getExtent().flush();
         }
         appiumMan.destroyAppiumNode();
-        if (getMobilePlatform(device_udid).equals(MobilePlatform.IOS)) {
+        if (DeviceUDIDManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             iosDevice.destroyIOSWebKitProxy();
         }
-        deviceManager.freeDevice(device_udid);
+        deviceManager.freeDevice();
     }
 
     public AppiumDriver<MobileElement> getDriver() {
-        return driver;
+        return DriverManager.getDriver();
     }
 
     public void onTestStart(ITestResult result) {
-        Object currentClass = result.getInstance();
-        AppiumDriver<MobileElement> driver = ((AppiumParallelTest) currentClass).getDriver();
-        SkipIf skip =
-                result.getMethod().getConstructorOrMethod().getMethod().getAnnotation(SkipIf.class);
-        if (skip != null) {
-            String info = skip.platform();
-            if (driver.toString().split("\\(")[0].trim().toString().contains(info)) {
-                System.out.println("skipping test");
-                throw new SkipException("Skipped because property was set to :::" + info);
+
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result) {
+
+    }
+
+    @Override
+    public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
+
+    }
+
+    @Override
+    public void onStart(ITestContext context) {
+
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+
+    }
+
+    @Override
+    public void onBeforeClass(ITestClass testClass) {
+        try {
+            String device = testClass.getXmlClass().getAllParameters().get("device").toString();
+            String className = testClass.getRealClass().getSimpleName();
+            allocateDevice(device, deviceManager.getNextAvailableDeviceId());
+            getCatAndStartServer(className);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onAfterClass(ITestClass testClass) {
+        try {
+            killAppiumServer();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        try {
+            setAuthorName(method);
+            currentMethodName = method.getTestMethod().getMethodName();
+            startAppiumServerInParallel(currentMethodName);
+            SkipIf skip =
+                    method.getTestMethod()
+                            .getConstructorOrMethod()
+                            .getMethod().getAnnotation(SkipIf.class);
+            if (skip != null) {
+                String info = skip.platform();
+                if (DriverManager.getDriver().toString().split("\\(")[0].trim().toString().contains(info)) {
+                    System.out.println("skipping test");
+                    throw new SkipException("Skipped because property was set to :::" + info);
+                }
             }
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void captureScreenshot(String methodName, String device, String className)
-            throws IOException, InterruptedException {
-        String context = getDriver().getContext();
-        boolean contextChanged = false;
-        if ("Android".equals(getDriver().getSessionDetails().get("platformName").toString())
-                && !"NATIVE_APP".equals(context)) {
-            getDriver().context("NATIVE_APP");
-            contextChanged = true;
+    @Override
+    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        try {
+            endLogTestResults(testResult);
+            DriverManager.getDriver().quit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        if (contextChanged) {
-            getDriver().context(context);
-        }
-        FileUtils.copyFile(scrFile, new File(
-                "screenshot/" + device + "/"
-                        + device_udid.replaceAll("\\W", "_")
-                        + "/" + className
-                        + "/" + methodName + "/" + deviceModel + "_"
-                        + methodName + "_failed" + ".png"));
-        Thread.sleep(3000);
     }
-
-
-    public void captureScreenShot(String screenShotName) throws InterruptedException, IOException {
-        String methodName = new Exception().getStackTrace()[1].getMethodName();
-        String className = new Exception().getStackTrace()[1].getClassName();
-        testLogger.captureScreenShot(screenShotName, 1, className,
-                driver, getDeviceModel(), device_udid);
-    }
-
-    public MobilePlatform getMobilePlatform(String device_udid) {
-        MobilePlatform platform = null;
-
-        if (device_udid.length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-            platform = MobilePlatform.IOS;
-        } else {
-            platform = MobilePlatform.ANDROID;
-        }
-        return platform;
-    }
-
 }

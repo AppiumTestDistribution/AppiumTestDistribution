@@ -7,6 +7,26 @@ public class TestResults {
     private String deviceName;
     private String deviceModel;
     private String deviceUDID;
+
+    public String getScreensShotPath() {
+        return screensShotPath;
+    }
+
+    public void setScreensShotPath(String screensShotPath) {
+        this.screensShotPath = screensShotPath;
+    }
+
+    private String screensShotPath;
+
+    public String getDeviceOS() {
+        return deviceOS;
+    }
+
+    public void setDeviceOS(String deviceOS) {
+        this.deviceOS = deviceOS;
+    }
+
+    private String deviceOS;
     private List<TestCases> testCases;
 
 
