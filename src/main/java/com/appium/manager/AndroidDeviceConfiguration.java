@@ -146,7 +146,7 @@ public class AndroidDeviceConfiguration {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        deviceModel = deviceModelName.concat("_" + brand);
+        deviceModel = deviceModelName.concat("_" + brand).replace("\n","");
 
         return deviceModel.trim();
 

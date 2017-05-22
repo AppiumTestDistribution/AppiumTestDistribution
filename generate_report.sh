@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "Copying generated output in target inside webContent->app"
 FILE=./webContent/app/src/data/Report.json
 if [ -d "$FILE" ]; then

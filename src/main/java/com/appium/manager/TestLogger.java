@@ -185,7 +185,7 @@ class TestLogger {
                     .log(Status.FAIL, "<pre>" + result.getThrowable() + "</pre>");
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),
-                            result.getTestClass().getName(), result.getMethod().getMethodName(), deviceModel);
+                            result.getInstance().getClass().getSimpleName(), result.getMethod().getMethodName(), deviceModel);
 
             if (DriverManager.getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
                 File framedImageAndroid = new File(

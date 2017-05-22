@@ -4,12 +4,13 @@ import com.annotation.values.Author;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.CapabilityBuilder;
+import com.appium.utils.GetDescriptionForChildNode;
 import com.appium.utils.MobilePlatform;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
-
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -17,31 +18,12 @@ import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
-
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.IClassListener;
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ITestClass;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
-import org.testng.SkipException;
+import org.testng.*;
 import org.testng.annotations.Test;
 
-
-import java.awt.Image;
-import java.awt.Toolkit;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -49,19 +31,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AppiumParallelTest implements ITestListener, IClassListener, IInvokedMethodListener {
 
-    public DeviceCapabilityManager deviceCapabilityManager;
+    private DeviceCapabilityManager deviceCapabilityManager;
     private TestLogger testLogger;
     private DeviceManager deviceManager;
-    public ConfigurationManager prop;
-    public IOSDeviceConfiguration iosDevice;
+    private ConfigurationManager prop;
+    private IOSDeviceConfiguration iosDevice;
     public static ConcurrentHashMap<String, Boolean> deviceMapping =
             new ConcurrentHashMap<String, Boolean>();
     public AppiumDriver<MobileElement> driver = null;
     public AppiumManager appiumMan;
-    public String device_udid;
     public String category = null;
     public String deviceModel;
-    public File scrFile = null;
     public String testDescription = "";
     private String CI_BASE_URI = null;
     public ThreadLocal<ExtentTest> parentTest = new ThreadLocal<ExtentTest>();
@@ -69,9 +49,11 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
     public ExtentTest parent;
     public ExtentTest child;
     private AndroidDeviceConfiguration androidDevice;
-    public AvailablePorts ports;
+    private AvailablePorts ports;
     private String currentMethodName = null;
-    DeviceSingleton deviceSingleton;
+    private DeviceSingleton deviceSingleton;
+    private GetDescriptionForChildNode getDescriptionForChildNode;
+    private CapabilityBuilder capabilityBuilder;
 
     private AppiumDriver<MobileElement> currentDriverSession;
 
@@ -87,14 +69,10 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
             deviceCapabilityManager = new DeviceCapabilityManager();
             ports = new AvailablePorts();
             deviceSingleton = DeviceSingleton.getInstance();
+            capabilityBuilder = new CapabilityBuilder();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static Image getImage(final String pathAndFileName) {
-        final URL url = Thread.currentThread().getContextClassLoader().getResource(pathAndFileName);
-        return Toolkit.getDefaultToolkit().getImage(url);
     }
 
     public void startAppiumServer(
@@ -104,11 +82,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
             CI_BASE_URI = System.getProperty("user.dir");
         }
-        if (device.isEmpty()) {
-            DeviceUDIDManager.setDeviceUDID(deviceSingleton.getDeviceUDID());
-        } else {
-            DeviceUDIDManager.setDeviceUDID(device);
-        }
+        allocateDevice(device, deviceSingleton.getDeviceUDID());
         if (DeviceUDIDManager.getDeviceUDID() == null) {
             System.out.println("No devices are free to run test or Failed to run test");
         }
@@ -118,12 +92,17 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         } else {
             category = androidDevice.getDeviceModel();
         }
-        //System.out.println("******Tags::::" + Arrays.toString(tags));
-        //Will fix the tag once extent-report issue
-        //https://github.com/anshooarora/extentreports-java/issues/757
-        ExtentTest extentTest = createParentNodeExtent(methodName, "").assignCategory(tags);
+        createParentNodeExtent(methodName, "").assignCategory(tags);
 
         checkOSAndStartServer(methodName);
+    }
+
+    public void allocateDevice(String device, String deviceUDID) {
+        if (device.isEmpty()) {
+            DeviceUDIDManager.setDeviceUDID(deviceUDID);
+        } else {
+            DeviceUDIDManager.setDeviceUDID(device);
+        }
     }
 
 
@@ -163,7 +142,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
 
     private void checkOSAndStartServer(String methodName) throws Exception {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            if (getMobilePlatform().equals(MobilePlatform.IOS)) {
+            if (DeviceUDIDManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 appiumMan.appiumServerForIOS(methodName);
             } else {
                 appiumMan.appiumServerForAndroid(methodName);
@@ -185,7 +164,8 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
 
     public ExtentTest createParentNodeExtent(String methodName, String testDescription) {
         parent = ExtentTestManager.createTest(methodName, testDescription,
-                DeviceUDIDManager.getDeviceUDID());
+                androidDevice.getDeviceModel() +
+                        DeviceUDIDManager.getDeviceUDID());
         parentTest.set(parent);
         ExtentTestManager.getTest().log(Status.INFO,
                 "<a target=\"_parent\" href=" + "appiumlogs/"
@@ -215,12 +195,26 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
 
     public void startAppiumServerInParallel(String methodName)
             throws Exception {
-         startAppiumServerInParallel(methodName, null, null);
+        DesiredCapabilities iOS = null;
+        DesiredCapabilities android = null;
+        // Check if json file does not exists and pick the default caps
+        DesiredCapabilities desiredCapabilities = capabilityBuilder
+                .buildDeviceCapability(System.getProperty("user.dir")
+                        + "/caps/android.json");
+        // Check for web chrome appplication
+        if (desiredCapabilities.getCapability("automationName")
+                .equals("UIAutomator2")) {
+            android = CapabilityBuilder.getDesiredCapability();
+        } else {
+            iOS = CapabilityBuilder.getDesiredCapability();
+        }
+        System.out.println("Caps generated" + android + iOS);
+        startAppiumServerInParallel(methodName, iOS, android);
     }
 
     public void startAppiumServerInParallel(
             String methodName, DesiredCapabilities caps) throws Exception {
-          startAppiumServerInParallel(methodName, caps, caps);
+        startAppiumServerInParallel(methodName, caps, caps);
     }
 
     public AppiumParallelTest createChildNodeWithCategory(String methodName,
@@ -238,22 +232,15 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         String descriptionMethodName;
         String description = methodName.getTestMethod()
                 .getConstructorOrMethod().getMethod()
-                    .getAnnotation(Test.class).description();
-        if (description.isEmpty()) {
-            descriptionMethodName = methodName.getTestMethod().getMethodName();
-        } else {
-            descriptionMethodName = description;
-        }
-        if (methodName.getTestMethod().getConstructorOrMethod()
-                .getMethod().getAnnotation(Author.class) != null) {
-            methodNamePresent = true;
-        } else {
-            methodNamePresent = false;
-        }
+                .getAnnotation(Test.class).description();
+        getDescriptionForChildNode = new GetDescriptionForChildNode(methodName, description)
+                .invoke();
+        methodNamePresent = getDescriptionForChildNode.isMethodNamePresent();
+        descriptionMethodName = getDescriptionForChildNode.getDescriptionMethodName();
         if (methodNamePresent) {
             authorName = methodName.getTestMethod()
                     .getConstructorOrMethod().getMethod()
-                        .getAnnotation(Author.class).name();
+                    .getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
                     .createNode(descriptionMethodName,
@@ -279,11 +266,11 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
                 if (prop.getProperty("IOS_APP_PATH") != null
                         && iosDevice.checkiOSDevice()) {
                     if (iosDevice.getIOSDeviceProductVersion()
-                        .contains("10")) {
+                            .contains("10")) {
                         iosCaps.get().setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                            AutomationName.IOS_XCUI_TEST);
+                                AutomationName.IOS_XCUI_TEST);
                         iosCaps.get().setCapability(IOSMobileCapabilityType
-                            .WDA_LOCAL_PORT,ports.getPort());
+                                .WDA_LOCAL_PORT, ports.getPort());
                     }
                     currentDriverSession = new IOSDriver<>(appiumMan.getAppiumUrl(),
                             iosCaps.orElse(deviceCapabilityManager.iosNative()));
@@ -291,7 +278,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
 
                 } else if (!iosDevice.checkiOSDevice()) {
                     currentDriverSession = new AndroidDriver<>(appiumMan.getAppiumUrl(),
-                            deviceCapabilityManager.androidNative());
+                            androidCaps.orElse(deviceCapabilityManager.androidNative()));
                     DriverManager.setWebDriver(currentDriverSession);
                 }
             } else {
@@ -316,14 +303,14 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
     }
 
     public void endLogTestResults(ITestResult result) throws IOException, InterruptedException {
-        testLogger.endLog(result,getDeviceModel(), test);
+        testLogger.endLog(result, getDeviceModel(), test);
     }
 
     private String getDeviceModel() throws InterruptedException, IOException {
         if (DriverManager.getDriver().getCapabilities().getCapability("platformName")
                 .toString().equals("Android")
                 && DriverManager.getDriver().getCapabilities().getCapability("browserName")
-                    .toString().isEmpty()) {
+                .toString().isEmpty()) {
             deviceModel = androidDevice.getDeviceModel();
         } else if (DriverManager.getDriver().getCapabilities().getCapability("platformName").toString().equals("iOS")) {
             deviceModel = iosDevice.getIOSDeviceProductTypeAndVersion();
@@ -336,7 +323,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         stopAppiumServerAndCloseReport();
     }
 
-    public void killAppiumServer()
+    private void killAppiumServer()
             throws InterruptedException, IOException {
         stopAppiumServerAndCloseReport();
     }
@@ -345,11 +332,10 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         System.out.println("**************ClosingAppiumSession****************"
                 + Thread.currentThread().getId());
         if (prop.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
-            //ExtentManager.getInstance().endTest(parent);
             ExtentManager.getExtent().flush();
         }
         appiumMan.destroyAppiumNode();
-        if (getMobilePlatform().equals(MobilePlatform.IOS)) {
+        if (DeviceUDIDManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             iosDevice.destroyIOSWebKitProxy();
         }
         deviceManager.freeDevice();
@@ -393,28 +379,12 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
 
     }
 
-    public MobilePlatform getMobilePlatform() {
-        MobilePlatform platform = null;
-
-        if (DeviceUDIDManager.getDeviceUDID().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-            platform = MobilePlatform.IOS;
-        } else {
-            platform = MobilePlatform.ANDROID;
-        }
-        return platform;
-    }
-
     @Override
     public void onBeforeClass(ITestClass testClass) {
         try {
             String device = testClass.getXmlClass().getAllParameters().get("device").toString();
-            System.out.println("Current Thread:" + Thread.currentThread().getId() + "::" + device);
             String className = testClass.getRealClass().getSimpleName();
-            if(device.isEmpty()) {
-                DeviceUDIDManager.setDeviceUDID(deviceManager.getNextAvailableDeviceId());
-            } else {
-                DeviceUDIDManager.setDeviceUDID(device);
-            }
+            allocateDevice(device, deviceManager.getNextAvailableDeviceId());
             getCatAndStartServer(className);
         } catch (Exception e) {
             e.printStackTrace();
@@ -465,6 +435,5 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //DriverManager.getDriver().quit();
     }
 }
