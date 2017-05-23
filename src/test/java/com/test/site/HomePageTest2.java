@@ -17,10 +17,9 @@ public class HomePageTest2
 
     MyClass myClass;
 
-    @Test(retryAnalyzer = AppiumParallelTestListener.class, groups = "smoke",
+    @Test(groups = "smoke",
     description = "Testing Skips")
     @Author(name = "AnsonLiao")
-    @RetryCount(maxRetryCount = 2)
     public void testMethodOne_2() throws Exception {
         myClass = new MyClass();
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
