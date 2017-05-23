@@ -97,8 +97,15 @@ public class DeviceAllocationManager {
         return null;
     }
 
-
     public void freeDevice() {
         deviceMapping.put(DeviceManager.getDeviceUDID(), true);
+    }
+
+    public void allocateDevice(String device, String deviceUDID) {
+        if (device.isEmpty()) {
+            DeviceManager.setDeviceUDID(deviceUDID);
+        } else {
+            DeviceManager.setDeviceUDID(device);
+        }
     }
 }

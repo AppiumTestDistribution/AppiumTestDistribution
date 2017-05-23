@@ -34,7 +34,7 @@ public class AppiumServerManager {
     }
 
 
-    AppiumServerManager() throws IOException {
+    public AppiumServerManager() throws IOException {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         ap = new AvailablePorts();
     }

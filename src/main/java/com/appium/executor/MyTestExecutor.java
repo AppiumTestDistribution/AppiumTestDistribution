@@ -156,7 +156,7 @@ public class MyTestExecutor {
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
         Map<String, List<Method>> methods, int deviceCount, ArrayList<String> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
-        listeners.add("com.appium.manager.AppiumParallelTest");
+        listeners.add("com.appium.manager.AppiumParallelTestListener");
         listeners.add("com.appium.utils.RetryListener");
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
@@ -216,7 +216,7 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
-        listeners.add("com.appium.manager.AppiumParallelTest");
+        listeners.add("com.appium.manager.AppiumParallelTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
         if (prop.getProperty("LISTENERS") != null) {

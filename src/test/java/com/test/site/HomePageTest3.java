@@ -2,7 +2,7 @@ package com.test.site;
 
 import com.annotation.values.Author;
 import com.annotation.values.RetryCount;
-import com.appium.utils.Retry;
+import com.appium.manager.AppiumParallelTestListener;
 import com.appium.utils.ScreenShotManager;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
@@ -13,7 +13,7 @@ import java.io.IOException;
 public class HomePageTest3 extends UserBaseTest {
 
 
-    @Test(retryAnalyzer = Retry.class, groups = "smoke")
+    @Test(retryAnalyzer = AppiumParallelTestListener.class, groups = "smoke")
     @Author(name = "AnsonLiao")
     @RetryCount(maxRetryCount = 2) public void testMethodOne_3()
         throws InterruptedException, IOException {
