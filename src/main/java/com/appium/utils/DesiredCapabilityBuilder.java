@@ -39,7 +39,8 @@ public class DesiredCapabilityBuilder {
 
     public DesiredCapabilities buildDesiredCapability(String jsonPath) throws Exception {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        JsonParser.getInstance(jsonPath).forEach((caps, values) ->
+        new JsonParser(jsonPath).getJsonParsedObject()
+                .forEach((caps, values) ->
                 desiredCapabilities.setCapability(caps.toString(), values.toString()));
         //Check for web
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {

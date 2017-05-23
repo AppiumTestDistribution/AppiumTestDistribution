@@ -4,6 +4,7 @@ import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.JsonParser;
 import com.github.lalyos.jfiglet.FigletFont;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;

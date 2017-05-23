@@ -13,32 +13,24 @@ import java.io.IOException;
  */
 public class JsonParser {
 
-    static JsonParser instance;
-    static JSONParser parser = new JSONParser();;
-    static Object obj;
+    JSONParser parser = new JSONParser();
+    Object object;
 
-    public JsonParser(String filePath) throws IOException, ParseException {
-        if(obj == null){
-            obj = parser.parse(new FileReader(filePath));
+    public JsonParser(String filePath){
+        try {
+            object = parser.parse(new FileReader(filePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+        JSONArray array = new JSONArray();
+        array.add(object);
+        Object o = ((JSONArray) object).get(0);
+        object = (JSONObject) o;
     }
 
-
-    public static JSONObject getInstance(String filePath){
-        if(instance == null){
-            try {
-                instance = new JsonParser(filePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            JSONArray array = new JSONArray();
-            array.add(obj);
-            Object o = ((JSONArray) obj).get(0);
-            return (JSONObject) o;
-        }
-        return null;
+    public JSONObject getJsonParsedObject() {
+        return (JSONObject) object;
     }
-
 }
