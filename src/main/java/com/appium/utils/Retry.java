@@ -1,22 +1,20 @@
 package com.appium.utils;
 
 import com.annotation.values.RetryCount;
-import com.appium.manager.ConfigurationManager;
+import com.appium.manager.ConfigFileManager;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 public class Retry implements IRetryAnalyzer {
-    private final ConfigurationManager prop;
+    private final ConfigFileManager prop;
     private int retryCount = 0;
     private int maxRetryCount;
 
     public Retry() throws IOException {
-        prop = ConfigurationManager.getInstance();
+        prop = ConfigFileManager.getInstance();
     }
 
     public boolean retry(ITestResult result) {

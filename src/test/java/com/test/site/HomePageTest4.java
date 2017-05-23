@@ -18,12 +18,12 @@ public class HomePageTest4 extends UserBaseTest {
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
                 .getStackTrace()[1].getClassName());
         Thread.sleep(3000);
-        new ScreenShotManager().captureScreenShot("TestSampler4");
-        getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/digit5")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
-        getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
+//        new ScreenShotManager().captureScreenShot("TestSampler4");
+//        getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+//        getDriver().findElement(By.id("com.android2.calculator3:id/digit5")).click();
+//        getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();
+//        getDriver().findElement(By.id("com.android2.calculator3:id/digit9")).click();
+//        getDriver().findElement(By.id("com.android2.calculator3:id/equal")).click();
     }
 
 }

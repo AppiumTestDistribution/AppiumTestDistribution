@@ -1,7 +1,8 @@
 package com.appium.manager;
 
+import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
-import io.appium.java_client.AppiumDriver;
+import com.appium.utils.AvailablePorts;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.AndroidServerFlag;
@@ -17,25 +18,23 @@ import java.net.URL;
  * To execute the tests from eclipse, you need to set PATH as
  * /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin in run configuration
  */
-public class AppiumManager {
+public class AppiumServerManager {
 
     private AvailablePorts ap;
-    private ConfigurationManager prop;
     private IOSDeviceConfiguration iosDeviceConfiguration;
-    private static ThreadLocal<AppiumDriverLocalService> appiumDriverThreadLocal
+    private static ThreadLocal<AppiumDriverLocalService> appiumDriverLocalService
             = new ThreadLocal<>();
 
-    public static AppiumDriverLocalService getServer() {
-        return appiumDriverThreadLocal.get();
+    private static AppiumDriverLocalService getServer() {
+        return appiumDriverLocalService.get();
     }
 
-    static void setServer(AppiumDriverLocalService server) {
-        appiumDriverThreadLocal.set(server);
+    private static void setServer(AppiumDriverLocalService server) {
+        appiumDriverLocalService.set(server);
     }
 
 
-    AppiumManager() throws IOException {
-        prop = ConfigurationManager.getInstance();
+    AppiumServerManager() throws IOException {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         ap = new AvailablePorts();
     }
@@ -45,12 +44,12 @@ public class AppiumManager {
      * bootstrap port and device UDID
      */
 
-    public void appiumServerForAndroid(String methodName)
+    private void startAppiumServerForAndroid(String methodName)
         throws Exception {
         AppiumDriverLocalService appiumDriverLocalService;
         System.out.println(
             "**************************************************************************\n");
-        System.out.println("Starting Appium Server to handle Android Device::" + DeviceUDIDManager.getDeviceUDID() + "\n");
+        System.out.println("Starting Appium Server to handle Android Device::" + DeviceManager.getDeviceUDID() + "\n");
         System.out.println(
             "**************************************************************************\n");
         int port = ap.getPort();
@@ -58,9 +57,9 @@ public class AppiumManager {
         int bootstrapPort = ap.getPort();
         int selendroidPort = ap.getPort();
         AppiumServiceBuilder builder =
-            new AppiumServiceBuilder().withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
+            new AppiumServiceBuilder().withAppiumJS(new File(ConfigFileManager.configFileMap.get("APPIUM_JS_PATH")))
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
-                System.getProperty("user.dir") + "/target/appiumlogs/" + DeviceUDIDManager.getDeviceUDID()
+                System.getProperty("user.dir") + "/target/appiumlogs/" + DeviceManager.getDeviceUDID()
                     .replaceAll("\\W", "_") + "__" + methodName + ".txt"))
                 .withArgument(AndroidServerFlag.CHROME_DRIVER_PORT, Integer.toString(chromePort))
                 .withArgument(AndroidServerFlag.BOOTSTRAP_PORT_NUMBER,
@@ -86,21 +85,21 @@ public class AppiumManager {
         }
     };
 
-    public void appiumServerForIOS(String methodName)
+    private void startAppiumServerForIOS(String methodName)
             throws Exception {
         AppiumDriverLocalService appiumDriverLocalService;
         String webKitPort = iosDeviceConfiguration.startIOSWebKit();
         System.out
             .println("**********************************************************************\n");
-        System.out.println("Starting Appium Server to handle IOS::" + DeviceUDIDManager.getDeviceUDID() + "\n");
+        System.out.println("Starting Appium Server to handle IOS::" + DeviceManager.getDeviceUDID() + "\n");
         System.out
             .println("**********************************************************************\n");
         File classPathRoot = new File(System.getProperty("user.dir"));
         int port = ap.getPort();
         AppiumServiceBuilder builder =
-            new AppiumServiceBuilder().withAppiumJS(new File(prop.getProperty("APPIUM_JS_PATH")))
+            new AppiumServiceBuilder().withAppiumJS(new File(ConfigFileManager.configFileMap.get("APPIUM_JS_PATH")))
                 .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
-                System.getProperty("user.dir") + "/target/appiumlogs/" + DeviceUDIDManager.getDeviceUDID()
+                System.getProperty("user.dir") + "/target/appiumlogs/" + DeviceManager.getDeviceUDID()
                         + "__" + methodName + ".txt"))
                 .withArgument(webKitProxy, webKitPort)
                 .withIPAddress("127.0.0.1")
@@ -117,11 +116,30 @@ public class AppiumManager {
         return getServer().getUrl();
     }
 
-    public void destroyAppiumNode() {
+    private void destroyAppiumNode() {
         getServer().stop();
         if (getServer().isRunning()) {
             System.out.println("AppiumServer didn't shut... Trying to quit again....");
             getServer().stop();
+        }
+    }
+
+    public void startAppiumServer(String methodName) throws Exception {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+                startAppiumServerForIOS(methodName);
+            } else {
+                startAppiumServerForAndroid(methodName);
+            }
+        } else {
+            startAppiumServerForAndroid(methodName);
+        }
+    }
+
+    public void stopAppiumServer() throws IOException, InterruptedException {
+        destroyAppiumNode();
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+            iosDeviceConfiguration.destroyIOSWebKitProxy();
         }
     }
 }

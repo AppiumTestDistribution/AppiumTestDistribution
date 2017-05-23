@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.utils.AvailablePorts;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -11,37 +12,37 @@ import java.io.IOException;
 /**
  * Created by saikrisv on 24/01/17.
  */
-public class DeviceCapabilityManager {
+public class DesiredCapabilityManager {
 
-    private final ConfigurationManager configurationManager;
+    private final ConfigFileManager configFileManager;
     DeviceSingleton deviceSingleton;
     AvailablePorts ap = new AvailablePorts();
 
-    public DeviceCapabilityManager() throws IOException {
-        configurationManager = ConfigurationManager.getInstance();
+    public DesiredCapabilityManager() throws IOException {
+        configFileManager = ConfigFileManager.getInstance();
         deviceSingleton = DeviceSingleton.getInstance();
 
     }
 
     public DesiredCapabilities androidNative() {
         System.out.println("Setting Android Desired Capabilities:");
-        System.out.println("Running caps::" + DeviceUDIDManager.getDeviceUDID() + Thread.currentThread().getId());
+        System.out.println("Running caps::" + DeviceManager.getDeviceUDID() + Thread.currentThread().getId());
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY,
-                configurationManager.getProperty("APP_ACTIVITY"));
+                configFileManager.getProperty("APP_ACTIVITY"));
         androidCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-                configurationManager.getProperty("APP_PACKAGE"));
+                configFileManager.getProperty("APP_PACKAGE"));
         androidCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                 AutomationName.ANDROID_UIAUTOMATOR2);
         androidCapabilities.setCapability("browserName", "");
         //checkSelendroid(androidCapabilities);
         androidCapabilities
                 .setCapability(MobileCapabilityType.APP,
-                        configurationManager.getProperty("ANDROID_APP_PATH"));
-        System.out.println(DeviceUDIDManager.getDeviceUDID() + Thread.currentThread().getId());
-        androidCapabilities.setCapability(MobileCapabilityType.UDID, DeviceUDIDManager.getDeviceUDID());
+                        configFileManager.getProperty("ANDROID_APP_PATH"));
+        System.out.println(DeviceManager.getDeviceUDID() + Thread.currentThread().getId());
+        androidCapabilities.setCapability(MobileCapabilityType.UDID, DeviceManager.getDeviceUDID());
         try {
             androidCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,ap.getPort());
         } catch (Exception e) {
@@ -55,7 +56,7 @@ public class DeviceCapabilityManager {
         androidWebCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
         androidWebCapabilities
                 .setCapability(MobileCapabilityType.BROWSER_NAME,
-                        configurationManager.getProperty("BROWSER_TYPE"));
+                        configFileManager.getProperty("BROWSER_TYPE"));
         androidWebCapabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
         return androidWebCapabilities;
     }
@@ -69,11 +70,13 @@ public class DeviceCapabilityManager {
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                 "10.0");
         iOSCapabilities.setCapability(MobileCapabilityType.APP,
-                configurationManager.getProperty("IOS_APP_PATH"));
+                configFileManager.getProperty("IOS_APP_PATH"));
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities
                 .setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
-        iOSCapabilities.setCapability(MobileCapabilityType.UDID, DeviceUDIDManager.getDeviceUDID());
+        iOSCapabilities.setCapability(MobileCapabilityType.UDID, DeviceManager.getDeviceUDID());
         return iOSCapabilities;
     }
+
+
 }

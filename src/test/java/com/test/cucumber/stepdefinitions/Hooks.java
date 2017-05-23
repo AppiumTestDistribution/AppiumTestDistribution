@@ -1,7 +1,7 @@
 package com.test.cucumber.stepdefinitions;
 
 
-import com.appium.manager.DriverManager;
+import com.appium.manager.AppiumDriverManager;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -20,7 +20,7 @@ public class Hooks  {
         if (scenario.isFailed()) {
             try {
                 byte[] screenshot =
-                    ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.BYTES);
+                    ((TakesScreenshot) AppiumDriverManager.getDriver()).getScreenshotAs(OutputType.BYTES);
                 scenario.embed(screenshot, "image/png");
             } catch (WebDriverException wde) {
                 System.err.println(wde.getMessage());
@@ -29,7 +29,7 @@ public class Hooks  {
             }
             System.out.println("Inside After" + Thread.currentThread().getId());
         }
-        DriverManager.getDriver().quit();
+        AppiumDriverManager.getDriver().quit();
 
     }
 }

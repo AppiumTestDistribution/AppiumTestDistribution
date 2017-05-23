@@ -1,5 +1,6 @@
 package com.cucumber.listener;
 
+import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.*;
 import com.appium.utils.ImageUtils;
@@ -44,7 +45,7 @@ import java.util.Map;
  */
 public class ExtentCucumberFormatter implements Reporter, Formatter {
 
-    private final DeviceManager deviceManager;
+    private final DeviceAllocationManager deviceAllocationManager;
     public LinkedList<Step> testSteps;
     public AppiumDriver<MobileElement> appium_driver;
     public AppiumParallelTest appiumParallelTest;
@@ -56,7 +57,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     public XpathXML xpathXML = new XpathXML();
     protected DesiredCapabilities iosCapabilities;
     protected DesiredCapabilities androidCapabilities;
-    private ConfigurationManager prop;
+    private ConfigFileManager prop;
 
     public static AppiumDriver getDriver() {
         return driver.get();
@@ -79,11 +80,11 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public ExtentCucumberFormatter()  {
         appiumParallelTest = new AppiumParallelTest();
-        deviceManager = DeviceManager.getInstance();
+        deviceAllocationManager = DeviceAllocationManager.getInstance();
         try {
             iosDevice = new IOSDeviceConfiguration();
             androidDevice = new AndroidDeviceConfiguration();
-            prop = ConfigurationManager.getInstance();
+            prop = ConfigFileManager.getInstance();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,7 +167,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         String[] tagsArray = getTagArray(feature.getTags());
         String tags = String.join(",", tagsArray);
         if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-            deviceManager.getNextAvailableDeviceId();
+            deviceAllocationManager.getNextAvailableDeviceId();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
             System.out.println(deviceThreadNumber);
             System.out.println(Integer.parseInt(deviceThreadNumber[1])
@@ -272,7 +273,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
-                            + DeviceUDIDManager.getDeviceUDID()
+                            + DeviceManager.getDeviceUDID()
                             + "/" + deviceModel
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
             File[] files1 = framePath.listFiles();
@@ -288,13 +289,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                                         files1[i].toString(),
                                         System.getProperty("user.dir")
                                                 + "/target/screenshot/" + device
-                                                + "/" + DeviceUDIDManager.getDeviceUDID()
+                                                + "/" + DeviceManager.getDeviceUDID()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_") + ".jpeg",
                                         System.getProperty("user.dir")
                                                 + "/target/screenshot/" + device
-                                                + "/" + DeviceUDIDManager.getDeviceUDID()
+                                                + "/" + DeviceManager.getDeviceUDID()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_")
@@ -327,7 +328,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         }
         File framedImageAndroid = new File(
                 System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + DeviceUDIDManager.getDeviceUDID() + "/" + deviceModel
+                        + DeviceManager.getDeviceUDID() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
         if (framedImageAndroid.exists()) {
             appiumParallelTest.test.get().log(Status.INFO,
@@ -335,7 +336,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                             System.getProperty("user.dir")
                                     + "/target/screenshot/"
                                     + platform + "/"
-                                    + DeviceUDIDManager.getDeviceUDID()
+                                    + DeviceManager.getDeviceUDID()
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg"));
         } else {
@@ -343,7 +344,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir") + "/target/screenshot/"
                                     + platform + "/"
-                                    + DeviceUDIDManager.getDeviceUDID()
+                                    + DeviceManager.getDeviceUDID()
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + ".jpeg"));
         }

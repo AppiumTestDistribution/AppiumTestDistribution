@@ -6,17 +6,17 @@ package com.appium.manager;
 public class DeviceSingleton {
 
     public static DeviceSingleton instance;
-    static DeviceManager deviceID = null;
+    static DeviceAllocationManager deviceID = null;
 
     public static DeviceSingleton getInstance(){
         if(instance == null){
             instance = new DeviceSingleton();
-            deviceID = DeviceManager.getInstance();
+            deviceID = DeviceAllocationManager.getInstance();
         }
         return instance;
     }
 
-    public String getDeviceUDID(){
+    protected String getDeviceUDID(){
         return deviceID.getNextAvailableDeviceId();
     }
 }

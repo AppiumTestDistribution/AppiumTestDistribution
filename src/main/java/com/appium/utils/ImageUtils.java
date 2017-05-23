@@ -1,6 +1,6 @@
 package com.appium.utils;
 
-import com.appium.manager.AndroidDeviceConfiguration;
+import com.appium.android.AndroidDeviceConfiguration;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 

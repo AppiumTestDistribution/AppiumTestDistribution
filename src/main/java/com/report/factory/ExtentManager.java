@@ -1,6 +1,6 @@
 package com.report.factory;
 
-import com.appium.manager.ConfigurationManager;
+import com.appium.manager.ConfigFileManager;
 import com.appium.utils.CommandPrompt;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
@@ -11,19 +11,15 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 public class ExtentManager {
 
-    private static ConfigurationManager configurationManager;
+    private static ConfigFileManager configFileManager;
     private static ExtentReports extent;
     private static String filePath = System.getProperty("user.dir") + "/target/ExtentReports.html";
     private static CommandPrompt commandPrompt = new CommandPrompt();
@@ -31,7 +27,7 @@ public class ExtentManager {
     public synchronized static ExtentReports getExtent() {
         if (extent == null) {
             try {
-                configurationManager = ConfigurationManager.getInstance();
+                configFileManager = ConfigFileManager.getInstance();
                 extent = new ExtentReports();
                 extent.attachReporter(getHtmlReporter());
                 if (System.getenv("ExtentX") != null && System.getenv("ExtentX")
@@ -43,14 +39,14 @@ public class ExtentManager {
                 String appiumVersion = null;
                 try {
                     String command = "node " 
-                        + configurationManager.getProperty("APPIUM_JS_PATH") + " -v";
+                        + configFileManager.getProperty("APPIUM_JS_PATH") + " -v";
                     appiumVersion = commandPrompt.runCommand(command);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 extent.setSystemInfo("AppiumClient", "5.0.0-BETA6");
                 extent.setSystemInfo("AppiumServer", appiumVersion.replace("\n", ""));
-                extent.setSystemInfo("Runner", configurationManager.getProperty("RUNNER"));
+                extent.setSystemInfo("Runner", configFileManager.getProperty("RUNNER"));
                 List statusHierarchy = Arrays.asList(
                         Status.FATAL,
                         Status.FAIL,
@@ -99,16 +95,16 @@ public class ExtentManager {
     }
 
     private static ExtentXReporter getExtentXReporter() {
-        String host = configurationManager.getProperty("MONGODB_SERVER");
-        Integer port = Integer.parseInt(configurationManager.getProperty("MONGODB_PORT"));
+        String host = configFileManager.getProperty("MONGODB_SERVER");
+        Integer port = Integer.parseInt(configFileManager.getProperty("MONGODB_PORT"));
         ExtentXReporter extentx = new ExtentXReporter(host, port);
 
         // project name
-        String projectName = configurationManager.getProperty("projectName", "ExtentReports");
+        String projectName = configFileManager.getProperty("projectName", "ExtentReports");
         extentx.config().setProjectName(projectName);
 
         // report or build name
-        String reportName = configurationManager.getProperty("reportName", "ExtentReports");
+        String reportName = configFileManager.getProperty("reportName", "ExtentReports");
         extentx.config().setReportName(reportName);
 
         // server URL
