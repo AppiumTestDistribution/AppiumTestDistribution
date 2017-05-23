@@ -6,14 +6,14 @@
         <listener class-name="com.appium.utils.RetryListener"/>
     </listeners>
     <test name="TestNG Test">
-        <parameter name="device" value="192.168.68.102:5555"/>
+        <parameter name="device" value="192.168.56.101:5555"/>
         <groups>
         <run>
             <include name="smoke"/>
         </run>
         </groups>
         <classes>
-            <class name="com.test.site.HomePageTest3"/>
+            <class name="com.test.site.HomePageTest2"/>
         </classes>
     </test> <!-- TestNG Test -->
 </suite> <!-- TestNG Forum -->

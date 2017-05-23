@@ -16,11 +16,11 @@ public class HomePageTest2
 
     @Test(groups = {"smoke"}, description = "Testing")
     public void testMethodOne_2() throws Exception {
-//        myClass = new MyClass();
-//        getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
-//        getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
-//        getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
-//        new ScreenShotManager().captureScreenShot("Second Test Screen");
+        myClass = new MyClass();
+        getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+        getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
+        getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
+        new ScreenShotManager().captureScreenShot("Second Test Screen");
         Assert.assertEquals(myClass.sum(2, 3), 6,"Runing in Thread" + Thread.currentThread().getId());
     }
 }

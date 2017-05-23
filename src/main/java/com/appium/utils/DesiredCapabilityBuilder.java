@@ -22,6 +22,7 @@ public class DesiredCapabilityBuilder {
     JSONParser parser;
     AvailablePorts availablePorts;
     IOSDeviceConfiguration iosDevice;
+    ThreadLocal<Object> obj;
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
 
@@ -29,6 +30,7 @@ public class DesiredCapabilityBuilder {
         parser = new JSONParser();
         availablePorts = new AvailablePorts();
         iosDevice = new IOSDeviceConfiguration();
+        obj = new ThreadLocal<>();
     }
 
     public static DesiredCapabilities getDesiredCapability() {
@@ -36,20 +38,21 @@ public class DesiredCapabilityBuilder {
     }
 
     public DesiredCapabilities buildDesiredCapability(String jsonPath) throws Exception {
-        Object obj = parser.parse(new FileReader(jsonPath));
-        JSONArray array = new JSONArray();
-        array.add(obj);
-        Object o = ((JSONArray) obj).get(0);
-        JSONObject jsonObject = (JSONObject) o;
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        jsonObject.forEach((caps, values) ->
+        JsonParser.getInstance(jsonPath).forEach((caps, values) ->
                 desiredCapabilities.setCapability(caps.toString(), values.toString()));
         //Check for web
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                    AutomationName.ANDROID_UIAUTOMATOR2);
+            if (desiredCapabilities.getCapability("automationName") == null
+                    || desiredCapabilities.getCapability("automationName")
+                            .toString() == "UIAutomator2") {
+                desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                        AutomationName.ANDROID_UIAUTOMATOR2);
+            }
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                     availablePorts.getPort());
+            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
+                    DeviceManager.getDeviceUDID());
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             if (iosDevice.getIOSDeviceProductVersion()
                     .contains("10")) {

@@ -42,12 +42,9 @@ public class DeviceManager {
     }
 
     public String getDeviceModel() throws InterruptedException, IOException {
-        if (AppiumDriverManager.getDriver().getCapabilities().getCapability("platformName")
-            .toString().equals("Android")
-            && AppiumDriverManager.getDriver().getCapabilities().getCapability("browserName")
-            .toString().isEmpty()) {
+        if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceModel();
-        } else if (AppiumDriverManager.getDriver().getCapabilities().getCapability("platformName").toString().equals("iOS")) {
+        } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
             return iosDeviceConfiguration.getIOSDeviceProductTypeAndVersion();
         }
         return null;

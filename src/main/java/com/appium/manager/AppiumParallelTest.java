@@ -3,28 +3,17 @@ package com.appium.manager;
 import com.annotation.values.Author;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.utils.AvailablePorts;
-import com.appium.utils.DesiredCapabilityBuilder;
+
 import com.appium.utils.GetDescriptionForChildNode;
-import com.appium.entities.MobilePlatform;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.AutomationName;
-import io.appium.java_client.remote.IOSMobileCapabilityType;
-import io.appium.java_client.remote.MobileCapabilityType;
+
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.*;
-import org.testng.annotations.Test;
 
-import java.io.FileNotFoundException;
+import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +21,6 @@ import java.util.Optional;
 
 public class AppiumParallelTest implements ITestListener, IClassListener, IInvokedMethodListener {
 
-    private DesiredCapabilityManager desiredCapabilityManager;
     private DeviceManager deviceManager;
     private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
@@ -46,12 +34,10 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
     public ExtentTest parent;
     public ExtentTest child;
 
-    private AvailablePorts availablePorts;
     private String currentMethodName = null;
     private DeviceSingleton deviceSingleton;
     private GetDescriptionForChildNode getDescriptionForChildNode;
-    private DesiredCapabilityBuilder desiredCapabilityBuilder;
-    private AppiumDriver<MobileElement> currentDriverSession;
+    private AppiumDriverManager appiumDriverManager;
 
 
     public AppiumParallelTest() {
@@ -61,10 +47,8 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
             prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             testLogger = new TestLogger();
-            desiredCapabilityManager = new DesiredCapabilityManager();
-            availablePorts = new AvailablePorts();
             deviceSingleton = DeviceSingleton.getInstance();
-            desiredCapabilityBuilder = new DesiredCapabilityBuilder();
+            appiumDriverManager = new AppiumDriverManager();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,7 +56,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
 
     public void startAppiumServer(
             String device, String methodName, String tags) throws Exception {
-        if (prop.containsKey("CI_BASE_URI")) {
+        if (prop.getProperty("CI_BASE_URI") != null) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
             CI_BASE_URI = System.getProperty("user.dir");
@@ -102,7 +86,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
 
 
     public void startAppiumServer(String device) throws Exception {
-        if (prop.containsKey("CI_BASE_URI")) {
+        if (prop.getProperty("CI_BASE_URI") !=null) {
             CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
         } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
             CI_BASE_URI = System.getProperty("user.dir");
@@ -153,7 +137,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
             DesiredCapabilities androidCaps) throws Exception {
         Thread.sleep(3000);
         startingServerInstance(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
-        startLogResults(currentMethodName);
+        //startLogResults(currentMethodName);
     }
 
     public void startAppiumServerInParallel(
@@ -164,26 +148,7 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         }
         Thread.sleep(3000);
         startingServerInstance(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
-        startLogResults(currentMethodName);
-    }
-
-    public void startAppiumServerInParallel(String methodName)
-            throws Exception {
-        DesiredCapabilities iOS = null;
-        DesiredCapabilities android = null;
-        // Check if json file does not exists and pick the default caps
-        DesiredCapabilities desiredCapabilities = desiredCapabilityBuilder
-                .buildDesiredCapability(System.getProperty("user.dir")
-                        + "/caps/android.json");
-        // Check for web chrome appplication
-        if (desiredCapabilities.getCapability("automationName")
-                .equals("UIAutomator2")) {
-            android = DesiredCapabilityBuilder.getDesiredCapability();
-        } else {
-            iOS = DesiredCapabilityBuilder.getDesiredCapability();
-        }
-        System.out.println("Caps generated" + android + iOS);
-        startAppiumServerInParallel(methodName, iOS, android);
+        //startLogResults(currentMethodName);
     }
 
     public AppiumParallelTest createChildNodeWithCategory(String methodName,
@@ -227,11 +192,6 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
                                        Optional<DesiredCapabilities> androidCaps)
             throws Exception {
 
-
-    }
-
-    private void startLogResults(String methodName) throws FileNotFoundException {
-        testLogger.startLogging(methodName, getClass().getName());
     }
 
     public void endLogTestResults(ITestResult result) throws IOException, InterruptedException {
@@ -283,7 +243,8 @@ public class AppiumParallelTest implements ITestListener, IClassListener, IInvok
         try {
             setAuthorName(method);
             currentMethodName = method.getTestMethod().getMethodName();
-            startAppiumServerInParallel(currentMethodName);
+            appiumDriverManager.startAppiumServerInParallel(currentMethodName,
+                    testResult.getTestClass().getRealClass().getSimpleName());
             SkipIf skip =
                     method.getTestMethod()
                             .getConstructorOrMethod()

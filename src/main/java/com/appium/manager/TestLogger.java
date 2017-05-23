@@ -22,27 +22,28 @@ import java.util.logging.Level;
 class TestLogger {
     private Flick videoRecording;
     public File logFile;
-    public List<LogEntry> logEntries;
-    public PrintWriter log_file_writer;
+    private ThreadLocal<List<LogEntry>> logEntries;
+    private ThreadLocal<PrintWriter> log_file_writer;
     private ScreenShotManager screenShotManager;
 
     public TestLogger() {
         this.videoRecording = new Flick();
         screenShotManager = new ScreenShotManager();
+        logEntries = new ThreadLocal<>();
+        log_file_writer = new ThreadLocal<>();
     }
 
     public void startLogging(String methodName,String className) throws FileNotFoundException {
-        startVideoRecording(methodName, className);
         Capabilities capabilities = AppiumDriverManager.getDriver().getCapabilities();
         if (capabilities.getCapability("platformName")
                 .toString().equals("Android")
-                && capabilities.getCapability("browserName").toString().isEmpty()) {
-            startVideoRecording(methodName, className);
+                && capabilities.getCapability("browserName") == null) {
             System.out.println("Starting ADB logs" + DeviceManager.getDeviceUDID());
-            logEntries = AppiumDriverManager.getDriver().manage().logs().get("logcat").filter(Level.ALL);
+            logEntries.set(AppiumDriverManager.getDriver().manage().logs().get("logcat").filter(Level.ALL));
             logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + DeviceManager.getDeviceUDID()
                     + "__" + methodName + ".txt");
-            log_file_writer = new PrintWriter(logFile);
+            log_file_writer.set(new PrintWriter(logFile));
+            startVideoRecording(methodName, className);
         }
     }
 
@@ -164,8 +165,8 @@ class TestLogger {
     public void getAdbLogs(ITestResult result,
                            ThreadLocal<ExtentTest> test) {
         if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
-            log_file_writer.println(logEntries);
-            log_file_writer.flush();
+            log_file_writer.get().println(logEntries);
+            log_file_writer.get().flush();
             test.get().log(Status.INFO,
                     "<a target=\"_parent\" href=" + "adblogs/" + DeviceManager.getDeviceUDID()
                             + "__"
@@ -234,8 +235,8 @@ class TestLogger {
 
             }
 
-
-            getAdbLogs(result, test);
+           // better way to right adb logs
+           // getAdbLogs(result, test);
 
         }
     }
