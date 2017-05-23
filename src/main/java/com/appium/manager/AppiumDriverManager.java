@@ -1,7 +1,7 @@
 package com.appium.manager;
 
-import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
+
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.DesiredCapabilityBuilder;
 import io.appium.java_client.AppiumDriver;
@@ -10,29 +10,25 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Optional;
 
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver
             = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
-    private AndroidDeviceConfiguration androidDeviceConfiguration;
     private AppiumServerManager appiumServerManager;
-    private ConfigFileManager prop;
     private DesiredCapabilityManager desiredCapabilityManager;
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
-    private TestLogger testLogger;
+    private ConfigFileManager prop;
 
-    public AppiumDriverManager() throws IOException {
+    public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
-        androidDeviceConfiguration = new AndroidDeviceConfiguration();
         desiredCapabilityManager = new DesiredCapabilityManager();
         appiumServerManager = new AppiumServerManager();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
-        testLogger = new TestLogger();
         prop = ConfigFileManager.getInstance();
     }
 
@@ -75,19 +71,21 @@ public class AppiumDriverManager {
     }
 
     // Should be used by Cucumber as well
-    public void startAppiumServerInParallel(String methodName, String className)
+
+    public void startAppiumDriver()
             throws Exception {
         DesiredCapabilities iOS = null;
         DesiredCapabilities android = null;
         String userSpecifiedAndroidCaps = System.getProperty("user.dir")
                 + "/caps/android.json";
         String userSpecifiediOSCaps = System.getProperty("user.dir")
-                + "/caps/android.json";
+                + "/caps/iOS.json";
 
         android = getDesiredAndroidCapabilities(android, userSpecifiedAndroidCaps);
         iOS = getDesiredIOSCapabilities(iOS, userSpecifiediOSCaps);
         System.out.println("Caps generated" + android + iOS);
-        startAppiumServerInParallel(methodName, className, iOS, android);
+        startAppiumDriver(Optional.ofNullable(iOS), Optional.ofNullable(android));
+        Thread.sleep(3000);
     }
 
     public DesiredCapabilities getDesiredIOSCapabilities(DesiredCapabilities iOS, String userSpecifiediOSCaps) throws Exception {
@@ -130,16 +128,14 @@ public class AppiumDriverManager {
     }
 
     public void startAppiumServerInParallel(
-            String methodName, String className,
             DesiredCapabilities iosCaps,
             DesiredCapabilities androidCaps) throws Exception {
         startAppiumDriver(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
         Thread.sleep(3000);
-        startLogResults(methodName, className);
     }
 
-    private void startLogResults(String methodName, String className) throws FileNotFoundException {
-        testLogger.startLogging(methodName, className);
+    public void stopAppiumDriver() {
+        AppiumDriverManager.getDriver().quit();
     }
 
 }

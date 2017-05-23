@@ -16,7 +16,7 @@ public class DeviceSingleton {
         return instance;
     }
 
-    protected String getDeviceUDID(){
+    public String getDeviceUDID(){
         return deviceID.getNextAvailableDeviceId();
     }
 }

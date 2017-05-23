@@ -5,7 +5,13 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
+import java.io.IOException;
+
 public class SampleSteps extends ExtentCucumberFormatter {
+
+    public SampleSteps() throws Exception {
+        super();
+    }
 
     @Given
         ("^I have the this useless scenario$") public void uselessScenario() {

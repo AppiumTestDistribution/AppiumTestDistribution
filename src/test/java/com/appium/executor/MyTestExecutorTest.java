@@ -4,7 +4,7 @@ package com.appium.executor;
 import static junit.framework.TestCase.assertTrue;
 
 
-import com.appium.manager.AppiumParallelTest;
+import com.appium.manager.AppiumParallelTestListener;
 import com.appium.manager.DeviceManager;
 import com.appium.entities.MobilePlatform;
 import org.testng.annotations.Test;
@@ -105,7 +105,7 @@ public class MyTestExecutorTest {
 
     @Test
     public void testapp() throws Exception {
-        AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
+        AppiumParallelTestListener appiumParallelTestListener = new AppiumParallelTestListener();
         MobilePlatform mobilePlatform = DeviceManager.getMobilePlatform();
         System.out.println(mobilePlatform.toString());
     }
