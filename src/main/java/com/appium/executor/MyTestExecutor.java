@@ -129,7 +129,7 @@ public class MyTestExecutor {
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
-        //ImageUtils.creatResultsSet();
+        ImageUtils.creatResultsSet();
         //ImageUtils.createJSonForHtml();
         return hasFailure;
     }
@@ -324,7 +324,7 @@ public class MyTestExecutor {
             test.addParameter("device", deviceSerail.get(i));
             test.setPackages(getPackages());
         }
-        File file = new File(System.getProperty("user.dir") + "/target/parallelCucumber.xml");
+        File file = new File(System.getProperty("user.dir") + "/target/parallel.xml");
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());

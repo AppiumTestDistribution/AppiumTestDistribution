@@ -3,8 +3,6 @@ package com.test.site;
 
 import com.annotation.values.Author;
 import com.annotation.values.Description;
-import com.annotation.values.RetryCount;
-import com.appium.manager.AppiumParallelTestListener;
 import com.appium.utils.ScreenShotManager;
 import org.openqa.selenium.By;
 import org.testng.Assert;

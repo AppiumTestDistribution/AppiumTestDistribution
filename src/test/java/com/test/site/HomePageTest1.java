@@ -13,7 +13,7 @@ public class HomePageTest1 extends UserBaseTest {
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class)
     @RetryCount(maxRetryCount = 2)
-    @SkipIf(platform = "AndroidDriver") public void testMethodOne_1() throws Exception {
+    @SkipIf(platform = "AndroidDriver") public void testMethodOne1() throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
@@ -33,7 +33,7 @@ public class HomePageTest1 extends UserBaseTest {
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class)
     @SkipIf
-        (platform = "IOSDriver") public void testMethodOne_6()
+        (platform = "IOSDriver") public void testMethodOne6()
         throws Exception {
 
         System.out.println(
@@ -70,7 +70,7 @@ public class HomePageTest1 extends UserBaseTest {
 
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class)
-    @SkipIf(platform = "IOSDriver") public void testMethodOne_8()
+    @SkipIf(platform = "IOSDriver") public void testMethodOne8()
         throws Exception {
 
         System.out.println(
@@ -85,7 +85,7 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class)
-    @SkipIf(platform = "IOSDriver") public void testMethodOne_9()
+    @SkipIf(platform = "IOSDriver") public void testMethodOne9()
         throws Exception {
 
         System.out.println(
@@ -103,7 +103,7 @@ public class HomePageTest1 extends UserBaseTest {
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class)
     @SkipIf(platform = "AndroidDriver")
-    public void testMethodOne_10() throws Exception {
+    public void testMethodOne10() throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
@@ -118,7 +118,7 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class)
-    public void testMethodOne_11() throws Exception {
+    public void testMethodOne11() throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()

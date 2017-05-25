@@ -1,6 +1,7 @@
 package com.appium.utils;
 
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.manager.DeviceManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -86,11 +87,9 @@ public class ImageUtils {
                                             filePath = sFile.getCanonicalPath();
                                             testResult.setDeviceName(sFile.getName().split("_")[1]);
                                             testResult
-                                                    .setDeviceModel(new AndroidDeviceConfiguration()
-                                                            .getDeviceModel()
-                                                    .split("_")[0]);
+                                                    .setDeviceModel(DeviceManager.getDeviceUDID());
                                             testResult.setDeviceOS(new AndroidDeviceConfiguration()
-                                                    .deviceOS(testResult.getDeviceUDID()));
+                                                    .deviceOS(DeviceManager.getDeviceUDID()));
 
                                         }
                                     }

@@ -18,11 +18,11 @@ import java.io.IOException;
  * Created by saikrisv on 20/05/17.
  */
 public class DesiredCapabilityBuilder {
-    JSONParser parser;
-    AvailablePorts availablePorts;
-    IOSDeviceConfiguration iosDevice;
-    ThreadLocal<Object> obj;
-    ConfigFileManager prop;
+    private JSONParser parser;
+    private AvailablePorts availablePorts;
+    private IOSDeviceConfiguration iosDevice;
+    private ThreadLocal<Object> obj;
+    private ConfigFileManager prop;
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
 

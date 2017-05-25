@@ -142,7 +142,8 @@ public final class AppiumParallelTestListener
         return false;
     }
 
-    public void onTestStart(ITestResult result) {
+    @Override
+    public void onTestStart(ITestResult iTestResult) {
 
     }
 

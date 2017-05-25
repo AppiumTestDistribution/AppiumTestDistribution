@@ -101,11 +101,4 @@ public class MyTestExecutorTest {
         }
         assertTrue(true);
     }
-
-    @Test
-    public void testapp() throws Exception {
-        AppiumParallelTestListener appiumParallelTestListener = new AppiumParallelTestListener();
-        MobilePlatform mobilePlatform = DeviceManager.getMobilePlatform();
-        System.out.println(mobilePlatform.toString());
-    }
 }

@@ -16,9 +16,9 @@ import java.io.IOException;
 public class DesiredCapabilityManager {
 
     private final ConfigFileManager configFileManager;
-    DeviceSingleton deviceSingleton;
-    AvailablePorts availablePorts;
-    IOSDeviceConfiguration iosDevice;
+    private DeviceSingleton deviceSingleton;
+    private AvailablePorts availablePorts;
+    private IOSDeviceConfiguration iosDevice;
 
     public DesiredCapabilityManager() throws IOException {
         configFileManager = ConfigFileManager.getInstance();
