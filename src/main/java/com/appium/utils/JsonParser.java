@@ -16,7 +16,7 @@ public class JsonParser {
     JSONParser parser = new JSONParser();
     Object object;
 
-    public JsonParser(String filePath){
+    public JsonParser(String filePath) {
         try {
             object = parser.parse(new FileReader(filePath));
         } catch (IOException e) {

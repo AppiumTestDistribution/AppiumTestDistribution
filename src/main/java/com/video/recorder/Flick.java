@@ -22,14 +22,14 @@ public class Flick extends CommandPrompt {
     Process screenRecord;
 
     /**
-     * @param device_udid
      * @param className     - Current test class name
      * @param methodName    - Current test method name
      * @param videoFileName - filename should have TimeStamp,deviceID with TestMethod name
      * @throws IOException
      * @throws InterruptedException
      */
-    public void stopVideoRecording(String className, String methodName, String videoFileName) throws IOException, InterruptedException {
+    public void stopVideoRecording(String className, String methodName,
+                                   String videoFileName) throws IOException, InterruptedException {
         System.out.println("**************Stopping Video Recording**************");
         flickRecordingCommand("stop", className, methodName, videoFileName);
     }
@@ -42,7 +42,8 @@ public class Flick extends CommandPrompt {
      * @throws IOException
      * @throws InterruptedException
      */
-    public void startVideoRecording(String className, String methodName, String videoFileName) throws IOException, InterruptedException {
+    public void startVideoRecording(String className, String methodName,
+                                    String videoFileName) throws IOException, InterruptedException {
         System.out.println("**************Starting Video Recording**************");
         flickRecordingCommand("start", className, methodName, videoFileName);
     }
@@ -71,7 +72,8 @@ public class Flick extends CommandPrompt {
                         System.out.println("Process ID's:" + getPid(screenRecord));
                         Thread.sleep(1000);
                     } else {
-                        android = "flick video -a " + command + " -p android -u " + DeviceManager.getDeviceUDID();
+                        android = "flick video -a " + command + " -p android -u "
+                                + DeviceManager.getDeviceUDID();
                         runCommandThruProcess(android);
                     }
                 } catch (IOException e) {
@@ -88,8 +90,9 @@ public class Flick extends CommandPrompt {
                         .pullVideoFromDevice(methodName, videoLocationAndroid)
                         .removeVideoFileFromDevice(methodName);
                 } else {
-                    android = "flick video -a " + command + " -p android -o " + videoLocationAndroid
-                        + " -n " + videoFileName + " -u " + DeviceManager.getDeviceUDID() + " --trace";
+                    android = "flick video -a " + command + " -p android -o "
+                            + videoLocationAndroid + " -n " + videoFileName
+                            + " -u " + DeviceManager.getDeviceUDID() + " --trace";
                     runCommandThruProcess(android);
                     System.out.println("Stopping Video recording on Emulator");
                     Thread.sleep(10000);

@@ -1,9 +1,10 @@
 package com.appium.utils;
 
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.DeviceManager;
+
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.OutputType;
@@ -30,28 +31,23 @@ public class ScreenShotManager {
         imageUtils = new ImageUtils();
     }
 
-    public String captureScreenShot(int status, String className, String methodName, String deviceModel)
+    public String captureScreenShot(int status, String className,
+                                    String methodName, String deviceModel)
             throws IOException, InterruptedException {
 
         String getDeviceModel = null;
-        boolean contextChanged = false;
-//        if ("Android".equals(AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString())
-//                && !AppiumDriverManager.getDriver().getContext()
-//                .equals("NATIVE_APP")) {
-//            AppiumDriverManager.getDriver().context("NATIVE_APP");
-//            contextChanged = true;
-//        }
-        System.out.println("Current Running Thread Status" + AppiumDriverManager.getDriver().getSessionId());
-        File scrFile = ((TakesScreenshot) AppiumDriverManager.getDriver()).getScreenshotAs(OutputType.FILE);
-//        if (contextChanged) {
-//            driver.context(context);
-//        }
+        System.out.println("Current Running Thread Status"
+                + AppiumDriverManager.getDriver().getSessionId());
+        File scrFile = ((TakesScreenshot) AppiumDriverManager.getDriver())
+                .getScreenshotAs(OutputType.FILE);
         screenShotNameWithTimeStamp = currentDateAndTime();
-        if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
+        if (AppiumDriverManager.getDriver().getSessionDetails()
+                .get("platformName").toString().equals("Android")) {
             getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                     "android", deviceModel);
-        } else if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
+        } else if (AppiumDriverManager.getDriver().getSessionDetails()
+                .get("platformName").toString().equals("iOS")) {
             getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                     "iOS", deviceModel);
@@ -62,7 +58,8 @@ public class ScreenShotManager {
     public void captureScreenShot(String screenShotName)
             throws InterruptedException, IOException {
         String className = new Exception().getStackTrace()[1].getClassName();
-        String platformName = AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString();
+        String platformName = AppiumDriverManager.getDriver().getSessionDetails()
+                .get("platformName").toString();
         String deviceModel = null;
         if (platformName.equals("Android")) {
             deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
@@ -82,7 +79,8 @@ public class ScreenShotManager {
 
     private void screenShotAndFrame(int status,
                                     File scrFile, String methodName,
-                                    String className, String model, String platform, String deviceModel) {
+                                    String className, String model,
+                                    String platform, String deviceModel) {
         String failedScreen =
                 System.getProperty("user.dir") + "/target/screenshot/"
                         + platform + "/" + DeviceManager.getDeviceUDID()
@@ -112,7 +110,8 @@ public class ScreenShotManager {
 
         try {
             File framePath =
-                    new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
+                    new File(System.getProperty("user.dir")
+                            + "/src/test/resources/frames/");
             if (status == ITestResult.FAILURE) {
                 FileUtils.copyFile(scrFile, new File(failedScreen.trim()));
             } else {

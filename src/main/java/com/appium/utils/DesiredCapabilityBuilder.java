@@ -48,19 +48,17 @@ public class DesiredCapabilityBuilder {
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")
-                    .toString() == "UIAutomator2") {
+                    .toString() != "UIAutomator2") {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.ANDROID_UIAUTOMATOR2);
             }
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                     availablePorts.getPort());
-            appPackage(desiredCapabilities, jsonParsedObject
-                    .get("APP_PACKAGE").toString());
+            appPackage(desiredCapabilities);
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                     DeviceManager.getDeviceUDID());
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            appPackageBundle(desiredCapabilities, jsonParsedObject
-                    .get("BUNDLE_ID").toString());
+            appPackageBundle(desiredCapabilities);
             if (iosDevice.getIOSDeviceProductVersion()
                     .contains("10")) {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
@@ -73,22 +71,15 @@ public class DesiredCapabilityBuilder {
         return desiredCapabilities;
     }
 
-    public void appPackage(DesiredCapabilities desiredCapabilities, String appPackage) {
+    public void appPackage(DesiredCapabilities desiredCapabilities) {
         if (System.getenv("APP_PACKAGE") == null) {
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-                    appPackage);
-        } else {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
                     System.getenv("APP_PACKAGE"));
         }
     }
 
-    private void appPackageBundle(DesiredCapabilities iOSCapabilities, String bundleID) {
+    private void appPackageBundle(DesiredCapabilities iOSCapabilities) {
         if (System.getenv("APP_PACKAGE") == null) {
-            iOSCapabilities
-                    .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
-                            bundleID);
-        } else {
             iOSCapabilities
                     .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
                             System.getenv("APP_PACKAGE"));

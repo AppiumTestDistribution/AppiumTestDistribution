@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.entities.MobilePlatform;
 import com.appium.utils.ScreenShotManager;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
@@ -22,28 +23,29 @@ import java.util.logging.Level;
 class TestLogger {
     private Flick videoRecording;
     public File logFile;
-    private ThreadLocal<List<LogEntry>> logEntries;
-    private ThreadLocal<PrintWriter> log_file_writer;
+    private List<LogEntry> logEntries;
+    private PrintWriter log_file_writer;
     private ScreenShotManager screenShotManager;
 
     public TestLogger() {
         this.videoRecording = new Flick();
         screenShotManager = new ScreenShotManager();
-        logEntries = new ThreadLocal<>();
-        log_file_writer = new ThreadLocal<>();
     }
 
     public void startLogging(String methodName,String className) throws FileNotFoundException {
         Capabilities capabilities = AppiumDriverManager.getDriver().getCapabilities();
-        if (capabilities.getCapability("platformName")
-                .toString().equals("Android")
-                && capabilities.getCapability("browserName") == null) {
-            System.out.println("Starting ADB logs" + DeviceManager.getDeviceUDID());
-            logEntries.set(AppiumDriverManager.getDriver().manage().logs().get("logcat").filter(Level.ALL));
-            logFile = new File(System.getProperty("user.dir") + "/target/adblogs/" + DeviceManager.getDeviceUDID()
-                    + "__" + methodName + ".txt");
-            log_file_writer.set(new PrintWriter(logFile));
-            startVideoRecording(methodName, className);
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            if (capabilities.getCapability("browserName") == null) {
+                System.out.println("Starting ADB logs" + DeviceManager.getDeviceUDID());
+                logEntries = AppiumDriverManager.getDriver().manage()
+                        .logs().get("logcat").filter(Level.ALL);
+                logFile = new File(System.getProperty("user.dir") + "/target/adblogs/"
+                        + DeviceManager.getDeviceUDID()
+                        + "__" + methodName + ".txt");
+                log_file_writer = new PrintWriter(logFile);
+                startVideoRecording(methodName, className);
+            }
+
         }
     }
 
@@ -81,7 +83,8 @@ class TestLogger {
         }
 
         if (System.getenv("VIDEO_LOGS") != null) {
-            if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
+            if (AppiumDriverManager.getDriver().getSessionDetails()
+                    .get("platformName").toString().equals("Android")) {
                 String videoFilePath = System.getProperty("user.dir")
                         + "/target/screenshot/android/" + DeviceManager.getDeviceUDID()
                         + "/" + className + "/" + result.getMethod()
@@ -98,7 +101,8 @@ class TestLogger {
                             .getMethodName() + ".mp4" + ">Videologs</a>");
                 }
 
-            } else if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
+            } else if (AppiumDriverManager.getDriver().getSessionDetails()
+                    .get("platformName").toString().equals("iOS")) {
 
                 String iosVideoFilePath = System.getProperty("user.dir")
                         + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()
@@ -136,12 +140,15 @@ class TestLogger {
         return className;
     }
 
-    private void stopViewRecording(ITestResult result, String className) throws IOException, InterruptedException {
+    private void stopViewRecording(ITestResult result, String className)
+            throws IOException, InterruptedException {
         if (System.getenv("VIDEO_LOGS") != null) {
             try {
-                videoRecording.stopVideoRecording(className, result.getMethod().getMethodName(), result.getMethod().getMethodName());
+                videoRecording.stopVideoRecording(className, result.getMethod()
+                        .getMethodName(), result.getMethod().getMethodName());
             } catch (IOException e) {
-                videoRecording.stopVideoRecording(className, result.getMethod().getMethodName(), result.getMethod().getMethodName());
+                videoRecording.stopVideoRecording(className, result.getMethod()
+                        .getMethodName(), result.getMethod().getMethodName());
             } catch (InterruptedException e) {
                 System.out.println("");
             }
@@ -151,7 +158,8 @@ class TestLogger {
 
     private void deleteSuccessVideos(ITestResult result, String className) {
         if (result.isSuccess()) {
-            File videoFile = new File(System.getProperty("user.dir") + "/target/screenshot/android/"
+            File videoFile = new File(System.getProperty("user.dir")
+                    + "/target/screenshot/android/"
                     + DeviceManager.getDeviceUDID() + "/"
                     + className + "/" + result.getMethod().getMethodName()
                     + "/" + result.getMethod().getMethodName() + ".mp4");
@@ -164,14 +172,22 @@ class TestLogger {
 
     public void getAdbLogs(ITestResult result,
                            ThreadLocal<ExtentTest> test) {
-        if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
-            log_file_writer.get().println(logEntries);
-            log_file_writer.get().flush();
-            test.get().log(Status.INFO,
-                    "<a target=\"_parent\" href=" + "adblogs/" + DeviceManager.getDeviceUDID()
-                            + "__"
-                            + result.getMethod().getMethodName() + ".txt" + ">AdbLogs</a>");
-            System.out.println(AppiumDriverManager.getDriver().getSessionId() + ": Saving device log - Done.");
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            if (AppiumDriverManager.getDriver().getCapabilities()
+                    .getCapability("browserName") == null) {
+                log_file_writer.println(logEntries);
+                System.out.println(logEntries);
+                log_file_writer.close();
+                test.get().log(Status.INFO,
+                        "<a target=\"_parent\" href=" + "adblogs/"
+                                + DeviceManager.getDeviceUDID()
+                                + "__"
+                                + result.getMethod().getMethodName()
+                                + ".txt" + ">AdbLogs</a>");
+                System.out.println(AppiumDriverManager.getDriver()
+                        .getSessionId() + ": Saving device log - Done.");
+            }
+
         }
     }
 
@@ -183,11 +199,14 @@ class TestLogger {
                     .log(Status.FAIL, "<pre>" + result.getThrowable() + "</pre>");
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),
-                            result.getInstance().getClass().getSimpleName(), result.getMethod().getMethodName(), deviceModel);
+                            result.getInstance().getClass().getSimpleName(),
+                            result.getMethod().getMethodName(), deviceModel);
 
-            if (AppiumDriverManager.getDriver().toString().split(":")[0].trim().equals("AndroidDriver")) {
+            if (AppiumDriverManager.getDriver().toString().split(":")[0]
+                    .trim().equals("AndroidDriver")) {
                 File framedImageAndroid = new File(
-                        System.getProperty("user.dir") + "/target/screenshot/android/" + DeviceManager
+                        System.getProperty("user.dir")
+                                + "/target/screenshot/android/" + DeviceManager
                             .getDeviceUDID()
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
@@ -209,9 +228,11 @@ class TestLogger {
 
 
             }
-            if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
+            if (AppiumDriverManager.getDriver().getSessionDetails()
+                    .get("platformName").toString().equals("iOS")) {
                 File framedImageIOS = new File(
-                        System.getProperty("user.dir") + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()
+                        System.getProperty("user.dir")
+                                + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
@@ -234,9 +255,7 @@ class TestLogger {
                 }
 
             }
-
-           // better way to right adb logs
-           // getAdbLogs(result, test);
+            getAdbLogs(result, test);
 
         }
     }

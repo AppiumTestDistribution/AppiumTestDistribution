@@ -1,8 +1,15 @@
 package com.cucumber.listener;
 
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.manager.*;
+import com.appium.manager.AppiumDriverManager;
+import com.appium.manager.AppiumServerManager;
+import com.appium.manager.ConfigFileManager;
+import com.appium.manager.DeviceAllocationManager;
+import com.appium.manager.DeviceManager;
+import com.appium.manager.DeviceSingleton;
+import com.appium.manager.ReportManager;
 import com.appium.utils.ImageUtils;
 
 import com.aventstack.extentreports.Status;
@@ -28,7 +35,6 @@ import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,18 +62,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     private IOSDeviceConfiguration iosDevice;
     public String deviceModel;
     public ImageUtils imageUtils = new ImageUtils();
-    public static ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
     public XpathXML xpathXML = new XpathXML();
     private ConfigFileManager prop;
     private String CI_BASE_URI = null;
-
-    public static AppiumDriver getDriver() {
-        return driver.get();
-    }
-
-    public static void setWebDriver(AppiumDriver driver_) {
-        driver.set(driver_);
-    }
 
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap() {
         {
@@ -104,22 +101,25 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         } else if ("failed".equals(result.getStatus())) {
             String failed_StepName = testSteps.poll().getName();
             reportManager.test.get().log(Status.FAIL, result.getErrorMessage());
-            String context = getDriver().getContext();
+            String context = AppiumDriverManager.getDriver().getContext();
             boolean contextChanged = false;
-            if ("Android".equals(getDriver().getSessionDetails().get("platformName")
+            if ("Android".equals(AppiumDriverManager.getDriver()
+                    .getSessionDetails().get("platformName")
                     .toString())
                     && !"NATIVE_APP".equals(context)) {
-                getDriver().context("NATIVE_APP");
+                AppiumDriverManager.getDriver().context("NATIVE_APP");
                 contextChanged = true;
             }
-            File scrFile = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
+            File scrFile = ((TakesScreenshot) AppiumDriverManager.getDriver())
+                    .getScreenshotAs(OutputType.FILE);
             if (contextChanged) {
-                getDriver().context(context);
+                AppiumDriverManager.getDriver().context(context);
             }
-            if (getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
+            if (AppiumDriverManager.getDriver().getSessionDetails()
+                    .get("platformName").toString().equals("Android")) {
                 deviceModel = androidDevice.getDeviceModel();
                 screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (getDriver().getSessionDetails().get("platformName")
+            } else if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName")
                     .toString().equals("iOS")) {
                 try {
                     deviceModel =
@@ -186,12 +186,12 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     CI_BASE_URI = System.getProperty("user.dir");
                 }
                 deviceAllocationManager.allocateDevice(
-                    xpathXML.parseXML(Integer.parseInt(deviceThreadNumber[1])),
+                    xpathXML.parseXML(Integer
+                            .parseInt(deviceThreadNumber[1])),
                     deviceSingleton.getDeviceUDID());
                 if (DeviceManager.getDeviceUDID() == null) {
                     System.out.println("No devices are free to run test or Failed to run test");
                 }
-                System.out.println("****************Device*************" + DeviceManager.getDeviceUDID());
                 reportManager.createParentNodeExtent(feature.getName(),"")
                     .assignCategory(tags);
                 appiumServerManager.startAppiumServer(feature.getName());
@@ -202,6 +202,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             try {
                 deviceAllocationManager.allocateDevice("",
                     deviceSingleton.getDeviceUDID());
+                reportManager.createParentNodeExtent(feature.getName(),"")
+                        .assignCategory(tags);
                 appiumServerManager.startAppiumServer(feature.getName());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -243,11 +245,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     //TO DO fix this
     public void startAppiumServer(Scenario scenario, String tags) throws Exception {
-         reportManager.createChildNodeWithCategory(scenario.getName(), tags);
-         appiumServerManager.startAppiumServer(scenario.getName());
-         appiumDriverManager.startAppiumDriver();
-         ///This portion should be Broken : TODO
-        setWebDriver(appium_driver);
+        reportManager.createChildNodeWithCategory(scenario.getName(), tags);
+        appiumDriverManager.startAppiumDriver();
+        ///This portion should be Broken : TODO
     }
 
     public void background(Background background) {
@@ -264,7 +264,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void endOfScenarioLifeCycle(Scenario scenario) {
         ExtentManager.getExtent().flush();
-        getDriver().quit();
+        AppiumDriverManager.getDriver().quit();
     }
 
     public void done() {
@@ -337,12 +337,10 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
 
     public void attachScreenShotToReport(String stepName) throws IOException {
         String platform = null;
-        if (getDriver().getSessionDetails().get("platformName").toString().equals("Android")) {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             platform = "android";
-        } else if (getDriver().getSessionDetails().get("platformName").toString().equals("iOS")) {
+        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             platform = "iPhone";
-        } else {
-            platform = "android";
         }
         File framedImageAndroid = new File(
                 System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"

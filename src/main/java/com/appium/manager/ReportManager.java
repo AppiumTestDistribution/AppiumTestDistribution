@@ -45,8 +45,8 @@ public class ReportManager {
     public ExtentTest createParentNodeExtent(String methodName, String testDescription)
         throws IOException, InterruptedException {
         parent = ExtentTestManager.createTest(methodName, testDescription,
-            deviceManager.getDeviceModel() +
-                DeviceManager.getDeviceUDID());
+            deviceManager.getDeviceModel()
+                    + DeviceManager.getDeviceUDID());
         parentTest.set(parent);
         ExtentTestManager.getTest().log(Status.INFO,
             "<a target=\"_parent\" href=" + "appiumlogs/"

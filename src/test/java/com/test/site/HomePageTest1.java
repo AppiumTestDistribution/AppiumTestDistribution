@@ -53,11 +53,8 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = AppiumParallelTestListener.class) public void testMethodOne_7() throws Exception {
-
-        System.out.println(
-            "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
-                .getStackTrace()[1].getClassName());
+    @Test(retryAnalyzer = AppiumParallelTestListener.class)
+    public void testMethodOne_7() throws Exception {
         Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit33")).click();
@@ -120,7 +117,8 @@ public class HomePageTest1 extends UserBaseTest {
         //getDriver().close();
     }
 
-    @Test(retryAnalyzer = AppiumParallelTestListener.class) public void testMethodOne_11() throws Exception {
+    @Test(retryAnalyzer = AppiumParallelTestListener.class)
+    public void testMethodOne_11() throws Exception {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()

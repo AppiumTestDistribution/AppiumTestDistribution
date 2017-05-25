@@ -17,8 +17,7 @@ public class HomePageTest2
 
     MyClass myClass;
 
-    @Test(groups = "smoke",
-    description = "Testing Skips")
+    @Test(groups = "smoke", description = "Testing Skips")
     @Author(name = "AnsonLiao")
     public void testMethodOne_2() throws Exception {
         myClass = new MyClass();
@@ -26,6 +25,7 @@ public class HomePageTest2
         getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
         new ScreenShotManager().captureScreenShot("Second Test Screen");
-        Assert.assertEquals(myClass.sum(2, 3), 6,"Runing in Thread" + Thread.currentThread().getId());
+        Assert.assertEquals(myClass.sum(2, 3), 6,"Runing in Thread"
+                + Thread.currentThread().getId());
     }
 }

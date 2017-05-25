@@ -41,11 +41,11 @@ public class ConfigFileManager {
         return instance;
     }
 
-    public String getProperty(String object){
+    public String getProperty(String object) {
         return configFileMap.get(object);
     }
 
-    public String getProperty(String key,String value){
+    public String getProperty(String key,String value) {
         return configFileMap.getOrDefault(key,value);
     }
 }

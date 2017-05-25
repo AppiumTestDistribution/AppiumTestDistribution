@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.AvailablePorts;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
@@ -16,17 +17,19 @@ public class DesiredCapabilityManager {
 
     private final ConfigFileManager configFileManager;
     DeviceSingleton deviceSingleton;
-    AvailablePorts ap = new AvailablePorts();
+    AvailablePorts availablePorts;
+    IOSDeviceConfiguration iosDevice;
 
     public DesiredCapabilityManager() throws IOException {
         configFileManager = ConfigFileManager.getInstance();
         deviceSingleton = DeviceSingleton.getInstance();
+        iosDevice = new IOSDeviceConfiguration();
+        availablePorts = new AvailablePorts();
 
     }
 
     public DesiredCapabilities androidNative() {
         System.out.println("Setting Android Desired Capabilities:");
-        System.out.println("Running caps::" + DeviceManager.getDeviceUDID() + Thread.currentThread().getId());
         DesiredCapabilities androidCapabilities = new DesiredCapabilities();
         androidCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
         androidCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android");
@@ -36,7 +39,6 @@ public class DesiredCapabilityManager {
                 configFileManager.getProperty("APP_PACKAGE"));
         androidCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                 AutomationName.ANDROID_UIAUTOMATOR2);
-        androidCapabilities.setCapability("browserName", "");
         //checkSelendroid(androidCapabilities);
         androidCapabilities
                 .setCapability(MobileCapabilityType.APP,
@@ -44,7 +46,8 @@ public class DesiredCapabilityManager {
         System.out.println(DeviceManager.getDeviceUDID() + Thread.currentThread().getId());
         androidCapabilities.setCapability(MobileCapabilityType.UDID, DeviceManager.getDeviceUDID());
         try {
-            androidCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,ap.getPort());
+            androidCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
+                    availablePorts.getPort());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,6 +61,8 @@ public class DesiredCapabilityManager {
                 .setCapability(MobileCapabilityType.BROWSER_NAME,
                         configFileManager.getProperty("BROWSER_TYPE"));
         androidWebCapabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
+        androidWebCapabilities.setCapability(MobileCapabilityType.UDID,
+                DeviceManager.getDeviceUDID());
         return androidWebCapabilities;
     }
 
@@ -75,6 +80,17 @@ public class DesiredCapabilityManager {
         iOSCapabilities
                 .setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
         iOSCapabilities.setCapability(MobileCapabilityType.UDID, DeviceManager.getDeviceUDID());
+        if (iosDevice.getIOSDeviceProductVersion()
+                .contains("10")) {
+            iOSCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                    AutomationName.IOS_XCUI_TEST);
+            try {
+                iOSCapabilities.setCapability(IOSMobileCapabilityType
+                        .WDA_LOCAL_PORT, availablePorts.getPort());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return iOSCapabilities;
     }
 

@@ -1,8 +1,8 @@
 package com.appium.ios;
 
-import com.appium.utils.AvailablePorts;
 import com.appium.manager.ConfigFileManager;
 import com.appium.manager.DeviceManager;
+import com.appium.utils.AvailablePorts;
 import com.appium.utils.CommandPrompt;
 
 import java.io.BufferedReader;
@@ -37,7 +37,7 @@ public class IOSDeviceConfiguration {
 
     public IOSDeviceConfiguration() throws IOException {
         prop = ConfigFileManager.getInstance();
-        if(deviceUDIDiOS == null) {
+        if (deviceUDIDiOS == null) {
             getIOSUDID();
         }
     }
@@ -153,18 +153,21 @@ public class IOSDeviceConfiguration {
     public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
         return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid " + DeviceManager.getDeviceUDID() + " | grep ProductType");
+                .runCommandThruProcessBuilder("ideviceinfo --udid "
+                        + DeviceManager.getDeviceUDID() + " | grep ProductType");
     }
 
     public String getDeviceName() throws InterruptedException, IOException {
         String deviceName =
-                commandPrompt.runCommand("idevicename --udid " + DeviceManager.getDeviceUDID()).replace("\\W", "_");
+                commandPrompt.runCommand("idevicename --udid "
+                        + DeviceManager.getDeviceUDID());
         return deviceName;
     }
 
     public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
         return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid " + DeviceManager.getDeviceUDID()
+                .runCommandThruProcessBuilder("ideviceinfo --udid "
+                        + DeviceManager.getDeviceUDID()
                         + " | grep ProductVersion");
     }
 
@@ -192,13 +195,16 @@ public class IOSDeviceConfiguration {
         String ios_web_lit_proxy_runner =
                 file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
         String webkitRunner =
-                ios_web_lit_proxy_runner + " -c " + DeviceManager.getDeviceUDID() + ":" + deviceMap.get(
+                ios_web_lit_proxy_runner + " -c " + DeviceManager.getDeviceUDID()
+                        + ":" + deviceMap.get(
                     DeviceManager.getDeviceUDID()) + " -d";
         System.out.println(webkitRunner);
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
-                "WebKit Proxy is started on device " + DeviceManager.getDeviceUDID() + " and with port number " + deviceMap
-                        .get(DeviceManager.getDeviceUDID()) + " and in thread " + Thread.currentThread().getId());
+                "WebKit Proxy is started on device " + DeviceManager.getDeviceUDID()
+                        + " and with port number " + deviceMap
+                        .get(DeviceManager.getDeviceUDID()) + " and in thread "
+                        + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         appiumServerProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + appiumServerProcess);

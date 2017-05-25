@@ -1,7 +1,6 @@
 package com.appium.manager;
 
 import com.appium.entities.MobilePlatform;
-
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.DesiredCapabilityBuilder;
 import io.appium.java_client.AppiumDriver;
@@ -10,9 +9,7 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Optional;
 
 public class AppiumDriverManager {
@@ -71,7 +68,6 @@ public class AppiumDriverManager {
     }
 
     // Should be used by Cucumber as well
-
     public void startAppiumDriver()
             throws Exception {
         DesiredCapabilities iOS = null;
@@ -80,15 +76,19 @@ public class AppiumDriverManager {
                 + "/caps/android.json";
         String userSpecifiediOSCaps = System.getProperty("user.dir")
                 + "/caps/iOS.json";
-
-        android = getDesiredAndroidCapabilities(android, userSpecifiedAndroidCaps);
-        iOS = getDesiredIOSCapabilities(iOS, userSpecifiediOSCaps);
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            android = getDesiredAndroidCapabilities(android, userSpecifiedAndroidCaps);
+        } else {
+            iOS = getDesiredIOSCapabilities(iOS, userSpecifiediOSCaps);
+        }
         System.out.println("Caps generated" + android + iOS);
         startAppiumDriver(Optional.ofNullable(iOS), Optional.ofNullable(android));
         Thread.sleep(3000);
     }
 
-    public DesiredCapabilities getDesiredIOSCapabilities(DesiredCapabilities iOS, String userSpecifiediOSCaps) throws Exception {
+    public DesiredCapabilities getDesiredIOSCapabilities(DesiredCapabilities iOS,
+                                                         String userSpecifiediOSCaps)
+            throws Exception {
         String iOSJsonFilePath;
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             if (prop.getProperty("IOS_CAPS") == null) {
@@ -106,7 +106,9 @@ public class AppiumDriverManager {
         return iOS;
     }
 
-    public DesiredCapabilities getDesiredAndroidCapabilities(DesiredCapabilities android, String userSpecifiedAndroidCaps) throws Exception {
+    public DesiredCapabilities getDesiredAndroidCapabilities(DesiredCapabilities android,
+                                                             String userSpecifiedAndroidCaps)
+            throws Exception {
         String androidJsonFilePath;
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (prop.getProperty("ANDROID_CAPS") != null) {
@@ -122,16 +124,8 @@ public class AppiumDriverManager {
                         .buildDesiredCapability(androidJsonFilePath);
                 android = DesiredCapabilityBuilder.getDesiredCapability();
             }
-            //Check for web chrome appplication
         }
         return android;
-    }
-
-    public void startAppiumServerInParallel(
-            DesiredCapabilities iosCaps,
-            DesiredCapabilities androidCaps) throws Exception {
-        startAppiumDriver(Optional.ofNullable(iosCaps), Optional.ofNullable(androidCaps));
-        Thread.sleep(3000);
     }
 
     public void stopAppiumDriver() {

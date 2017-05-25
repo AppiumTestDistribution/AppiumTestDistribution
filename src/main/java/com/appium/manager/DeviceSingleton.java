@@ -8,15 +8,15 @@ public class DeviceSingleton {
     public static DeviceSingleton instance;
     static DeviceAllocationManager deviceID = null;
 
-    public static DeviceSingleton getInstance(){
-        if(instance == null){
+    public static DeviceSingleton getInstance() {
+        if (instance == null) {
             instance = new DeviceSingleton();
             deviceID = DeviceAllocationManager.getInstance();
         }
         return instance;
     }
 
-    public String getDeviceUDID(){
+    public String getDeviceUDID() {
         return deviceID.getNextAvailableDeviceId();
     }
 }

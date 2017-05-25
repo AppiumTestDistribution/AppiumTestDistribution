@@ -15,8 +15,12 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
 import org.testng.collections.Lists;
-import org.testng.xml.*;
+import org.testng.xml.XmlClass;
+import org.testng.xml.XmlInclude;
+import org.testng.xml.XmlPackage;
+import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
+import org.testng.xml.XmlTest;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,7 +28,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -116,7 +129,7 @@ public class MyTestExecutor {
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
-        ImageUtils.creatResultsSet();
+        //ImageUtils.creatResultsSet();
         //ImageUtils.createJSonForHtml();
         return hasFailure;
     }
@@ -143,10 +156,11 @@ public class MyTestExecutor {
                                                  Map<String, List<Method>> methods,
                                                  int deviceCount, ArrayList<String> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
-        if (!prop.getProperty("BROWSER_TYPE")
-                .equalsIgnoreCase("ChromeDesktop")
-                && prop.getProperty("BROWSER_TYPE").isEmpty()) {
-            listeners.add("com.appium.manager.AppiumParallelTestListener");
+        if (prop.getProperty("BROWSER_TYPE") != null) {
+            if (!prop.getProperty("BROWSER_TYPE")
+                    .equalsIgnoreCase("ChromeDesktop")) {
+                listeners.add("com.appium.manager.AppiumParallelTestListener");
+            }
         }
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
@@ -157,9 +171,6 @@ public class MyTestExecutor {
         suite.setParallel(ParallelMode.TESTS);
         suite.setVerbose(2);
         suite.setListeners(listeners);
-//        if (prop.getProperty("LISTENERS") != null) {
-//            suite.setListeners(listeners);
-//        }
         for (int i = 0; i < deviceCount; i++) {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
@@ -198,7 +209,8 @@ public class MyTestExecutor {
     }
 
     public XmlSuite constructXmlSuiteForDistribution(String pack, List<String> tests,
-                                                     Map<String, List<Method>> methods, int deviceCount) {
+                                                     Map<String, List<Method>> methods,
+                                                     int deviceCount) {
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
@@ -207,8 +219,8 @@ public class MyTestExecutor {
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
         if (prop.getProperty("BROWSER_TYPE") != null) {
-            if(!prop.getProperty("BROWSER_TYPE")
-                    .equalsIgnoreCase("ChromeDesktop")){
+            if (!prop.getProperty("BROWSER_TYPE")
+                    .equalsIgnoreCase("ChromeDesktop")) {
                 listeners.add("com.appium.manager.AppiumParallelTestListener");
             }
         }
@@ -270,7 +282,8 @@ public class MyTestExecutor {
         Map<String, List<Method>> testsMap = new HashMap<>();
         methods.stream().forEach(method -> {
             List<Method> methodsList = testsMap.get(
-                    method.getDeclaringClass().getPackage().getName() + "." + method.getDeclaringClass()
+                    method.getDeclaringClass().getPackage().getName()
+                            + "." + method.getDeclaringClass()
                             .getSimpleName());
             if (methodsList == null) {
                 methodsList = new ArrayList<>();
@@ -343,7 +356,7 @@ public class MyTestExecutor {
         test.setName("TestNG Test");
         test.addParameter("device", "");
         test.setPackages(getPackages());
-        File file = new File(System.getProperty("user.dir") + "/target/parallelCucumber.xml");
+        File file = new File(System.getProperty("user.dir") + "/target/parallel.xml");
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());

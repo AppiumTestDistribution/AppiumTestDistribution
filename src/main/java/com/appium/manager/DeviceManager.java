@@ -1,8 +1,8 @@
 package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
+import com.appium.ios.IOSDeviceConfiguration;
 
 import java.io.IOException;
 
