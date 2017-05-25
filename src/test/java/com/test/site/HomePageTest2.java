@@ -15,11 +15,11 @@ import org.testng.annotations.Test;
 public class HomePageTest2
         extends UserBaseTest {
 
-    MyClass myClass;
+    public MyClass myClass;
 
     @Test(groups = "smoke", description = "Testing Skips")
     @Author(name = "AnsonLiao")
-    public void testMethodOne_2() throws Exception {
+    public void testMethodOne2() throws Exception {
         myClass = new MyClass();
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();

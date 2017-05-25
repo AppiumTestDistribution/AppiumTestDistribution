@@ -15,7 +15,7 @@ public class HomePageTest3 extends UserBaseTest {
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class, groups = "smoke")
     @Author(name = "AnsonLiao")
-    @RetryCount(maxRetryCount = 2) public void testMethodOne_3()
+    @RetryCount(maxRetryCount = 2) public void testMethodOne3()
         throws InterruptedException, IOException {
 
         System.out.println(
@@ -32,7 +32,7 @@ public class HomePageTest3 extends UserBaseTest {
     }
 
     @Test
-    public void testMethodOne_4()
+    public void testMethodOne4()
             throws InterruptedException, IOException {
 
         System.out.println(
