@@ -54,7 +54,7 @@ public class HomePageTest1 extends UserBaseTest {
     }
 
     @Test(retryAnalyzer = AppiumParallelTestListener.class)
-    public void testMethodOne_7() throws Exception {
+    public void testMethodOne7() throws Exception {
         Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit33")).click();

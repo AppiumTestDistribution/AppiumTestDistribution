@@ -172,22 +172,19 @@ class TestLogger {
 
     public void getAdbLogs(ITestResult result,
                            ThreadLocal<ExtentTest> test) {
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            if (AppiumDriverManager.getDriver().getCapabilities()
-                    .getCapability("browserName") == null) {
-                log_file_writer.println(logEntries);
-                System.out.println(logEntries);
-                log_file_writer.close();
-                test.get().log(Status.INFO,
-                        "<a target=\"_parent\" href=" + "adblogs/"
-                                + DeviceManager.getDeviceUDID()
-                                + "__"
-                                + result.getMethod().getMethodName()
-                                + ".txt" + ">AdbLogs</a>");
-                System.out.println(AppiumDriverManager.getDriver()
-                        .getSessionId() + ": Saving device log - Done.");
-            }
-
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
+            && AppiumDriverManager.getDriver().getCapabilities()
+            .getCapability("browserName") == null) {
+            log_file_writer.println(logEntries);
+            log_file_writer.close();
+            test.get().log(Status.INFO,
+                "<a target=\"_parent\" href=" + "adblogs/"
+                    + DeviceManager.getDeviceUDID()
+                    + "__"
+                    + result.getMethod().getMethodName()
+                    + ".txt" + ">AdbLogs</a>");
+            System.out.println(AppiumDriverManager.getDriver()
+                .getSessionId() + ": Saving device log - Done.");
         }
     }
 

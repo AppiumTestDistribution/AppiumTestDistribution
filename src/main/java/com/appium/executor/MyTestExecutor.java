@@ -46,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 public class MyTestExecutor {
     private final ConfigFileManager prop;
     private final DeviceAllocationManager deviceAllocationManager;
-    List<Thread> threads = new ArrayList<Thread>();
     public List<Class> testcases = new ArrayList<>();
     public HtmlReporter reporter = new HtmlReporter();
     public ArrayList<String> items = new ArrayList<String>();

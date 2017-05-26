@@ -157,6 +157,9 @@ public final class AppiumParallelTestListener
 
     }
 
+    /*
+        Document to make codacy happy
+     */
     @Override
     public void onTestSkipped(ITestResult result) {
 

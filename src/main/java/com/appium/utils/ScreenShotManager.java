@@ -61,9 +61,9 @@ public class ScreenShotManager {
         String platformName = AppiumDriverManager.getDriver().getSessionDetails()
                 .get("platformName").toString();
         String deviceModel = null;
-        if (platformName.equals("Android")) {
+        if (("Android").equals(platformName)) {
             deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
-        } else if (platformName.equals("iOS")) {
+        } else if (("iOS").equals(platformName)) {
             deviceModel = new IOSDeviceConfiguration().getIOSDeviceProductTypeAndVersion();
         }
         captureScreenShot(1, className, screenShotName, deviceModel);
