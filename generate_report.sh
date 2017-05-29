@@ -5,7 +5,7 @@ if [ -d "$FILE" ]; then
     printf '%s\n' "Removing file ($FILE)"
     rm -rf "$FILE"
 fi
-cp -f ./target/Report.json ./webContent/app/src/data
+cp -f ./Report.json ./webContent/app/src/data
 ./screenshot_copy.sh
 echo "Kill all processes running on PORT: 3000"
 lsof -t -i tcp:3000 -s tcp:listen | xargs kill

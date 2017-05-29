@@ -91,7 +91,7 @@ public class AppiumDriverManager {
             throws Exception {
         String iOSJsonFilePath;
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            if (prop.getProperty("IOS_CAPS") == null) {
+            if (prop.getProperty("IOS_CAPS") != null) {
                 iOSJsonFilePath = prop.getProperty("IOS_CAPS");
                 desiredCapabilityBuilder
                         .buildDesiredCapability(iOSJsonFilePath);

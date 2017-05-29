@@ -62,20 +62,22 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(IOSMobileCapabilityType
                         .WDA_LOCAL_PORT, availablePorts.getPort());
             }
+            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
+                    DeviceManager.getDeviceUDID());
         }
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
         return desiredCapabilities;
     }
 
     public void appPackage(DesiredCapabilities desiredCapabilities) {
-        if (System.getenv("APP_PACKAGE") == null) {
+        if (System.getenv("APP_PACKAGE") != null) {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
                     System.getenv("APP_PACKAGE"));
         }
     }
 
     private void appPackageBundle(DesiredCapabilities iOSCapabilities) {
-        if (System.getenv("APP_PACKAGE") == null) {
+        if (System.getenv("APP_PACKAGE") != null) {
             iOSCapabilities
                     .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
                             System.getenv("APP_PACKAGE"));

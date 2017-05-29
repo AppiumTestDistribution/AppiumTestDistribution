@@ -86,10 +86,8 @@ public class ImageUtils {
                                                 .contains("result")) {
                                             filePath = sFile.getCanonicalPath();
                                             testResult.setDeviceName(sFile.getName().split("_")[1]);
-                                            testResult
-                                                    .setDeviceModel(DeviceManager.getDeviceUDID());
                                             testResult.setDeviceOS(new AndroidDeviceConfiguration()
-                                                    .deviceOS(DeviceManager.getDeviceUDID()));
+                                                    .deviceOS(testResult.getDeviceUDID()));
 
                                         }
                                     }
