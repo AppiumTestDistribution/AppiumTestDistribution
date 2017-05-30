@@ -30,16 +30,13 @@ public class IOSDeviceConfiguration {
 
     public final static int IOS_UDID_LENGTH = 40;
     String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
-            + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'\n";
+            + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'";
 
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
 
 
     public IOSDeviceConfiguration() throws IOException {
         prop = ConfigFileManager.getInstance();
-        if (deviceUDIDiOS == null) {
-            getIOSUDID();
-        }
     }
 
     public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {
@@ -59,7 +56,7 @@ public class IOSDeviceConfiguration {
         try {
             int startPos = 0;
             int endPos = IOS_UDID_LENGTH - 1;
-            String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
+            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
                 return null;
@@ -70,7 +67,7 @@ public class IOSDeviceConfiguration {
                             && validDeviceIds.contains(
                             getIOSDeviceID.substring(startPos, endPos + 1)))) {
                         if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
-                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 2)
+                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
                                     .replace("\n", ""));
                         }
                     }
@@ -87,7 +84,7 @@ public class IOSDeviceConfiguration {
 
     public Map<String, String> getIOSUDIDHash() {
         try {
-            String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
+            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
                 return null;
@@ -275,5 +272,9 @@ public class IOSDeviceConfiguration {
 
     public void setValidDevices(List<String> validDeviceIds) {
         this.validDeviceIds = validDeviceIds;
+    }
+
+    public static ArrayList<String> getDeviceUDIDiOS() {
+        return deviceUDIDiOS;
     }
 }

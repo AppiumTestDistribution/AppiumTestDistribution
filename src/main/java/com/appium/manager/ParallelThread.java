@@ -37,7 +37,7 @@ public class ParallelThread {
     private DeviceAllocationManager deviceAllocationManager;
     protected int deviceCount = 0;
     Map<String, String> devices = new HashMap<String, String>();
-    Map<String, String> iOSdevices = new HashMap<String, String>();
+    ArrayList<String> iOSdevices = new ArrayList<>();
     private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
     private MyTestExecutor myTestExecutor;
@@ -108,10 +108,10 @@ public class ParallelThread {
         }
 
         if (operSys.contains("mac")) {
-            if (IOSDeviceConfiguration.deviceUDIDiOS.size() > 0) {
+            if (deviceAllocationManager.getDevices().size() > 0) {
                 iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-                iOSdevices = iosDevice.getIOSUDIDHash();
-                deviceCount += iOSdevices.size();
+                iOSdevices = deviceAllocationManager.getDevices();
+                deviceCount = iOSdevices.size();
                 createSnapshotFolderiOS(deviceCount, "iPhone");
             }
         }
@@ -188,7 +188,7 @@ public class ParallelThread {
 
     public void createSnapshotFolderiOS(int deviceCount, String platform) {
         for (int i = 0; i < iOSdevices.size(); i++) {
-            String deviceSerial = iOSdevices.get("deviceID" + i);
+            String deviceSerial = iOSdevices.get(i);
             createPlatformDirectory(platform);
             File file = new File(
                     System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"

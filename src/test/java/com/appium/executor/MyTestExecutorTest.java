@@ -49,9 +49,9 @@ public class MyTestExecutorTest {
         List<String> tc = new ArrayList<>();
 
         XmlSuite xmlSuite =
-            ex1.constructXmlSuiteForDistribution("com.appium.executor",
+            ex1.constructXmlSuiteForParallel("com.appium.executor",
                 tc, ex1.createTestsMap(methods),
-                devices.size());
+                devices.size(),devices);
         System.out.println("xml:" + xmlSuite.toXml());
         assertTrue(true);
     }

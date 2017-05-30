@@ -53,7 +53,6 @@ public class CommandPrompt {
         String allLine = "";
         while ((line = br.readLine()) != null) {
             allLine = allLine.trim() + "" + line.trim() + "\n";
-            System.out.println(allLine);
         }
         return allLine.trim();
     }
