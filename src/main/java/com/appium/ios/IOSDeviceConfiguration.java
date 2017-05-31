@@ -1,7 +1,8 @@
 package com.appium.ios;
 
-import com.appium.manager.AvailablePorts;
-import com.appium.manager.ConfigurationManager;
+import com.appium.manager.ConfigFileManager;
+import com.appium.manager.DeviceManager;
+import com.appium.utils.AvailablePorts;
 import com.appium.utils.CommandPrompt;
 
 import java.io.BufferedReader;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {
     public static ArrayList<String> deviceUDIDiOS = new ArrayList<String>();
-    private final ConfigurationManager prop;
+    private final ConfigFileManager prop;
     CommandPrompt commandPrompt = new CommandPrompt();
     AvailablePorts ap = new AvailablePorts();
     public HashMap<String, String> deviceMap = new HashMap<String, String>();
@@ -26,28 +27,16 @@ public class IOSDeviceConfiguration {
     public Process p;
     public Process p1;
     public static List<String> validDeviceIds;
-    
+
     public final static int IOS_UDID_LENGTH = 40;
     String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
-            + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'\n";
+            + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'";
 
     public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
 
 
     public IOSDeviceConfiguration() throws IOException {
-        prop = ConfigurationManager.getInstance();
-    }
-
-    public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {
-        boolean checkMobileDevice =
-                commandPrompt.runCommand("brew list").contains("ideviceinstaller");
-        if (checkMobileDevice) {
-            System.out.println("iDeviceInstaller already exists");
-        } else {
-            System.out.println("Brewing iDeviceInstaller API....");
-            commandPrompt.runCommand("brew install ideviceinstaller");
-        }
-
+        prop = ConfigFileManager.getInstance();
     }
 
     public ArrayList<String> getIOSUDID() {
@@ -61,41 +50,19 @@ public class IOSDeviceConfiguration {
                 return null;
             } else {
                 while (endPos < getIOSDeviceID.length()) {
-                    if (validDeviceIds == null 
-                            || (validDeviceIds != null 
+                    if (validDeviceIds == null
+                            || (validDeviceIds != null
                             && validDeviceIds.contains(
-                                    getIOSDeviceID.substring(startPos, endPos + 1)))) {
+                            getIOSDeviceID.substring(startPos, endPos + 1)))) {
                         if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
-                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1));
+                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
+                                    .replace("\n", ""));
                         }
                     }
                     startPos += IOS_UDID_LENGTH;
                     endPos += IOS_UDID_LENGTH;
                 }
                 return deviceUDIDiOS;
-            }
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Map<String, String> getIOSUDIDHash() {
-        try {
-            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
-            if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
-                    .isEmpty()) {
-                return null;
-            } else {
-                String[] lines = getIOSDeviceID.split("\n");
-                for (int i = 0; i < lines.length; i++) {
-                    lines[i] = lines[i].replaceAll("\\s+", "");
-                    if (validDeviceIds == null 
-                            || (validDeviceIds != null && validDeviceIds.contains(lines[i]))) {
-                        devices.put("deviceID" + i, lines[i]);
-                    }
-                }
-                return devices;
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
@@ -145,40 +112,43 @@ public class IOSDeviceConfiguration {
      *                              report category
      */
 
-    public String getIOSDeviceProductTypeAndVersion(String udid)
+    public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
         return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid + " | grep ProductType");
+                .runCommandThruProcessBuilder("ideviceinfo --udid "
+                        + DeviceManager.getDeviceUDID() + " | grep ProductType");
     }
 
-    public String getDeviceName(String udid) throws InterruptedException, IOException {
+    public String getDeviceName() throws InterruptedException, IOException {
         String deviceName =
-                commandPrompt.runCommand("idevicename --udid " + udid).replace("\\W", "_");
+                commandPrompt.runCommand("idevicename --udid "
+                        + DeviceManager.getDeviceUDID());
         return deviceName;
     }
 
-    public String getIOSDeviceProductVersion(String udid) throws InterruptedException, IOException {
+    public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
         return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid " + udid
+                .runCommandThruProcessBuilder("ideviceinfo --udid "
+                        + DeviceManager.getDeviceUDID()
                         + " | grep ProductVersion");
     }
 
-    public boolean checkiOSDevice(String UDID) throws Exception {
+    public boolean checkiOSDevice() throws Exception {
         String getIOSDeviceID = commandPrompt.runCommand("idevice_id --list");
-        return getIOSDeviceID.contains(UDID);
+        return getIOSDeviceID.contains(DeviceManager.getDeviceUDID());
     }
 
-    public HashMap<String, String> setIOSWebKitProxyPorts(String device_udid) throws Exception {
+    public HashMap<String, String> setIOSWebKitProxyPorts() throws Exception {
         try {
             int webkitproxyport = ap.getPort();
-            deviceMap.put(device_udid, Integer.toString(webkitproxyport));
+            deviceMap.put(DeviceManager.getDeviceUDID(), Integer.toString(webkitproxyport));
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
         return deviceMap;
     }
 
-    public String startIOSWebKit(String udid) throws IOException, InterruptedException {
+    public String startIOSWebKit() throws IOException, InterruptedException {
         String serverPath = prop.getProperty("APPIUM_JS_PATH");
         File file = new File(serverPath);
         File currentPath = new File(file.getParent());
@@ -186,18 +156,26 @@ public class IOSDeviceConfiguration {
         file = new File(currentPath + "/.." + "/..");
         String ios_web_lit_proxy_runner =
                 file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
+        int port = 0;
+        try {
+            port = ap.getPort();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String webkitRunner =
-                ios_web_lit_proxy_runner + " -c " + udid + ":" + deviceMap.get(udid) + " -d";
+                ios_web_lit_proxy_runner + " -c " + DeviceManager.getDeviceUDID()
+                        + ":" + port + " -d";
         System.out.println(webkitRunner);
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
-                "WebKit Proxy is started on device " + udid + " and with port number " + deviceMap
-                        .get(udid) + " and in thread " + Thread.currentThread().getId());
+                "WebKit Proxy is started on device " + DeviceManager.getDeviceUDID()
+                        + " and with port number " + deviceMap
+                        .get(DeviceManager.getDeviceUDID()) + " and in thread "
+                        + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         appiumServerProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + appiumServerProcess);
-        Thread.sleep(1000);
-        return deviceMap.get(udid);
+        return String.valueOf(port);
     }
 
     public long getPidOfProcess(Process p) {
@@ -263,5 +241,9 @@ public class IOSDeviceConfiguration {
 
     public void setValidDevices(List<String> validDeviceIds) {
         this.validDeviceIds = validDeviceIds;
+    }
+
+    public static ArrayList<String> getDeviceUDIDiOS() {
+        return deviceUDIDiOS;
     }
 }

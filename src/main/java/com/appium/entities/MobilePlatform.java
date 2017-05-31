@@ -1,4 +1,4 @@
-package com.appium.utils;
+package com.appium.entities;
 
 /**
  * Created by saikrisv on 2016/11/16.

@@ -3,9 +3,8 @@ package com.appium.executor;
 
 import static junit.framework.TestCase.assertTrue;
 
-
-import com.appium.manager.AppiumParallelTest;
-import com.appium.utils.MobilePlatform;
+import com.appium.entities.MobilePlatform;
+import com.appium.manager.DeviceManager;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
 
@@ -50,9 +49,9 @@ public class MyTestExecutorTest {
         List<String> tc = new ArrayList<>();
 
         XmlSuite xmlSuite =
-            ex1.constructXmlSuiteForDistribution("com.appium.executor",
+            ex1.constructXmlSuiteForParallel("com.appium.executor",
                 tc, ex1.createTestsMap(methods),
-                devices.size());
+                devices.size(),devices);
         System.out.println("xml:" + xmlSuite.toXml());
         assertTrue(true);
     }
@@ -81,7 +80,7 @@ public class MyTestExecutorTest {
         XmlSuite xmlSuite =
             ex1.constructXmlSuiteForParallelCucumber(devices.size(), devices);
         System.out.println("xml:" + xmlSuite.toXml());
-        File file = new File(System.getProperty("user.dir") + "/target/parallelCucumber.xml");
+        File file = new File(System.getProperty("user.dir") + "/target/parallel.xml");
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());
@@ -100,12 +99,5 @@ public class MyTestExecutorTest {
             e.printStackTrace();
         }
         assertTrue(true);
-    }
-
-    @Test
-    public void testapp() throws Exception {
-        AppiumParallelTest appiumParallelTest = new AppiumParallelTest();
-        MobilePlatform mobilePlatform = appiumParallelTest.getMobilePlatform("57656757656757");
-        System.out.println(mobilePlatform.toString());
     }
 }

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>6.0.1-SNAPSHOT</version>
+    <version>6.0.4</version>
     <packaging>jar</packaging>
 
     <name>AppiumTestDistribution</name>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.9.10</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>org.im4java</groupId>
@@ -150,7 +150,11 @@
             <artifactId>jfiglet</artifactId>
             <version>0.0.7</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>1.69</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

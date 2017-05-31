@@ -1,100 +1,61 @@
 package com.appium.manager;
 
+import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Device Manager - Handles all device related information's e.g UDID, Model, etc
+ */
 public class DeviceManager {
-    private ArrayList<String> devices = new ArrayList<String>();
-    private ConcurrentHashMap<String, Boolean> deviceMapping =
-            new ConcurrentHashMap<String, Boolean>();
-    private static DeviceManager instance;
-    private static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
-    private static IOSDeviceConfiguration iosDevice;
 
-    private DeviceManager() {
+    private static ThreadLocal<String> deviceUDID = new ThreadLocal<>();
+    private IOSDeviceConfiguration iosDeviceConfiguration;
+    private AndroidDeviceConfiguration androidDeviceConfiguration;
+
+    public DeviceManager() {
         try {
-            iosDevice = new IOSDeviceConfiguration();
+            iosDeviceConfiguration = new IOSDeviceConfiguration();
+            androidDeviceConfiguration = new AndroidDeviceConfiguration();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        initializeDevices();
     }
 
-    public static DeviceManager getInstance() {
-        if (instance == null) {
-            instance = new DeviceManager();
-        }
-        return instance;
+    public static String getDeviceUDID() {
+        return deviceUDID.get();
     }
 
-    private void initializeDevices() {
-        try {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (iosDevice.getIOSUDID() != null) {
-                    System.out.println("Adding iOS devices");
-                    if (IOSDeviceConfiguration.validDeviceIds != null) {
-                        devices.addAll(IOSDeviceConfiguration.validDeviceIds);
-                    } else {
-                        devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
-                    }
-                }
-                if (androidDevice.getDeviceSerial() != null) {
-                    System.out.println("Adding Android devices");
-                    if (AndroidDeviceConfiguration.validDeviceIds != null) {
-                        System.out.println("Adding Devices from DeviceList Provided");
-                        devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
-                    } else {
-                        devices.addAll(AndroidDeviceConfiguration.deviceSerial);
-                    }
+    protected static void setDeviceUDID(String UDID) {
+        deviceUDID.set(UDID);
+    }
 
-                }
-            } else {
-                if (AndroidDeviceConfiguration.validDeviceIds != null) {
-                    System.out.println("Adding Devices from DeviceList Provided");
-                    devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
-                } else {
-                    devices.addAll(AndroidDeviceConfiguration.deviceSerial);
-                }
-            }
-            for (String device : devices) {
-                deviceMapping.put(device, true);
-            }
-            System.out.println(deviceMapping);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Failed to initialize framework");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to initialize framework");
+    public static MobilePlatform getMobilePlatform() {
+        if (DeviceManager.getDeviceUDID().length()
+                == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+            return MobilePlatform.IOS;
+        } else {
+            return MobilePlatform.ANDROID;
         }
     }
 
-    public ArrayList<String> getDevices() {
-        return devices;
-    }
-
-    public synchronized String getNextAvailableDeviceId() {
-        ConcurrentHashMap.KeySetView<String, Boolean> devices = deviceMapping.keySet();
-        int i = 0;
-        for (String device : devices) {
-            Thread t = Thread.currentThread();
-            t.setName("Thread_" + i);
-            System.out.println("Parallel Thread is::" + t.getName());
-            i++;
-            if (deviceMapping.get(device)) {
-                deviceMapping.put(device, false);
-                System.out.println(device);
-                return device;
-            }
+    public String getDeviceModel() throws InterruptedException, IOException {
+        if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            return androidDeviceConfiguration.getDeviceModel();
+        } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
+            return iosDeviceConfiguration.getIOSDeviceProductTypeAndVersion();
         }
         return null;
     }
 
-
-    public void freeDevice(String deviceId) {
-        deviceMapping.put(deviceId, true);
+    public String getDeviceCategory() throws Exception {
+        if (iosDeviceConfiguration.checkiOSDevice()) {
+            iosDeviceConfiguration.setIOSWebKitProxyPorts();
+            return iosDeviceConfiguration.getDeviceName().replace(" ", "_");
+        } else {
+            return androidDeviceConfiguration.getDeviceModel();
+        }
     }
 }
