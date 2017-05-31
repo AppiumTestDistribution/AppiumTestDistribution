@@ -39,18 +39,6 @@ public class IOSDeviceConfiguration {
         prop = ConfigFileManager.getInstance();
     }
 
-    public void checkIfiDeviceApiIsInstalled() throws InterruptedException, IOException {
-        boolean checkMobileDevice =
-                commandPrompt.runCommand("brew list").contains("ideviceinstaller");
-        if (checkMobileDevice) {
-            System.out.println("iDeviceInstaller already exists");
-        } else {
-            System.out.println("Brewing iDeviceInstaller API....");
-            commandPrompt.runCommand("brew install ideviceinstaller");
-        }
-
-    }
-
     public ArrayList<String> getIOSUDID() {
 
         try {
@@ -75,29 +63,6 @@ public class IOSDeviceConfiguration {
                     endPos += IOS_UDID_LENGTH;
                 }
                 return deviceUDIDiOS;
-            }
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Map<String, String> getIOSUDIDHash() {
-        try {
-            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
-            if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
-                    .isEmpty()) {
-                return null;
-            } else {
-                String[] lines = getIOSDeviceID.split("\n");
-                for (int i = 0; i < lines.length; i++) {
-                    lines[i] = lines[i].replaceAll("\\s+", "");
-                    if (validDeviceIds == null
-                            || (validDeviceIds != null && validDeviceIds.contains(lines[i]))) {
-                        devices.put("deviceID" + i, lines[i]);
-                    }
-                }
-                return devices;
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
@@ -191,10 +156,15 @@ public class IOSDeviceConfiguration {
         file = new File(currentPath + "/.." + "/..");
         String ios_web_lit_proxy_runner =
                 file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
+        int port = 0;
+        try {
+            port = ap.getPort();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String webkitRunner =
                 ios_web_lit_proxy_runner + " -c " + DeviceManager.getDeviceUDID()
-                        + ":" + deviceMap.get(
-                    DeviceManager.getDeviceUDID()) + " -d";
+                        + ":" + port + " -d";
         System.out.println(webkitRunner);
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
@@ -205,8 +175,7 @@ public class IOSDeviceConfiguration {
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         appiumServerProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + appiumServerProcess);
-        Thread.sleep(1000);
-        return deviceMap.get(DeviceManager.getDeviceUDID());
+        return String.valueOf(port);
     }
 
     public long getPidOfProcess(Process p) {
