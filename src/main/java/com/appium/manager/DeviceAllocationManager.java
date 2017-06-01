@@ -36,32 +36,23 @@ public class DeviceAllocationManager {
 
     private void initializeDevices() {
         try {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            if (System.getProperty("os.name").toLowerCase().contains("mac")
+                    && System.getenv("Platform").equalsIgnoreCase("iOS")
+                    || System.getenv("Platform").equalsIgnoreCase("Both")) {
                 if (iosDevice.getIOSUDID() != null) {
                     System.out.println("Adding iOS devices");
-                    if (IOSDeviceConfiguration.validDeviceIds != null) {
+                    if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
                         devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                     } else {
                         devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
                     }
                 }
-                if (androidDevice.getDeviceSerial() != null) {
-                    System.out.println("Adding Android devices");
-                    if (AndroidDeviceConfiguration.validDeviceIds != null) {
-                        System.out.println("Adding Devices from DeviceList Provided");
-                        devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
-                    } else {
-                        devices.addAll(AndroidDeviceConfiguration.deviceSerial);
-                    }
-
+                if (System.getenv("Platform").equalsIgnoreCase("android")
+                        || System.getenv("Platform").equalsIgnoreCase("Both")) {
+                    getAndroidDeviceSerial();
                 }
             } else {
-                if (AndroidDeviceConfiguration.validDeviceIds != null) {
-                    System.out.println("Adding Devices from DeviceList Provided");
-                    devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
-                } else {
-                    devices.addAll(AndroidDeviceConfiguration.deviceSerial);
-                }
+                getAndroidDeviceSerial();
             }
             for (String device : devices) {
                 deviceMapping.put(device, true);
@@ -73,6 +64,18 @@ public class DeviceAllocationManager {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Failed to initialize framework");
+        }
+    }
+
+    private void getAndroidDeviceSerial() throws Exception {
+        if (androidDevice.getDeviceSerial() != null) {
+            System.out.println("Adding Android devices");
+            if (AndroidDeviceConfiguration.validDeviceIds.size() > 0) {
+                System.out.println("Adding Devices from DeviceList Provided");
+                devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
+            } else {
+                devices.addAll(AndroidDeviceConfiguration.deviceSerial);
+            }
         }
     }
 

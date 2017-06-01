@@ -46,14 +46,17 @@ public class AppiumDriverManager {
                     desiredCapabilityManager.androidWeb());
             AppiumDriverManager.setDriver(currentDriverSession);
         } else {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                if (ConfigFileManager.configFileMap.get("IOS_APP_PATH") != null
-                        && iosDeviceConfiguration.checkiOSDevice()) {
+            if (System.getProperty("os.name").toLowerCase().contains("mac")
+                    && System.getenv("Platform").equalsIgnoreCase("iOS")
+                    || System.getenv("Platform").equalsIgnoreCase("Both")) {
+                if (iosDeviceConfiguration.deviceUDIDiOS
+                        .contains(DeviceManager.getDeviceUDID())) {
                     currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
                             iosCaps.orElse(desiredCapabilityManager.iosNative()));
                     AppiumDriverManager.setDriver(currentDriverSession);
 
-                } else if (!iosDeviceConfiguration.checkiOSDevice()) {
+                } else if (!iosDeviceConfiguration.deviceUDIDiOS
+                        .contains(DeviceManager.getDeviceUDID())) {
                     currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
                             androidCaps.orElse(desiredCapabilityManager.androidNative()));
                     AppiumDriverManager.setDriver(currentDriverSession);

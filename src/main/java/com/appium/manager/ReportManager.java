@@ -67,7 +67,10 @@ public class ReportManager {
             .invoke();
         methodNamePresent = getDescriptionForChildNode.isMethodNamePresent();
         descriptionMethodName = getDescriptionForChildNode.getDescriptionMethodName();
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")
+                && System.getenv("Platform").equalsIgnoreCase("iOS")
+                    || System.getenv("Platform")
+                         .equalsIgnoreCase("Both")) {
             category = deviceManager.getDeviceCategory();
         } else {
             category = deviceManager.getDeviceModel();

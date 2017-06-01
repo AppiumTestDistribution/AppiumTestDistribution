@@ -4,7 +4,6 @@ import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
-
 import com.github.lalyos.jfiglet.FigletFont;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -59,6 +58,7 @@ public class ParallelThread {
         configFileManager = ConfigFileManager.getInstance();
         androidDevice.setValidDevices(validDeviceIds);
         iosDevice.setValidDevices(validDeviceIds);
+        deviceAllocationManager = DeviceAllocationManager.getInstance();
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
     }
@@ -90,7 +90,9 @@ public class ParallelThread {
             }
         }
 
-        if (androidDevice.getDevices() != null) {
+        if (androidDevice.getDevices() != null && System.getenv("Platform")
+                .equalsIgnoreCase("android")
+                || System.getenv("Platform").equalsIgnoreCase("Both")) {
             devices = androidDevice.getDevices();
             deviceCount = devices.size() / 4;
             File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
@@ -107,7 +109,8 @@ public class ParallelThread {
             createSnapshotFolderAndroid(deviceCount, "android");
         }
 
-        if (operSys.contains("mac")) {
+        if (operSys.contains("mac") && System.getenv("Platform").equalsIgnoreCase("iOS")
+                || System.getenv("Platform").equalsIgnoreCase("Both")) {
             if (deviceAllocationManager.getDevices().size() > 0) {
                 iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
                 iOSdevices = deviceAllocationManager.getDevices();

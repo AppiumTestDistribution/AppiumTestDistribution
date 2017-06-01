@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ public class IOSDeviceConfiguration {
     Map<String, String> devices = new HashMap<>();
     public Process p;
     public Process p1;
-    public static List<String> validDeviceIds;
+    public static List<String> validDeviceIds = new ArrayList<>();
 
     public final static int IOS_UDID_LENGTH = 40;
     String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
@@ -50,14 +49,17 @@ public class IOSDeviceConfiguration {
                 return null;
             } else {
                 while (endPos < getIOSDeviceID.length()) {
-                    if (validDeviceIds == null
-                            || (validDeviceIds != null
-                            && validDeviceIds.contains(
-                            getIOSDeviceID.substring(startPos, endPos + 1)))) {
-                        if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
-                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
-                                    .replace("\n", ""));
+                    if (validDeviceIds.size() > 0) {
+                        if (validDeviceIds.contains(
+                                getIOSDeviceID.substring(startPos, endPos + 1))) {
+                            if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
+                                deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
+                                        .replace("\n", ""));
+                            }
                         }
+                    } else {
+                        deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
+                                .replace("\n", ""));
                     }
                     startPos += IOS_UDID_LENGTH;
                     endPos += IOS_UDID_LENGTH;
@@ -138,17 +140,20 @@ public class IOSDeviceConfiguration {
         return getIOSDeviceID.contains(DeviceManager.getDeviceUDID());
     }
 
-    public HashMap<String, String> setIOSWebKitProxyPorts() throws Exception {
+    public HashMap<String, String> setIOSWebKitProxyPorts() {
         try {
             int webkitproxyport = ap.getPort();
             deviceMap.put(DeviceManager.getDeviceUDID(), Integer.toString(webkitproxyport));
         } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return deviceMap;
     }
 
     public String startIOSWebKit() throws IOException, InterruptedException {
+        setIOSWebKitProxyPorts();
         String serverPath = prop.getProperty("APPIUM_JS_PATH");
         File file = new File(serverPath);
         File currentPath = new File(file.getParent());
@@ -239,8 +244,12 @@ public class IOSDeviceConfiguration {
         }
     }
 
-    public void setValidDevices(List<String> validDeviceIds) {
-        this.validDeviceIds = validDeviceIds;
+    public void setValidDevices(List<String> deviceID) {
+        deviceID.forEach(deviceList -> {
+            if (deviceList.length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                validDeviceIds.add(deviceList);
+            }
+        });
     }
 
     public static ArrayList<String> getDeviceUDIDiOS() {

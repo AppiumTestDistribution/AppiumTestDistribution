@@ -5,6 +5,7 @@ import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 
 import java.io.IOException;
+import java.sql.DriverManager;
 
 /**
  * Device Manager - Handles all device related information's e.g UDID, Model, etc
@@ -51,8 +52,7 @@ public class DeviceManager {
     }
 
     public String getDeviceCategory() throws Exception {
-        if (iosDeviceConfiguration.checkiOSDevice()) {
-            iosDeviceConfiguration.setIOSWebKitProxyPorts();
+        if (iosDeviceConfiguration.deviceUDIDiOS.contains(DeviceManager.getDeviceUDID())) {
             return iosDeviceConfiguration.getDeviceName().replace(" ", "_");
         } else {
             return androidDeviceConfiguration.getDeviceModel();
