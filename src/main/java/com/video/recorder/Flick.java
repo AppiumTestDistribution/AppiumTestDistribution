@@ -1,6 +1,7 @@
 package com.video.recorder;
 
-import com.appium.manager.AndroidDeviceConfiguration;
+import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.manager.DeviceManager;
 import com.appium.utils.CommandPrompt;
 
 import java.io.BufferedReader;
@@ -21,50 +22,49 @@ public class Flick extends CommandPrompt {
     Process screenRecord;
 
     /**
-     * @param device_udid
      * @param className     - Current test class name
      * @param methodName    - Current test method name
      * @param videoFileName - filename should have TimeStamp,deviceID with TestMethod name
      * @throws IOException
      * @throws InterruptedException
      */
-    public void stopVideoRecording(String device_udid, String className, String methodName,
-        String videoFileName) throws IOException, InterruptedException {
+    public void stopVideoRecording(String className, String methodName,
+                                   String videoFileName) throws IOException, InterruptedException {
         System.out.println("**************Stopping Video Recording**************");
-        flickRecordingCommand("stop", device_udid, className, methodName, videoFileName);
+        flickRecordingCommand("stop", className, methodName, videoFileName);
     }
 
     /**
-     * @param device_udid
+     *
      * @param className     - Current test class name
      * @param methodName    - Current test method name
      * @param videoFileName - filename should have TimeStamp,deviceID with TestMethod name
      * @throws IOException
      * @throws InterruptedException
      */
-    public void startVideoRecording(String device_udid, String className, String methodName,
-        String videoFileName) throws IOException, InterruptedException {
+    public void startVideoRecording(String className, String methodName,
+                                    String videoFileName) throws IOException, InterruptedException {
         System.out.println("**************Starting Video Recording**************");
-        flickRecordingCommand("start", device_udid, className, methodName, videoFileName);
+        flickRecordingCommand("start", className, methodName, videoFileName);
     }
 
-    public void flickRecordingCommand(String command, String device_udid, String className,
+    public void flickRecordingCommand(String command,String className,
         String methodName, String videoFileName) throws IOException, InterruptedException {
         String videoPath = System.getProperty("user.dir");
         String android;
         String ios;
-        if (device_udid.length() != 40) {
+        if (DeviceManager.getDeviceUDID().length() != 40) {
             String videoLocationAndroid =
-                videoPath + "/target/screenshot/android/" + device_udid.replaceAll("\\W", "_") + "/"
+                videoPath + "/target/screenshot/android/" + DeviceManager.getDeviceUDID() + "/"
                     + className + "/" + methodName;
             fileDirectoryCheck(videoLocationAndroid);
             if (command.equals("start")) {
                 try {
-                    if (!androidDeviceConfiguration.getDeviceManufacturer(device_udid)
+                    if (!androidDeviceConfiguration.getDeviceManufacturer()
                             .equals("unknown") && androidDeviceConfiguration
-                            .checkIfRecordable(device_udid)) {
+                            .checkIfRecordable()) {
                         screenRecord = Runtime.getRuntime()
-                            .exec(androidDeviceConfiguration.screenRecord(device_udid, methodName));
+                            .exec(androidDeviceConfiguration.screenRecord(methodName));
                         System.out.println(
                             "ScreenRecording has started..." + Thread.currentThread().getId());
                         androidScreenRecordProcess
@@ -72,7 +72,8 @@ public class Flick extends CommandPrompt {
                         System.out.println("Process ID's:" + getPid(screenRecord));
                         Thread.sleep(1000);
                     } else {
-                        android = "flick video -a " + command + " -p android -u " + device_udid;
+                        android = "flick video -a " + command + " -p android -u "
+                                + DeviceManager.getDeviceUDID();
                         runCommandThruProcess(android);
                     }
                 } catch (IOException e) {
@@ -81,16 +82,17 @@ public class Flick extends CommandPrompt {
                     e.printStackTrace();
                 }
             } else {
-                if (!androidDeviceConfiguration.getDeviceManufacturer(device_udid)
+                if (!androidDeviceConfiguration.getDeviceManufacturer()
                         .equals("unknown")
-                    && androidDeviceConfiguration.checkIfRecordable(device_udid)) {
+                    && androidDeviceConfiguration.checkIfRecordable()) {
                     stopRecording();
                     androidDeviceConfiguration
-                        .pullVideoFromDevice(device_udid, methodName, videoLocationAndroid)
-                        .removeVideoFileFromDevice(device_udid, methodName);
+                        .pullVideoFromDevice(methodName, videoLocationAndroid)
+                        .removeVideoFileFromDevice(methodName);
                 } else {
-                    android = "flick video -a " + command + " -p android -o " + videoLocationAndroid
-                        + " -n " + videoFileName + " -u " + device_udid + " --trace";
+                    android = "flick video -a " + command + " -p android -o "
+                            + videoLocationAndroid + " -n " + videoFileName
+                            + " -u " + DeviceManager.getDeviceUDID() + " --trace";
                     runCommandThruProcess(android);
                     System.out.println("Stopping Video recording on Emulator");
                     Thread.sleep(10000);
@@ -98,14 +100,14 @@ public class Flick extends CommandPrompt {
             }
         } else {
             String videoLocationIOS =
-                videoPath + "/target/screenshot/iOS/" + device_udid.replaceAll("\\W", "_") + "/"
-                    + className + "/" + methodName;
+                videoPath + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()
+                        + "/" + className + "/" + methodName;
             fileDirectoryCheck(videoLocationIOS);
             if (command.equals("start")) {
-                ios = "flick video -a " + command + " -p ios -u " + device_udid;
+                ios = "flick video -a " + command + " -p ios -u " + DeviceManager.getDeviceUDID();
             } else {
                 ios = "flick video -a " + command + " -p ios -o " + videoLocationIOS + " -n "
-                    + videoFileName + " -u " + device_udid;
+                    + videoFileName + " -u " + DeviceManager.getDeviceUDID();
             }
 
             System.out.println(ios);

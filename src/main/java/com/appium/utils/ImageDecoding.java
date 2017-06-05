@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 /**
  * Created by saikrisv on 10/06/16.
  */
+
 public class ImageDecoding {
     public static String encodeToString(BufferedImage image, String type) {
         String imageString = null;

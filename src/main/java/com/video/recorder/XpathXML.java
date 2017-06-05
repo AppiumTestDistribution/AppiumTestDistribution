@@ -23,7 +23,7 @@ public class XpathXML {
         throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         try {
             File inputFile = new File(
-                System.getProperty("user.dir") + "/target/parallelCucumber.xml");
+                System.getProperty("user.dir") + "/target/parallel.xml");
             if (inputFile.exists()) {
                 DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
