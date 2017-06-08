@@ -83,8 +83,7 @@ class TestLogger {
         }
 
         if (System.getenv("VIDEO_LOGS") != null) {
-            if (AppiumDriverManager.getDriver().getSessionDetails()
-                    .get("platformName").toString().equals("Android")) {
+            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 String videoFilePath = System.getProperty("user.dir")
                         + "/target/screenshot/android/" + DeviceManager.getDeviceUDID()
                         + "/" + className + "/" + result.getMethod()
@@ -101,8 +100,7 @@ class TestLogger {
                             .getMethodName() + ".mp4" + ">Videologs</a>");
                 }
 
-            } else if (AppiumDriverManager.getDriver().getSessionDetails()
-                    .get("platformName").toString().equals("iOS")) {
+            } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
 
                 String iosVideoFilePath = System.getProperty("user.dir")
                         + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()
@@ -225,8 +223,7 @@ class TestLogger {
 
 
             }
-            if (AppiumDriverManager.getDriver().getSessionDetails()
-                    .get("platformName").toString().equals("iOS")) {
+            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 File framedImageIOS = new File(
                         System.getProperty("user.dir")
                                 + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()

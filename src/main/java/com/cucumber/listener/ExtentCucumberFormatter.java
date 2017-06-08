@@ -115,12 +115,10 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             if (contextChanged) {
                 AppiumDriverManager.getDriver().context(context);
             }
-            if (AppiumDriverManager.getDriver().getSessionDetails()
-                    .get("platformName").toString().equals("Android")) {
+            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 deviceModel = androidDevice.getDeviceModel();
                 screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (AppiumDriverManager.getDriver().getSessionDetails().get("platformName")
-                    .toString().equals("iOS")) {
+            } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 try {
                     deviceModel =
                             iosDevice.getIOSDeviceProductTypeAndVersion();

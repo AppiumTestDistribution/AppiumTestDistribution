@@ -9,6 +9,8 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 /**
  * Created by saikrisv on 24/01/17.
@@ -16,13 +18,11 @@ import java.io.IOException;
 public class DesiredCapabilityManager {
 
     private final ConfigFileManager configFileManager;
-    private DeviceSingleton deviceSingleton;
     private AvailablePorts availablePorts;
     private IOSDeviceConfiguration iosDevice;
 
     public DesiredCapabilityManager() throws IOException {
         configFileManager = ConfigFileManager.getInstance();
-        deviceSingleton = DeviceSingleton.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         availablePorts = new AvailablePorts();
 
@@ -40,9 +40,16 @@ public class DesiredCapabilityManager {
         androidCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                 AutomationName.ANDROID_UIAUTOMATOR2);
         //checkSelendroid(androidCapabilities);
-        androidCapabilities
-                .setCapability(MobileCapabilityType.APP,
-                        configFileManager.getProperty("ANDROID_APP_PATH"));
+        Path path = FileSystems.getDefault().getPath(configFileManager
+                .getProperty("ANDROID_APP_PATH"));
+        if (!path.getParent().isAbsolute()) {
+            androidCapabilities.setCapability(MobileCapabilityType.APP, path.normalize()
+                    .toAbsolutePath().toString());
+        } else {
+            androidCapabilities
+                    .setCapability(MobileCapabilityType.APP,
+                            configFileManager.getProperty("ANDROID_APP_PATH"));
+        }
         System.out.println(DeviceManager.getDeviceUDID() + Thread.currentThread().getId());
         androidCapabilities.setCapability(MobileCapabilityType.UDID, DeviceManager.getDeviceUDID());
         try {
@@ -74,8 +81,15 @@ public class DesiredCapabilityManager {
                 "iOS");
         iOSCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                 "10.0");
-        iOSCapabilities.setCapability(MobileCapabilityType.APP,
-                configFileManager.getProperty("IOS_APP_PATH"));
+        Path path = FileSystems.getDefault().getPath(configFileManager
+                .getProperty("IOS_APP_PATH"));
+        if (!path.getParent().isAbsolute()) {
+            iOSCapabilities.setCapability(MobileCapabilityType.APP, path.normalize()
+                    .toAbsolutePath().toString());
+        } else {
+            iOSCapabilities.setCapability(MobileCapabilityType.APP,
+                    configFileManager.getProperty("IOS_APP_PATH"));
+        }
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities
                 .setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");

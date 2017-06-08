@@ -1,6 +1,7 @@
 package com.appium.utils;
 
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.DeviceManager;
@@ -41,13 +42,11 @@ public class ScreenShotManager {
         File scrFile = ((TakesScreenshot) AppiumDriverManager.getDriver())
                 .getScreenshotAs(OutputType.FILE);
         screenShotNameWithTimeStamp = currentDateAndTime();
-        if (AppiumDriverManager.getDriver().getSessionDetails()
-                .get("platformName").toString().equals("Android")) {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                     "android", deviceModel);
-        } else if (AppiumDriverManager.getDriver().getSessionDetails()
-                .get("platformName").toString().equals("iOS")) {
+        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                     "iOS", deviceModel);
@@ -58,12 +57,10 @@ public class ScreenShotManager {
     public void captureScreenShot(String screenShotName)
             throws InterruptedException, IOException {
         String className = new Exception().getStackTrace()[1].getClassName();
-        String platformName = AppiumDriverManager.getDriver().getSessionDetails()
-                .get("platformName").toString();
         String deviceModel = null;
-        if (("Android").equals(platformName)) {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
-        } else if (("iOS").equals(platformName)) {
+        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             deviceModel = new IOSDeviceConfiguration().getIOSDeviceProductTypeAndVersion();
         }
         captureScreenShot(1, className, screenShotName, deviceModel);
