@@ -10,6 +10,8 @@ import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Optional;
 
 public class AppiumDriverManager {
@@ -38,7 +40,9 @@ public class AppiumDriverManager {
     }
 
     public void startAppiumDriver(Optional<DesiredCapabilities> iosCaps,
-                                  Optional<DesiredCapabilities> androidCaps)
+                                  Optional<DesiredCapabilities> androidCaps,
+                                  String userSpecifiedAndroidCaps,
+                                  String userSpecifiediOSCaps)
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
         if (ConfigFileManager.configFileMap.get("APP_TYPE").equalsIgnoreCase("web")) {
@@ -52,19 +56,22 @@ public class AppiumDriverManager {
                 if (iosDeviceConfiguration.deviceUDIDiOS
                         .contains(DeviceManager.getDeviceUDID())) {
                     currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
-                            iosCaps.orElse(desiredCapabilityManager.iosNative()));
+                            iosCaps.orElse(desiredCapabilityManager
+                                    .iosNative(userSpecifiediOSCaps)));
                     AppiumDriverManager.setDriver(currentDriverSession);
 
                 } else if (!iosDeviceConfiguration.deviceUDIDiOS
                         .contains(DeviceManager.getDeviceUDID())) {
                     currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
-                            androidCaps.orElse(desiredCapabilityManager.androidNative()));
+                            androidCaps.orElse(desiredCapabilityManager
+                                    .androidNative(userSpecifiedAndroidCaps)));
                     AppiumDriverManager.setDriver(currentDriverSession);
                 }
             } else {
                 currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
                         androidCaps
-                                .orElse(desiredCapabilityManager.androidNative()));
+                                .orElse(desiredCapabilityManager
+                                        .androidNative(userSpecifiedAndroidCaps)));
                 AppiumDriverManager.setDriver(currentDriverSession);
             }
         }
@@ -85,7 +92,9 @@ public class AppiumDriverManager {
             iOS = getDesiredIOSCapabilities(iOS, userSpecifiediOSCaps);
         }
         System.out.println("Caps generated" + android + iOS);
-        startAppiumDriver(Optional.ofNullable(iOS), Optional.ofNullable(android));
+        startAppiumDriver(Optional.ofNullable(iOS), Optional.ofNullable(android),
+                userSpecifiedAndroidCaps,
+                userSpecifiediOSCaps);
         Thread.sleep(3000);
     }
 
@@ -96,6 +105,11 @@ public class AppiumDriverManager {
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             if (prop.getProperty("IOS_CAPS") != null) {
                 iOSJsonFilePath = prop.getProperty("IOS_CAPS");
+                Path path = FileSystems.getDefault().getPath(iOSJsonFilePath.toString());
+                if (!path.getParent().isAbsolute()) {
+                    iOSJsonFilePath = path.normalize()
+                            .toAbsolutePath().toString();
+                }
                 desiredCapabilityBuilder
                         .buildDesiredCapability(iOSJsonFilePath);
                 iOS = DesiredCapabilityBuilder.getDesiredCapability();
@@ -116,6 +130,11 @@ public class AppiumDriverManager {
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (prop.getProperty("ANDROID_CAPS") != null) {
                 androidJsonFilePath = prop.getProperty("ANDROID_CAPS");
+                Path path = FileSystems.getDefault().getPath(androidJsonFilePath.toString());
+                if (!path.getParent().isAbsolute()) {
+                    androidJsonFilePath = path.normalize()
+                            .toAbsolutePath().toString();
+                }
                 System.out.println("Picking Caps from property file");
                 desiredCapabilityBuilder
                         .buildDesiredCapability(androidJsonFilePath);
