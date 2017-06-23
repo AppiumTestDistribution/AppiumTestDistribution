@@ -19,8 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 public final class AppiumParallelTestListener
-    implements ITestListener, IClassListener, IInvokedMethodListener,
-    IRetryAnalyzer {
+    implements ITestListener, IClassListener, IInvokedMethodListener {
 
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
@@ -76,7 +75,6 @@ public final class AppiumParallelTestListener
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
-            reportManager.setAuthorName(method);
             appiumDriverManager.startAppiumDriver();
             reportManager.startLogResults(method.getTestMethod().getMethodName(),
                     testResult.getTestClass().getRealClass().getSimpleName());
@@ -101,45 +99,15 @@ public final class AppiumParallelTestListener
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
-            reportManager.endLogTestResults(testResult);
+            if (testResult.getStatus() == ITestResult.SUCCESS
+                    || testResult.getStatus() == ITestResult.FAILURE) {
+                reportManager.setAuthorName(method);
+                reportManager.endLogTestResults(testResult);
+            }
             appiumDriverManager.stopAppiumDriver();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override public boolean retry(ITestResult iTestResult) {
-        Method[] methods = iTestResult.getInstance().getClass().getMethods();
-        for (Method m : methods) {
-            if (m.getName().equals(iTestResult.getMethod().getMethodName())) {
-                if (m.isAnnotationPresent(RetryCount.class)) {
-                    RetryCount ta = m.getAnnotation(RetryCount.class);
-                    maxRetryCount = ta.maxRetryCount();
-                } else {
-                    try {
-                        maxRetryCount = Integer.parseInt(prop.getProperty("MAX_RETRY_COUNT"));
-                    } catch (Exception e) {
-                        maxRetryCount = 0;
-                    }
-                }
-            }
-        }
-        if (iTestResult.getStatus() == ITestResult.FAILURE) {
-            System.out.println("Test Failed");
-            if (retryCount == maxRetryCount) {
-                System.out.println("Log report");
-            }
-            if (retryCount < maxRetryCount) {
-                retryCount++;
-                System.out.println(
-                    "Retrying Failed Test Cases " + retryCount + "out of " + maxRetryCount);
-                return true;
-
-            }
-        }
-        return false;
     }
 
     @Override

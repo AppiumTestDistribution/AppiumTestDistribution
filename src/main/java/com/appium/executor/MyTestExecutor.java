@@ -159,6 +159,7 @@ public class MyTestExecutor {
             if (!prop.getProperty("BROWSER_TYPE")
                     .equalsIgnoreCase("ChromeDesktop")) {
                 listeners.add("com.appium.manager.AppiumParallelTestListener");
+                listeners.add("com.appium.utils.RetryListener");
             }
         }
         include(listeners, "LISTENERS");
@@ -221,6 +222,7 @@ public class MyTestExecutor {
             if (!prop.getProperty("BROWSER_TYPE")
                     .equalsIgnoreCase("ChromeDesktop")) {
                 listeners.add("com.appium.manager.AppiumParallelTestListener");
+                listeners.add("com.appium.utils.RetryListener");
             }
         }
         suite.setListeners(listeners);
