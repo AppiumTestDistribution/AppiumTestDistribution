@@ -44,6 +44,9 @@ public class DesiredCapabilityBuilder {
                         if (!path.getParent().isAbsolute()) {
                             desiredCapabilities.setCapability(caps.toString(), path.normalize()
                                     .toAbsolutePath().toString());
+                        } else {
+                            desiredCapabilities.setCapability(caps.toString(), path.normalize()
+                                    .toAbsolutePath().toString());
                         }
                     } else {
                         desiredCapabilities.setCapability(caps.toString(), values.toString());
