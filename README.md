@@ -119,6 +119,16 @@ A. Yes, with a Valid provisioning profile this app can be installed on your devi
 (Note: The application must be signed with a valid developer certificate and your device should be added to the provisioning profile)
 
 
+## Organizations :blue_heart:
+
+ThoughtWorks             |  CeX
+:-------------------------:|:-------------------------:
+![](https://static1.squarespace.com/static/5914a98815cf7d683358255d/t/5914b14d17bffc60d36cf2a7/1494531166569/)  |  ![](https://uk.webuy.com/images/logo/CeX_Logo_Rich_black_RGB-01.png)
+
+Jio India             |  M800 | Reward Gateway
+:-:|:-:|:-:
+![](http://images.indianexpress.com/2016/07/reliancejio_newlogo_1.jpg)  |  ![](https://i.stack.imgur.com/nY9CC.jpg) | ![](http://www.greathillpartners.com/wp-content/uploads/2016/01/reward-gateway-logo-horizontal-tagline-on-white-1.png)
+
 ## License
 
 ![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)
