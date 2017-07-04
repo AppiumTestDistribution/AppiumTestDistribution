@@ -245,7 +245,8 @@ class TestLogger {
                                     + DeviceManager.getDeviceUDID().replaceAll("\\W", "_")
                                     + "/" + className
                                     + "/" + result.getMethod().getMethodName() + "/"
-                                    + screenShotNameWithTimeStamp + deviceModel + "_failed_" + result
+                                    + screenShotNameWithTimeStamp + deviceModel
+                                    + "_failed_" + result
                                     .getMethod().getMethodName() + "_framed.png"));
                 } else {
                     test.get().log(Status.FAIL,"Snapshot below: "
