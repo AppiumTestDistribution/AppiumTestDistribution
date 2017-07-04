@@ -5,6 +5,7 @@ import com.appium.utils.ScreenShotManager;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
+import com.report.factory.ExtentTestManager;
 import com.video.recorder.Flick;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.logging.LogEntry;
@@ -207,18 +208,23 @@ class TestLogger {
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 if (framedImageAndroid.exists()) {
-                    log.addScreenCaptureFromPath(
-                            "screenshot/android/" + DeviceManager.getDeviceUDID() + "/"
+                    test.get().log(Status.FAIL,"Snapshot below: "
+                            + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/android/"
+                                    + DeviceManager.getDeviceUDID().replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
-                                    + "_failed_" + result
-                                    .getMethod().getMethodName() + "_framed.jpeg");
+                                    + deviceModel + "_failed_" + result
+                                    .getMethod().getMethodName() + "_framed.png"));
+
                 } else {
-                    log.addScreenCaptureFromPath(
-                            "screenshot/android/" + DeviceManager.getDeviceUDID() + "/"
+                    test.get().log(Status.FAIL,"Snapshot below: "
+                            + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/android/"
+                                    + DeviceManager.getDeviceUDID().replaceAll("\\W", "_") + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
-                                    + screenShotNameWithTimeStamp + "_" + result
-                                    .getMethod().getMethodName() + "_failed.jpeg");
+                                    + screenShotNameWithTimeStamp + deviceModel + "_" + result
+                                    .getMethod().getMethodName() + "_failed.png"));
                 }
 
 
@@ -233,19 +239,24 @@ class TestLogger {
                 System.out.println("************************" + framedImageIOS.exists()
                         + "***********************");
                 if (framedImageIOS.exists()) {
-                    log.addScreenCaptureFromPath("screenshot/iOS/"
-                            + DeviceManager.getDeviceUDID()
-                            + "/" + className
-                            + "/" + result.getMethod().getMethodName() + "/"
-                            + screenShotNameWithTimeStamp + "_failed_" + result
-                            .getMethod().getMethodName() + "_framed.jpeg");
+                    test.get().log(Status.FAIL,"Snapshot below: "
+                            + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/iOS/"
+                                    + DeviceManager.getDeviceUDID().replaceAll("\\W", "_")
+                                    + "/" + className
+                                    + "/" + result.getMethod().getMethodName() + "/"
+                                    + screenShotNameWithTimeStamp + deviceModel
+                                    + "_failed_" + result
+                                    .getMethod().getMethodName() + "_framed.png"));
                 } else {
-                    log.addScreenCaptureFromPath("screenshot/iOS/"
-                            + DeviceManager.getDeviceUDID()
-                            + "/" + className
-                            + "/" + result.getMethod().getMethodName() + "/"
-                            + screenShotNameWithTimeStamp + "_" + result
-                            .getMethod().getMethodName() + "_failed.jpeg");
+                    test.get().log(Status.FAIL,"Snapshot below: "
+                            + ExtentTestManager.getTest().addScreenCaptureFromPath(
+                            System.getProperty("user.dir") + "/target/screenshot/iOS/"
+                                    + DeviceManager.getDeviceUDID().replaceAll("\\W", "_")
+                                    + "/" + className
+                                    + "/" + result.getMethod().getMethodName() + "/"
+                                    + screenShotNameWithTimeStamp + deviceModel + "_" + result
+                                    .getMethod().getMethodName() + "_failed.png"));
                 }
 
             }

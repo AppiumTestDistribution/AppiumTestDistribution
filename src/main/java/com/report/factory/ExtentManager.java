@@ -108,8 +108,8 @@ public class ExtentManager {
         extentx.config().setReportName(reportName);
 
         // server URL
-        // ! must provide this to be able to upload snapshots
-        String url = host + ":" + port;
+        // must provide this to be able to upload snapshots
+        String url = configFileManager.getProperty("ExtentXURL");
         if (!url.isEmpty()) {
             extentx.config().setServerUrl(url);
         }
