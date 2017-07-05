@@ -6,6 +6,7 @@ import com.appium.ios.IOSDeviceConfiguration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  *  DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
@@ -35,6 +36,11 @@ public class DeviceAllocationManager {
     }
 
     private void initializeDevices() {
+        if (System.getenv("Platform") == null) {
+            System.out.println("Please execute with Platform environment"
+                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test'");
+            System.exit(0);
+        }
         try {
             if (System.getProperty("os.name").toLowerCase().contains("mac")
                     && System.getenv("Platform").equalsIgnoreCase("iOS")
@@ -63,7 +69,6 @@ public class DeviceAllocationManager {
             System.out.println("Failed to initialize framework");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Failed to initialize framework");
         }
     }
 
