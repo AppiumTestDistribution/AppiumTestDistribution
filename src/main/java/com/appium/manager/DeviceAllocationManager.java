@@ -6,7 +6,6 @@ import com.appium.ios.IOSDeviceConfiguration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  *  DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
@@ -37,7 +36,7 @@ public class DeviceAllocationManager {
 
     private void initializeDevices() {
         if (System.getenv("Platform") == null) {
-            throw new RuntimeException("Please execute with Platform environment"
+            throw new IllegalArgumentException("Please execute with Platform environment"
                     + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
         }
         try {
@@ -100,7 +99,7 @@ public class DeviceAllocationManager {
                 return device;
             }
         }
-        throw new RuntimeException("No Available Devices");
+        throw new IllegalArgumentException("No Available Devices");
     }
 
     public void freeDevice() {

@@ -48,7 +48,7 @@ public class DeviceManager {
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
             return iosDeviceConfiguration.getIOSDeviceProductTypeAndVersion();
         }
-        throw new RuntimeException("DeviceModel is Empty");
+        throw new IllegalArgumentException("DeviceModel is Empty");
     }
 
     public String getDeviceCategory() throws Exception {

@@ -49,7 +49,7 @@ public class AndroidDeviceConfiguration {
 
         if (lines.length <= 1) {
             stopADB();
-            throw new RuntimeException("No Android Device Connected");
+            throw new IllegalArgumentException("No Android Device Connected");
         } else {
             for (int i = 1; i < lines.length; i++) {
                 lines[i] = lines[i].replaceAll("\\s+", "");
@@ -104,7 +104,7 @@ public class AndroidDeviceConfiguration {
         String[] lines = output.split("\n");
 
         if (lines.length <= 1) {
-            throw new RuntimeException("No Android Device Connected");
+            throw new IllegalArgumentException("No Android Device Connected");
         } else {
             for (int i = 1; i < lines.length; i++) {
                 lines[i] = lines[i].replaceAll("\\s+", "");
