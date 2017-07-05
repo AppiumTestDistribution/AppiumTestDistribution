@@ -37,9 +37,8 @@ public class DeviceAllocationManager {
 
     private void initializeDevices() {
         if (System.getenv("Platform") == null) {
-            System.out.println("Please execute with Platform environment"
-                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test'");
-            System.exit(0);
+            throw new RuntimeException("Please execute with Platform environment"
+                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
         }
         try {
             if (System.getProperty("os.name").toLowerCase().contains("mac")
@@ -98,11 +97,10 @@ public class DeviceAllocationManager {
             i++;
             if (deviceMapping.get(device)) {
                 deviceMapping.put(device, false);
-                System.out.println(device);
                 return device;
             }
         }
-        return null;
+        throw new RuntimeException("No Available Devices");
     }
 
     public void freeDevice() {

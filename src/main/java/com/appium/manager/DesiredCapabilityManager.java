@@ -63,7 +63,7 @@ public class DesiredCapabilityManager {
             }
             return androidCapabilities;
         }
-        return null;
+        throw new RuntimeException("Default Android Capability failed to load");
     }
 
     public DesiredCapabilities androidWeb() {
@@ -114,7 +114,7 @@ public class DesiredCapabilityManager {
             }
             return iOSCapabilities;
         }
-        return null;
+        throw new RuntimeException("Default iOS Capability failed to load");
     }
 
 
