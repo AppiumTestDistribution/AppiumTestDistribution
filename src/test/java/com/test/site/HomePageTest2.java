@@ -43,9 +43,7 @@ public class HomePageTest2 {
     public static Object[][] getTOCs() {
         return new Object[][]{
                 {"a"},
-                {"b"},
-                {"c"},
-                {"d"}
+                {"b"}
         };
     }
 
