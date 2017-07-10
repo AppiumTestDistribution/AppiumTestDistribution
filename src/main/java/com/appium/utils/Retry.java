@@ -44,7 +44,6 @@ public class Retry implements IRetryAnalyzer {
             System.out.println("Test Failed");
             if (retryCount == maxRetryCount) {
                 System.out.println("Log report");
-                //reportManager.setAuthorName(iTestResult.getMethod().getMethodName());
             }
             if (retryCount < maxRetryCount) {
                 retryCount++;

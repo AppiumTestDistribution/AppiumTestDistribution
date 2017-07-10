@@ -35,6 +35,10 @@ public class DeviceAllocationManager {
     }
 
     private void initializeDevices() {
+        if (System.getenv("Platform") == null) {
+            throw new IllegalArgumentException("Please execute with Platform environment"
+                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
+        }
         try {
             if (System.getProperty("os.name").toLowerCase().contains("mac")
                     && System.getenv("Platform").equalsIgnoreCase("iOS")
@@ -63,7 +67,6 @@ public class DeviceAllocationManager {
             System.out.println("Failed to initialize framework");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Failed to initialize framework");
         }
     }
 
@@ -93,11 +96,10 @@ public class DeviceAllocationManager {
             i++;
             if (deviceMapping.get(device)) {
                 deviceMapping.put(device, false);
-                System.out.println(device);
                 return device;
             }
         }
-        return null;
+        throw new IllegalArgumentException("No Available Devices");
     }
 
     public void freeDevice() {

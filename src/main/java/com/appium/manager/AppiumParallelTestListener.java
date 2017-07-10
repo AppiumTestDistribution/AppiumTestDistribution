@@ -1,14 +1,12 @@
 package com.appium.manager;
 
 import com.annotation.values.Description;
-import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.report.factory.ExtentManager;
 
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
-import org.testng.IRetryAnalyzer;
 import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
@@ -16,7 +14,6 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 public final class AppiumParallelTestListener
     implements ITestListener, IClassListener, IInvokedMethodListener {
@@ -75,7 +72,7 @@ public final class AppiumParallelTestListener
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
-            appiumDriverManager.startAppiumDriver();
+            appiumDriverManager.startAppiumDriverInstance();
             reportManager.startLogResults(method.getTestMethod().getMethodName(),
                     testResult.getTestClass().getRealClass().getSimpleName());
             SkipIf skip =

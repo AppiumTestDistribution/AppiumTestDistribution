@@ -46,7 +46,7 @@ public class IOSDeviceConfiguration {
             String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
             if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
                     .isEmpty()) {
-                return null;
+                throw new IllegalArgumentException("No IOS devices found");
             } else {
                 while (endPos < getIOSDeviceID.length()) {
                     if (validDeviceIds.size() > 0) {
@@ -68,7 +68,7 @@ public class IOSDeviceConfiguration {
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
-            return null;
+            throw new IllegalStateException("Failed to fetch iOS device connected");
         }
     }
 

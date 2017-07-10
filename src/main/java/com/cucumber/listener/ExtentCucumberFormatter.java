@@ -244,7 +244,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
     //TO DO fix this
     public void startAppiumServer(Scenario scenario, String tags) throws Exception {
         reportManager.createChildNodeWithCategory(scenario.getName(), tags);
-        appiumDriverManager.startAppiumDriver();
+        appiumDriverManager.startAppiumDriverInstance();
         ///This portion should be Broken : TODO
     }
 

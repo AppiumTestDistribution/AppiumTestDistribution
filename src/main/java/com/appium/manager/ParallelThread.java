@@ -106,7 +106,7 @@ public class ParallelThread {
                     se.printStackTrace();
                 }
             }
-            createSnapshotFolderAndroid(deviceCount, "android");
+            createSnapshotFolderAndroid("android");
         }
 
         if (operSys.contains("mac") && System.getenv("Platform").equalsIgnoreCase("iOS")
@@ -115,7 +115,7 @@ public class ParallelThread {
                 iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
                 iOSdevices = deviceAllocationManager.getDevices();
                 deviceCount = iOSdevices.size();
-                createSnapshotFolderiOS(deviceCount, "iPhone");
+                createSnapshotFolderiOS("iPhone");
             }
         }
         if (deviceCount == 0) {
@@ -170,7 +170,7 @@ public class ParallelThread {
         return hasFailures;
     }
 
-    public void createSnapshotFolderAndroid(int deviceCount, String platform) throws Exception {
+    public void createSnapshotFolderAndroid(String platform) throws Exception {
         for (int i = 1; i <= (devices.size() / 4); i++) {
             String deviceSerial = devices.get("deviceID" + i);
             if (deviceSerial != null) {
@@ -189,7 +189,7 @@ public class ParallelThread {
         }
     }
 
-    public void createSnapshotFolderiOS(int deviceCount, String platform) {
+    public void createSnapshotFolderiOS(String platform) {
         for (int i = 0; i < iOSdevices.size(); i++) {
             String deviceSerial = iOSdevices.get(i);
             createPlatformDirectory(platform);

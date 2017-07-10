@@ -9,6 +9,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 
@@ -25,10 +26,11 @@ public class HomePageTest2 {
         return driver;
     }
 
-    @Test(groups = "smoke", description = "Testing Skips")
+    @Test(groups = "smoke", description = "Testing Skips", dataProvider = "getTOCs")
     @Author(name = "AnsonLiao")
-    public void testMethodOne2() throws Exception {
+    public void testMethodOne2(String arg) throws Exception {
         myClass = new MyClass();
+        System.out.println(arg);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit2")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/plus")).click();
@@ -36,4 +38,13 @@ public class HomePageTest2 {
         Assert.assertEquals(myClass.sum(2, 3), 6,"Runing in Thread"
                 + Thread.currentThread().getId());
     }
+
+    @DataProvider
+    public static Object[][] getTOCs() {
+        return new Object[][]{
+                {"a"},
+                {"b"}
+        };
+    }
+
 }
