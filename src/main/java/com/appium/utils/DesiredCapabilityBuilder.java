@@ -71,9 +71,9 @@ public class DesiredCapabilityBuilder {
             appPackage(desiredCapabilities);
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             appPackageBundle(desiredCapabilities);
+
                 //Check if simulator.json exists and add the deviceName and OS
                 if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                   // desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET,true);
                     desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                             simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
                                     "iOS").getName());
@@ -88,6 +88,7 @@ public class DesiredCapabilityBuilder {
                     desiredCapabilities.setCapability(IOSMobileCapabilityType
                             .WDA_LOCAL_PORT, availablePorts.getPort());
                 }
+
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                     DeviceManager.getDeviceUDID());
         }
