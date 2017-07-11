@@ -5,7 +5,6 @@ import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 
 import java.io.IOException;
-import java.sql.DriverManager;
 
 /**
  * Device Manager - Handles all device related information's e.g UDID, Model, etc
@@ -34,8 +33,10 @@ public class DeviceManager {
     }
 
     public static MobilePlatform getMobilePlatform() {
-        if (DeviceManager.getDeviceUDID().length()
-                == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+        if (DeviceManager.getDeviceUDID().length() ==
+                IOSDeviceConfiguration.IOS_UDID_LENGTH
+                || DeviceManager.getDeviceUDID().length() ==
+                IOSDeviceConfiguration.SIM_UDID_LENGTH) {
             return MobilePlatform.IOS;
         } else {
             return MobilePlatform.ANDROID;

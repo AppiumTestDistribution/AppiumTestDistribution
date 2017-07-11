@@ -15,12 +15,13 @@ public class DeviceAllocationManager {
     private ConcurrentHashMap<String, Boolean> deviceMapping =
             new ConcurrentHashMap<String, Boolean>();
     private static DeviceAllocationManager instance;
-    private static AndroidDeviceConfiguration androidDevice = new AndroidDeviceConfiguration();
+    private static AndroidDeviceConfiguration androidDevice;
     private static IOSDeviceConfiguration iosDevice;
 
     private DeviceAllocationManager() {
         try {
             iosDevice = new IOSDeviceConfiguration();
+            androidDevice = new AndroidDeviceConfiguration();
         } catch (IOException e) {
             e.printStackTrace();
         }
