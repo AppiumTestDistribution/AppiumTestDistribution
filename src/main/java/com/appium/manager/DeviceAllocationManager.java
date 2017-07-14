@@ -43,7 +43,7 @@ public class DeviceAllocationManager {
             if (System.getProperty("os.name").toLowerCase().contains("mac")
                     && System.getenv("Platform").equalsIgnoreCase("iOS")
                     || System.getenv("Platform").equalsIgnoreCase("Both")) {
-                if (iosDevice.getIOSUDID() != null) {
+                if (iosDevice.getIOSUDIDs() != null) {
                     System.out.println("Adding iOS devices");
                     if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
                         devices.addAll(IOSDeviceConfiguration.validDeviceIds);
