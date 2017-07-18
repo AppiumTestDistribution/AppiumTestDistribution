@@ -128,7 +128,7 @@ public class MyTestExecutor {
         }
         System.out.println("Finally complete");
         ParallelThread.figlet("Test Completed");
-        ImageUtils.creatResultsSet();
+        //ImageUtils.creatResultsSet();
         //ImageUtils.createJSonForHtml();
         return hasFailure;
     }
