@@ -34,7 +34,6 @@ public class ExtentManager {
                     extent.attachReporter(getExtentXReporter());
                 }
                 extent.setSystemInfo("Selenium Java Version", "3.3.1");
-                extent.setSystemInfo("Environment", "Prod");
                 String appiumVersion = null;
                 try {
                     String command = "node "
