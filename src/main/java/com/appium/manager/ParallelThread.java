@@ -6,7 +6,6 @@ import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.report.factory.ExtentManager;
-import com.report.factory.ExtentTestManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
@@ -44,7 +43,7 @@ public class ParallelThread {
     private MyTestExecutor myTestExecutor;
     List<Class> testcases;
     private HtmlReporter htmlReporter;
-    private ExtentManager extentManager;
+    ExtentManager extentManager;
 
     public ParallelThread() throws IOException {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -65,6 +64,7 @@ public class ParallelThread {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
+        extentManager = new ExtentManager();
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
