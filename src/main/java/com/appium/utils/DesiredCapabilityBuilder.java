@@ -21,7 +21,6 @@ public class DesiredCapabilityBuilder {
 
     private AvailablePorts availablePorts;
     private IOSDeviceConfiguration iosDevice;
-
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
 
@@ -35,10 +34,12 @@ public class DesiredCapabilityBuilder {
     }
 
     public DesiredCapabilities buildDesiredCapability(String jsonPath) throws Exception {
+        final boolean[] flag = {false};
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         jsonParsedObject
                 .forEach((caps, values) -> {
+                    if (caps.equals("browserName") && values.toString().equals("chrome")) flag[0] = true;
                     if (caps.equals("app")) {
                         Path path = FileSystems.getDefault().getPath(values.toString());
                         if (!path.getParent().isAbsolute()) {
@@ -53,13 +54,20 @@ public class DesiredCapabilityBuilder {
                     }
                 });
         //Check for web
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID) && flag[0] == false) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")
                     .toString() != "UIAutomator2") {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.ANDROID_UIAUTOMATOR2);
             }
+            desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
+                    availablePorts.getPort());
+            appPackage(desiredCapabilities);
+            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
+                    DeviceManager.getDeviceUDID());
+        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID) &&
+                flag[0] == true) {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                     availablePorts.getPort());
             appPackage(desiredCapabilities);
