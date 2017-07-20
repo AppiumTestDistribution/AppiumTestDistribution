@@ -21,7 +21,6 @@ public class DesiredCapabilityBuilder {
 
     private AvailablePorts availablePorts;
     private IOSDeviceConfiguration iosDevice;
-
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
 
@@ -35,10 +34,14 @@ public class DesiredCapabilityBuilder {
     }
 
     public DesiredCapabilities buildDesiredCapability(String jsonPath) throws Exception {
+        final boolean[] flag = {false};
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         jsonParsedObject
                 .forEach((caps, values) -> {
+                    if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
+                        flag[0] = true;
+                    }
                     if (caps.equals("app")) {
                         Path path = FileSystems.getDefault().getPath(values.toString());
                         if (!path.getParent().isAbsolute()) {
@@ -52,19 +55,16 @@ public class DesiredCapabilityBuilder {
                         desiredCapabilities.setCapability(caps.toString(), values.toString());
                     }
                 });
-        //Check for web
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID) && !flag[0]) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")
                     .toString() != "UIAutomator2") {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.ANDROID_UIAUTOMATOR2);
+                desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
+                        availablePorts.getPort());
             }
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
-                    availablePorts.getPort());
             appPackage(desiredCapabilities);
-            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                    DeviceManager.getDeviceUDID());
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             appPackageBundle(desiredCapabilities);
             if (iosDevice.getIOSDeviceProductVersion()
@@ -74,9 +74,9 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(IOSMobileCapabilityType
                         .WDA_LOCAL_PORT, availablePorts.getPort());
             }
-            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                    DeviceManager.getDeviceUDID());
         }
+        desiredCapabilities.setCapability(MobileCapabilityType.UDID,
+                DeviceManager.getDeviceUDID());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
         return desiredCapabilities;
     }
