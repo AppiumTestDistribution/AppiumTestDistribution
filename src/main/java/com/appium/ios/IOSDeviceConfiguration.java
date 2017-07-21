@@ -30,7 +30,7 @@ public class IOSDeviceConfiguration {
     String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
             + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'";
 
-    public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Long, Integer> iosDebugProxyProcess = new ConcurrentHashMap<>();
 
 
     public IOSDeviceConfiguration() throws IOException {
@@ -200,16 +200,14 @@ public class IOSDeviceConfiguration {
         String webkitRunner =
                 ios_web_lit_proxy_runner + " -c " + DeviceManager.getDeviceUDID()
                         + ":" + port + " -d";
-        System.out.println(webkitRunner);
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
                 "WebKit Proxy is started on device " + DeviceManager.getDeviceUDID()
-                        + " and with port number " + deviceMap
-                        .get(DeviceManager.getDeviceUDID()) + " and in thread "
+                        + " and with port number " + port + " and in thread "
                         + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
-        appiumServerProcess.put(Thread.currentThread().getId(), getPid(p1));
-        System.out.println("Process ID's:" + appiumServerProcess);
+        iosDebugProxyProcess.put(Thread.currentThread().getId(), getPid(p1));
+        System.out.println("Process ID's:" + iosDebugProxyProcess);
         return String.valueOf(port);
     }
 
@@ -245,8 +243,8 @@ public class IOSDeviceConfiguration {
 
     public void destroyIOSWebKitProxy() throws IOException, InterruptedException {
         Thread.sleep(3000);
-        if (appiumServerProcess.get(Thread.currentThread().getId()) != -1) {
-            String process = "pgrep -P " + appiumServerProcess.get(Thread.currentThread().getId());
+        if (iosDebugProxyProcess.get(Thread.currentThread().getId()) != -1) {
+            String process = "pgrep -P " + iosDebugProxyProcess.get(Thread.currentThread().getId());
             Process p2 = Runtime.getRuntime().exec(process);
             BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
             String command = "kill -9 " + r.readLine();
