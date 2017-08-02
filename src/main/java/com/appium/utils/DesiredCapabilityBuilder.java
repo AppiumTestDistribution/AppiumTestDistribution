@@ -73,7 +73,7 @@ public class DesiredCapabilityBuilder {
 
                 //Check if simulator.json exists and add the deviceName and OS
                 if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                    desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET,true);
+                   // desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET,true);
                     desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                             simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
                                     "iOS").getName());

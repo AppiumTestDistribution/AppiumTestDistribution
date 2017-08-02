@@ -38,7 +38,7 @@ public class SimManager {
                     Device device = simulatorManager.getDevice(simulator.getDeviceName(),
                             simulator.getOS(), "iOS");
                     UDIDS.add(device.getUdid());
-                    simulatorManager.bootSimulator(simulator.getDeviceName(),simulator.getOS(), "iOS");
+                    //simulatorManager.bootSimulator(simulator.getDeviceName(),simulator.getOS(), "iOS");
                     //check for simulator state
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
