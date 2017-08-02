@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class AppiumParallelTestListener
         implements ITestListener, IClassListener, IInvokedMethodListener, ISuiteListener {
@@ -116,7 +117,11 @@ public final class AppiumParallelTestListener
                 JSONObject status = getStatus(json, getExecutionStatus(testResult),
                         String.valueOf(testResult.getThrowable()),
                         getLogDetails, method.getTestMethod().getMethodName(),
-                        testResult.getInstance().getClass().getSimpleName());
+                        testResult.getInstance().getClass().getSimpleName(),
+                        TimeUnit.MILLISECONDS.toSeconds(testResult.getStartMillis())
+                        , TimeUnit.MILLISECONDS.toSeconds(testResult.getEndMillis()),
+                        TimeUnit.MILLISECONDS.toSeconds(testResult.getEndMillis()
+                                - TimeUnit.MILLISECONDS.toSeconds(testResult.getStartMillis())));
 
                 sync(status.toString());
             }
@@ -166,13 +171,17 @@ public final class AppiumParallelTestListener
 
     public JSONObject getStatus(JSONObject json, String status, String error,
                                 HashMap<String, String> deviceLogsPath,
-                                String methodname, String classname) {
+                                String methodname, String classname,
+                                long startTime, long endTime, long totalTime) {
         JSONObject jsonObj = new JSONObject();
         JSONObject logs = new JSONObject();
         jsonObj.put("results", status);
         jsonObj.put("methodname", methodname);
         jsonObj.put("classname", classname);
         jsonObj.put("exceptiontrace", error);
+        jsonObj.put("starttime", startTime);
+        jsonObj.put("endtime", endTime);
+        json.put("totaltime", totalTime);
         deviceLogsPath.forEach((key, value) -> {
             if (key.equals("videoLogs")
                     || key.equals("screenShotFailure")) {
