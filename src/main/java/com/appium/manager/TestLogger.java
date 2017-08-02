@@ -27,6 +27,15 @@ class TestLogger {
     private List<LogEntry> logEntries;
     private PrintWriter log_file_writer;
     private ScreenShotManager screenShotManager;
+    private  String videoPath;
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
+    }
 
     public TestLogger() {
         this.videoRecording = new Flick();
@@ -120,12 +129,10 @@ class TestLogger {
         logs.put("adbLogs", adbPath);
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotFailure;
-            if (new File(System.getProperty("user.dir")
-                    + "/target/" + failedScreen).exists()) {
+            if (new File(failedScreen).exists()) {
                 screenShotFailure = failedScreen;
                 logs.put("screenShotFailure",screenShotFailure);
-            } else if(new File(System.getProperty("user.dir")
-                    + "/target/" + framedFailureScreen).exists()) {
+            } else if(new File(framedFailureScreen).exists()) {
                 screenShotFailure = framedFailureScreen;
                 logs.put("screenShotFailure",screenShotFailure);
             }
