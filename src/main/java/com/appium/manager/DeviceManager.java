@@ -59,4 +59,19 @@ public class DeviceManager {
             return androidDeviceConfiguration.getDeviceModel();
         }
     }
+
+    public String getDeviceVersion() {
+        if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            return androidDeviceConfiguration.deviceOS();
+        } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
+            try {
+                return iosDeviceConfiguration.getIOSDeviceProductVersion();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        throw new IllegalArgumentException("DeviceVersion is Empty");
+    }
 }

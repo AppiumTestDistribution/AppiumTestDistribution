@@ -57,7 +57,7 @@ public class AppiumDriverManager {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.isPresent()
                 ? iOSCaps.get() : desiredCapabilityManager.iosNative();
-
+          Thread.sleep(500 * Thread.currentThread().getId() + 10);
         currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
         return currentDriverSession;
