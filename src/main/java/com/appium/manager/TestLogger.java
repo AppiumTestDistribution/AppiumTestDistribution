@@ -120,10 +120,12 @@ class TestLogger {
         logs.put("adbLogs", adbPath);
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotFailure;
-            if (new File(failedScreen).exists()) {
+            if (new File(System.getProperty("user.dir")
+                    + "/target/" + failedScreen).exists()) {
                 screenShotFailure = failedScreen;
                 logs.put("screenShotFailure",screenShotFailure);
-            } else if(new File(framedFailureScreen).exists()) {
+            } else if(new File(System.getProperty("user.dir")
+                    + "/target/" + framedFailureScreen).exists()) {
                 screenShotFailure = framedFailureScreen;
                 logs.put("screenShotFailure",screenShotFailure);
             }
