@@ -26,6 +26,26 @@ public class ScreenShotManager {
 
     private String screenShotNameWithTimeStamp;
     private ImageUtils imageUtils;
+    private String capturedScreen;
+    private String failedScreen;
+    private String framedFailedScreen;
+    private String framedCapturedScreen;
+
+    public String getFramedCapturedScreen() {
+        return framedCapturedScreen;
+    }
+
+    public void setFramedCapturedScreen(String framedCapturedScreen) {
+        this.framedCapturedScreen = framedCapturedScreen;
+    }
+
+    public String getCapturedScreen() {
+        return capturedScreen;
+    }
+
+    public void setCapturedScreen(String capturedScreen) {
+        this.capturedScreen = capturedScreen;
+    }
 
     public String getFramedFailedScreen() {
         return framedFailedScreen;
@@ -35,8 +55,6 @@ public class ScreenShotManager {
         this.framedFailedScreen = framedFailedScreen;
     }
 
-    private String framedFailedScreen;
-
     public String getFailedScreen() {
         return failedScreen;
     }
@@ -45,7 +63,6 @@ public class ScreenShotManager {
         this.failedScreen = failedScreen;
     }
 
-    public String failedScreen;
 
     public ScreenShotManager() {
         imageUtils = new ImageUtils();
@@ -103,17 +120,17 @@ public class ScreenShotManager {
                         + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
                         + methodName + "_failed" + ".jpeg");
-        String capturedScreen =
+        setCapturedScreen(
                 "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className
                         + "/" + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
-                        + methodName + "_results.jpeg";
-        String framedCapturedScreen =
-                "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
+                        + methodName + "_results.jpeg");
+
+        setFramedCapturedScreen("screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className
                         + "/" + methodName + "/" + model + "_"
-                        + methodName + "_results_framed.jpeg";
+                        + methodName + "_results_framed.jpeg");
         setFramedFailedScreen(
                 "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className
@@ -126,9 +143,10 @@ public class ScreenShotManager {
                             + "/src/test/resources/frames/");
             if (status == ITestResult.FAILURE) {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")
-                        + "/target" + getFailedScreen().trim()));
+                        + "/target/" + getFailedScreen().trim()));
             } else {
-                FileUtils.copyFile(scrFile, new File(capturedScreen.trim()));
+                FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")
+                        + "/target/" + getCapturedScreen().trim()));
             }
 
             File[] files1 = framePath.listFiles();
@@ -150,9 +168,9 @@ public class ScreenShotManager {
                                                     + "/target/" + getFramedFailedScreen());
                                     deleteFile(screenToFrame);
                                 } else {
-                                    String screenToFrame = capturedScreen;
+                                    String screenToFrame = getCapturedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
-                                            framedCapturedScreen);
+                                            getFramedCapturedScreen());
                                     deleteFile(screenToFrame);
                                 }
 
