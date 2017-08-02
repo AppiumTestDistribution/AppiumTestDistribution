@@ -116,7 +116,7 @@ public class AppiumServerManager {
                         .withArgument(GeneralServerFlag.TEMP_DIRECTORY,
                                 new File(String.valueOf(classPathRoot))
                                         .getAbsolutePath() + "/target/" + "tmp_"
-                                        + port).withArgument(GeneralServerFlag.SESSION_OVERRIDE)
+                                        + port)
                         .usingPort(port);
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();

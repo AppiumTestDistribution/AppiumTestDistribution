@@ -154,11 +154,11 @@ public class AndroidDeviceConfiguration {
     /*
      * This method gets the device OS API Level
      */
-    public String deviceOS(String deviceID) {
+    public String deviceOS() {
         String deviceOSLevel = null;
         try {
             deviceOSLevel =
-                    cmd.runCommand("adb -s " + deviceID
+                    cmd.runCommand("adb -s " + DeviceManager.getDeviceUDID()
                             + " shell getprop ro.build.version.release")
                             .replace("\n", "");
         } catch (InterruptedException | IOException e) {
@@ -258,5 +258,10 @@ public class AndroidDeviceConfiguration {
                 validDeviceIds.add(deviceList);
             }
         });
+    }
+
+    public String getDeviceResolution() throws IOException, InterruptedException {
+        return cmd.runCommand("adb -s " + DeviceManager.getDeviceUDID()
+                + "shell wm size").split(":")[1].replace("\n","");
     }
 }
