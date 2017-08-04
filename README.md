@@ -91,6 +91,9 @@ Your should see report file generated as ExtentReport.html under the target fold
 
 [![ScreenShot](http://s29.postimg.org/uln15acdz/Screen_Shot_2016_01_10_at_12_02_10_pm.png)](https://www.youtube.com/watch?v=KfMoJ6dSC3g)
 
+### Parallel Simulator Test
+[![ScreenShot](https://s2.postimg.org/eygv4ueyx/Screen_Shot_2017-08-04_at_3.01.50_PM.png)](https://www.youtube.com/watch?v=X2OaLAqikMI&t=57s)
+
 ## WIP
 iOS WebTest using Safari
 
