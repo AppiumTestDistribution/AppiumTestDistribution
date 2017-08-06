@@ -35,13 +35,11 @@ import java.util.Map;
 public class ParallelThread {
     private ConfigFileManager configFileManager;
     private DeviceAllocationManager deviceAllocationManager;
-    protected int deviceCount = 0;
     Map<String, String> devices = new HashMap<String, String>();
     ArrayList<String> iOSdevices = new ArrayList<>();
     private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
     private MyTestExecutor myTestExecutor;
-    List<Class> testcases;
     private HtmlReporter htmlReporter;
     ExtentManager extentManager;
 
@@ -76,52 +74,34 @@ public class ParallelThread {
         return runner(pack, new ArrayList<String>());
     }
 
-    public boolean triggerTest(String pack, List<String> tests) throws Exception {
+    private boolean triggerTest(String pack, List<String> tests) throws Exception {
         return parallelExecution(pack, tests);
     }
 
-    public boolean parallelExecution(String pack, List<String> tests) throws Exception {
-        String operSys = System.getProperty("os.name").toLowerCase();
-        File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
-        if (!f.exists()) {
-            System.out.println("creating directory: " + "Logs");
-            boolean result = false;
-            try {
-                f.mkdir();
-                result = true;
-            } catch (SecurityException se) {
-                se.printStackTrace();
-            }
-        }
+    private boolean parallelExecution(String pack, List<String> tests) throws Exception {
+        String os = System.getProperty("os.name").toLowerCase();
+        String platform = System.getenv("Platform");
+        int deviceCount = deviceAllocationManager.getDevices().size();
+        createAppiumLogsFolder();
 
-        if (androidDevice.getDevices() != null && System.getenv("Platform")
+
+        if (androidDevice.getDevices() != null && platform
                 .equalsIgnoreCase("android")
-                || System.getenv("Platform").equalsIgnoreCase("Both")) {
-            devices = androidDevice.getDevices();
-            deviceCount = devices.size() / 4;
-            File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
-            if (!adb_logs.exists()) {
-                System.out.println("creating directory: " + "ADBLogs");
-                boolean result = false;
-                try {
-                    adb_logs.mkdir();
-                    result = true;
-                } catch (SecurityException se) {
-                    se.printStackTrace();
-                }
-            }
+                || platform.equalsIgnoreCase("Both")) {
+            createAdblogs();
             createSnapshotFolderAndroid("android");
         }
 
-        if (operSys.contains("mac") && System.getenv("Platform").equalsIgnoreCase("iOS")
-                || System.getenv("Platform").equalsIgnoreCase("Both")) {
-            if (deviceAllocationManager.getDevices().size() > 0) {
+
+
+        if (os.contains("mac") && platform.equalsIgnoreCase("iOS")
+                || platform.equalsIgnoreCase("Both")) {
+            if (deviceCount > 0) {
                 iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-                iOSdevices = deviceAllocationManager.getDevices();
-                deviceCount = iOSdevices.size();
                 createSnapshotFolderiOS("iPhone");
             }
         }
+
         if (deviceCount == 0) {
             figlet("No Devices Connected");
             System.exit(0);
@@ -131,38 +111,34 @@ public class ParallelThread {
         System.out.println("***************************************************\n");
         System.out.println("starting running tests in threads");
 
-        testcases = new ArrayList<Class>();
+        List<Class> testcases = new ArrayList<>();
 
         boolean hasFailures = false;
-        if (configFileManager.getProperty("FRAMEWORK").equalsIgnoreCase("testng")) {
+        String runner = configFileManager.getProperty("RUNNER");
+        String framework = configFileManager.getProperty("FRAMEWORK");
+
+
+        if (framework.equalsIgnoreCase("testng")) {
             // final String pack = "com.paralle.tests"; // Or any other package
             PackageUtil.getClasses(pack).stream().forEach(s -> {
                 if (s.toString().contains("Test")) {
                     testcases.add((Class) s);
                 }
             });
-
-            if (configFileManager.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
-                hasFailures = myTestExecutor
-                        .runMethodParallelAppium(tests, pack, deviceCount,
-                                "distribute");
-
-            }
-            if (configFileManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-                hasFailures = myTestExecutor
-                        .runMethodParallelAppium(tests, pack, deviceCount,
-                                "parallel");
-            }
+            String executionType = runner.equalsIgnoreCase("distribute") ? "distribute": "parallel";
+            hasFailures = myTestExecutor
+                    .runMethodParallelAppium(tests, pack, deviceCount,
+                            executionType);
         }
 
-        if (configFileManager.getProperty("FRAMEWORK").equalsIgnoreCase("cucumber")) {
+        if (framework.equalsIgnoreCase("cucumber")) {
             //addPluginToCucumberRunner();
-            if (configFileManager.getProperty("RUNNER").equalsIgnoreCase("distribute")) {
+            if (runner.equalsIgnoreCase("distribute")) {
                 myTestExecutor
                         .constructXmlSuiteDistributeCucumber(deviceCount,
                                 deviceAllocationManager.getDevices());
                 hasFailures = myTestExecutor.runMethodParallel();
-            } else if (configFileManager.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
+            } else if (runner.equalsIgnoreCase("parallel")) {
                 //addPluginToCucumberRunner();
                 myTestExecutor
                         .constructXmlSuiteForParallelCucumber(deviceCount,
@@ -174,7 +150,31 @@ public class ParallelThread {
         return hasFailures;
     }
 
-    public void createSnapshotFolderAndroid(String platform) throws Exception {
+    private void createAdblogs() {
+        File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+        if (!adb_logs.exists()) {
+            System.out.println("creating directory: " + "ADBLogs");
+            try {
+                adb_logs.mkdir();
+            } catch (SecurityException se) {
+                se.printStackTrace();
+            }
+        }
+    }
+
+    private void createAppiumLogsFolder() {
+        File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
+        if (!f.exists()) {
+            System.out.println("creating directory: " + "Logs");
+            try {
+                f.mkdir();
+            } catch (SecurityException se) {
+                se.printStackTrace();
+            }
+        }
+    }
+
+    private void createSnapshotFolderAndroid(String platform) throws Exception {
         for (int i = 1; i <= (devices.size() / 4); i++) {
             String deviceSerial = devices.get("deviceID" + i);
             if (deviceSerial != null) {
@@ -193,7 +193,7 @@ public class ParallelThread {
         }
     }
 
-    public void createSnapshotFolderiOS(String platform) {
+    private void createSnapshotFolderiOS(String platform) {
         for (int i = 0; i < iOSdevices.size(); i++) {
             String deviceSerial = iOSdevices.get(i);
             createPlatformDirectory(platform);
@@ -212,14 +212,9 @@ public class ParallelThread {
 
 
     public void createPlatformDirectory(String platform) {
-        File file2 = new File(System.getProperty("user.dir") + "/target/screenshot");
-        if (!file2.exists()) {
-            file2.mkdir();
-        }
-
-        File file3 = new File(System.getProperty("user.dir") + "/target/screenshot/" + platform);
-        if (!file3.exists()) {
-            file3.mkdir();
+        File platformDirectory = new File(System.getProperty("user.dir") + "/target/screenshot/" + platform);
+        if (!platformDirectory.exists()) {
+            platformDirectory.mkdirs();
         }
     }
 

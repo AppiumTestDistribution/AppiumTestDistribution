@@ -38,7 +38,7 @@ public class IOSDeviceConfiguration {
         prop = ConfigFileManager.getInstance();
     }
 
-    public ArrayList<String> getIOSUDID() {
+    public ArrayList<String> getIOSUDIDs() {
 
         try {
             int startPos = 0;
