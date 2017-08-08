@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public final class AppiumParallelTestListener
@@ -29,6 +30,9 @@ public final class AppiumParallelTestListener
 
     List<String> syncal =
             Collections.synchronizedList(new ArrayList<String>());
+
+    public static Map<String,String> userLogs =
+            Collections.synchronizedMap(new HashMap<String,String>());
 
     public AppiumParallelTestListener() throws Exception {
         try {
@@ -165,7 +169,7 @@ public final class AppiumParallelTestListener
     }
 
     @Override
-    public void onFinish(ITestContext context) {
+    public void onFinish(ITestContext iTestContext) {
 
     }
 
@@ -227,6 +231,8 @@ public final class AppiumParallelTestListener
             }
         }
         try {
+            userLogs.put("Appium","1.6.6.beta4");
+            jsonArray.put(new JSONObject().put("userMetaData",userLogs));
             file.write(jsonArray.toString());
             file.close();
         } catch (IOException e) {
