@@ -33,7 +33,7 @@ public final class AppiumParallelTestListener
 
     public static Map<String,String> userLogs =
             Collections.synchronizedMap(new HashMap<String,String>());
-
+    
     public AppiumParallelTestListener() throws Exception {
         try {
             reportManager = new ReportManager();
