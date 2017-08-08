@@ -1,5 +1,6 @@
 package com.test.site;
 
+import com.appium.manager.AppiumParallelTestListener;
 import com.appium.manager.ParallelThread;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -17,8 +18,10 @@ public class Runner {
         List<String> deviceList = Arrays.asList(parts);
         System.out.println(deviceList);*/
         ParallelThread parallelThread = new ParallelThread();
+        AppiumParallelTestListener.userLogs.put("Build","1.9.0");
         List<String> tests = new ArrayList<>();
         tests.add("HomePageTest2");
+        //tests.add("HomePageTest3");
         boolean hasFailures = parallelThread.runner("com.test.site",tests);
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
     }
