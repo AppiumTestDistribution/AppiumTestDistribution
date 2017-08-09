@@ -27,6 +27,15 @@ class TestLogger {
     private List<LogEntry> logEntries;
     private PrintWriter log_file_writer;
     private ScreenShotManager screenShotManager;
+    private  String videoPath;
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
+    }
 
     public TestLogger() {
         this.videoRecording = new Flick();
@@ -250,4 +259,6 @@ class TestLogger {
 
         }
     }
+
+
 }
