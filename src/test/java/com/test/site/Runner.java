@@ -2,11 +2,11 @@ package com.test.site;
 
 import com.appium.manager.AppiumParallelTestListener;
 import com.appium.manager.ParallelThread;
+import com.report.factory.ExtentManager;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Runner {
@@ -18,7 +18,7 @@ public class Runner {
         List<String> deviceList = Arrays.asList(parts);
         System.out.println(deviceList);*/
         ParallelThread parallelThread = new ParallelThread();
-        AppiumParallelTestListener.userLogs.put("Build","1.9.0");
+        ExtentManager.setSystemInfoInReport("version","1.0.0");
         List<String> tests = new ArrayList<>();
         tests.add("HomePageTest2");
         //tests.add("HomePageTest3");

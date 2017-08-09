@@ -38,6 +38,7 @@ public class DesiredCapabilityBuilder {
     }
 
     public DesiredCapabilities buildDesiredCapability(String jsonPath) throws Exception {
+        final boolean[] flag = {false};
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         jsonParsedObject
@@ -55,25 +56,21 @@ public class DesiredCapabilityBuilder {
                         desiredCapabilities.setCapability(caps.toString(), values.toString());
                     }
                 });
-        //Check for web
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID) && !flag[0]) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")
                     .toString() != "UIAutomator2") {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.ANDROID_UIAUTOMATOR2);
+                desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
+                        availablePorts.getPort());
             }
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
-                    availablePorts.getPort());
             appPackage(desiredCapabilities);
-            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                    DeviceManager.getDeviceUDID());
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             appPackageBundle(desiredCapabilities);
 
                 //Check if simulator.json exists and add the deviceName and OS
                 if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                   // desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET,true);
                     desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                             simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
                                     "iOS").getName());
@@ -81,16 +78,17 @@ public class DesiredCapabilityBuilder {
                             simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
                                     "iOS").getOsVersion());
                 }
-
-//                if(Float.valueOf(iosDevice.getIOSDeviceProductVersion()) >= 10.0) {
+                if(Float.valueOf(iosDevice.getIOSDeviceProductVersion()) >= 10.0) {
                     desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                             AutomationName.IOS_XCUI_TEST);
                     desiredCapabilities.setCapability(IOSMobileCapabilityType
                             .WDA_LOCAL_PORT, availablePorts.getPort());
-//                }
+                }
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                     DeviceManager.getDeviceUDID());
         }
+        desiredCapabilities.setCapability(MobileCapabilityType.UDID,
+                DeviceManager.getDeviceUDID());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
         return desiredCapabilities;
     }
