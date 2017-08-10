@@ -72,7 +72,8 @@ class TestLogger {
         }
     }
 
-    public HashMap<String, String> endLog(ITestResult result, String deviceModel, ThreadLocal<ExtentTest> test)
+    public HashMap<String, String> endLog(ITestResult result, String deviceModel,
+                                          ThreadLocal<ExtentTest> test)
             throws IOException, InterruptedException {
         HashMap<String,String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
@@ -133,7 +134,7 @@ class TestLogger {
                     + "/target/" + failedScreen).exists()) {
                 screenShotFailure = failedScreen;
                 logs.put("screenShotFailure",screenShotFailure);
-            } else if(new File(System.getProperty("user.dir")
+            } else if (new File(System.getProperty("user.dir")
                     + "/target/" + framedFailureScreen).exists()) {
                 screenShotFailure = framedFailureScreen;
                 logs.put("screenShotFailure",screenShotFailure);

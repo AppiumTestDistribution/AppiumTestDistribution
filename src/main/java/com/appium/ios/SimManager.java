@@ -62,6 +62,7 @@ public class SimManager {
         }
         return iOS;
     }
+
     public class Simulator {
         public String getOS() {
 

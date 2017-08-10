@@ -33,10 +33,10 @@ public class DeviceManager {
     }
 
     public static MobilePlatform getMobilePlatform() {
-        if (DeviceManager.getDeviceUDID().length() ==
-                IOSDeviceConfiguration.IOS_UDID_LENGTH
-                || DeviceManager.getDeviceUDID().length() ==
-                IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+        if (DeviceManager.getDeviceUDID().length()
+                == IOSDeviceConfiguration.IOS_UDID_LENGTH
+                || DeviceManager.getDeviceUDID().length()
+                == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
             return MobilePlatform.IOS;
         } else {
             return MobilePlatform.ANDROID;

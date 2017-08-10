@@ -10,7 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {
@@ -49,7 +52,7 @@ public class IOSDeviceConfiguration {
             e.printStackTrace();
         }
         if (device_platform.contains("simulator")) {
-            if(xcode_version.contains("9")) {
+            if (xcode_version.contains("9")) {
                 deviceUDIDiOS = simulatorManager.getAllSimulatorUDIDs();
             } else {
                 new RuntimeException("Xcode version should be 9.0 to run parallel simulators");
@@ -57,7 +60,7 @@ public class IOSDeviceConfiguration {
 
         }
 
-        if(device_platform.contains("device")) {
+        if (device_platform.contains("device")) {
             try {
                 int startPos = 0;
                 int endPos = IOS_UDID_LENGTH - 1;
@@ -156,12 +159,13 @@ public class IOSDeviceConfiguration {
 
     public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
         if (DeviceManager.getDeviceUDID().length() == IOS_UDID_LENGTH) {
-           return commandPrompt
+            return commandPrompt
                     .runCommandThruProcessBuilder("ideviceinfo --udid "
                             + DeviceManager.getDeviceUDID()
                             + " | grep ProductVersion").split(":")[1].replace("\n", "");
         } else {
-            return simulatorManager.getSimulatorDetails(DeviceManager.getDeviceUDID()).getOsVersion();
+            return simulatorManager.getSimulatorDetails(DeviceManager.getDeviceUDID())
+                    .getOsVersion();
         }
     }
 

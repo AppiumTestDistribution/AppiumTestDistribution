@@ -39,7 +39,8 @@ public class ReportManager {
         testLogger.startLogging(methodName, className);
     }
 
-    public HashMap<String, String> endLogTestResults(ITestResult result) throws IOException, InterruptedException {
+    public HashMap<String, String> endLogTestResults(ITestResult result)
+            throws IOException, InterruptedException {
         return testLogger.endLog(result, deviceManager.getDeviceModel(), test);
     }
 

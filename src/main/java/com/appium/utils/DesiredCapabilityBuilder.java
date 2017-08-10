@@ -69,21 +69,22 @@ public class DesiredCapabilityBuilder {
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             appPackageBundle(desiredCapabilities);
 
-                //Check if simulator.json exists and add the deviceName and OS
-                if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                    desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                            simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
-                                    "iOS").getName());
-                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                            simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
-                                    "iOS").getOsVersion());
-                }
-                if(Float.valueOf(iosDevice.getIOSDeviceProductVersion()) >= 10.0) {
-                    desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                            AutomationName.IOS_XCUI_TEST);
-                    desiredCapabilities.setCapability(IOSMobileCapabilityType
-                            .WDA_LOCAL_PORT, availablePorts.getPort());
-                }
+            //Check if simulator.json exists and add the deviceName and OS
+            if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
+                        simulatorManager.getSimulatorDetailsFromUDID(
+                                DeviceManager.getDeviceUDID(),
+                                "iOS").getName());
+                desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
+                        simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
+                                "iOS").getOsVersion());
+            }
+            if (Float.valueOf(iosDevice.getIOSDeviceProductVersion()) >= 10.0) {
+                desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
+                        AutomationName.IOS_XCUI_TEST);
+                desiredCapabilities.setCapability(IOSMobileCapabilityType
+                        .WDA_LOCAL_PORT, availablePorts.getPort());
+            }
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                     DeviceManager.getDeviceUDID());
         }

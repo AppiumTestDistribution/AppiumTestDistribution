@@ -31,6 +31,8 @@
 
     <module name="TreeWalker">
         <module name="OuterTypeFilename"/>
+        <!-- Make the @SuppressWarnings annotations available to Checkstyle -->
+        <module name="SuppressWarningsHolder"/>
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
             <property name="format"
@@ -147,7 +149,6 @@
             <property name="ignoreFinal" value="false"/>
             <property name="allowedAbbreviationLength" value="8"/>
         </module>
-        <module name="OverloadMethodsDeclarationOrder"/>
         <module name="VariableDeclarationUsageDistance"/>
         <module name="CustomImportOrder">
             <property name="specialImportsRegExp" value="com.google"/>

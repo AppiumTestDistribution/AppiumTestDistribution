@@ -7,7 +7,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.testng.*;
+import org.testng.IClassListener;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
+import org.testng.ITestClass;
+import org.testng.ITestContext;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+import org.testng.SkipException;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -122,8 +131,8 @@ public final class AppiumParallelTestListener
                         String.valueOf(testResult.getThrowable()),
                         getLogDetails, method.getTestMethod().getMethodName(),
                         testResult.getInstance().getClass().getSimpleName(),
-                        TimeUnit.MILLISECONDS.toSeconds(testResult.getStartMillis())
-                        , TimeUnit.MILLISECONDS.toSeconds(testResult.getEndMillis()),
+                        TimeUnit.MILLISECONDS.toSeconds(testResult.getStartMillis()),
+                        TimeUnit.MILLISECONDS.toSeconds(testResult.getEndMillis()),
                         TimeUnit.MILLISECONDS.toSeconds(testResult.getEndMillis()
                                 - TimeUnit.MILLISECONDS.toSeconds(testResult.getStartMillis())));
 
@@ -200,15 +209,16 @@ public final class AppiumParallelTestListener
         return json;
     }
 
+    @Override
+    public void onStart(ISuite iSuite) {
+
+    }
+
     private void sync(String message) {
         //Adding elements to synchronized ArrayList
         syncal.add(message);
     }
 
-    @Override
-    public void onStart(ISuite iSuite) {
-
-    }
 
     @Override
     public void onFinish(ISuite iSuite) {
