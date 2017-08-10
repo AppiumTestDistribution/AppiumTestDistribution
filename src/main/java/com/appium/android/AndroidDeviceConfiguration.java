@@ -15,7 +15,6 @@ public class AndroidDeviceConfiguration {
     private CommandPrompt cmd = new CommandPrompt();
     private Map<String, String> devices = new HashMap<String, String>();
     public static ArrayList<String> deviceSerial = new ArrayList<String>();
-    ArrayList<String> deviceModel = new ArrayList<String>();
     public static List<String> validDeviceIds = new ArrayList<>();
 
     /**

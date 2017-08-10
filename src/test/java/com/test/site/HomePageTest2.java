@@ -4,16 +4,6 @@ package com.test.site;
 import com.annotation.values.Author;
 import com.annotation.values.Description;
 import com.appium.manager.AppiumDriverManager;
-import com.appium.utils.ScreenShotManager;
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.ios.IOSTouchAction;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 

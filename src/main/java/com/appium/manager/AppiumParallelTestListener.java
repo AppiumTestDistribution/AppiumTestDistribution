@@ -172,11 +172,17 @@ public final class AppiumParallelTestListener
 
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onStart(ITestContext context) {
 
     }
 
+    /*
+     Document to make codacy happy
+     */
     @Override
     public void onFinish(ITestContext iTestContext) {
 
@@ -196,8 +202,8 @@ public final class AppiumParallelTestListener
         jsonObj.put("endtime", endTime);
         json.put("totaltime", totalTime);
         deviceLogsPath.forEach((key, value) -> {
-            if (key.equals("videoLogs")
-                    || key.equals("screenShotFailure")) {
+            if ("videoLogs".equals(key)
+                    || "screenShotFailure".equals(key)) {
                 if (new File(value).exists()) {
                     logs.put(key, value);
                 }
@@ -209,6 +215,9 @@ public final class AppiumParallelTestListener
         return json;
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onStart(ISuite iSuite) {
 

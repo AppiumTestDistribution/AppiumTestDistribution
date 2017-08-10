@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by saikrisv on 27/05/16.
  */
 public class SimManager {
-    SimulatorManager simulatorManager = new SimulatorManager();
+    private SimulatorManager simulatorManager = new SimulatorManager();
 
     public ArrayList<String> getAllSimulatorUDIDs() {
         ArrayList<String> UDIDS = new ArrayList<>();
@@ -24,11 +24,10 @@ public class SimManager {
             Object obj = parser.parse(new FileReader(System.getProperty("user.dir") + "/caps/"
                     + "simulator.json"));
             JSONObject jsonObject = (JSONObject) obj;
-            JSONArray msg = (JSONArray) jsonObject.get("simulators");
             ((JSONArray) jsonObject.get("simulators")).forEach(o -> {
                 Simulator simulator = new Simulator();
                 ((JSONObject) o).forEach((key, value) -> {
-                    if (key.equals("OS")) {
+                    if ("OS".equals(key)) {
                         simulator.OS = (java.lang.String) value;
                     } else {
                         simulator.DeviceName = (java.lang.String) value;
@@ -64,6 +63,10 @@ public class SimManager {
     }
 
     public class Simulator {
+        private String OS;
+
+        private String DeviceName;
+
         public String getOS() {
 
             return OS;
@@ -73,8 +76,6 @@ public class SimManager {
             this.OS = OS;
         }
 
-        private String OS;
-
         public String getDeviceName() {
             return DeviceName;
         }
@@ -83,7 +84,6 @@ public class SimManager {
             DeviceName = deviceName;
         }
 
-        private String DeviceName;
     }
 }
 

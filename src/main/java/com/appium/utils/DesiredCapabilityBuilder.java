@@ -43,7 +43,7 @@ public class DesiredCapabilityBuilder {
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         jsonParsedObject
                 .forEach((caps, values) -> {
-                    if (caps.equals("app")) {
+                    if ("app".equals(caps)) {
                         Path path = FileSystems.getDefault().getPath(values.toString());
                         if (!path.getParent().isAbsolute()) {
                             desiredCapabilities.setCapability(caps.toString(), path.normalize()
