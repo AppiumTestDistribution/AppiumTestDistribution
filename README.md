@@ -9,31 +9,13 @@
 
 ![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/Network-2.gif)
 
-Add the below dependencies in your pom.xml (Release)
-
-```
-<dependency>
-    <groupId>com.github.saikrishna321</groupId>
-    <artifactId>AppiumTestDistribution</artifactId>
-    <version>6.0.1</version>
-</dependency>
-```
-
-```
-<repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-</repositories>
-```
 Add the below dependencies in your pom.xml (Master)
 
 ```
 <dependency>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>a7fe0c9</version>
+    <version>09c4398</version>
 </dependency>
 ```
 
@@ -64,6 +46,9 @@ Add the below dependencies in your pom.xml (Master)
 ## [Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
 
 ## Video log Prerequisites
+* Install flick
+    * ```$ gem install flick```
+
 * Install ffmpeg. [OSX](https://trac.ffmpeg.org/wiki/CompilationGuide/MacOSX)
 	* ```$ brew update```
 	* ```$ brew install ffmpeg```
@@ -95,7 +80,7 @@ Your should see report file generated as ExtentReport.html under the target fold
 [![ScreenShot](https://s2.postimg.org/eygv4ueyx/Screen_Shot_2017-08-04_at_3.01.50_PM.png)](https://www.youtube.com/watch?v=X2OaLAqikMI&t=57s)
 
 ## WIP
-iOS WebTest using Safari
+Run Parallel tests across iOS devices and Simulators.
 
 ## FAQ
 **Q. Can I automate application which I already have installed/ downloaded from App store?**
@@ -104,7 +89,7 @@ A. No, Appium can only instruments application which is in debug mode, it will n
 
 **Q. Is this framework supports to run multiple IOS simulators?**
 
-A. No, Currently Appium does not support multiple simulators, it  will be supported in Appium's future releases.
+A. Yes, Currently Appium does support multiple simulators with latest 1.6.6.beta with Xcode9-beta.
 
 **Q. Unable to instruments application or instruments crashed on start up?**
 
