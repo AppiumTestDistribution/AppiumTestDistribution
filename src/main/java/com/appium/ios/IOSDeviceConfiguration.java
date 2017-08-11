@@ -5,10 +5,8 @@ import com.appium.manager.DeviceManager;
 import com.appium.utils.AvailablePorts;
 import com.appium.utils.CommandPrompt;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -188,7 +186,6 @@ public class IOSDeviceConfiguration {
 
     public String startIOSWebKit() throws IOException, InterruptedException {
         setIOSWebKitProxyPorts();
-
         String webkitRunner = "ios_webkit_debug_proxy -c " + DeviceManager.getDeviceUDID() + ":"
                 + deviceMap.get(DeviceManager.getDeviceUDID());
         p1 = Runtime.getRuntime().exec(webkitRunner);
