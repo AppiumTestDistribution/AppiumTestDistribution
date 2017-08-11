@@ -3,6 +3,7 @@ package com.appium.utils;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.DeviceManager;
+import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -21,12 +22,15 @@ public class DesiredCapabilityBuilder {
 
     private AvailablePorts availablePorts;
     private IOSDeviceConfiguration iosDevice;
+    private SimulatorManager simulatorManager;
+
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
 
     public DesiredCapabilityBuilder() throws IOException {
         availablePorts = new AvailablePorts();
         iosDevice = new IOSDeviceConfiguration();
+        simulatorManager = new SimulatorManager();
     }
 
     public static DesiredCapabilities getDesiredCapability() {
@@ -39,10 +43,7 @@ public class DesiredCapabilityBuilder {
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         jsonParsedObject
                 .forEach((caps, values) -> {
-                    if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
-                        flag[0] = true;
-                    }
-                    if (caps.equals("app")) {
+                    if ("app".equals(caps)) {
                         Path path = FileSystems.getDefault().getPath(values.toString());
                         if (!path.getParent().isAbsolute()) {
                             desiredCapabilities.setCapability(caps.toString(), path.normalize()
@@ -67,13 +68,25 @@ public class DesiredCapabilityBuilder {
             appPackage(desiredCapabilities);
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             appPackageBundle(desiredCapabilities);
-            if (iosDevice.getIOSDeviceProductVersion()
-                    .contains("10")) {
+
+            //Check if simulator.json exists and add the deviceName and OS
+            if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
+                        simulatorManager.getSimulatorDetailsFromUDID(
+                                DeviceManager.getDeviceUDID(),
+                                "iOS").getName());
+                desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
+                        simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
+                                "iOS").getOsVersion());
+            }
+            if (Float.valueOf(iosDevice.getIOSDeviceProductVersion()) >= 10.0) {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.IOS_XCUI_TEST);
                 desiredCapabilities.setCapability(IOSMobileCapabilityType
                         .WDA_LOCAL_PORT, availablePorts.getPort());
             }
+            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
+                    DeviceManager.getDeviceUDID());
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                 DeviceManager.getDeviceUDID());

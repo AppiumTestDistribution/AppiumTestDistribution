@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -26,6 +27,15 @@ class TestLogger {
     private List<LogEntry> logEntries;
     private PrintWriter log_file_writer;
     private ScreenShotManager screenShotManager;
+    private  String videoPath;
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
+    }
 
     public TestLogger() {
         this.videoRecording = new Flick();
@@ -62,14 +72,21 @@ class TestLogger {
         }
     }
 
-    public void endLog(ITestResult result, String deviceModel, ThreadLocal<ExtentTest> test)
+    public HashMap<String, String> endLog(ITestResult result, String deviceModel,
+                                          ThreadLocal<ExtentTest> test)
             throws IOException, InterruptedException {
+        HashMap<String,String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
         stopViewRecording(result, className);
+        String adbPath = "adblogs/"
+                + DeviceManager.getDeviceUDID()
+                + "__"
+                + result.getMethod().getMethodName()
+                + ".txt";
 
         if (result.isSuccess()) {
             test.get().log(Status.PASS, result.getMethod().getMethodName());
-            getAdbLogs(result, test);
+            getAdbLogs(result, adbPath, test);
         }
         /*
          * Failure Block
@@ -83,59 +100,48 @@ class TestLogger {
         }
 
         if (System.getenv("VIDEO_LOGS") != null) {
+            setVideoPath("screenshot/" + DeviceManager.getMobilePlatform()
+                    .toString().toLowerCase()
+                    + "/" + DeviceManager.getDeviceUDID()
+                    + "/" + className + "/" + result.getMethod()
+                    .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
+            logs.put("videoLogs", getVideoPath());
             if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                String videoFilePath = System.getProperty("user.dir")
-                        + "/target/screenshot/android/" + DeviceManager.getDeviceUDID()
-                        + "/" + className + "/" + result.getMethod()
-                        .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4";
-                boolean exists = new File(videoFilePath)
+                boolean exists = new File(getVideoPath())
                         .exists();
-                System.out.println("****************" + exists + videoFilePath);
+                System.out.println("****************" + exists + getVideoPath());
                 if (exists) {
                     test.get().log(Status.INFO, "<a target=\"_parent\" href="
-                            + "screenshot/android/" + DeviceManager.getDeviceUDID()
-                            + "/" + className
-                            + "/" + result.getMethod().getMethodName()
-                            + "/" + result.getMethod()
-                            .getMethodName() + ".mp4" + ">Videologs</a>");
+                            + getVideoPath() + ">Videologs</a>");
                 }
 
             } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-
-                String iosVideoFilePath = System.getProperty("user.dir")
-                        + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()
-                        + "/" + className + "/" + result.getMethod()
-                        .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4";
-                if (new File(iosVideoFilePath)
+                if (new File(getVideoPath())
                         .exists()) {
                     test.get().log(Status.INFO, "<a target=\"_parent\" href="
-                            + "screenshot/iOS/" + DeviceManager.getDeviceUDID()
-                            + "/" + className
-                            + "/" + result.getMethod().getMethodName() + "/" + result.getMethod()
-                            .getMethodName() + ".mp4" + ">Videologs</a>");
+                            + getVideoPath() + ">Videologs</a>");
                 }
             }
 
         }
-        ExtentManager.getExtent().flush();
-    }
+        String failedScreen = screenShotManager.getFailedScreen();
+        String framedFailureScreen = screenShotManager.getFramedFailedScreen();
 
-    public String getClassName(String s) {
-        final String classNameCur = s.substring(1);
-        final Package[] packages = Package.getPackages();
-        String className = null;
-        for (final Package p : packages) {
-            final String pack = p.getName();
-            final String tentative = pack + "." + classNameCur;
-            try {
-                Class.forName(tentative);
-            } catch (final ClassNotFoundException e) {
-                continue;
+        logs.put("adbLogs", adbPath);
+        if (result.getStatus() == ITestResult.FAILURE) {
+            String screenShotFailure;
+            if (new File(System.getProperty("user.dir")
+                    + "/target/" + failedScreen).exists()) {
+                screenShotFailure = failedScreen;
+                logs.put("screenShotFailure",screenShotFailure);
+            } else if (new File(System.getProperty("user.dir")
+                    + "/target/" + framedFailureScreen).exists()) {
+                screenShotFailure = framedFailureScreen;
+                logs.put("screenShotFailure",screenShotFailure);
             }
-            className = tentative;
-            break;
         }
-        return className;
+        ExtentManager.getExtent().flush();
+        return logs;
     }
 
     private void stopViewRecording(ITestResult result, String className)
@@ -168,21 +174,17 @@ class TestLogger {
         }
     }
 
-    public void getAdbLogs(ITestResult result,
+    public void getAdbLogs(ITestResult result, String adbPath,
                            ThreadLocal<ExtentTest> test) {
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-            && AppiumDriverManager.getDriver().getCapabilities()
-            .getCapability("browserName") == null) {
+                && AppiumDriverManager.getDriver().getCapabilities()
+                .getCapability("browserName") == null) {
             log_file_writer.println(logEntries);
             log_file_writer.close();
             test.get().log(Status.INFO,
-                "<a target=\"_parent\" href=" + "adblogs/"
-                    + DeviceManager.getDeviceUDID()
-                    + "__"
-                    + result.getMethod().getMethodName()
-                    + ".txt" + ">AdbLogs</a>");
+                    "<a target=\"_parent\" href=" + adbPath + ">AdbLogs</a>");
             System.out.println(AppiumDriverManager.getDriver()
-                .getSessionId() + ": Saving device log - Done.");
+                    .getSessionId() + ": Saving device log - Done.");
         }
     }
 
@@ -202,7 +204,7 @@ class TestLogger {
                 File framedImageAndroid = new File(
                         System.getProperty("user.dir")
                                 + "/target/screenshot/android/" + DeviceManager
-                            .getDeviceUDID()
+                                .getDeviceUDID()
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
@@ -249,8 +251,15 @@ class TestLogger {
                 }
 
             }
-            getAdbLogs(result, test);
+            String adbPath = "adblogs/"
+                    + DeviceManager.getDeviceUDID()
+                    + "__"
+                    + result.getMethod().getMethodName()
+                    + ".txt";
+            getAdbLogs(result, adbPath, test);
 
         }
     }
+
+
 }

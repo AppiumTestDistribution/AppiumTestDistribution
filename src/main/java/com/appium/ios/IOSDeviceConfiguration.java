@@ -26,50 +26,72 @@ public class IOSDeviceConfiguration {
     public Process p;
     public Process p1;
     public static List<String> validDeviceIds = new ArrayList<>();
+    private SimManager simulatorManager;
 
     public final static int IOS_UDID_LENGTH = 40;
+    public final static int SIM_UDID_LENGTH = 36;
     String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
             + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'";
 
-    public static ConcurrentHashMap<Long, Integer> appiumServerProcess = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Long, Integer> iosDebugProxyProcess = new ConcurrentHashMap<>();
 
 
     public IOSDeviceConfiguration() throws IOException {
         prop = ConfigFileManager.getInstance();
+        simulatorManager = new SimManager();
     }
 
     public ArrayList<String> getIOSUDID() {
-
+        String device_platform = prop.getProperty("DEVICE_PLATFORM");
+        String xcode_version = "";
         try {
-            int startPos = 0;
-            int endPos = IOS_UDID_LENGTH - 1;
-            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
-            if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
-                    .isEmpty()) {
-                throw new IllegalArgumentException("No IOS devices found");
-            } else {
-                while (endPos < getIOSDeviceID.length()) {
-                    if (validDeviceIds.size() > 0) {
-                        if (validDeviceIds.contains(
-                                getIOSDeviceID.substring(startPos, endPos + 1))) {
-                            if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
-                                deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
-                                        .replace("\n", ""));
-                            }
-                        }
-                    } else {
-                        deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
-                                .replace("\n", ""));
-                    }
-                    startPos += IOS_UDID_LENGTH;
-                    endPos += IOS_UDID_LENGTH;
-                }
-                return deviceUDIDiOS;
-            }
-        } catch (InterruptedException | IOException e) {
+            xcode_version = commandPrompt.runCommand("xcodebuild -version");
+        } catch (InterruptedException e) {
             e.printStackTrace();
-            throw new IllegalStateException("Failed to fetch iOS device connected");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        if (device_platform.contains("simulator")) {
+            if (xcode_version.contains("9")) {
+                deviceUDIDiOS = simulatorManager.getAllSimulatorUDIDs();
+            } else {
+                new RuntimeException("Xcode version should be 9.0 to run parallel simulators");
+            }
+
+        }
+
+        if (device_platform.contains("device")) {
+            try {
+                int startPos = 0;
+                int endPos = IOS_UDID_LENGTH - 1;
+                String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
+                if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
+                        .isEmpty()) {
+                    throw new IllegalArgumentException("No IOS devices found");
+                } else {
+                    while (endPos < getIOSDeviceID.length()) {
+                        if (validDeviceIds.size() > 0) {
+                            if (validDeviceIds.contains(
+                                    getIOSDeviceID.substring(startPos, endPos + 1))) {
+                                if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
+                                    deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
+                                            .replace("\n", ""));
+                                }
+                            }
+                        } else {
+                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
+                                    .replace("\n", ""));
+                        }
+                        startPos += IOS_UDID_LENGTH;
+                        endPos += IOS_UDID_LENGTH;
+                    }
+                }
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+                throw new IllegalStateException("Failed to fetch iOS device connected");
+            }
+        }
+        return deviceUDIDiOS;
     }
 
     /**
@@ -112,27 +134,39 @@ public class IOSDeviceConfiguration {
      * @throws InterruptedException
      * @throws IOException          Need to fix bug not fetching the version and product type for
      *                              report category
+     *                              iPhone 7,1
      */
 
     public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
-        return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid "
-                        + DeviceManager.getDeviceUDID() + " | grep ProductType");
+        if (DeviceManager.getDeviceUDID().length() == IOS_UDID_LENGTH) {
+            return commandPrompt
+                    .runCommandThruProcessBuilder("ideviceinfo --udid "
+                            + DeviceManager.getDeviceUDID() + " | grep ProductType");
+        } else {
+            return simulatorManager.getSimulatorDetails(DeviceManager.getDeviceUDID()).getName();
+        }
     }
 
     public String getDeviceName() throws InterruptedException, IOException {
-        String deviceName =
-                commandPrompt.runCommand("idevicename --udid "
-                        + DeviceManager.getDeviceUDID());
-        return deviceName;
+        if (DeviceManager.getDeviceUDID().length() == IOS_UDID_LENGTH) {
+            return commandPrompt.runCommand("idevicename --udid "
+                    + DeviceManager.getDeviceUDID());
+        } else {
+            return simulatorManager.getSimulatorDetails(DeviceManager.getDeviceUDID()).getName();
+        }
     }
 
     public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
-        return commandPrompt
-                .runCommandThruProcessBuilder("ideviceinfo --udid "
-                        + DeviceManager.getDeviceUDID()
-                        + " | grep ProductVersion");
+        if (DeviceManager.getDeviceUDID().length() == IOS_UDID_LENGTH) {
+            return commandPrompt
+                    .runCommandThruProcessBuilder("ideviceinfo --udid "
+                            + DeviceManager.getDeviceUDID()
+                            + " | grep ProductVersion").split(":")[1].replace("\n", "");
+        } else {
+            return simulatorManager.getSimulatorDetails(DeviceManager.getDeviceUDID())
+                    .getOsVersion();
+        }
     }
 
     public boolean checkiOSDevice() throws Exception {
@@ -170,16 +204,14 @@ public class IOSDeviceConfiguration {
         String webkitRunner =
                 ios_web_lit_proxy_runner + " -c " + DeviceManager.getDeviceUDID()
                         + ":" + port + " -d";
-        System.out.println(webkitRunner);
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
                 "WebKit Proxy is started on device " + DeviceManager.getDeviceUDID()
-                        + " and with port number " + deviceMap
-                        .get(DeviceManager.getDeviceUDID()) + " and in thread "
+                        + " and with port number " + port + " and in thread "
                         + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
-        appiumServerProcess.put(Thread.currentThread().getId(), getPid(p1));
-        System.out.println("Process ID's:" + appiumServerProcess);
+        iosDebugProxyProcess.put(Thread.currentThread().getId(), getPid(p1));
+        System.out.println("Process ID's:" + iosDebugProxyProcess);
         return String.valueOf(port);
     }
 
@@ -215,8 +247,8 @@ public class IOSDeviceConfiguration {
 
     public void destroyIOSWebKitProxy() throws IOException, InterruptedException {
         Thread.sleep(3000);
-        if (appiumServerProcess.get(Thread.currentThread().getId()) != -1) {
-            String process = "pgrep -P " + appiumServerProcess.get(Thread.currentThread().getId());
+        if (iosDebugProxyProcess.get(Thread.currentThread().getId()) != -1) {
+            String process = "pgrep -P " + iosDebugProxyProcess.get(Thread.currentThread().getId());
             Process p2 = Runtime.getRuntime().exec(process);
             BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
             String command = "kill -9 " + r.readLine();

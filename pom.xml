@@ -76,11 +76,6 @@
             <version>4.12</version>
         </dependency>
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20141113</version>
-        </dependency>
-        <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
@@ -154,6 +149,11 @@
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
             <version>1.69</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SrinivasanTarget</groupId>
+            <artifactId>iOSDeviceManager</artifactId>
+            <version>90de263</version>
         </dependency>
     </dependencies>
 
