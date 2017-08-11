@@ -1,0 +1,24 @@
+{
+  "simulators": [
+    {
+      "deviceName": "iPhone 6",
+      "OS": "11.0"
+    },
+    {
+      "deviceName": "iPhone 6s",
+      "OS": "11.0"
+    },
+    {
+      "deviceName": "iPhone 5s",
+      "OS": "11.0"
+    },
+    {
+      "deviceName": "iPhone 7",
+      "OS": "11.0"
+    },
+    {
+      "deviceName": "iPhone 7 Plus",
+      "OS": "11.0"
+    }
+  ]
+}

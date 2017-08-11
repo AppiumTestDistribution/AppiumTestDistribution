@@ -1,0 +1,25 @@
+{
+  "testDetails": {
+    "result": "String",
+    "exceptiontrace": "String",
+    "screenshotpath": "String",
+    "methodname": "String",
+    "classname": "String",
+    "starttime": "String",
+    "endtime": "String",
+    "totaltime": "String",
+    "retries": "String",
+    "logs": [
+      {
+        "screenShotFailure": "String",
+        "adbLogs": "String",
+        "videoLogs": "String"
+      }
+    ]
+  },
+  "id": "String",
+  "version": "String",
+  "platform": "String",
+  "resolution": "String",
+  "model": "String"
+}

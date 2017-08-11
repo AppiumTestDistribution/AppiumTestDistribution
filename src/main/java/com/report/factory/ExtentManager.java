@@ -12,7 +12,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -35,11 +34,10 @@ public class ExtentManager {
                     extent.attachReporter(getExtentXReporter());
                 }
                 extent.setSystemInfo("Selenium Java Version", "3.3.1");
-                extent.setSystemInfo("Environment", "Prod");
                 String appiumVersion = null;
                 try {
-                    String command = "node " 
-                        + configFileManager.getProperty("APPIUM_JS_PATH") + " -v";
+                    String command = "node "
+                            + configFileManager.getProperty("APPIUM_JS_PATH") + " -v";
                     appiumVersion = commandPrompt.runCommand(command);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -115,4 +113,13 @@ public class ExtentManager {
         }
         return extentx;
     }
+
+    public synchronized static void setSystemInfoInReport(String parameter, String value) {
+        if (extent == null) {
+            getExtent();
+        }
+        extent.setSystemInfo(parameter, value);
+    }
+
+
 }

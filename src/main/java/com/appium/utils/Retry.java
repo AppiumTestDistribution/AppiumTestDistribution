@@ -24,7 +24,8 @@ public class Retry implements IRetryAnalyzer {
         }
     }
 
-    @Override public boolean retry(ITestResult iTestResult) {
+    @Override
+    public boolean retry(ITestResult iTestResult) {
         Method[] methods = iTestResult.getInstance().getClass().getMethods();
         for (Method m : methods) {
             if (m.getName().equals(iTestResult.getMethod().getMethodName())) {
@@ -44,6 +45,8 @@ public class Retry implements IRetryAnalyzer {
             System.out.println("Test Failed");
             if (retryCount == maxRetryCount) {
                 System.out.println("Log report");
+                retryCount = 0;
+                return false;
             }
             if (retryCount < maxRetryCount) {
                 retryCount++;
