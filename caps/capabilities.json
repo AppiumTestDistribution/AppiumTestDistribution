@@ -1,0 +1,37 @@
+[
+  {
+    "android": {
+      "platformName": "android",
+      "noSign": true,
+      "deviceName": "android",
+      "app": "/Users/saikrisv/Documents/VodQaAdvancedAppium/VodQA.apk"
+    }
+  },
+  {
+    "iOS": {
+      "platformName": "iOS",
+      "app": "/Users/saikrisv/git/new_appium_parallel/AppiumTestDistribution/VodQAReactNative.zip",
+      "wdaLaunchTimeout": "80000",
+      "wdaConnectionTimeout": "80000",
+      "preventWDAAttachments": true,
+      "clearSystemFiles": true,
+      "shouldUseSingletonTestManager": false,
+      "simpleIsVisibleCheck": true,
+      "maxTypingFrequency": 10,
+      "isHeadless": false,
+      "fullReset": false
+    }
+  },
+  {
+    "simulators": [
+      {
+        "deviceName": "iPhone 6",
+        "OS": "11.0"
+      },
+      {
+        "deviceName": "iPhone 6s",
+        "OS": "11.0"
+      }
+    ]
+  }
+]
