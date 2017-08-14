@@ -57,7 +57,6 @@ public class AppiumDriverManager {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.isPresent()
                 ? iOSCaps.get() : desiredCapabilityManager.iosNative();
-        Thread.sleep(500 * Thread.currentThread().getId() + 10);
         currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
         return currentDriverSession;
@@ -97,14 +96,12 @@ public class AppiumDriverManager {
             throws Exception {
         DesiredCapabilities iOS = null;
         DesiredCapabilities android = null;
-        String userSpecifiedAndroidCaps = System.getProperty("user.dir")
-                + "/caps/android.json";
-        String userSpecifiediOSCaps = System.getProperty("user.dir")
-                + "/caps/iOS.json";
+        String userSpecifiedCaps = System.getProperty("user.dir")
+                + "/caps/capabilities.json";
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            android = getDesiredAndroidCapabilities(android, userSpecifiedAndroidCaps);
+            android = getDesiredAndroidCapabilities(android, userSpecifiedCaps);
         } else {
-            iOS = getDesiredIOSCapabilities(iOS, userSpecifiediOSCaps);
+            iOS = getDesiredIOSCapabilities(iOS, userSpecifiedCaps);
         }
         System.out.println("Caps generated" + android + iOS);
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
@@ -124,12 +121,12 @@ public class AppiumDriverManager {
                             .toAbsolutePath().toString();
                 }
                 desiredCapabilityBuilder
-                        .buildDesiredCapability(iOSJsonFilePath);
+                        .buildDesiredCapability("iOS",iOSJsonFilePath);
                 iOS = DesiredCapabilityBuilder.getDesiredCapability();
             } else if (new File(userSpecifiediOSCaps).exists()) {
                 iOSJsonFilePath = userSpecifiediOSCaps;
                 desiredCapabilityBuilder
-                        .buildDesiredCapability(iOSJsonFilePath);
+                        .buildDesiredCapability("iOS",iOSJsonFilePath);
                 iOS = DesiredCapabilityBuilder.getDesiredCapability();
             }
         }
@@ -150,13 +147,13 @@ public class AppiumDriverManager {
                 }
                 System.out.println("Picking Caps from property file");
                 desiredCapabilityBuilder
-                        .buildDesiredCapability(androidJsonFilePath);
+                        .buildDesiredCapability("android", androidJsonFilePath);
                 android = DesiredCapabilityBuilder.getDesiredCapability();
             } else if (new File(userSpecifiedAndroidCaps).exists()) {
                 System.out.println("Picking Caps from default path");
                 androidJsonFilePath = userSpecifiedAndroidCaps;
                 desiredCapabilityBuilder
-                        .buildDesiredCapability(androidJsonFilePath);
+                        .buildDesiredCapability("android", androidJsonFilePath);
                 android = DesiredCapabilityBuilder.getDesiredCapability();
             }
         }

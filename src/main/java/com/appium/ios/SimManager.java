@@ -22,9 +22,14 @@ public class SimManager {
 
         try {
             Object obj = parser.parse(new FileReader(System.getProperty("user.dir") + "/caps/"
-                    + "simulator.json"));
-            JSONObject jsonObject = (JSONObject) obj;
-            ((JSONArray) jsonObject.get("simulators")).forEach(o -> {
+                    + "capabilities.json"));
+            JSONArray jsonObject = (JSONArray) obj;
+            Object getSimulatorObject = jsonObject.stream().filter(o -> ((JSONObject) o)
+                    .get("simulators") != null)
+                    .findFirst().orElse(null);
+            Object simulators = ((JSONObject) getSimulatorObject).get("simulators");
+
+            ((JSONArray) simulators).forEach(o -> {
                 Simulator simulator = new Simulator();
                 ((JSONObject) o).forEach((key, value) -> {
                     if ("OS".equals(key)) {

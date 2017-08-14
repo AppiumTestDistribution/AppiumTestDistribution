@@ -8,6 +8,7 @@ import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -37,11 +38,16 @@ public class DesiredCapabilityBuilder {
         return desiredCapabilitiesThreadLocal.get();
     }
 
-    public DesiredCapabilities buildDesiredCapability(String jsonPath) throws Exception {
+    public DesiredCapabilities buildDesiredCapability(String platform,
+                                                      String jsonPath) throws Exception {
         final boolean[] flag = {false};
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        JSONObject jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
-        jsonParsedObject
+        JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
+        Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
+                .get(platform) != null)
+                .findFirst().orElse(null);
+        Object platFormCapabilties = ((JSONObject) getPlatformObject).get(platform);
+        ((JSONObject) platFormCapabilties)
                 .forEach((caps, values) -> {
                     if ("app".equals(caps)) {
                         Path path = FileSystems.getDefault().getPath(values.toString());

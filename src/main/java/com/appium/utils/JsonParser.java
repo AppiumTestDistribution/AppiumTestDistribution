@@ -26,11 +26,9 @@ public class JsonParser {
         }
         JSONArray array = new JSONArray();
         array.add(object);
-        Object o = ((JSONArray) object).get(0);
-        object = (JSONObject) o;
     }
 
-    public JSONObject getJsonParsedObject() {
-        return (JSONObject) object;
+    public JSONArray getJsonParsedObject() {
+        return (JSONArray) object;
     }
 }

@@ -168,9 +168,11 @@ public class ScreenShotManager {
                                                     + "/target/" + getFramedFailedScreen());
                                     deleteFile(screenToFrame);
                                 } else {
-                                    String screenToFrame = getCapturedScreen();
+                                    String screenToFrame = System.getProperty("user.dir")
+                                            + "/target/" + getCapturedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
-                                            getFramedCapturedScreen());
+                                            System.getProperty("user.dir")
+                                                    + "/target/" +  getFramedCapturedScreen());
                                     deleteFile(screenToFrame);
                                 }
 
