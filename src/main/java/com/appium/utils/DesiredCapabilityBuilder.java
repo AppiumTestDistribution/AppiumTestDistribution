@@ -45,7 +45,7 @@ public class DesiredCapabilityBuilder {
         JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get(platform) != null)
-                .findFirst().orElse(null);
+                .findFirst();
         Object platFormCapabilties = ((JSONObject) getPlatformObject).get(platform);
         ((JSONObject) platFormCapabilties)
                 .forEach((caps, values) -> {
@@ -55,8 +55,8 @@ public class DesiredCapabilityBuilder {
                             desiredCapabilities.setCapability(caps.toString(), path.normalize()
                                     .toAbsolutePath().toString());
                         } else {
-                            desiredCapabilities.setCapability(caps.toString(), path.normalize()
-                                    .toAbsolutePath().toString());
+                            desiredCapabilities.setCapability(caps.toString(), path
+                                    .toString());
                         }
                     } else {
                         desiredCapabilities.setCapability(caps.toString(), values.toString());

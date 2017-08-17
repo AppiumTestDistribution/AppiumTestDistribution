@@ -113,8 +113,8 @@ public class AppiumDriverManager {
             throws Exception {
         String iOSJsonFilePath;
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            if (prop.getProperty("IOS_CAPS") != null) {
-                iOSJsonFilePath = prop.getProperty("IOS_CAPS");
+            if (prop.getProperty("CAPS") != null) {
+                iOSJsonFilePath = prop.getProperty("CAPS");
                 Path path = FileSystems.getDefault().getPath(iOSJsonFilePath.toString());
                 if (!path.getParent().isAbsolute()) {
                     iOSJsonFilePath = path.normalize()
@@ -138,8 +138,8 @@ public class AppiumDriverManager {
             throws Exception {
         String androidJsonFilePath;
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            if (prop.getProperty("ANDROID_CAPS") != null) {
-                androidJsonFilePath = prop.getProperty("ANDROID_CAPS");
+            if (prop.getProperty("CAPS") != null) {
+                androidJsonFilePath = prop.getProperty("CAPS");
                 Path path = FileSystems.getDefault().getPath(androidJsonFilePath.toString());
                 if (!path.getParent().isAbsolute()) {
                     androidJsonFilePath = path.normalize()
