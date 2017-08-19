@@ -15,6 +15,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -46,10 +47,21 @@ public class DesiredCapabilityBuilder {
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get(platform) != null)
                 .findFirst();
-        Object platFormCapabilties = ((JSONObject) getPlatformObject).get(platform);
-        ((JSONObject) platFormCapabilties)
+        Object platFormCapabilities = ((JSONObject)((Optional) getPlatformObject)
+                .get()).get(platform);
+        ((JSONObject) platFormCapabilities)
                 .forEach((caps, values) -> {
                     if ("app".equals(caps)) {
+                        if (values instanceof JSONObject) {
+                            if (DeviceManager.getDeviceUDID().length()
+                                    == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                                values = ((JSONObject) values).get("simulator");
+                            } else if (DeviceManager.getDeviceUDID().length()
+                                    == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                                values = ((JSONObject) values).get("device");
+                            }
+
+                        }
                         Path path = FileSystems.getDefault().getPath(values.toString());
                         if (!path.getParent().isAbsolute()) {
                             desiredCapabilities.setCapability(caps.toString(), path.normalize()

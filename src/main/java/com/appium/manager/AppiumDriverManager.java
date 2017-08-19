@@ -112,23 +112,21 @@ public class AppiumDriverManager {
                                                          String userSpecifiediOSCaps)
             throws Exception {
         String iOSJsonFilePath;
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            if (prop.getProperty("CAPS") != null) {
-                iOSJsonFilePath = prop.getProperty("CAPS");
-                Path path = FileSystems.getDefault().getPath(iOSJsonFilePath.toString());
-                if (!path.getParent().isAbsolute()) {
-                    iOSJsonFilePath = path.normalize()
-                            .toAbsolutePath().toString();
-                }
-                desiredCapabilityBuilder
-                        .buildDesiredCapability("iOS",iOSJsonFilePath);
-                iOS = DesiredCapabilityBuilder.getDesiredCapability();
-            } else if (new File(userSpecifiediOSCaps).exists()) {
-                iOSJsonFilePath = userSpecifiediOSCaps;
-                desiredCapabilityBuilder
-                        .buildDesiredCapability("iOS",iOSJsonFilePath);
-                iOS = DesiredCapabilityBuilder.getDesiredCapability();
+        if (prop.getProperty("CAPS") != null) {
+            iOSJsonFilePath = prop.getProperty("CAPS");
+            Path path = FileSystems.getDefault().getPath(iOSJsonFilePath.toString());
+            if (!path.getParent().isAbsolute()) {
+                iOSJsonFilePath = path.normalize()
+                        .toAbsolutePath().toString();
             }
+            desiredCapabilityBuilder
+                    .buildDesiredCapability("iOS", iOSJsonFilePath);
+            iOS = DesiredCapabilityBuilder.getDesiredCapability();
+        } else if (new File(userSpecifiediOSCaps).exists()) {
+            iOSJsonFilePath = userSpecifiediOSCaps;
+            desiredCapabilityBuilder
+                    .buildDesiredCapability("iOS", iOSJsonFilePath);
+            iOS = DesiredCapabilityBuilder.getDesiredCapability();
         }
         return iOS;
     }
@@ -137,26 +135,25 @@ public class AppiumDriverManager {
                                                              String userSpecifiedAndroidCaps)
             throws Exception {
         String androidJsonFilePath;
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            if (prop.getProperty("CAPS") != null) {
-                androidJsonFilePath = prop.getProperty("CAPS");
-                Path path = FileSystems.getDefault().getPath(androidJsonFilePath.toString());
-                if (!path.getParent().isAbsolute()) {
-                    androidJsonFilePath = path.normalize()
-                            .toAbsolutePath().toString();
-                }
-                System.out.println("Picking Caps from property file");
-                desiredCapabilityBuilder
-                        .buildDesiredCapability("android", androidJsonFilePath);
-                android = DesiredCapabilityBuilder.getDesiredCapability();
-            } else if (new File(userSpecifiedAndroidCaps).exists()) {
-                System.out.println("Picking Caps from default path");
-                androidJsonFilePath = userSpecifiedAndroidCaps;
-                desiredCapabilityBuilder
-                        .buildDesiredCapability("android", androidJsonFilePath);
-                android = DesiredCapabilityBuilder.getDesiredCapability();
+        if (prop.getProperty("CAPS") != null) {
+            androidJsonFilePath = prop.getProperty("CAPS");
+            Path path = FileSystems.getDefault().getPath(androidJsonFilePath.toString());
+            if (!path.getParent().isAbsolute()) {
+                androidJsonFilePath = path.normalize()
+                        .toAbsolutePath().toString();
             }
+            System.out.println("Picking Caps from property file");
+            desiredCapabilityBuilder
+                    .buildDesiredCapability("android", androidJsonFilePath);
+            android = DesiredCapabilityBuilder.getDesiredCapability();
+        } else if (new File(userSpecifiedAndroidCaps).exists()) {
+            System.out.println("Picking Caps from default path");
+            androidJsonFilePath = userSpecifiedAndroidCaps;
+            desiredCapabilityBuilder
+                    .buildDesiredCapability("android", androidJsonFilePath);
+            android = DesiredCapabilityBuilder.getDesiredCapability();
         }
+
         return android;
     }
 
