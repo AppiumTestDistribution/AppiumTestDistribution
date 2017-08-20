@@ -162,7 +162,7 @@ public class IOSDeviceConfiguration {
             return commandPrompt
                     .runCommandThruProcessBuilder("ideviceinfo --udid "
                             + DeviceManager.getDeviceUDID()
-                            + " | grep ProductVersion").split(":")[1].replace("\n", "");
+                            + " | grep ProductVersion").replace("\n", "");
         } else {
             return simulatorManager.getSimulatorDetails(DeviceManager.getDeviceUDID())
                     .getOsVersion();
