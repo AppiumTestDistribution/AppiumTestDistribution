@@ -91,11 +91,10 @@ public class DesiredCapabilityBuilder {
             if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                         simulatorManager.getSimulatorDetailsFromUDID(
-                                DeviceManager.getDeviceUDID(),
-                                "iOS").getName());
+                                DeviceManager.getDeviceUDID()).getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                        simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
-                                "iOS").getOsVersion());
+                        simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID())
+                                .getOsVersion());
             }
             if (Float.valueOf(iosDevice.getIOSDeviceProductVersion()) >= 10.0) {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,

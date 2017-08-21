@@ -90,7 +90,7 @@ public class SimManager {
     public Device getSimulatorDetails(String UDID) {
         Device iOS = null;
         try {
-            iOS = simulatorManager.getSimulatorDetailsFromUDID(UDID, "iOS");
+            iOS = simulatorManager.getSimulatorDetailsFromUDID(UDID);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
