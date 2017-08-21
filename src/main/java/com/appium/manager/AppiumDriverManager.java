@@ -142,12 +142,10 @@ public class AppiumDriverManager {
                 androidJsonFilePath = path.normalize()
                         .toAbsolutePath().toString();
             }
-            System.out.println("Picking Caps from property file");
             desiredCapabilityBuilder
                     .buildDesiredCapability("android", androidJsonFilePath);
             android = DesiredCapabilityBuilder.getDesiredCapability();
         } else if (new File(userSpecifiedAndroidCaps).exists()) {
-            System.out.println("Picking Caps from default path");
             androidJsonFilePath = userSpecifiedAndroidCaps;
             desiredCapabilityBuilder
                     .buildDesiredCapability("android", androidJsonFilePath);

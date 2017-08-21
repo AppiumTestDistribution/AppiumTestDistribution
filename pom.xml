@@ -153,7 +153,7 @@
         <dependency>
             <groupId>com.github.SrinivasanTarget</groupId>
             <artifactId>iOSDeviceManager</artifactId>
-            <version>90de263</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 

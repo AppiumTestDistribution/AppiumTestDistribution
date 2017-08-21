@@ -93,7 +93,6 @@ public class DeviceAllocationManager {
         for (String device : devices) {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
-            System.out.println("Parallel Thread is::" + t.getName());
             i++;
             if (deviceMapping.get(device)) {
                 deviceMapping.put(device, false);
