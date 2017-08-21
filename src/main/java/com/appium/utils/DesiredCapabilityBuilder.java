@@ -15,6 +15,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -45,18 +46,29 @@ public class DesiredCapabilityBuilder {
         JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get(platform) != null)
-                .findFirst().orElse(null);
-        Object platFormCapabilties = ((JSONObject) getPlatformObject).get(platform);
-        ((JSONObject) platFormCapabilties)
+                .findFirst();
+        Object platFormCapabilities = ((JSONObject)((Optional) getPlatformObject)
+                .get()).get(platform);
+        ((JSONObject) platFormCapabilities)
                 .forEach((caps, values) -> {
                     if ("app".equals(caps)) {
+                        if (values instanceof JSONObject) {
+                            if (DeviceManager.getDeviceUDID().length()
+                                    == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                                values = ((JSONObject) values).get("simulator");
+                            } else if (DeviceManager.getDeviceUDID().length()
+                                    == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                                values = ((JSONObject) values).get("device");
+                            }
+
+                        }
                         Path path = FileSystems.getDefault().getPath(values.toString());
                         if (!path.getParent().isAbsolute()) {
                             desiredCapabilities.setCapability(caps.toString(), path.normalize()
                                     .toAbsolutePath().toString());
                         } else {
-                            desiredCapabilities.setCapability(caps.toString(), path.normalize()
-                                    .toAbsolutePath().toString());
+                            desiredCapabilities.setCapability(caps.toString(), path
+                                    .toString());
                         }
                     } else {
                         desiredCapabilities.setCapability(caps.toString(), values.toString());
@@ -79,11 +91,10 @@ public class DesiredCapabilityBuilder {
             if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                         simulatorManager.getSimulatorDetailsFromUDID(
-                                DeviceManager.getDeviceUDID(),
-                                "iOS").getName());
+                                DeviceManager.getDeviceUDID()).getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                        simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID(),
-                                "iOS").getOsVersion());
+                        simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID())
+                                .getOsVersion());
             }
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,

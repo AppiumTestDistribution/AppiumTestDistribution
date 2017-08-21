@@ -10,7 +10,10 @@
   {
     "iOS": {
       "platformName": "iOS",
-      "app": "/Users/saikrisv/git/new_appium_parallel/AppiumTestDistribution/VodQAReactNative.zip",
+      "app": {
+        "device":"./VodQAReactNative.ips",
+        "simulator":"./VodQAReactNative.zip"
+      },
       "wdaLaunchTimeout": "80000",
       "wdaConnectionTimeout": "80000",
       "preventWDAAttachments": true,

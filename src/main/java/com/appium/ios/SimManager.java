@@ -1,14 +1,20 @@
 package com.appium.ios;
 
+import com.appium.manager.ConfigFileManager;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.SimulatorManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * Created by saikrisv on 27/05/16.
@@ -21,13 +27,9 @@ public class SimManager {
         JSONParser parser = new JSONParser();
 
         try {
-            Object obj = parser.parse(new FileReader(System.getProperty("user.dir") + "/caps/"
-                    + "capabilities.json"));
-            JSONArray jsonObject = (JSONArray) obj;
-            Object getSimulatorObject = jsonObject.stream().filter(o -> ((JSONObject) o)
-                    .get("simulators") != null)
-                    .findFirst().orElse(null);
-            Object simulators = ((JSONObject) getSimulatorObject).get("simulators");
+            Object getSimulatorObject = getSimulatorObject(parser);
+            Object simulators = ((JSONObject)((Optional) getSimulatorObject)
+                    .get()).get("simulators");
 
             ((JSONArray) simulators).forEach(o -> {
                 Simulator simulator = new Simulator();
@@ -55,16 +57,59 @@ public class SimManager {
         return UDIDS;
     }
 
+    public Object getSimulatorObject(JSONParser parser) throws IOException, ParseException {
+        String defaultCapabilityLocation = System.getProperty("user.dir") + "/caps/"
+                + "capabilities.json";
+        String parserCapabilityFile = null;
+        if (new File(defaultCapabilityLocation).exists()) {
+            parserCapabilityFile = defaultCapabilityLocation;
+        } else {
+            String userCapabilityLocation = null;
+            try {
+                userCapabilityLocation = ConfigFileManager.getInstance()
+                        .getProperty("CAPS");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Path path = FileSystems.getDefault().getPath(userCapabilityLocation);
+            if (!path.getParent().isAbsolute()) {
+                parserCapabilityFile = path.normalize()
+                        .toAbsolutePath().toString();
+            } else {
+                parserCapabilityFile = path.toString();
+            }
+
+        }
+        Object obj = parser.parse(new FileReader(parserCapabilityFile));
+        JSONArray jsonObject = (JSONArray) obj;
+        return jsonObject.stream().filter(o -> ((JSONObject) o)
+                .get("simulators") != null)
+                .findFirst();
+    }
+
     public Device getSimulatorDetails(String UDID) {
         Device iOS = null;
         try {
-            iOS = simulatorManager.getSimulatorDetailsFromUDID(UDID, "iOS");
+            iOS = simulatorManager.getSimulatorDetailsFromUDID(UDID);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return iOS;
+    }
+
+    public boolean isSimulatorAvailable() {
+        JSONParser parser = new JSONParser();
+        Object simulatorObjectPreset = null;
+        try {
+            simulatorObjectPreset = getSimulatorObject(parser);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return ((Optional) simulatorObjectPreset).isPresent();
     }
 
     public class Simulator {

@@ -13,7 +13,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IOSDeviceConfiguration {
@@ -22,7 +21,6 @@ public class IOSDeviceConfiguration {
     CommandPrompt commandPrompt = new CommandPrompt();
     AvailablePorts ap = new AvailablePorts();
     public HashMap<String, String> deviceMap = new HashMap<String, String>();
-    Map<String, String> devices = new HashMap<>();
     public Process p;
     public Process p1;
     public static List<String> validDeviceIds = new ArrayList<>();
@@ -42,7 +40,6 @@ public class IOSDeviceConfiguration {
     }
 
     public ArrayList<String> getIOSUDID() {
-        String device_platform = prop.getProperty("DEVICE_PLATFORM");
         String xcode_version = "";
         try {
             xcode_version = commandPrompt.runCommand("xcodebuild -version");
@@ -51,45 +48,43 @@ public class IOSDeviceConfiguration {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (device_platform.contains("simulator")) {
+        if (new SimManager().isSimulatorAvailable()) {
             if (xcode_version.contains("9")) {
                 deviceUDIDiOS = simulatorManager.getAllSimulatorUDIDs();
             } else {
                 new RuntimeException("Xcode version should be 9.0 to run parallel simulators");
             }
-
         }
-
-        if (device_platform.contains("device")) {
-            try {
-                int startPos = 0;
-                int endPos = IOS_UDID_LENGTH - 1;
-                String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
-                if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
-                        .isEmpty()) {
-                    throw new IllegalArgumentException("No IOS devices found");
-                } else {
-                    while (endPos < getIOSDeviceID.length()) {
-                        if (validDeviceIds.size() > 0) {
-                            if (validDeviceIds.contains(
-                                    getIOSDeviceID.substring(startPos, endPos + 1))) {
-                                if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
-                                    deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
-                                            .replace("\n", ""));
-                                }
+        try {
+            String ANSI_RED = "\u001B[34m";
+            int startPos = 0;
+            int endPos = IOS_UDID_LENGTH - 1;
+            String getIOSDeviceID = commandPrompt.runProcessCommandToGetDeviceID(profile);
+            if (getIOSDeviceID == null || getIOSDeviceID.equalsIgnoreCase("") || getIOSDeviceID
+                    .isEmpty()) {
+                System.out.println(ANSI_RED + "No iOS device found....Running tests on "
+                        + deviceUDIDiOS + ANSI_RED);
+            } else {
+                while (endPos < getIOSDeviceID.length()) {
+                    if (validDeviceIds.size() > 0) {
+                        if (validDeviceIds.contains(
+                                getIOSDeviceID.substring(startPos, endPos + 1))) {
+                            if (!deviceUDIDiOS.contains(getIOSDeviceID)) {
+                                deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
+                                        .replace("\n", ""));
                             }
-                        } else {
-                            deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
-                                    .replace("\n", ""));
                         }
-                        startPos += IOS_UDID_LENGTH;
-                        endPos += IOS_UDID_LENGTH;
+                    } else {
+                        deviceUDIDiOS.add(getIOSDeviceID.substring(startPos, endPos + 1)
+                                .replace("\n", ""));
                     }
+                    startPos += IOS_UDID_LENGTH;
+                    endPos += IOS_UDID_LENGTH;
                 }
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
-                throw new IllegalStateException("Failed to fetch iOS device connected");
             }
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Failed to fetch iOS device connected");
         }
         return deviceUDIDiOS;
     }

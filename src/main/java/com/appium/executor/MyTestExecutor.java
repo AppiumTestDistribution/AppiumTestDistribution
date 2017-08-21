@@ -136,7 +136,6 @@ public class MyTestExecutor {
     public boolean testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
         TestNG test = new TestNG();
         test.setTestClasses(new Class[]{arg});
-        System.out.println("Into TestNGRunner");
         test.run();
         return test.hasFailure();
 
