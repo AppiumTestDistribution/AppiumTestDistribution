@@ -5,10 +5,8 @@ import com.appium.manager.DeviceManager;
 import com.appium.utils.AvailablePorts;
 import com.appium.utils.CommandPrompt;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,31 +181,18 @@ public class IOSDeviceConfiguration {
 
     public String startIOSWebKit() throws IOException, InterruptedException {
         setIOSWebKitProxyPorts();
-        String serverPath = prop.getProperty("APPIUM_JS_PATH");
-        File file = new File(serverPath);
-        File currentPath = new File(file.getParent());
-        System.out.println(currentPath);
-        file = new File(currentPath + "/.." + "/..");
-        String ios_web_lit_proxy_runner =
-                file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js";
-        int port = 0;
-        try {
-            port = ap.getPort();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String webkitRunner =
-                ios_web_lit_proxy_runner + " -c " + DeviceManager.getDeviceUDID()
-                        + ":" + port + " -d";
+        String webkitRunner = "ios_webkit_debug_proxy -c " + DeviceManager.getDeviceUDID() + ":"
+                + deviceMap.get(DeviceManager.getDeviceUDID());
         p1 = Runtime.getRuntime().exec(webkitRunner);
         System.out.println(
                 "WebKit Proxy is started on device " + DeviceManager.getDeviceUDID()
-                        + " and with port number " + port + " and in thread "
+                        + " and with port number " + deviceMap.get(DeviceManager.getDeviceUDID())
+                        + " and in thread "
                         + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         iosDebugProxyProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + iosDebugProxyProcess);
-        return String.valueOf(port);
+        return String.valueOf(deviceMap.get(DeviceManager.getDeviceUDID()));
     }
 
     public long getPidOfProcess(Process p) {
@@ -242,11 +227,9 @@ public class IOSDeviceConfiguration {
 
     public void destroyIOSWebKitProxy() throws IOException, InterruptedException {
         Thread.sleep(3000);
+
         if (iosDebugProxyProcess.get(Thread.currentThread().getId()) != -1) {
-            String process = "pgrep -P " + iosDebugProxyProcess.get(Thread.currentThread().getId());
-            Process p2 = Runtime.getRuntime().exec(process);
-            BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-            String command = "kill -9 " + r.readLine();
+            String command = "kill -9 " + iosDebugProxyProcess.get(Thread.currentThread().getId());
             System.out.println("Kills webkit proxy");
             System.out.println("******************" + command);
             Runtime.getRuntime().exec(command);
