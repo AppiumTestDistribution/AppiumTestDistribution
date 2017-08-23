@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.ios.IOSDeviceConfiguration;
 import com.report.factory.ExtentManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,7 +62,6 @@ public final class AppiumParallelTestListener
             String className = testClass.getRealClass().getSimpleName();
             deviceAllocationManager.allocateDevice(device,
                     deviceAllocationManager.getNextAvailableDeviceId());
-            appiumServerManager.startAppiumServer(className);
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
@@ -73,21 +73,15 @@ public final class AppiumParallelTestListener
 
     @Override
     public void onAfterClass(ITestClass testClass) {
-        try {
-            appiumServerManager.stopAppiumServer();
-            ExtentManager.getExtent().flush();
-            deviceAllocationManager.freeDevice();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ExtentManager.getExtent().flush();
+        deviceAllocationManager.freeDevice();
     }
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
             appiumDriverManager.startAppiumDriverInstance();
+            String webKitPort = new IOSDeviceConfiguration().startIOSWebKit();
             reportManager.startLogResults(method.getTestMethod().getMethodName(),
                     testResult.getTestClass().getRealClass().getSimpleName());
             SkipIf skip =
@@ -102,7 +96,6 @@ public final class AppiumParallelTestListener
                     throw new SkipException("Skipped because property was set to :::" + info);
                 }
             }
-            Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -220,7 +213,11 @@ public final class AppiumParallelTestListener
     */
     @Override
     public void onStart(ISuite iSuite) {
-
+        try {
+            appiumServerManager.startAppiumServer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void sync(String message) {
@@ -231,6 +228,13 @@ public final class AppiumParallelTestListener
 
     @Override
     public void onFinish(ISuite iSuite) {
+        try {
+            appiumServerManager.stopAppiumServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         FileWriter file = null;
         try {
             file = new FileWriter(System.getProperty("user.dir")

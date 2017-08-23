@@ -192,7 +192,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 }
                 reportManager.createParentNodeExtent(feature.getName(),"")
                     .assignCategory(tags);
-                appiumServerManager.startAppiumServer(feature.getName());
+                appiumServerManager.startAppiumServer();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -202,7 +202,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     deviceSingleton.getDeviceUDID());
                 reportManager.createParentNodeExtent(feature.getName(),"")
                         .assignCategory(tags);
-                appiumServerManager.startAppiumServer(feature.getName());
+                appiumServerManager.startAppiumServer();
             } catch (Exception e) {
                 e.printStackTrace();
             }
