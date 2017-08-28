@@ -41,13 +41,14 @@ public class DesiredCapabilityBuilder {
 
     public DesiredCapabilities buildDesiredCapability(String platform,
                                                       String jsonPath) throws Exception {
+        String webKitPort = new IOSDeviceConfiguration().startIOSWebKit();
         final boolean[] flag = {false};
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get(platform) != null)
                 .findFirst();
-        Object platFormCapabilities = ((JSONObject)((Optional) getPlatformObject)
+        Object platFormCapabilities = ((JSONObject) ((Optional) getPlatformObject)
                 .get()).get(platform);
         ((JSONObject) platFormCapabilities)
                 .forEach((caps, values) -> {
@@ -95,7 +96,10 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                         simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID())
                                 .getOsVersion());
+            } else {
+                desiredCapabilities.setCapability("webkitDebugProxyPort", webKitPort);
             }
+
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.IOS_XCUI_TEST);

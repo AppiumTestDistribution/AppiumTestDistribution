@@ -35,8 +35,6 @@ public class AppiumServerManager {
     static AppiumDriverLocalService appiumDriverLocalService;
 
 
-
-
     public AppiumServerManager() throws IOException {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         ap = new AvailablePorts();
@@ -145,5 +143,8 @@ public class AppiumServerManager {
 
     public void stopAppiumServer() throws IOException, InterruptedException {
         destroyAppiumNode();
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+            iosDeviceConfiguration.destroyIOSWebKitProxy();
+        }
     }
 }
