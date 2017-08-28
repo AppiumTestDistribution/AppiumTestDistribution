@@ -173,8 +173,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
             deviceAllocationManager.getNextAvailableDeviceId();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
             System.out.println(deviceThreadNumber);
-            System.out.println(Integer.parseInt(deviceThreadNumber[1])
-                    + prop.getProperty("RUNNER"));
             System.out.println("Feature Tag Name::" + feature.getTags());
             try {
 
@@ -183,10 +181,11 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
                     CI_BASE_URI = System.getProperty("user.dir");
                 }
+                String device = xpathXML.parseXML(Integer
+                        .parseInt(deviceThreadNumber[1]));
                 deviceAllocationManager.allocateDevice(
-                    xpathXML.parseXML(Integer
-                            .parseInt(deviceThreadNumber[1])),
-                    deviceSingleton.getDeviceUDID());
+                    device,
+                    DeviceManager.getDeviceUDID());
                 if (DeviceManager.getDeviceUDID() == null) {
                     System.out.println("No devices are free to run test or Failed to run test");
                 }
