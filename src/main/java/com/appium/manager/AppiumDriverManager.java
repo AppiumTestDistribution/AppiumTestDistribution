@@ -155,7 +155,10 @@ public class AppiumDriverManager {
         return android;
     }
 
-    public void stopAppiumDriver() {
+    public void stopAppiumDriver() throws IOException, InterruptedException {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+            iosDeviceConfiguration.destroyIOSWebKitProxy();
+        }
         AppiumDriverManager.getDriver().quit();
     }
 

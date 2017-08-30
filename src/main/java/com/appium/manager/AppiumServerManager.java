@@ -143,8 +143,5 @@ public class AppiumServerManager {
 
     public void stopAppiumServer() throws IOException, InterruptedException {
         destroyAppiumNode();
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            iosDeviceConfiguration.destroyIOSWebKitProxy();
-        }
     }
 }

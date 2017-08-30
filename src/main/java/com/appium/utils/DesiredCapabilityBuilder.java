@@ -41,7 +41,6 @@ public class DesiredCapabilityBuilder {
 
     public DesiredCapabilities buildDesiredCapability(String platform,
                                                       String jsonPath) throws Exception {
-        String webKitPort = new IOSDeviceConfiguration().startIOSWebKit();
         final boolean[] flag = {false};
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
@@ -52,6 +51,9 @@ public class DesiredCapabilityBuilder {
                 .get()).get(platform);
         ((JSONObject) platFormCapabilities)
                 .forEach((caps, values) -> {
+                    if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
+                        flag[0] = true;
+                    }
                     if ("app".equals(caps)) {
                         if (values instanceof JSONObject) {
                             if (DeviceManager.getDeviceUDID().length()
@@ -97,7 +99,7 @@ public class DesiredCapabilityBuilder {
                         simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID())
                                 .getOsVersion());
             } else {
-                desiredCapabilities.setCapability("webkitDebugProxyPort", webKitPort);
+                desiredCapabilities.setCapability("webkitDebugProxyPort", new IOSDeviceConfiguration().startIOSWebKit());
             }
 
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
