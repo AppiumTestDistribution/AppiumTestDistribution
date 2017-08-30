@@ -35,6 +35,8 @@ import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +51,7 @@ import java.util.Map;
 /**
  * Cucumber custom format listener which generates ExtentsReport html file
  */
-public class ExtentCucumberFormatter implements Reporter, Formatter {
+public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListener {
 
     private final DeviceAllocationManager deviceAllocationManager;
     public AppiumServerManager appiumServerManager;
@@ -191,7 +193,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                 }
                 reportManager.createParentNodeExtent(feature.getName(),"")
                     .assignCategory(tags);
-                appiumServerManager.startAppiumServer();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -201,7 +202,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
                     deviceSingleton.getDeviceUDID());
                 reportManager.createParentNodeExtent(feature.getName(),"")
                         .assignCategory(tags);
-                appiumServerManager.startAppiumServer();
+                //appiumServerManager.startAppiumServer();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -363,4 +364,23 @@ public class ExtentCucumberFormatter implements Reporter, Formatter {
         }
     }
 
+    @Override
+    public void onStart(ISuite iSuite) {
+        try {
+            appiumServerManager.startAppiumServer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onFinish(ISuite iSuite) {
+        try {
+            appiumServerManager.stopAppiumServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

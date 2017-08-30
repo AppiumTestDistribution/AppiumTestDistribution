@@ -313,11 +313,14 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForParallelCucumber(
             int deviceCount, ArrayList<String> deviceSerail) {
+        ArrayList<String> listeners = new ArrayList<>();
+        listeners.add("com.cucumber.listener.ExtentCucumberFormatter");
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.TESTS);
         suite.setVerbose(2);
+        suite.setListeners(listeners);
         for (int i = 0; i < deviceCount; i++) {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
@@ -347,12 +350,15 @@ public class MyTestExecutor {
     }
 
     public XmlSuite constructXmlSuiteDistributeCucumber(
-            int deviceCount, ArrayList<String> deviceSerail) {
+            int deviceCount) {
+        ArrayList<String> listeners = new ArrayList<>();
+        listeners.add("com.cucumber.listener.ExtentCucumberFormatter");
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
+        suite.setListeners(listeners);
         XmlTest test = new XmlTest(suite);
         test.setName("TestNG Test");
         test.addParameter("device", "");
