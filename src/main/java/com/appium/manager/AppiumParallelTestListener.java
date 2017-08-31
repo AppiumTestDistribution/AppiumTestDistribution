@@ -81,7 +81,6 @@ public final class AppiumParallelTestListener
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
             appiumDriverManager.startAppiumDriverInstance();
-            String webKitPort = new IOSDeviceConfiguration().startIOSWebKit();
             reportManager.startLogResults(method.getTestMethod().getMethodName(),
                     testResult.getTestClass().getRealClass().getSimpleName());
             SkipIf skip =

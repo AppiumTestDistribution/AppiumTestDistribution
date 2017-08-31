@@ -35,8 +35,6 @@ public class AppiumServerManager {
     static AppiumDriverLocalService appiumDriverLocalService;
 
 
-
-
     public AppiumServerManager() throws IOException {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         ap = new AvailablePorts();
