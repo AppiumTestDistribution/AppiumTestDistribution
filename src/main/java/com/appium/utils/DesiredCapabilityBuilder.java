@@ -99,7 +99,8 @@ public class DesiredCapabilityBuilder {
                         simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID())
                                 .getOsVersion());
             } else {
-                desiredCapabilities.setCapability("webkitDebugProxyPort", new IOSDeviceConfiguration().startIOSWebKit());
+                desiredCapabilities.setCapability("webkitDebugProxyPort",
+                        new IOSDeviceConfiguration().startIOSWebKit());
             }
 
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
