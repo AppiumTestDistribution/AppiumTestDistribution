@@ -53,6 +53,11 @@ public class DesiredCapabilityBuilder {
                 .forEach((caps, values) -> {
                     if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
                         flag[0] = true;
+                        try {
+                            desiredCapabilities.setCapability("chromeDriverPort",availablePorts.getPort());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                     if ("app".equals(caps)) {
                         if (values instanceof JSONObject) {
