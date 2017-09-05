@@ -229,8 +229,6 @@ public class IOSDeviceConfiguration {
     }
 
     public void destroyIOSWebKitProxy() throws IOException, InterruptedException {
-        Thread.sleep(3000);
-
         if (iosDebugProxyProcess.get(Thread.currentThread().getId()) != -1) {
             String command = "kill -9 " + iosDebugProxyProcess.get(Thread.currentThread().getId());
             System.out.println("Kills webkit proxy");

@@ -5,7 +5,6 @@ import com.appium.manager.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.PackageUtil;
 import com.appium.manager.ParallelThread;
-import com.appium.utils.ImageUtils;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -15,8 +14,12 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
 import org.testng.collections.Lists;
-import org.testng.xml.*;
+import org.testng.xml.XmlClass;
+import org.testng.xml.XmlInclude;
+import org.testng.xml.XmlPackage;
+import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
+import org.testng.xml.XmlTest;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,7 +27,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -107,11 +119,11 @@ public class MyTestExecutor {
         if (executionType.equalsIgnoreCase("distribute")) {
             if (prop.getProperty("RUNNER_LEVEL") != null
                     && prop.getProperty("RUNNER_LEVEL")
-                        .equalsIgnoreCase("methods")) {
-                constructXmlSuiteForDistributionMethods(pack, test, createTestsMap(resources),
+                        .equalsIgnoreCase("class")) {
+                constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
                         devicecount);
             } else {
-                constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
+                constructXmlSuiteForDistributionMethods(pack, test, createTestsMap(resources),
                         devicecount);
             }
 
@@ -258,13 +270,13 @@ public class MyTestExecutor {
         List<XmlClass> xmlClasses = new ArrayList<>();
         xmlClasses = writeXmlClass(tests, methods, xmlClasses);
         for (int i = 0; i < xmlClasses.size(); i++) {
-            List<XmlClass> writeXml = new ArrayList<>();
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
             test.addParameter("device", "");
             include(groupsExclude, "EXCLUDE_GROUPS");
             test.setIncludedGroups(groupsInclude);
             test.setExcludedGroups(groupsExclude);
+            List<XmlClass> writeXml = new ArrayList<>();
             writeXml.add(new XmlClass(xmlClasses.get(i).getName()));
             test.setClasses(writeXml);
         }

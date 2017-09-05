@@ -125,7 +125,8 @@ public class ParallelThread {
                     testcases.add((Class) s);
                 }
             });
-            String executionType = runner.equalsIgnoreCase("distribute") ? "distribute": "parallel";
+            String executionType = runner.equalsIgnoreCase("distribute")
+                    ? "distribute" : "parallel";
             hasFailures = myTestExecutor
                     .runMethodParallelAppium(tests, pack, deviceCount,
                             executionType);
@@ -211,7 +212,8 @@ public class ParallelThread {
 
 
     public void createPlatformDirectory(String platform) {
-        File platformDirectory = new File(System.getProperty("user.dir") + "/target/screenshot/" + platform);
+        File platformDirectory = new File(System.getProperty("user.dir")
+                + "/target/screenshot/" + platform);
         if (!platformDirectory.exists()) {
             platformDirectory.mkdirs();
         }
