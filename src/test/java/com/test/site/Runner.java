@@ -21,7 +21,7 @@ public class Runner {
         ExtentManager.setSystemInfoInReport("version","1.0.0");
         List<String> tests = new ArrayList<>();
         tests.add("HomePageTest2");
-        //tests.add("HomePageTest3");
+        tests.add("HomePageTest1");
         boolean hasFailures = parallelThread.runner("com.test.site",tests);
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
     }

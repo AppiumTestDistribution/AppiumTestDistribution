@@ -15,12 +15,8 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
 import org.testng.collections.Lists;
-import org.testng.xml.XmlClass;
-import org.testng.xml.XmlInclude;
-import org.testng.xml.XmlPackage;
-import org.testng.xml.XmlSuite;
+import org.testng.xml.*;
 import org.testng.xml.XmlSuite.ParallelMode;
-import org.testng.xml.XmlTest;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,16 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -118,8 +105,16 @@ public class MyTestExecutor {
                 reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
         boolean hasFailure;
         if (executionType.equalsIgnoreCase("distribute")) {
-            constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
-                    devicecount);
+            if (prop.getProperty("RUNNER_LEVEL") != null
+                    && prop.getProperty("RUNNER_LEVEL")
+                        .equalsIgnoreCase("methods")) {
+                constructXmlSuiteForDistributionMethods(pack, test, createTestsMap(resources),
+                        devicecount);
+            } else {
+                constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
+                        devicecount);
+            }
+
             hasFailure = runMethodParallel();
         } else {
             constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
@@ -187,18 +182,18 @@ public class MyTestExecutor {
         return suite;
     }
 
-    public void writeXmlClass(List<String> testcases, Map<String,
+    public List<XmlClass> writeXmlClass(List<String> testcases, Map<String,
             List<Method>> methods, List<XmlClass> xmlClasses) {
         for (String className : methods.keySet()) {
             if (className.contains("Test")) {
                 if (testcases.size() == 0) {
-                    xmlClasses.add(createClass(className, methods.get(className)));
+                    xmlClasses.add(createClass(className));
                 } else {
                     for (String s : testcases) {
                         for (int j = 0; j < items.size(); j++) {
                             String testName = items.get(j).concat("." + s).toString();
                             if (testName.equals(className)) {
-                                xmlClasses.add(createClass(className, methods.get(className)));
+                                xmlClasses.add(createClass(className));
                             }
                         }
                     }
@@ -206,6 +201,7 @@ public class MyTestExecutor {
 
             }
         }
+        return xmlClasses;
     }
 
     public XmlSuite constructXmlSuiteForDistribution(String pack, List<String> tests,
@@ -242,6 +238,40 @@ public class MyTestExecutor {
         return suite;
     }
 
+
+    public XmlSuite constructXmlSuiteForDistributionMethods(String pack,List<String> tests,
+                                                            Map<String, List<Method>> methods,
+                                                            int deviceCount) {
+        include(listeners, "LISTENERS");
+        include(groupsInclude, "INCLUDE_GROUPS");
+        XmlSuite suite = new XmlSuite();
+        suite.setName("TestNG Forum");
+        suite.setThreadCount(deviceCount);
+        suite.setVerbose(2);
+        suite.setParallel(ParallelMode.METHODS);
+        listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
+        listeners.add("com.appium.utils.RetryListener");
+        suite.setListeners(listeners);
+        if (prop.getProperty("LISTENERS") != null) {
+            suite.setListeners(listeners);
+        }
+        List<XmlClass> xmlClasses = new ArrayList<>();
+        xmlClasses = writeXmlClass(tests, methods, xmlClasses);
+        for (int i = 0; i < xmlClasses.size(); i++) {
+            List<XmlClass> writeXml = new ArrayList<>();
+            XmlTest test = new XmlTest(suite);
+            test.setName("TestNG Test" + i);
+            test.addParameter("device", "");
+            include(groupsExclude, "EXCLUDE_GROUPS");
+            test.setIncludedGroups(groupsInclude);
+            test.setExcludedGroups(groupsExclude);
+            writeXml.add(new XmlClass(xmlClasses.get(i).getName()));
+            test.setClasses(writeXml);
+        }
+        writeTestNGFile(suite);
+        return suite;
+    }
+
     private void writeTestNGFile(XmlSuite suite) {
         try {
             FileWriter writer = new FileWriter(new File(
@@ -263,7 +293,7 @@ public class MyTestExecutor {
     }
 
 
-    private XmlClass createClass(String className, List<Method> methods) {
+    private XmlClass createClass(String className) {
         XmlClass clazz = new XmlClass();
         clazz.setName(className);
         //clazz.setIncludedMethods(constructIncludes(methods));

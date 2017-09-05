@@ -105,7 +105,6 @@ public class AppiumDriverManager {
         }
         System.out.println("Caps generated" + android + iOS);
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
-        Thread.sleep(3000);
     }
 
     public DesiredCapabilities getDesiredIOSCapabilities(DesiredCapabilities iOS,
