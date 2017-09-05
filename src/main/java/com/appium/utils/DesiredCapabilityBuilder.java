@@ -54,7 +54,8 @@ public class DesiredCapabilityBuilder {
                     if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
                         flag[0] = true;
                         try {
-                            desiredCapabilities.setCapability("chromeDriverPort",availablePorts.getPort());
+                            desiredCapabilities.setCapability("chromeDriverPort",
+                                    availablePorts.getPort());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
