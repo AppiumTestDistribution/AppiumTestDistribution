@@ -66,7 +66,6 @@ public final class AppiumParallelMethodTestListener
                     throw new SkipException("Skipped because property was set to :::" + info);
                 }
             }
-            Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -107,7 +107,6 @@ public class AppiumServerManager {
                         .configFileMap.get("APPIUM_JS_PATH")))
                         .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
                         System.getProperty("user.dir") + "/target/appiumlogs/appium_logs.txt"))
-                        .withIPAddress("127.0.0.1")
                         .withArgument(GeneralServerFlag.LOG_LEVEL, "debug")
                         .withArgument(GeneralServerFlag.TEMP_DIRECTORY,
                                 new File(String.valueOf(classPathRoot))
