@@ -161,13 +161,8 @@ public class MyTestExecutor {
                                                  Map<String, List<Method>> methods,
                                                  int deviceCount, ArrayList<String> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
-        if (prop.getProperty("BROWSER_TYPE") != null) {
-            if (!prop.getProperty("BROWSER_TYPE")
-                    .equalsIgnoreCase("ChromeDesktop")) {
-                listeners.add("com.appium.manager.AppiumParallelTestListener");
-                listeners.add("com.appium.utils.RetryListener");
-            }
-        }
+        listeners.add("com.appium.manager.AppiumParallelTestListener");
+        listeners.add("com.appium.utils.RetryListener");
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
         include(groupsExclude, "EXCLUDE_GROUPS");
@@ -226,13 +221,8 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
-        if (prop.getProperty("BROWSER_TYPE") != null) {
-            if (!prop.getProperty("BROWSER_TYPE")
-                    .equalsIgnoreCase("ChromeDesktop")) {
-                listeners.add("com.appium.manager.AppiumParallelTestListener");
-                listeners.add("com.appium.utils.RetryListener");
-            }
-        }
+        listeners.add("com.appium.manager.AppiumParallelTestListener");
+        listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
         if (prop.getProperty("LISTENERS") != null) {
             suite.setListeners(listeners);
@@ -259,6 +249,7 @@ public class MyTestExecutor {
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
+        suite.setDataProviderThreadCount(deviceCount);
         suite.setVerbose(2);
         suite.setParallel(ParallelMode.METHODS);
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
