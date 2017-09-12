@@ -61,7 +61,6 @@ public final class AppiumParallelTestListener
             String className = testClass.getRealClass().getSimpleName();
             deviceAllocationManager.allocateDevice(device,
                     deviceAllocationManager.getNextAvailableDeviceId());
-            appiumServerManager.startAppiumServer(className);
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
@@ -73,15 +72,8 @@ public final class AppiumParallelTestListener
 
     @Override
     public void onAfterClass(ITestClass testClass) {
-        try {
-            appiumServerManager.stopAppiumServer();
-            ExtentManager.getExtent().flush();
-            deviceAllocationManager.freeDevice();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ExtentManager.getExtent().flush();
+        deviceAllocationManager.freeDevice();
     }
 
     @Override
@@ -102,7 +94,6 @@ public final class AppiumParallelTestListener
                     throw new SkipException("Skipped because property was set to :::" + info);
                 }
             }
-            Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -220,7 +211,11 @@ public final class AppiumParallelTestListener
     */
     @Override
     public void onStart(ISuite iSuite) {
-
+        try {
+            appiumServerManager.startAppiumServer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void sync(String message) {
@@ -231,6 +226,13 @@ public final class AppiumParallelTestListener
 
     @Override
     public void onFinish(ISuite iSuite) {
+        try {
+            appiumServerManager.stopAppiumServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         FileWriter file = null;
         try {
             file = new FileWriter(System.getProperty("user.dir")

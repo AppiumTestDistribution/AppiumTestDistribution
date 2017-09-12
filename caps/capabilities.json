@@ -4,7 +4,7 @@
       "platformName": "android",
       "noSign": true,
       "deviceName": "android",
-      "app": "/Users/saikrisv/Documents/VodQaAdvancedAppium/VodQA.apk"
+      "app": "./AndroidCalculator.apk"
     }
   },
   {

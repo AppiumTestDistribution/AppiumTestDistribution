@@ -105,7 +105,6 @@ public class AppiumDriverManager {
         }
         System.out.println("Caps generated" + android + iOS);
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
-        Thread.sleep(3000);
     }
 
     public DesiredCapabilities getDesiredIOSCapabilities(DesiredCapabilities iOS,
@@ -155,7 +154,10 @@ public class AppiumDriverManager {
         return android;
     }
 
-    public void stopAppiumDriver() {
+    public void stopAppiumDriver() throws IOException, InterruptedException {
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+            iosDeviceConfiguration.destroyIOSWebKitProxy();
+        }
         AppiumDriverManager.getDriver().quit();
     }
 

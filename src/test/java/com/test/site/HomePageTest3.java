@@ -23,15 +23,14 @@ public class HomePageTest3  {
         return driver;
     }
 
-    @Test(retryAnalyzer = AppiumParallelTestListener.class, groups = "smoke")
+    @Test
     @Author(name = "AnsonLiao")
-    @RetryCount(maxRetryCount = 2) public void testMethodOne3()
+    @RetryCount(maxRetryCount = 2) public void testMethodHomePage3()
         throws InterruptedException, IOException {
 
         System.out.println(
             "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
                 .getStackTrace()[1].getClassName());
-        Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
         new ScreenShotManager().captureScreenShot("LoginPage--1");
         getDriver().findElement(By.id("com.android2.calculator3:id/digit4")).click();
@@ -42,13 +41,12 @@ public class HomePageTest3  {
     }
 
     @Test
-    public void testMethodOne4()
+    public void testMethodHomePage3Two()
             throws InterruptedException, IOException {
 
         System.out.println(
                 "ThreadName: " + Thread.currentThread().getName() + Thread.currentThread()
                         .getStackTrace()[1].getClassName());
-        Thread.sleep(3000);
         getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/digit4")).click();
         getDriver().findElement(By.id("com.android2.calculator3:id/minus")).click();

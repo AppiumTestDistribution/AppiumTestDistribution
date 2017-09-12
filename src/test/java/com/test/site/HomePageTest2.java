@@ -31,5 +31,4 @@ public class HomePageTest2 {
         AppiumDriverManager.getDriver().quit();
     }
 
-
 }

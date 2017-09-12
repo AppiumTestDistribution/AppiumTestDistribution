@@ -199,8 +199,7 @@ class TestLogger {
                             result.getInstance().getClass().getSimpleName(),
                             result.getMethod().getMethodName(), deviceModel);
 
-            if (AppiumDriverManager.getDriver().toString().split(":")[0]
-                    .trim().equals("AndroidDriver")) {
+            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 File framedImageAndroid = new File(
                         System.getProperty("user.dir")
                                 + "/target/screenshot/android/" + DeviceManager

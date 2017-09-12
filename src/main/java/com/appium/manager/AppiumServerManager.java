@@ -22,16 +22,17 @@ public class AppiumServerManager {
 
     private AvailablePorts ap;
     private IOSDeviceConfiguration iosDeviceConfiguration;
-    private static ThreadLocal<AppiumDriverLocalService> appiumDriverLocalService
-            = new ThreadLocal<>();
 
-    private static AppiumDriverLocalService getServer() {
-        return appiumDriverLocalService.get();
+    public static AppiumDriverLocalService getAppiumDriverLocalService() {
+        return appiumDriverLocalService;
     }
 
-    private static void setServer(AppiumDriverLocalService server) {
-        appiumDriverLocalService.set(server);
+    public static void setAppiumDriverLocalService(
+            AppiumDriverLocalService appiumDriverLocalService) {
+        AppiumServerManager.appiumDriverLocalService = appiumDriverLocalService;
     }
+
+    static AppiumDriverLocalService appiumDriverLocalService;
 
 
     public AppiumServerManager() throws IOException {
@@ -77,7 +78,7 @@ public class AppiumServerManager {
         ;
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
-        setServer(appiumDriverLocalService);
+        setAppiumDriverLocalService(appiumDriverLocalService);
     }
 
     /**
@@ -91,13 +92,11 @@ public class AppiumServerManager {
         }
     };
 
-    private void startAppiumServerForIOS(String methodName)
+    private void startAppiumServerSingleSession()
             throws Exception {
-        String webKitPort = iosDeviceConfiguration.startIOSWebKit();
         System.out
                 .println("***********************************************************\n");
-        System.out.println("Starting Appium Server to handle IOS::"
-                + DeviceManager.getDeviceUDID() + "\n");
+        System.out.println("Starting Appium Server......");
         System.out
                 .println("***********************************************************\n");
         File classPathRoot = new File(System.getProperty("user.dir"));
@@ -107,11 +106,7 @@ public class AppiumServerManager {
                 new AppiumServiceBuilder().withAppiumJS(new File(ConfigFileManager
                         .configFileMap.get("APPIUM_JS_PATH")))
                         .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
-                        System.getProperty("user.dir") + "/target/appiumlogs/"
-                                + DeviceManager.getDeviceUDID()
-                                + "__" + methodName + ".txt"))
-                        .withArgument(webKitProxy, webKitPort)
-                        .withIPAddress("127.0.0.1")
+                        System.getProperty("user.dir") + "/target/appiumlogs/appium_logs.txt"))
                         .withArgument(GeneralServerFlag.LOG_LEVEL, "debug")
                         .withArgument(GeneralServerFlag.TEMP_DIRECTORY,
                                 new File(String.valueOf(classPathRoot))
@@ -120,37 +115,32 @@ public class AppiumServerManager {
                         .usingPort(port);
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
-        setServer(appiumDriverLocalService);
+        System.out
+                .println("***********************************************************\n");
+        System.out.println("Started AppiumServer on Port......"
+                + appiumDriverLocalService.getUrl());
+        System.out
+                .println("***********************************************************\n");
+        setAppiumDriverLocalService(appiumDriverLocalService);
     }
 
     public URL getAppiumUrl() {
-        return getServer().getUrl();
+        return getAppiumDriverLocalService().getUrl();
     }
 
     private void destroyAppiumNode() {
-        getServer().stop();
-        if (getServer().isRunning()) {
+        getAppiumDriverLocalService().stop();
+        if (getAppiumDriverLocalService().isRunning()) {
             System.out.println("AppiumServer didn't shut... Trying to quit again....");
-            getServer().stop();
+            getAppiumDriverLocalService().stop();
         }
     }
 
-    public void startAppiumServer(String methodName) throws Exception {
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-                startAppiumServerForIOS(methodName);
-            } else {
-                startAppiumServerForAndroid(methodName);
-            }
-        } else {
-            startAppiumServerForAndroid(methodName);
-        }
+    public void startAppiumServer() throws Exception {
+        startAppiumServerSingleSession();
     }
 
     public void stopAppiumServer() throws IOException, InterruptedException {
         destroyAppiumNode();
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            iosDeviceConfiguration.destroyIOSWebKitProxy();
-        }
     }
 }

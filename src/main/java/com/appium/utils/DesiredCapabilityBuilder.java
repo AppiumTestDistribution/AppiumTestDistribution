@@ -47,10 +47,19 @@ public class DesiredCapabilityBuilder {
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get(platform) != null)
                 .findFirst();
-        Object platFormCapabilities = ((JSONObject)((Optional) getPlatformObject)
+        Object platFormCapabilities = ((JSONObject) ((Optional) getPlatformObject)
                 .get()).get(platform);
         ((JSONObject) platFormCapabilities)
                 .forEach((caps, values) -> {
+                    if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
+                        flag[0] = true;
+                        try {
+                            desiredCapabilities.setCapability("chromeDriverPort",
+                                    availablePorts.getPort());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     if ("app".equals(caps)) {
                         if (values instanceof JSONObject) {
                             if (DeviceManager.getDeviceUDID().length()
@@ -95,7 +104,11 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                         simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID())
                                 .getOsVersion());
+            } else {
+                desiredCapabilities.setCapability("webkitDebugProxyPort",
+                        new IOSDeviceConfiguration().startIOSWebKit());
             }
+
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.IOS_XCUI_TEST);
