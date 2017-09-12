@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.appium.ios.IOSDeviceConfiguration;
 import com.report.factory.ExtentManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
