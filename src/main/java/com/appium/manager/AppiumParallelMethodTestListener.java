@@ -45,15 +45,7 @@ public final class AppiumParallelMethodTestListener
             appiumDriverManager.startAppiumDriverInstance();
             reportManager.startLogResults(method.getTestMethod().getMethodName(),
                     testResult.getTestClass().getRealClass().getSimpleName());
-            try {
-                String className = method.getTestMethod().getMethodName();
-                if (getClass().getAnnotation(Description.class) != null) {
-                    testDescription = getClass().getAnnotation(Description.class).value();
-                }
-                reportManager.createParentNodeExtent(className, testDescription);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
             SkipIf skip =
                     method.getTestMethod()
                             .getConstructorOrMethod()
@@ -76,7 +68,18 @@ public final class AppiumParallelMethodTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
+                try {
+                    String className = testResult.getMethod().getRealClass().getSimpleName()
+                            + "-------" +method.getTestMethod().getMethodName();
+                    if (getClass().getAnnotation(Description.class) != null) {
+                        testDescription = getClass().getAnnotation(Description.class).value();
+                    }
+                    reportManager.createParentNodeExtent(className, testDescription);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 reportManager.setAuthorName(method);
+
                 reportManager.endLogTestResults(testResult);
             }
             appiumDriverManager.stopAppiumDriver();

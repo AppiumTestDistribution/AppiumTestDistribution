@@ -13,12 +13,10 @@ public class Retry implements IRetryAnalyzer {
     private int retryCount = 0;
     private int maxRetryCount;
     private ConfigFileManager prop;
-    private ReportManager reportManager;
 
     public Retry() {
         try {
             prop = ConfigFileManager.getInstance();
-            reportManager = new ReportManager();
         } catch (IOException e) {
             e.printStackTrace();
         }

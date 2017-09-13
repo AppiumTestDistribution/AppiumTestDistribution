@@ -10,6 +10,7 @@ import org.json.simple.parser.ParseException;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
+import org.testng.IMethodInstance;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestClass;
@@ -54,27 +55,6 @@ public final class AppiumParallelTestListener
         }
     }
 
-    @Override
-    public void onBeforeClass(ITestClass testClass) {
-        try {
-            String device = testClass.getXmlClass().getAllParameters().get("device").toString();
-            String className = testClass.getRealClass().getSimpleName();
-            deviceAllocationManager.allocateDevice(device,
-                    deviceAllocationManager.getNextAvailableDeviceId());
-            if (getClass().getAnnotation(Description.class) != null) {
-                testDescription = getClass().getAnnotation(Description.class).value();
-            }
-            reportManager.createParentNodeExtent(className, testDescription);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onAfterClass(ITestClass testClass) {
-        ExtentManager.getExtent().flush();
-        deviceAllocationManager.freeDevice();
-    }
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -272,5 +252,27 @@ public final class AppiumParallelTestListener
             default:
                 throw new RuntimeException("Invalid status");
         }
+    }
+
+    @Override
+    public void onBeforeClass(ITestClass testClass, IMethodInstance iMethodInstance) {
+        try {
+            String device = testClass.getXmlClass().getAllParameters().get("device").toString();
+            String className = testClass.getRealClass().getSimpleName();
+            deviceAllocationManager.allocateDevice(device,
+                    deviceAllocationManager.getNextAvailableDeviceId());
+            if (getClass().getAnnotation(Description.class) != null) {
+                testDescription = getClass().getAnnotation(Description.class).value();
+            }
+            reportManager.createParentNodeExtent(className, testDescription);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onAfterClass(ITestClass iTestClass, IMethodInstance iMethodInstance) {
+        ExtentManager.getExtent().flush();
+        deviceAllocationManager.freeDevice();
     }
 }
