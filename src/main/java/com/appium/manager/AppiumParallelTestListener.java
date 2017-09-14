@@ -96,6 +96,9 @@ public final class AppiumParallelTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
+                reportManager.createParentNodeExtent(testResult.getMethod()
+                                .getRealClass().getSimpleName(),
+                        testDescription);
                 reportManager.setAuthorName(method);
                 HashMap<String, String> getLogDetails = reportManager.endLogTestResults(testResult);
                 JSONObject status = getStatus(json, getExecutionStatus(testResult),
@@ -264,7 +267,6 @@ public final class AppiumParallelTestListener
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
-            reportManager.createParentNodeExtent(className, testDescription);
         } catch (Exception e) {
             e.printStackTrace();
         }

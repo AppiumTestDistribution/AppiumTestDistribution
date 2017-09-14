@@ -99,7 +99,7 @@ public class DeviceAllocationManager {
                 return device;
             }
         }
-        throw new IllegalArgumentException("No Available Devices");
+        return "";
     }
 
     public void freeDevice() {
