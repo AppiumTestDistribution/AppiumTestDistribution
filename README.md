@@ -85,7 +85,17 @@ Run Parallel tests across iOS devices and Simulators.
 ## FAQ
 **Q. Can I automate application which I already have installed/ downloaded from App store?**
 
-A. No, Appium can only instruments application which is in debug mode, it will not work with any application which is not in debug mode. Read more about it [here](https://discuss.appium.io/t/appium-ios-app-testing/105/8)
+A. With XCUITest framework, that is available from ios version 9.3, it's possible to execute Native (WebViews content would not be reachable) application using it's bundle id.
+
+In order to get information about bundle id of pre-installed application:
+* connect device with application installed;
+* run ideviceinstaller -l or ideviceinstaller -l -u {udid of the device} in case if more then one device connected to the host;
+* in the list - find name of the application followed by its bundle id.
+
+After that, instead of `app` capability `bundleId` should be used with application's bundle id as a value.
+Since Appium still needs WDA to be built and deployed on the real device - valid certificate and provisioning profile will be needed. More information could be found [here](https://github.com/imurchie/appium-xcuitest-driver/blob/isaac-rs/docs/real-device-config.md)
+
+In case if test need to interact with WebViews and/or ios version has no support of XCUITest - Appium would need instruments application which is in debug mode, it will not work with any application which is not in debug mode. Read more about it [here](https://discuss.appium.io/t/appium-ios-app-testing/105/8)
 
 **Q. Is this framework supports to run multiple IOS simulators?**
 
@@ -97,7 +107,6 @@ A. Below are few possible causes
 * (app/ipa) is not on debug mode.
 * (app) targeted to simulator will not work with real device and vice versa
 * Check device's developer option in settings.
-*
 
 **Q. Unable to install application during automation?**
 
