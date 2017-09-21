@@ -8,7 +8,6 @@ import com.appium.manager.DeviceManager;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.testng.ITestResult;
 
 import java.io.File;
@@ -75,7 +74,7 @@ public class ScreenShotManager {
         String getDeviceModel = null;
         System.out.println("Current Running Thread Status"
                 + AppiumDriverManager.getDriver().getSessionId());
-        File scrFile = ((TakesScreenshot) AppiumDriverManager.getDriver())
+        File scrFile = AppiumDriverManager.getDriver()
                 .getScreenshotAs(OutputType.FILE);
         screenShotNameWithTimeStamp = currentDateAndTime();
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {

@@ -10,12 +10,9 @@ import org.json.simple.parser.ParseException;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
-import org.testng.IMethodInstance;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestClass;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
@@ -30,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public final class AppiumParallelTestListener
-        implements ITestListener, IClassListener, IInvokedMethodListener, ISuiteListener {
+        implements IClassListener, IInvokedMethodListener, ISuiteListener {
 
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
@@ -96,9 +93,6 @@ public final class AppiumParallelTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                reportManager.createParentNodeExtent(testResult.getMethod()
-                                .getRealClass().getSimpleName(),
-                        testDescription);
                 reportManager.setAuthorName(method);
                 HashMap<String, String> getLogDetails = reportManager.endLogTestResults(testResult);
                 JSONObject status = getStatus(json, getExecutionStatus(testResult),
@@ -116,50 +110,6 @@ public final class AppiumParallelTestListener
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onTestStart(ITestResult iTestResult) {
-
-    }
-
-    @Override
-    public void onTestSuccess(ITestResult result) {
-
-    }
-
-    @Override
-    public void onTestFailure(ITestResult result) {
-
-    }
-
-    /*
-        Document to make codacy happy
-     */
-    @Override
-    public void onTestSkipped(ITestResult result) {
-
-    }
-
-    @Override
-    public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-
-    }
-
-    /*
-    Document to make codacy happy
-    */
-    @Override
-    public void onStart(ITestContext context) {
-
-    }
-
-    /*
-     Document to make codacy happy
-     */
-    @Override
-    public void onFinish(ITestContext iTestContext) {
-
     }
 
     public JSONObject getStatus(JSONObject json, String status, String error,
@@ -258,7 +208,7 @@ public final class AppiumParallelTestListener
     }
 
     @Override
-    public void onBeforeClass(ITestClass testClass, IMethodInstance iMethodInstance) {
+    public void onBeforeClass(ITestClass testClass) {
         try {
             String device = testClass.getXmlClass().getAllParameters().get("device").toString();
             String className = testClass.getRealClass().getSimpleName();
@@ -267,13 +217,15 @@ public final class AppiumParallelTestListener
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
+            reportManager.createParentNodeExtent(className,
+                    testDescription);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onAfterClass(ITestClass iTestClass, IMethodInstance iMethodInstance) {
+    public void onAfterClass(ITestClass iTestClass) {
         ExtentManager.getExtent().flush();
         deviceAllocationManager.freeDevice();
     }

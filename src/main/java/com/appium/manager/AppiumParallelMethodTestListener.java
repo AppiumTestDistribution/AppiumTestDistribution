@@ -70,7 +70,7 @@ public final class AppiumParallelMethodTestListener
                     || testResult.getStatus() == ITestResult.FAILURE) {
                 try {
                     String className = testResult.getMethod().getRealClass().getSimpleName()
-                            + "-------" +method.getTestMethod().getMethodName();
+                            + "-------" + method.getTestMethod().getMethodName();
                     if (getClass().getAnnotation(Description.class) != null) {
                         testDescription = getClass().getAnnotation(Description.class).value();
                     }
