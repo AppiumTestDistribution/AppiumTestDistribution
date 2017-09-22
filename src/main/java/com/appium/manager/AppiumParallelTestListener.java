@@ -3,6 +3,8 @@ package com.appium.manager;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.report.factory.ExtentManager;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -106,7 +108,9 @@ public final class AppiumParallelTestListener
 
                 sync(status.toString());
             }
-            appiumDriverManager.stopAppiumDriver();
+            if (method.isTestMethod()) {
+                appiumDriverManager.stopAppiumDriver();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
