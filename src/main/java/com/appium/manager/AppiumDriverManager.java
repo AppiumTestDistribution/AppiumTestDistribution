@@ -158,7 +158,9 @@ public class AppiumDriverManager {
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             iosDeviceConfiguration.destroyIOSWebKitProxy();
         }
-        AppiumDriverManager.getDriver().quit();
+        if (AppiumDriverManager.getDriver() != null) {
+            AppiumDriverManager.getDriver().quit();
+        }
     }
 
 }
