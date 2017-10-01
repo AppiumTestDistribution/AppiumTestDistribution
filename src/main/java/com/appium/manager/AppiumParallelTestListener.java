@@ -3,29 +3,16 @@ package com.appium.manager;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.report.factory.ExtentManager;
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.testng.IClassListener;
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ISuite;
-import org.testng.ISuiteListener;
-import org.testng.ITestClass;
-import org.testng.ITestResult;
-import org.testng.SkipException;
+import org.testng.*;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public final class AppiumParallelTestListener
@@ -40,8 +27,8 @@ public final class AppiumParallelTestListener
     List<String> syncal =
             Collections.synchronizedList(new ArrayList<String>());
 
-    public static Map<String,String> userLogs =
-            Collections.synchronizedMap(new HashMap<String,String>());
+    public static Map<String, String> userLogs =
+            Collections.synchronizedMap(new HashMap<String, String>());
 
     public AppiumParallelTestListener() throws Exception {
         try {
@@ -178,24 +165,55 @@ public final class AppiumParallelTestListener
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonReport = new JSONObject();
+        JSONArray jsonTest = new JSONArray();
         JSONParser parser = new JSONParser();
         for (int i = 0; i < syncal.size(); i++) {
             try {
-                jsonArray.put(parser.parse(syncal.get(i)));
+                jsonTest.put(parser.parse(syncal.get(i)));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
+        Map<String, ISuiteResult> results = iSuite.getResults();
+        JSONObject summaryDetails = getSummaryDetails(results);
+        summaryDetails.put("Invoked Methods", iSuite.getAllInvokedMethods().size());
+
+        jsonReport.put("summary", summaryDetails);
+        jsonReport.put("tests", jsonTest);
         try {
-            userLogs.put("Appium","1.6.6.beta4");
-            jsonArray.put(new JSONObject().put("userMetaData",userLogs));
-            file.write(jsonArray.toString());
+            userLogs.put("Appium", "1.6.6.beta4");
+            //jsonObject.put("userMetaData",userLogs);
+            file.write(new JSONObject().put("Reports", jsonReport).toString());
             file.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private JSONObject getSummaryDetails(Map<String, ISuiteResult> results) {
+
+        Object firstSuite = results.keySet().toArray()[0];
+        ISuiteResult result = results.get(firstSuite);
+        ITestContext testContext = result.getTestContext();
+        int passedTests = testContext.getPassedTests().getAllResults().size();
+        int failedTests = testContext.getFailedTests().getAllResults().size();
+        int skippedTests = testContext.getSkippedTests().getAllResults().size();
+        String suiteName = testContext.getName();
+        String includedGroups = testContext.getIncludedGroups().toString();
+
+        Date startDate = testContext.getStartDate();
+        Date endDate = testContext.getEndDate();
+        long duration = endDate.getTime() - startDate.getTime();
+        JSONObject jsonSummary = new JSONObject();
+        jsonSummary.put("Suite Name", suiteName);
+        jsonSummary.put("Included Groups", includedGroups);
+        jsonSummary.put("Passed", passedTests);
+        jsonSummary.put("Failed", failedTests);
+        jsonSummary.put("Skipped", skippedTests);
+        jsonSummary.put("Duration", duration / 1000 + " seconds");
+
+        return jsonSummary;
     }
 
     private String getExecutionStatus(ITestResult result) {
