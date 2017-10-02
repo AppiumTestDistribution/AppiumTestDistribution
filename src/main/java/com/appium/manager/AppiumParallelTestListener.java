@@ -200,7 +200,7 @@ public final class AppiumParallelTestListener
         int failedTests = testContext.getFailedTests().getAllResults().size();
         int skippedTests = testContext.getSkippedTests().getAllResults().size();
         String suiteName = testContext.getName();
-        String includedGroups = testContext.getIncludedGroups().toString();
+        //String includedGroups = testContext.getIncludedGroups().toString();
 
         Date startDate = testContext.getStartDate();
         Date endDate = testContext.getEndDate();
