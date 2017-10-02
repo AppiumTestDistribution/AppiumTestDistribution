@@ -177,14 +177,14 @@ public final class AppiumParallelTestListener
         }
         Map<String, ISuiteResult> results = iSuite.getResults();
         JSONObject summaryDetails = getSummaryDetails(results);
-        summaryDetails.put("Invoked Methods", iSuite.getAllInvokedMethods().size());
+        summaryDetails.put("num_tests", iSuite.getAllInvokedMethods().size());
 
         jsonReport.put("summary", summaryDetails);
         jsonReport.put("tests", jsonTest);
         try {
             userLogs.put("Appium", "1.6.6.beta4");
             //jsonObject.put("userMetaData",userLogs);
-            file.write(new JSONObject().put("Reports", jsonReport).toString());
+            file.write(new JSONObject().put("report", jsonReport).toString());
             file.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -206,12 +206,12 @@ public final class AppiumParallelTestListener
         Date endDate = testContext.getEndDate();
         long duration = endDate.getTime() - startDate.getTime();
         JSONObject jsonSummary = new JSONObject();
-        jsonSummary.put("Suite Name", suiteName);
-        jsonSummary.put("Included Groups", includedGroups);
-        jsonSummary.put("Passed", passedTests);
-        jsonSummary.put("Failed", failedTests);
-        jsonSummary.put("Skipped", skippedTests);
-        jsonSummary.put("Duration", duration / 1000 + " seconds");
+        jsonSummary.put("suite_name", suiteName);
+        //jsonSummary.put("Included Groups", includedGroups);
+        jsonSummary.put("passed", passedTests);
+        jsonSummary.put("failed", failedTests);
+        jsonSummary.put("skipped", skippedTests);
+        jsonSummary.put("duration", duration / 1000 + " seconds");
 
         return jsonSummary;
     }
