@@ -12,8 +12,9 @@ import org.testng.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public final class AppiumParallelTestListener
         implements IClassListener, IInvokedMethodListener, ISuiteListener {
@@ -88,10 +89,10 @@ public final class AppiumParallelTestListener
                         String.valueOf(testResult.getThrowable()),
                         getLogDetails, method.getTestMethod().getMethodName(),
                         testResult.getInstance().getClass().getSimpleName(),
-                        TimeUnit.MILLISECONDS.toSeconds(testResult.getStartMillis()),
-                        TimeUnit.MILLISECONDS.toSeconds(testResult.getEndMillis()),
-                        TimeUnit.MILLISECONDS.toSeconds(testResult.getEndMillis()
-                                - TimeUnit.MILLISECONDS.toSeconds(testResult.getStartMillis())));
+                        Duration.of(testResult.getStartMillis(), ChronoUnit.MILLIS).getSeconds(),
+                        Duration.of(testResult.getEndMillis(), ChronoUnit.MILLIS).getSeconds(),
+                        Duration.of(testResult.getEndMillis()-testResult.getStartMillis(),
+                                ChronoUnit.MILLIS).getSeconds());
 
                 sync(status.toString());
             }
