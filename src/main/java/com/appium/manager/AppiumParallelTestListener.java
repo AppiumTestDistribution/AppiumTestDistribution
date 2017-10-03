@@ -91,7 +91,7 @@ public final class AppiumParallelTestListener
                         testResult.getInstance().getClass().getSimpleName(),
                         Duration.of(testResult.getStartMillis(), ChronoUnit.MILLIS).getSeconds(),
                         Duration.of(testResult.getEndMillis(), ChronoUnit.MILLIS).getSeconds(),
-                        Duration.of(testResult.getEndMillis()-testResult.getStartMillis(),
+                        Duration.of(testResult.getEndMillis() - testResult.getStartMillis(),
                                 ChronoUnit.MILLIS).getSeconds());
 
                 sync(status.toString());
