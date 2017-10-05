@@ -184,7 +184,7 @@ public final class AppiumParallelTestListener
         jsonReport.put("tests", jsonTest);
         try {
             userLogs.put("Appium", "1.6.6.beta4");
-            //jsonObject.put("userMetaData",userLogs);
+            jsonReport.put("userMetaData",userLogs);
             file.write(new JSONObject().put("report", jsonReport).toString());
             file.close();
         } catch (IOException e) {
@@ -212,7 +212,7 @@ public final class AppiumParallelTestListener
         jsonSummary.put("passed", passedTests);
         jsonSummary.put("failed", failedTests);
         jsonSummary.put("skipped", skippedTests);
-        jsonSummary.put("duration", duration / 1000 + " seconds");
+        jsonSummary.put("duration", duration / 1000);
 
         return jsonSummary;
     }
