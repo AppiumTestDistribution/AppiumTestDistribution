@@ -57,13 +57,13 @@ public class Retry implements IRetryAnalyzer {
         }
 
         if (!iTestResult.isSuccess() && retryCountForTest < maxRetryCount) {
-            System.out.println(methodName +
-                    " execution failed in count: " + retryCountForTest + "\n");
+            System.out.println(methodName
+                    + " execution failed in count: " + retryCountForTest + "\n");
             retryCounts.put(methodName, retryCountForTest);
             return true;
         } else if (!iTestResult.isSuccess() && retryCountForTest == maxRetryCount) {
-            System.out.println(methodName +
-                    " execution failed in count: " + maxRetryCount + "\n");
+            System.out.println(methodName
+                    + " execution failed in count: " + maxRetryCount + "\n");
             return false;
         }
         return false;
