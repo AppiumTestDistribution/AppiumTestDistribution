@@ -184,7 +184,7 @@ public final class AppiumParallelTestListener
         jsonReport.put("tests", jsonTest);
         try {
             userLogs.put("Appium", "1.6.6.beta4");
-            jsonReport.put("userMetaData",userLogs);
+            jsonReport.put("userMetaData", userLogs);
             file.write(new JSONObject().put("report", jsonReport).toString());
             file.close();
         } catch (IOException e) {
@@ -203,16 +203,14 @@ public final class AppiumParallelTestListener
         String suiteName = testContext.getName();
         //String includedGroups = testContext.getIncludedGroups().toString();
 
-        Date startDate = testContext.getStartDate();
-        Date endDate = testContext.getEndDate();
-        long duration = endDate.getTime() - startDate.getTime();
         JSONObject jsonSummary = new JSONObject();
         jsonSummary.put("suite_name", suiteName);
         //jsonSummary.put("Included Groups", includedGroups);
         jsonSummary.put("passed", passedTests);
         jsonSummary.put("failed", failedTests);
         jsonSummary.put("skipped", skippedTests);
-        jsonSummary.put("duration", duration / 1000);
+        jsonSummary.put("duration", Duration.of(testContext.getEndDate().getTime()
+                - testContext.getStartDate().getTime(), ChronoUnit.SECONDS));
 
         return jsonSummary;
     }
