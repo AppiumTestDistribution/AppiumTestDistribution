@@ -1,13 +1,15 @@
 package com.appium.utils;
 
 
+import com.annotation.values.Description;
+import com.appium.manager.AppiumDriverManager;
+import com.appium.manager.DeviceManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.testng.ISuite;
-import org.testng.ISuiteResult;
-import org.testng.ITestContext;
+import org.testng.*;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,11 +20,17 @@ import java.util.*;
 
 public class GenerateReportJson {
 
+    AppiumDriverManager appiumDriverManager;
+
     public List<String> syncal =
             Collections.synchronizedList(new ArrayList<String>());
 
     public static Map<String, String> userLogs =
             Collections.synchronizedMap(new HashMap<String, String>());
+
+    public GenerateReportJson() throws Exception {
+        appiumDriverManager = new AppiumDriverManager();
+    }
 
     public JSONObject getStatus(JSONObject json, HashMap<String, String> deviceLogs,
                                 String status, String error,
@@ -108,8 +116,86 @@ public class GenerateReportJson {
         }
     }
 
+    public void getTestResultsAndQuitDriver(IInvokedMethod method, ITestResult testResult) {
+        ScreenShotManager screenShotManager = new ScreenShotManager();
+        HashMap<String,String> logs = new HashMap<>();
+        JSONObject json = new JSONObject();
+        json.put("id", DeviceManager.getDeviceUDID());
+        json.put("version", new DeviceManager().getDeviceVersion());
+        json.put("platform", DeviceManager.getMobilePlatform());
+        //json.put("resolution", DeviceManager.getMobilePlatform());
+        try {
+            json.put("model", new DeviceManager().getDeviceModel());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (testResult.getStatus() == ITestResult.SUCCESS
+                    || testResult.getStatus() == ITestResult.FAILURE) {
+                if(testResult.getStatus() == ITestResult.FAILURE) {
+                    screenShotManager.captureScreenShot(2,
+                            testResult.getClass().getSimpleName(),
+                            testResult.getMethod().getMethodName());
+                    String screenShotFailure;
+                    if (new File(System.getProperty("user.dir")
+                            + "/target/" + screenShotManager.getFailedScreen()).exists()) {
+                        screenShotFailure = screenShotManager.getFailedScreen();
+                        logs.put("screenShotFailure",screenShotFailure);
+                    } else if (new File(System.getProperty("user.dir")
+                            + "/target/" + screenShotManager.getFramedFailedScreen()).exists()) {
+                        screenShotFailure = screenShotManager.getFramedFailedScreen();
+                        logs.put("screenShotFailure",screenShotFailure);
+                    }
+                }
+                String testDescription;
+                String description = method.getTestMethod().getMethod().getAnnotation(Test.class).description();
+                if (description.isEmpty()) {
+                    testDescription = method.getTestMethod().getMethodName();
+                } else {
+                    testDescription = description;
+                }
+                JSONObject status = getStatus(json,logs,
+                        getExecutionStatus(testResult),
+                        String.valueOf(testResult.getThrowable()),
+                        testDescription,
+                        testResult.getInstance().getClass().getSimpleName(),
+                        Duration.of(testResult.getStartMillis(), ChronoUnit.MILLIS).getSeconds(),
+                        Duration.of(testResult.getEndMillis(), ChronoUnit.MILLIS).getSeconds(),
+                        Duration.of(testResult.getEndMillis() - testResult.getStartMillis(),
+                                ChronoUnit.MILLIS).getSeconds());
+
+                sync(status.toString());
+            }
+            if (method.isTestMethod()) {
+                appiumDriverManager.stopAppiumDriver();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getExecutionStatus(ITestResult result) {
+        switch (result.getStatus()) {
+            case ITestResult.SUCCESS:
+                return "Pass";
+            case ITestResult.FAILURE:
+                return "Fail";
+            case ITestResult.SKIP:
+                return "Skip";
+            default:
+                throw new RuntimeException("Invalid status");
+        }
+    }
+
     private JSONObject getSummaryDetails(Map<String, ISuiteResult> results) {
         return getResultsSummary(results);
+    }
+
+    private void sync(String message) {
+        //Adding elements to synchronized ArrayList
+        syncal.add(message);
     }
 
 }

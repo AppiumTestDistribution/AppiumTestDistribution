@@ -5,15 +5,10 @@ import com.annotation.values.SkipIf;
 import com.appium.utils.GenerateReportJson;
 
 import com.appium.utils.ScreenShotManager;
-import javafx.stage.Screen;
-import org.json.JSONObject;
 import org.testng.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
+
 
 public final class AppiumParallelTestListener
         implements IClassListener, IInvokedMethodListener, ISuiteListener {
@@ -61,55 +56,7 @@ public final class AppiumParallelTestListener
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        HashMap<String,String> logs = new HashMap<>();
-        JSONObject json = new JSONObject();
-        json.put("id", DeviceManager.getDeviceUDID());
-        json.put("version", new DeviceManager().getDeviceVersion());
-        json.put("platform", DeviceManager.getMobilePlatform());
-        //json.put("resolution", DeviceManager.getMobilePlatform());
-        try {
-            json.put("model", new DeviceManager().getDeviceModel());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (testResult.getStatus() == ITestResult.SUCCESS
-                    || testResult.getStatus() == ITestResult.FAILURE) {
-                if(testResult.getStatus() == ITestResult.FAILURE) {
-                    screenShotManager.captureScreenShot(2,
-                            testResult.getClass().getSimpleName(),
-                            testResult.getMethod().getMethodName());
-                    String screenShotFailure;
-                    if (new File(System.getProperty("user.dir")
-                            + "/target/" + screenShotManager.getFailedScreen()).exists()) {
-                        screenShotFailure = screenShotManager.getFailedScreen();
-                        logs.put("screenShotFailure",screenShotFailure);
-                    } else if (new File(System.getProperty("user.dir")
-                            + "/target/" + screenShotManager.getFramedFailedScreen()).exists()) {
-                        screenShotFailure = screenShotManager.getFramedFailedScreen();
-                        logs.put("screenShotFailure",screenShotFailure);
-                    }
-                }
-                JSONObject status = generateReportJson.getStatus(json,logs,
-                        getExecutionStatus(testResult),
-                        String.valueOf(testResult.getThrowable()),
-                        method.getTestMethod().getMethodName(),
-                        testResult.getInstance().getClass().getSimpleName(),
-                        Duration.of(testResult.getStartMillis(), ChronoUnit.MILLIS).getSeconds(),
-                        Duration.of(testResult.getEndMillis(), ChronoUnit.MILLIS).getSeconds(),
-                        Duration.of(testResult.getEndMillis() - testResult.getStartMillis(),
-                                ChronoUnit.MILLIS).getSeconds());
-
-                sync(status.toString());
-            }
-            if (method.isTestMethod()) {
-                appiumDriverManager.stopAppiumDriver();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        generateReportJson.getTestResultsAndQuitDriver(method, testResult);
     }
 
     /*
@@ -124,11 +71,6 @@ public final class AppiumParallelTestListener
         }
     }
 
-    private void sync(String message) {
-        //Adding elements to synchronized ArrayList
-        generateReportJson.syncal.add(message);
-    }
-
 
     @Override
     public void onFinish(ISuite iSuite) {
@@ -140,19 +82,6 @@ public final class AppiumParallelTestListener
             e.printStackTrace();
         }
         generateReportJson.finalReportCreation(iSuite);
-    }
-
-    private String getExecutionStatus(ITestResult result) {
-        switch (result.getStatus()) {
-            case ITestResult.SUCCESS:
-                return "Pass";
-            case ITestResult.FAILURE:
-                return "Fail";
-            case ITestResult.SKIP:
-                return "Skip";
-            default:
-                throw new RuntimeException("Invalid status");
-        }
     }
 
     @Override

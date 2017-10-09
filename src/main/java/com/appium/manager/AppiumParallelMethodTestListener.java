@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.utils.GenerateReportJson;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
@@ -19,8 +20,8 @@ public final class AppiumParallelMethodTestListener
     private DeviceAllocationManager deviceAllocationManager;
     private ConfigFileManager prop;
     public AppiumServerManager appiumServerManager;
-    public String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
+    private GenerateReportJson generateReportJson;
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
@@ -28,6 +29,7 @@ public final class AppiumParallelMethodTestListener
             prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
+            generateReportJson = new GenerateReportJson();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,19 +63,7 @@ public final class AppiumParallelMethodTestListener
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
-            if (testResult.getStatus() == ITestResult.SUCCESS
-                    || testResult.getStatus() == ITestResult.FAILURE) {
-                try {
-                    String className = testResult.getMethod().getRealClass().getSimpleName()
-                            + "-------" + method.getTestMethod().getMethodName();
-                    if (getClass().getAnnotation(Description.class) != null) {
-                        testDescription = getClass().getAnnotation(Description.class).value();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            appiumDriverManager.stopAppiumDriver();
+            generateReportJson.getTestResultsAndQuitDriver(method,testResult);
             deviceAllocationManager.freeDevice();
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,6 +120,7 @@ public final class AppiumParallelMethodTestListener
     public void onFinish(ISuite iSuite) {
         try {
             appiumServerManager.stopAppiumServer();
+            generateReportJson.finalReportCreation(iSuite);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
