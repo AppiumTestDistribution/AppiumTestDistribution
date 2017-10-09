@@ -1,8 +1,6 @@
 package com.test.site;
 
-import com.appium.manager.AppiumParallelTestListener;
 import com.appium.manager.ParallelThread;
-import com.report.factory.ExtentManager;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,7 +15,6 @@ public class Runner {
         String[] parts = udidParam.split(",");
         List<String> deviceList = Arrays.asList(parts);
         System.out.println(deviceList);*/
-        ExtentManager.setSystemInfoInReport("version","1.0.0");
         List<String> tests = new ArrayList<>();
         tests.add("HomePageTest2");
         tests.add("HomePageTest1");

@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.report.factory.ExtentManager;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
@@ -17,7 +16,6 @@ import java.io.IOException;
 public final class AppiumParallelMethodTestListener
     implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
-    private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
     private ConfigFileManager prop;
     public AppiumServerManager appiumServerManager;
@@ -26,7 +24,6 @@ public final class AppiumParallelMethodTestListener
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
-            reportManager = new ReportManager();
             appiumServerManager = new AppiumServerManager();
             prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -43,8 +40,6 @@ public final class AppiumParallelMethodTestListener
             deviceAllocationManager.allocateDevice("",
                     deviceAllocationManager.getNextAvailableDeviceId());
             appiumDriverManager.startAppiumDriverInstance();
-            reportManager.startLogResults(method.getTestMethod().getMethodName(),
-                    testResult.getTestClass().getRealClass().getSimpleName());
 
             SkipIf skip =
                     method.getTestMethod()
@@ -74,16 +69,11 @@ public final class AppiumParallelMethodTestListener
                     if (getClass().getAnnotation(Description.class) != null) {
                         testDescription = getClass().getAnnotation(Description.class).value();
                     }
-                    reportManager.createParentNodeExtent(className, testDescription);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                reportManager.setAuthorName(method);
-
-                reportManager.endLogTestResults(testResult);
             }
             appiumDriverManager.stopAppiumDriver();
-            ExtentManager.getExtent().flush();
             deviceAllocationManager.freeDevice();
         } catch (Exception e) {
             e.printStackTrace();

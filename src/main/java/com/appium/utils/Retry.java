@@ -2,7 +2,6 @@ package com.appium.utils;
 
 import com.annotation.values.RetryCount;
 import com.appium.manager.ConfigFileManager;
-import com.appium.manager.ReportManager;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 

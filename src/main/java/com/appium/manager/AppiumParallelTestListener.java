@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.report.factory.ExtentManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,7 +18,6 @@ import java.util.*;
 public final class AppiumParallelTestListener
         implements IClassListener, IInvokedMethodListener, ISuiteListener {
 
-    private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
     public AppiumServerManager appiumServerManager;
     public String testDescription = "";
@@ -33,7 +31,6 @@ public final class AppiumParallelTestListener
 
     public AppiumParallelTestListener() throws Exception {
         try {
-            reportManager = new ReportManager();
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
@@ -47,8 +44,6 @@ public final class AppiumParallelTestListener
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
             appiumDriverManager.startAppiumDriverInstance();
-            reportManager.startLogResults(method.getTestMethod().getMethodName(),
-                    testResult.getTestClass().getRealClass().getSimpleName());
             SkipIf skip =
                     method.getTestMethod()
                             .getConstructorOrMethod()
@@ -83,11 +78,9 @@ public final class AppiumParallelTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                reportManager.setAuthorName(method);
-                HashMap<String, String> getLogDetails = reportManager.endLogTestResults(testResult);
                 JSONObject status = getStatus(json, getExecutionStatus(testResult),
                         String.valueOf(testResult.getThrowable()),
-                        getLogDetails, method.getTestMethod().getMethodName(),
+                        method.getTestMethod().getMethodName(),
                         testResult.getInstance().getClass().getSimpleName(),
                         Duration.of(testResult.getStartMillis(), ChronoUnit.MILLIS).getSeconds(),
                         Duration.of(testResult.getEndMillis(), ChronoUnit.MILLIS).getSeconds(),
@@ -105,7 +98,6 @@ public final class AppiumParallelTestListener
     }
 
     public JSONObject getStatus(JSONObject json, String status, String error,
-                                HashMap<String, String> deviceLogsPath,
                                 String methodname, String classname,
                                 long startTime, long endTime, long totalTime) {
         JSONObject jsonObj = new JSONObject();
@@ -117,15 +109,6 @@ public final class AppiumParallelTestListener
         jsonObj.put("starttime", startTime);
         jsonObj.put("endtime", endTime);
         json.put("totaltime", totalTime);
-        deviceLogsPath.forEach((key, value) -> {
-            if ("videoLogs".equals(key)
-                    || "screenShotFailure".equals(key)) {
-                if (new File(value).exists()) {
-                    logs.put(key, value);
-                }
-            }
-            logs.put(key, value);
-        });
         jsonObj.put("logs", logs);
         json.put("testDetails", jsonObj);
         return json;
@@ -238,8 +221,6 @@ public final class AppiumParallelTestListener
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
-            reportManager.createParentNodeExtent(className,
-                    testDescription);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -247,7 +228,6 @@ public final class AppiumParallelTestListener
 
     @Override
     public void onAfterClass(ITestClass iTestClass) {
-        ExtentManager.getExtent().flush();
         deviceAllocationManager.freeDevice();
     }
 }

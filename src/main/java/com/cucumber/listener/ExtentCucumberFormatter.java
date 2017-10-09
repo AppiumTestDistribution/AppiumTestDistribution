@@ -1,7 +1,6 @@
 package com.cucumber.listener;
 
 import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
@@ -9,12 +8,7 @@ import com.appium.manager.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.DeviceManager;
 import com.appium.manager.DeviceSingleton;
-import com.appium.manager.ReportManager;
 import com.appium.utils.ImageUtils;
-
-import com.aventstack.extentreports.Status;
-import com.report.factory.ExtentManager;
-import com.report.factory.ExtentTestManager;
 
 import com.video.recorder.XpathXML;
 import gherkin.formatter.Formatter;
@@ -57,7 +51,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     public AppiumServerManager appiumServerManager;
     public AppiumDriverManager appiumDriverManager;
     public DeviceSingleton deviceSingleton;
-    public ReportManager reportManager;
     public LinkedList<Step> testSteps;
     public AppiumDriver<MobileElement> appium_driver;
     private AndroidDeviceConfiguration androidDevice;
@@ -80,7 +73,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     };
 
     public ExtentCucumberFormatter() throws Exception {
-        reportManager = new ReportManager();
         appiumServerManager = new AppiumServerManager();
         appiumDriverManager = new AppiumDriverManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -97,51 +89,11 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     public void before(Match match, Result result) {
     }
 
+    @Override
     public void result(Result result) {
-        if ("passed".equals(result.getStatus())) {
-            reportManager.test.get().log(Status.PASS, testSteps.poll().getName());
-        } else if ("failed".equals(result.getStatus())) {
-            String failed_StepName = testSteps.poll().getName();
-            reportManager.test.get().log(Status.FAIL, result.getErrorMessage());
-            String context = AppiumDriverManager.getDriver().getContext();
-            boolean contextChanged = false;
-            if ("Android".equals(AppiumDriverManager.getDriver()
-                    .getSessionDetails().get("platformName")
-                    .toString())
-                    && !"NATIVE_APP".equals(context)) {
-                AppiumDriverManager.getDriver().context("NATIVE_APP");
-                contextChanged = true;
-            }
-            File scrFile = ((TakesScreenshot) AppiumDriverManager.getDriver())
-                    .getScreenshotAs(OutputType.FILE);
-            if (contextChanged) {
-                AppiumDriverManager.getDriver().context(context);
-            }
-            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                deviceModel = androidDevice.getDeviceModel();
-                screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-                try {
-                    deviceModel =
-                            iosDevice.getIOSDeviceProductTypeAndVersion();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                screenShotAndFrame(failed_StepName, scrFile, "iPhone");
-            }
-            try {
-                attachScreenShotToReport(failed_StepName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if ("skipped".equals(result.getStatus())) {
-            reportManager.test.get().log(Status.SKIP, testSteps.poll().getName());
-        } else if ("undefined".equals(result.getStatus())) {
-            reportManager.test.get().log(Status.WARNING, testSteps.poll().getName());
-        }
+
     }
+
 
     public void after(Match match, Result result) {
 
@@ -191,8 +143,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                 if (DeviceManager.getDeviceUDID() == null) {
                     System.out.println("No devices are free to run test or Failed to run test");
                 }
-                reportManager.createParentNodeExtent(feature.getName(),"")
-                    .assignCategory(tags);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -200,8 +150,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             try {
                 deviceAllocationManager.allocateDevice("",
                     deviceSingleton.getDeviceUDID());
-                reportManager.createParentNodeExtent(feature.getName(),"")
-                        .assignCategory(tags);
                 //appiumServerManager.startAppiumServer();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -243,7 +191,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
 
     //TO DO fix this
     public void startAppiumServer(Scenario scenario, String tags) throws Exception {
-        reportManager.createChildNodeWithCategory(scenario.getName(), tags);
         appiumDriverManager.startAppiumDriverInstance();
         ///This portion should be Broken : TODO
     }
@@ -261,7 +208,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     }
 
     public void endOfScenarioLifeCycle(Scenario scenario) {
-        ExtentManager.getExtent().flush();
         AppiumDriverManager.getDriver().quit();
     }
 
@@ -274,7 +220,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     }
 
     public void eof() {
-        ExtentManager.getExtent().flush();
         try {
             deviceAllocationManager.freeDevice();
         } catch (Exception e) {
@@ -330,37 +275,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("Resource Directory was not found");
-        }
-    }
-
-    public void attachScreenShotToReport(String stepName) throws IOException {
-        String platform = null;
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            platform = "android";
-        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            platform = "iPhone";
-        }
-        File framedImageAndroid = new File(
-                System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + DeviceManager.getDeviceUDID() + "/" + deviceModel
-                        + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
-        if (framedImageAndroid.exists()) {
-            reportManager.test.get().log(Status.INFO,
-                    "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
-                            System.getProperty("user.dir")
-                                    + "/target/screenshot/"
-                                    + platform + "/"
-                                    + DeviceManager.getDeviceUDID()
-                                    + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg"));
-        } else {
-            reportManager.test.get().log(Status.INFO,
-                    "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
-                            System.getProperty("user.dir") + "/target/screenshot/"
-                                    + platform + "/"
-                                    + DeviceManager.getDeviceUDID()
-                                    + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + ".jpeg"));
         }
     }
 
