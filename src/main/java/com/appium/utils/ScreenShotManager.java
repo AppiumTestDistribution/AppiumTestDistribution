@@ -68,7 +68,7 @@ public class ScreenShotManager {
     }
 
     public String captureScreenShot(int status, String className,
-                                    String methodName, String deviceModel)
+                                    String methodName)
             throws IOException, InterruptedException {
 
         String getDeviceModel = null;
@@ -78,13 +78,13 @@ public class ScreenShotManager {
                 .getScreenshotAs(OutputType.FILE);
         screenShotNameWithTimeStamp = currentDateAndTime();
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
+            getDeviceModel = screenShotNameWithTimeStamp;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "android", deviceModel);
+                    "android");
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
+            getDeviceModel = screenShotNameWithTimeStamp;
             screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "iOS", deviceModel);
+                    "iOS");
         }
         return getDeviceModel;
     }
@@ -92,13 +92,7 @@ public class ScreenShotManager {
     public void captureScreenShot(String screenShotName)
             throws InterruptedException, IOException {
         String className = new Exception().getStackTrace()[1].getClassName();
-        String deviceModel = null;
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
-        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            deviceModel = new IOSDeviceConfiguration().getIOSDeviceProductTypeAndVersion();
-        }
-        captureScreenShot(1, className, screenShotName, deviceModel);
+        captureScreenShot(1, className, screenShotName);
     }
 
 
@@ -112,18 +106,18 @@ public class ScreenShotManager {
     private void screenShotAndFrame(int status,
                                     File scrFile, String methodName,
                                     String className, String model,
-                                    String platform, String deviceModel) {
+                                    String platform) {
         setFailedScreen(
                   "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className + "/"
                         + methodName + "/"
-                        + screenShotNameWithTimeStamp + deviceModel + "_"
+                        + screenShotNameWithTimeStamp  + "_"
                         + methodName + "_failed" + ".jpeg");
         setCapturedScreen(
                 "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className
                         + "/" + methodName + "/"
-                        + screenShotNameWithTimeStamp + deviceModel + "_"
+                        + screenShotNameWithTimeStamp  + "_"
                         + methodName + "_results.jpeg");
 
         setFramedCapturedScreen("screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()

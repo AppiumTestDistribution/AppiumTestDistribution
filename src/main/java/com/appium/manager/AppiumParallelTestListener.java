@@ -2,18 +2,18 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import org.json.JSONArray;
+import com.appium.utils.GenerateReportJson;
+
+import com.appium.utils.ScreenShotManager;
+import javafx.stage.Screen;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.testng.*;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashMap;
 
 public final class AppiumParallelTestListener
         implements IClassListener, IInvokedMethodListener, ISuiteListener {
@@ -22,18 +22,16 @@ public final class AppiumParallelTestListener
     public AppiumServerManager appiumServerManager;
     public String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
-
-    List<String> syncal =
-            Collections.synchronizedList(new ArrayList<String>());
-
-    public static Map<String, String> userLogs =
-            Collections.synchronizedMap(new HashMap<String, String>());
+    private GenerateReportJson generateReportJson;
+    ScreenShotManager screenShotManager;
 
     public AppiumParallelTestListener() throws Exception {
         try {
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
+            generateReportJson = new GenerateReportJson();
+            screenShotManager = new ScreenShotManager();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,6 +61,7 @@ public final class AppiumParallelTestListener
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        HashMap<String,String> logs = new HashMap<>();
         JSONObject json = new JSONObject();
         json.put("id", DeviceManager.getDeviceUDID());
         json.put("version", new DeviceManager().getDeviceVersion());
@@ -78,7 +77,23 @@ public final class AppiumParallelTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                JSONObject status = getStatus(json, getExecutionStatus(testResult),
+                if(testResult.getStatus() == ITestResult.FAILURE) {
+                    screenShotManager.captureScreenShot(2,
+                            testResult.getClass().getSimpleName(),
+                            testResult.getMethod().getMethodName());
+                    String screenShotFailure;
+                    if (new File(System.getProperty("user.dir")
+                            + "/target/" + screenShotManager.getFailedScreen()).exists()) {
+                        screenShotFailure = screenShotManager.getFailedScreen();
+                        logs.put("screenShotFailure",screenShotFailure);
+                    } else if (new File(System.getProperty("user.dir")
+                            + "/target/" + screenShotManager.getFramedFailedScreen()).exists()) {
+                        screenShotFailure = screenShotManager.getFramedFailedScreen();
+                        logs.put("screenShotFailure",screenShotFailure);
+                    }
+                }
+                JSONObject status = generateReportJson.getStatus(json,logs,
+                        getExecutionStatus(testResult),
                         String.valueOf(testResult.getThrowable()),
                         method.getTestMethod().getMethodName(),
                         testResult.getInstance().getClass().getSimpleName(),
@@ -97,23 +112,6 @@ public final class AppiumParallelTestListener
         }
     }
 
-    public JSONObject getStatus(JSONObject json, String status, String error,
-                                String methodname, String classname,
-                                long startTime, long endTime, long totalTime) {
-        JSONObject jsonObj = new JSONObject();
-        JSONObject logs = new JSONObject();
-        jsonObj.put("results", status);
-        jsonObj.put("methodname", methodname);
-        jsonObj.put("classname", classname);
-        jsonObj.put("exceptiontrace", error);
-        jsonObj.put("starttime", startTime);
-        jsonObj.put("endtime", endTime);
-        json.put("totaltime", totalTime);
-        jsonObj.put("logs", logs);
-        json.put("testDetails", jsonObj);
-        return json;
-    }
-
     /*
     Document to make codacy happy
     */
@@ -128,7 +126,7 @@ public final class AppiumParallelTestListener
 
     private void sync(String message) {
         //Adding elements to synchronized ArrayList
-        syncal.add(message);
+        generateReportJson.syncal.add(message);
     }
 
 
@@ -141,61 +139,7 @@ public final class AppiumParallelTestListener
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        FileWriter file = null;
-        try {
-            file = new FileWriter(System.getProperty("user.dir")
-                    + "/target/finalReport.json");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        JSONObject jsonReport = new JSONObject();
-        JSONArray jsonTest = new JSONArray();
-        JSONParser parser = new JSONParser();
-        for (int i = 0; i < syncal.size(); i++) {
-            try {
-                jsonTest.put(parser.parse(syncal.get(i)));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        Map<String, ISuiteResult> results = iSuite.getResults();
-        JSONObject summaryDetails = getSummaryDetails(results);
-        summaryDetails.put("num_tests", iSuite.getAllInvokedMethods().size());
-
-        jsonReport.put("summary", summaryDetails);
-        jsonReport.put("tests", jsonTest);
-        try {
-            userLogs.put("Appium", "1.6.6.beta4");
-            jsonReport.put("userMetaData", userLogs);
-            file.write(new JSONObject().put("report", jsonReport).toString());
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private JSONObject getSummaryDetails(Map<String, ISuiteResult> results) {
-
-        Object firstSuite = results.keySet().toArray()[0];
-        ISuiteResult result = results.get(firstSuite);
-        ITestContext testContext = result.getTestContext();
-        int passedTests = testContext.getPassedTests().getAllResults().size();
-        int failedTests = testContext.getFailedTests().getAllResults().size();
-        int skippedTests = testContext.getSkippedTests().getAllResults().size();
-        String suiteName = testContext.getName();
-        //String includedGroups = testContext.getIncludedGroups().toString();
-
-        JSONObject jsonSummary = new JSONObject();
-        jsonSummary.put("suite_name", suiteName);
-        //jsonSummary.put("Included Groups", includedGroups);
-        jsonSummary.put("passed", passedTests);
-        jsonSummary.put("failed", failedTests);
-        jsonSummary.put("skipped", skippedTests);
-        jsonSummary.put("duration", Duration.of(testContext.getEndDate().getTime()
-                - testContext.getStartDate().getTime(), ChronoUnit.SECONDS));
-
-        return jsonSummary;
+        generateReportJson.finalReportCreation(iSuite);
     }
 
     private String getExecutionStatus(ITestResult result) {
