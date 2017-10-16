@@ -17,7 +17,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by saikrisv on 26/04/17.
@@ -32,16 +34,19 @@ public class ScreenShotManager {
     private String framedCapturedScreen;
     JSONArray screenShotArray = new JSONArray();
     JSONObject screenshotDetails = new JSONObject();
-    JSONObject logs = new JSONObject();;
+    JSONObject logs = new JSONObject();
+    ;
 
-    public HashMap<String,String> syncal =
+    public static HashMap<String, String> syncal =
             new HashMap<>();
 
 //    public Map<String, String> getSynmap() {
 //        return synmap;
 //    }
 
-    public static Map<String,String> synmap;
+    public static Map<String, String> synmap
+            = Collections.synchronizedMap(syncal);
+    ;
 
     public ScreenShotManager() {
         imageUtils = new ImageUtils();
@@ -105,34 +110,32 @@ public class ScreenShotManager {
             throws InterruptedException, IOException {
         String json = null;
         String className = new Exception().getStackTrace()[1].getClassName();
-//        String methodName = new Exception().getStackTrace()[1].getMethodName();
+        String methodName = new Exception().getStackTrace()[1].getMethodName();
         JSONObject jsonObj1 = new JSONObject();
 
-        String s = captureScreenShot(1, className, screenShotName);
+        String s = captureScreenShot(1, className, methodName);
         new File(System.getProperty("user.dir")
                 + "/target/" + screenShotName + getCapturedScreen());
 //        jsonObj.put(className + "." + methodName, screenShotName + s);
 //        screenShots.put(jsonObj);
 
-        if(screenshotDetails.length()<=0) {
+        if (screenshotDetails.length() <= 0) {
             screenshotDetails = getScreenshotDetails();
         }
-
         logs.put(screenShotName, System.getProperty("user.dir") + "/target/" + s);
         //screenshotDetails.remove("screens");
-        screenshotDetails.put("screens",logs);
-        if (syncal.containsKey(screenshotDetails.get("method_name").toString())) {
-            syncal.put(screenshotDetails.get("method_name").toString()+"",
+        screenshotDetails.put("screens", logs);
+        if (syncal.containsKey(className+methodName)) {
+            syncal.put(className+methodName,
                     screenshotDetails.toString());
         }
-        syncal.put(screenshotDetails.get("method_name").toString()+"",
+        syncal.put(className+methodName,
                 screenshotDetails.toString());
-         synmap = Collections.synchronizedMap(syncal);
     }
 
     private JSONObject getScreenshotDetails() {
-        String className = new Exception().getStackTrace()[1].getClassName();
-        String methodName = new Exception().getStackTrace()[1].getMethodName();
+        String className = new Exception().getStackTrace()[2].getClassName();
+        String methodName = new Exception().getStackTrace()[2].getMethodName();
 //        JSONObject jsonObj = new JSONObject();
         JSONObject jsonObj1 = new JSONObject();
 //        jsonObj.put(className + "." + methodName, screenShotName + s);
