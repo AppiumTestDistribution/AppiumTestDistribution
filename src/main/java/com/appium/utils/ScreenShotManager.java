@@ -1,12 +1,12 @@
 package com.appium.utils;
 
-import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.DeviceManager;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openqa.selenium.OutputType;
 import org.testng.ITestResult;
 
@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 /**
  * Created by saikrisv on 26/04/17.
@@ -29,6 +30,22 @@ public class ScreenShotManager {
     private String failedScreen;
     private String framedFailedScreen;
     private String framedCapturedScreen;
+    JSONArray screenShotArray = new JSONArray();
+    JSONObject screenshotDetails = new JSONObject();
+    JSONObject logs = new JSONObject();;
+
+    public HashMap<String,String> syncal =
+            new HashMap<>();
+
+//    public Map<String, String> getSynmap() {
+//        return synmap;
+//    }
+
+    public static Map<String,String> synmap;
+
+    public ScreenShotManager() {
+        imageUtils = new ImageUtils();
+    }
 
     public String getFramedCapturedScreen() {
         return framedCapturedScreen;
@@ -62,11 +79,6 @@ public class ScreenShotManager {
         this.failedScreen = failedScreen;
     }
 
-
-    public ScreenShotManager() {
-        imageUtils = new ImageUtils();
-    }
-
     public String captureScreenShot(int status, String className,
                                     String methodName)
             throws IOException, InterruptedException {
@@ -91,10 +103,55 @@ public class ScreenShotManager {
 
     public void captureScreenShot(String screenShotName)
             throws InterruptedException, IOException {
+        String json = null;
         String className = new Exception().getStackTrace()[1].getClassName();
-        captureScreenShot(1, className, screenShotName);
+//        String methodName = new Exception().getStackTrace()[1].getMethodName();
+        JSONObject jsonObj1 = new JSONObject();
+
+        String s = captureScreenShot(1, className, screenShotName);
+        new File(System.getProperty("user.dir")
+                + "/target/" + screenShotName + getCapturedScreen());
+//        jsonObj.put(className + "." + methodName, screenShotName + s);
+//        screenShots.put(jsonObj);
+
+        if(screenshotDetails.length()<=0) {
+            screenshotDetails = getScreenshotDetails();
+        }
+
+        logs.put(screenShotName, System.getProperty("user.dir") + "/target/" + s);
+        //screenshotDetails.remove("screens");
+        screenshotDetails.put("screens",logs);
+        if (syncal.containsKey(screenshotDetails.get("method_name").toString())) {
+            syncal.put(screenshotDetails.get("method_name").toString()+"",
+                    screenshotDetails.toString());
+        }
+        syncal.put(screenshotDetails.get("method_name").toString()+"",
+                screenshotDetails.toString());
+         synmap = Collections.synchronizedMap(syncal);
     }
 
+    private JSONObject getScreenshotDetails() {
+        String className = new Exception().getStackTrace()[1].getClassName();
+        String methodName = new Exception().getStackTrace()[1].getMethodName();
+//        JSONObject jsonObj = new JSONObject();
+        JSONObject jsonObj1 = new JSONObject();
+//        jsonObj.put(className + "." + methodName, screenShotName + s);
+//        screenShots.put(jsonObj);
+        jsonObj1.put("class_name", className);
+        jsonObj1.put("method_name", methodName);
+        try {
+            jsonObj1.put("model", new DeviceManager().getDeviceModel());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        jsonObj1.put("id", DeviceManager.getDeviceUDID());
+        jsonObj1.put("version", new DeviceManager().getDeviceVersion());
+        jsonObj1.put("platform", DeviceManager.getMobilePlatform());
+
+        return jsonObj1;
+    }
 
     private String currentDateAndTime() {
         LocalDateTime now = LocalDateTime.now();
@@ -108,22 +165,22 @@ public class ScreenShotManager {
                                     String className, String model,
                                     String platform) {
         setFailedScreen(
-                  "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
+                "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className + "/"
                         + methodName + "/"
-                        + screenShotNameWithTimeStamp  + "_"
+                        + screenShotNameWithTimeStamp + "_"
                         + methodName + "_failed" + ".jpeg");
         setCapturedScreen(
                 "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className
                         + "/" + methodName + "/"
-                        + screenShotNameWithTimeStamp  + "_"
+                        + screenShotNameWithTimeStamp + "_"
                         + methodName + "_results.jpeg");
 
         setFramedCapturedScreen("screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
-                        + "/" + className
-                        + "/" + methodName + "/" + model + "_"
-                        + methodName + "_results_framed.jpeg");
+                + "/" + className
+                + "/" + methodName + "/" + model + "_"
+                + methodName + "_results_framed.jpeg");
         setFramedFailedScreen(
                 "screenshot/" + platform + "/" + DeviceManager.getDeviceUDID()
                         + "/" + className
@@ -165,7 +222,7 @@ public class ScreenShotManager {
                                             + "/target/" + getCapturedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                             System.getProperty("user.dir")
-                                                    + "/target/" +  getFramedCapturedScreen());
+                                                    + "/target/" + getFramedCapturedScreen());
                                     deleteFile(screenToFrame);
                                 }
 
