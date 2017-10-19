@@ -105,17 +105,17 @@ public class GenerateReportJson {
 
         jsonReport.put("summary", summaryDetails);
         jsonReport.put("tests", jsonTest);
-        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
         JSONParser jsonParser = new JSONParser();
         try {
             ScreenShotManager.synmap.forEach((s, s2) -> {
                 try {
-                    jsonObject.put(s,jsonParser.parse(s2));
+                    jsonArray.put(jsonParser.parse(s2));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             });
-            jsonReport.put("Screenshots",jsonObject);
+            jsonReport.put("Screenshots",jsonArray);
         } catch (Exception e) {
             e.printStackTrace();
         }
