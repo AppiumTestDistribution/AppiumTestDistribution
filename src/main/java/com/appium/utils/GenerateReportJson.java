@@ -163,7 +163,8 @@ public class GenerateReportJson {
                     }
                 }
                 String testDescription;
-                String description = method.getTestMethod().getMethod().getAnnotation(Test.class).description();
+                String description = method.getTestMethod().getMethod()
+                        .getAnnotation(Test.class).description();
                 if (description.isEmpty()) {
                     testDescription = method.getTestMethod().getMethodName();
                 } else {

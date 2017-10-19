@@ -34,14 +34,12 @@ public class ScreenShotManager {
 
     JSONObject screenshotDetails = new JSONObject();
     JSONObject logs = new JSONObject();
-    ;
 
     public static HashMap<String, String> syncal =
             new HashMap<>();
 
     public static Map<String, String> synmap
             = Collections.synchronizedMap(syncal);
-    ;
 
     public ScreenShotManager() {
         imageUtils = new ImageUtils();
@@ -130,7 +128,7 @@ public class ScreenShotManager {
         String className = new Exception().getStackTrace()[1].getClassName();
         String methodName = new Exception().getStackTrace()[1].getMethodName();
 
-        String s = captureScreenShot(1, className, methodName,screenShotName);
+        captureScreenShot(1, className, methodName,screenShotName);
 
         new File(System.getProperty("user.dir")
                 + "/target/" + getCapturedScreen());
