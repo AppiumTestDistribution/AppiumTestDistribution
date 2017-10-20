@@ -21,10 +21,12 @@ public class HomePageTest2 {
     public void testMethodOne1() throws Exception {
         ScreenShotManager screenShotManager = new ScreenShotManager();
         Thread.sleep(5000);
-        AppiumDriverManager.getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+        AppiumDriverManager.getDriver().findElement(
+                By.id("com.android2.calculator3:id/cling_dismiss")).click();
         screenShotManager.captureScreenShot("first" );
         screenShotManager.captureScreenShot("second" );
-        AppiumDriverManager.getDriver().findElementByAccessibilityId("doubleTap").click();
+        AppiumDriverManager.getDriver()
+                .findElementByAccessibilityId("doubleTap").click();
         Thread.sleep(2000);
         AppiumDriverManager.getDriver().quit();
     }
@@ -34,10 +36,12 @@ public class HomePageTest2 {
     public void testMethodOne2() throws Exception {
         ScreenShotManager screenShotManager = new ScreenShotManager();
         Thread.sleep(5000);
-        AppiumDriverManager.getDriver().findElement(By.id("com.android2.calculator3:id/cling_dismiss")).click();
+        AppiumDriverManager.getDriver().findElement(
+                By.id("com.android2.calculator3:id/cling_dismiss")).click();
         screenShotManager.captureScreenShot("Third" );
         screenShotManager.captureScreenShot("Fourth" );
-        AppiumDriverManager.getDriver().findElementByAccessibilityId("doubleTap").click();
+        AppiumDriverManager.getDriver()
+                .findElementByAccessibilityId("doubleTap").click();
         Thread.sleep(2000);
         AppiumDriverManager.getDriver().quit();
     }
