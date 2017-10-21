@@ -2,9 +2,13 @@ package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.AvailablePorts;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,8 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DeviceAllocationManager {
     private ArrayList<String> devices = new ArrayList<String>();
-    private ConcurrentHashMap<String, Boolean> deviceMapping =
-            new ConcurrentHashMap<String, Boolean>();
+    public ConcurrentHashMap<String, Object> deviceMapping;
     private static DeviceAllocationManager instance;
     private static AndroidDeviceConfiguration androidDevice;
     private static IOSDeviceConfiguration iosDevice;
@@ -22,6 +25,7 @@ public class DeviceAllocationManager {
         try {
             iosDevice = new IOSDeviceConfiguration();
             androidDevice = new AndroidDeviceConfiguration();
+            deviceMapping = new ConcurrentHashMap<>();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,7 +64,10 @@ public class DeviceAllocationManager {
                 getAndroidDeviceSerial();
             }
             for (String device : devices) {
-                deviceMapping.put(device, true);
+                HashMap<String,Object> deviceState = new HashMap<>();
+                deviceState.put("deviceState",true);
+                deviceState.put("port", new AvailablePorts().getPort());
+                deviceMapping.put(device, deviceState);
             }
             System.out.println(deviceMapping);
         } catch (IOException e) {
@@ -88,14 +95,14 @@ public class DeviceAllocationManager {
     }
 
     public synchronized String getNextAvailableDeviceId() {
-        ConcurrentHashMap.KeySetView<String, Boolean> devices = deviceMapping.keySet();
+        ConcurrentHashMap.KeySetView<String, Object> devices = deviceMapping.keySet();
         int i = 0;
         for (String device : devices) {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
             i++;
-            if (deviceMapping.get(device)) {
-                deviceMapping.put(device, false);
+            if (((HashMap) deviceMapping.get(device)).get("deviceState").toString().equals("true")) {
+                ((HashMap) deviceMapping.get(device)).put("deviceState",false);
                 return device;
             }
         }
@@ -103,7 +110,9 @@ public class DeviceAllocationManager {
     }
 
     public void freeDevice() {
-        deviceMapping.put(DeviceManager.getDeviceUDID(), true);
+        System.out.println("DeviceMapping before free" + deviceMapping);
+        ((HashMap) deviceMapping.get(DeviceManager.getDeviceUDID())).put("deviceState",true);
+        System.out.println("DeviceMapping after free" + deviceMapping);
     }
 
     public void allocateDevice(String device, String deviceUDID) {

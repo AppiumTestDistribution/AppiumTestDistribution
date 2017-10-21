@@ -43,9 +43,7 @@ public class IOSDeviceConfiguration {
         String xcode_version = "";
         try {
             xcode_version = commandPrompt.runCommand("xcodebuild -version");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
         if (new SimManager().isSimulatorAvailable()) {
@@ -120,9 +118,7 @@ public class IOSDeviceConfiguration {
      * @throws IOException
      */
     public boolean checkIfAppIsInstalled(String bundleID) throws InterruptedException, IOException {
-        boolean appAlreadyExists =
-                commandPrompt.runCommand("ideviceinstaller --list-apps").contains(bundleID);
-        return appAlreadyExists;
+        return commandPrompt.runCommand("ideviceinstaller --list-apps").contains(bundleID);
     }
 
     /**

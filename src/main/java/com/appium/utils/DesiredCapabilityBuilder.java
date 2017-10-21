@@ -2,6 +2,7 @@ package com.appium.utils;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.DeviceManager;
 import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
@@ -15,6 +16,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -42,6 +44,9 @@ public class DesiredCapabilityBuilder {
     public DesiredCapabilities buildDesiredCapability(String platform,
                                                       String jsonPath) throws Exception {
         final boolean[] flag = {false};
+        System.out.println("DeviceMappy-----" + DeviceAllocationManager.getInstance().deviceMapping);
+        Object port = ((HashMap) DeviceAllocationManager.getInstance().deviceMapping.get(DeviceManager
+                .getDeviceUDID())).get("port");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
@@ -90,7 +95,7 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.ANDROID_UIAUTOMATOR2);
                 desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
-                        availablePorts.getPort());
+                        Integer.parseInt(port.toString()));
             }
             appPackage(desiredCapabilities);
         } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
@@ -113,7 +118,7 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.IOS_XCUI_TEST);
                 desiredCapabilities.setCapability(IOSMobileCapabilityType
-                        .WDA_LOCAL_PORT, availablePorts.getPort());
+                        .WDA_LOCAL_PORT, Integer.parseInt(port.toString()));
             }
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                     DeviceManager.getDeviceUDID());
