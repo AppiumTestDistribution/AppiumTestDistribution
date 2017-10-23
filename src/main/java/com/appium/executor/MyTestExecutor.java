@@ -260,14 +260,14 @@ public class MyTestExecutor {
         }
         List<XmlClass> xmlClasses = new ArrayList<>();
         xmlClasses = writeXmlClass(tests, methods, xmlClasses);
+        XmlTest test = new XmlTest(suite);
+        test.setName("TestNG Test");
+        test.addParameter("device", "");
+        include(groupsExclude, "EXCLUDE_GROUPS");
+        test.setIncludedGroups(groupsInclude);
+        test.setExcludedGroups(groupsExclude);
+        List<XmlClass> writeXml = new ArrayList<>();
         for (int i = 0; i < xmlClasses.size(); i++) {
-            XmlTest test = new XmlTest(suite);
-            test.setName("TestNG Test" + i);
-            test.addParameter("device", "");
-            include(groupsExclude, "EXCLUDE_GROUPS");
-            test.setIncludedGroups(groupsInclude);
-            test.setExcludedGroups(groupsExclude);
-            List<XmlClass> writeXml = new ArrayList<>();
             writeXml.add(new XmlClass(xmlClasses.get(i).getName()));
             test.setClasses(writeXml);
         }
