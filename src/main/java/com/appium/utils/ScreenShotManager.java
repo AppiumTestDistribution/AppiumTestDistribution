@@ -1,6 +1,5 @@
 package com.appium.utils;
 
-import com.appium.entities.MobilePlatform;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.DeviceManager;
 import org.apache.commons.io.FileUtils;
@@ -81,44 +80,29 @@ public class ScreenShotManager {
                                     String methodName)
             throws IOException, InterruptedException {
 
-        String getDeviceModel = null;
         System.out.println("Current Running Thread Status"
                 + AppiumDriverManager.getDriver().getSessionId());
         File scrFile = AppiumDriverManager.getDriver()
                 .getScreenshotAs(OutputType.FILE);
         screenShotNameWithTimeStamp = currentDateAndTime();
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            getDeviceModel = screenShotNameWithTimeStamp;
-            screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "android");
-        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            getDeviceModel = screenShotNameWithTimeStamp;
-            screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "iOS");
-        }
-        return getDeviceModel;
+        screenShotAndFrame(status, scrFile, methodName, className, screenShotNameWithTimeStamp,
+                DeviceManager.getMobilePlatform().toString());
+        return screenShotNameWithTimeStamp;
     }
 
     public String captureScreenShot(int status, String className,
                                     String methodName, String screenShotName)
             throws IOException, InterruptedException {
 
-        String getDeviceModel = null;
         System.out.println("Current Running Thread Status"
                 + AppiumDriverManager.getDriver().getSessionId());
         File scrFile = AppiumDriverManager.getDriver()
                 .getScreenshotAs(OutputType.FILE);
         screenShotNameWithTimeStamp = currentDateAndTime();
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            getDeviceModel = screenShotNameWithTimeStamp;
-            screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "android", screenShotName);
-        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            getDeviceModel = screenShotNameWithTimeStamp;
-            screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                    "iOS", screenShotName);
-        }
-        return getDeviceModel;
+        screenShotAndFrame(status, scrFile, methodName, className, screenShotNameWithTimeStamp,
+                DeviceManager.getMobilePlatform().toString(), screenShotName);
+
+        return screenShotNameWithTimeStamp;
     }
 
 
@@ -128,7 +112,7 @@ public class ScreenShotManager {
         String className = new Exception().getStackTrace()[1].getClassName();
         String methodName = new Exception().getStackTrace()[1].getMethodName();
 
-        captureScreenShot(1, className, methodName,screenShotName);
+        captureScreenShot(1, className, methodName, screenShotName);
 
         new File(System.getProperty("user.dir")
                 + "/target/" + getCapturedScreen());
