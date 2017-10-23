@@ -4,6 +4,7 @@ import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.DeviceManager;
+import com.thoughtworks.device.Device;
 import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
@@ -44,8 +45,10 @@ public class DesiredCapabilityBuilder {
     public DesiredCapabilities buildDesiredCapability(String platform,
                                                       String jsonPath) throws Exception {
         final boolean[] flag = {false};
-        System.out.println("DeviceMappy-----" + DeviceAllocationManager.getInstance().deviceMapping);
-        Object port = ((HashMap) DeviceAllocationManager.getInstance().deviceMapping.get(DeviceManager
+        System.out.println("DeviceMappy-----" + DeviceAllocationManager
+                .getInstance().deviceMapping);
+        Object port = ((HashMap) DeviceAllocationManager.getInstance()
+                .deviceMapping.get(DeviceManager
                 .getDeviceUDID())).get("port");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();

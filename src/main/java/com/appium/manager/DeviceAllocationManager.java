@@ -101,7 +101,8 @@ public class DeviceAllocationManager {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
             i++;
-            if (((HashMap) deviceMapping.get(device)).get("deviceState").toString().equals("true")) {
+            if (((HashMap) deviceMapping.get(device))
+                    .get("deviceState").toString().equals("true")) {
                 ((HashMap) deviceMapping.get(device)).put("deviceState",false);
                 return device;
             }
