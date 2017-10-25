@@ -62,7 +62,7 @@ public class DeviceManager {
 
     public String getDeviceVersion() {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            return androidDeviceConfiguration.deviceOS();
+            return androidDeviceConfiguration.getDeviceOS();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
             try {
                 return iosDeviceConfiguration.getIOSDeviceProductVersion();

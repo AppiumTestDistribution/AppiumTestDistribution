@@ -21,11 +21,11 @@ import java.util.Set;
 public class MyTestExecutorTest {
     MyTestExecutor ex1 ;
 
-    public MyTestExecutorTest() throws IOException {
+    public MyTestExecutorTest() throws Exception {
         ex1 = new MyTestExecutor();
     }
 
-    @Test public void testXmlSuiteCreation() {
+    public void testXmlSuiteCreation() {
         Set<Method> methods = new HashSet<>();
         ArrayList<String> devices = new ArrayList<>();
         devices.add("192.168.0.1");
@@ -89,7 +89,7 @@ public class MyTestExecutorTest {
     }
 
 
-    @Test public void testXmlSuiteCreationCucumber() {
+    public void testXmlSuiteCreationCucumber() {
         Set<Method> methods = new HashSet<>();
         ArrayList<String> devices = new ArrayList<>();
         devices.add("192.168.0.1");

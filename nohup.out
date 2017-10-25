@@ -1,0 +1,44 @@
+Hax is enabled
+Hax ram_size 0xc0000000
+HAX is working and emulator runs in fast virt mode.
+Warning: requested ram_size 3072M too big, reduced to 1664M
+Hax is enabled
+Hax ram_size 0x68000000
+HAX is working and emulator runs in fast virt mode.
+emulator: Listening for console connections on port: 5554
+emulator: Serial number of this emulator (for ADB): emulator-5554
+emulator: Listening for console connections on port: 5556
+emulator: Serial number of this emulator (for ADB): emulator-5556
+Hax is enabled
+Hax ram_size 0xc0000000
+HAX is working and emulator runs in fast virt mode.
+Warning: requested ram_size 3072M too big, reduced to 1664M
+Hax is enabled
+Hax ram_size 0x68000000
+HAX is working and emulator runs in fast virt mode.
+emulator: Listening for console connections on port: 5554
+emulator: Serial number of this emulator (for ADB): emulator-5554
+emulator: Listening for console connections on port: 5556
+emulator: Serial number of this emulator (for ADB): emulator-5556
+Hax is enabled
+Hax ram_size 0xc0000000
+HAX is working and emulator runs in fast virt mode.
+Hax is enabled
+Hax ram_size 0xc0000000
+HAX is working and emulator runs in fast virt mode.
+emulator: Listening for console connections on port: 5554
+emulator: Serial number of this emulator (for ADB): emulator-5554
+emulator: Listening for console connections on port: 5556
+emulator: Serial number of this emulator (for ADB): emulator-5556
+error: more than one device/emulator
+Hax is enabled
+Hax ram_size 0xc0000000
+HAX is working and emulator runs in fast virt mode.
+Hax is enabled
+Hax ram_size 0xc0000000
+HAX is working and emulator runs in fast virt mode.
+emulator: Listening for console connections on port: 5554
+emulator: Serial number of this emulator (for ADB): emulator-5554
+emulator: Listening for console connections on port: 5556
+emulator: Serial number of this emulator (for ADB): emulator-5556
+error: more than one device/emulator

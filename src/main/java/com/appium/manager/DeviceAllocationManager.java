@@ -3,10 +3,11 @@ package com.appium.manager;
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.AvailablePorts;
+import com.thoughtworks.android.AndroidManager;
+import com.thoughtworks.device.Device;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,24 +16,26 @@ import java.util.concurrent.ConcurrentHashMap;
  *  DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
  */
 public class DeviceAllocationManager {
-    private ArrayList<String> devices = new ArrayList<String>();
+    private ArrayList<String> devices = new ArrayList<>();
     public ConcurrentHashMap<String, Object> deviceMapping;
     private static DeviceAllocationManager instance;
     private static AndroidDeviceConfiguration androidDevice;
     private static IOSDeviceConfiguration iosDevice;
+    public List<Device> androidManager;
 
-    private DeviceAllocationManager() {
+    private DeviceAllocationManager() throws Exception {
         try {
             iosDevice = new IOSDeviceConfiguration();
             androidDevice = new AndroidDeviceConfiguration();
             deviceMapping = new ConcurrentHashMap<>();
+            androidManager = new AndroidManager().getDeviceProperties();
         } catch (IOException e) {
             e.printStackTrace();
         }
         initializeDevices();
     }
 
-    public static DeviceAllocationManager getInstance() {
+    public static DeviceAllocationManager getInstance() throws Exception {
         if (instance == null) {
             instance = new DeviceAllocationManager();
         }
@@ -51,9 +54,9 @@ public class DeviceAllocationManager {
                 if (iosDevice.getIOSUDID() != null) {
                     System.out.println("Adding iOS devices");
                     if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
-                        devices.addAll(IOSDeviceConfiguration.validDeviceIds);
+                        //devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                     } else {
-                        devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
+                        //devices.addAll(IOSDeviceConfiguration.deviceUDIDiOS);
                     }
                 }
                 if (System.getenv("Platform").equalsIgnoreCase("android")
@@ -79,15 +82,14 @@ public class DeviceAllocationManager {
     }
 
     private void getAndroidDeviceSerial() throws Exception {
-        if (androidDevice.getDeviceSerial() != null) {
             System.out.println("Adding Android devices");
             if (AndroidDeviceConfiguration.validDeviceIds.size() > 0) {
                 System.out.println("Adding Devices from DeviceList Provided");
-                devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
+                //devices.addAll(deviceProperties);
             } else {
-                devices.addAll(AndroidDeviceConfiguration.deviceSerial);
+                androidManager.forEach(device -> devices.add(device.getUdid()));
             }
-        }
+
     }
 
     public ArrayList<String> getDevices() {
@@ -107,7 +109,7 @@ public class DeviceAllocationManager {
                 return device;
             }
         }
-        return "";
+        return null;
     }
 
     public void freeDevice() {

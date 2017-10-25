@@ -19,7 +19,7 @@ public class Runner {
         System.out.println(deviceList);*/
         ExtentManager.setSystemInfoInReport("version","1.0.0");
         List<String> tests = new ArrayList<>();
-        tests.add("HomePageTest2");
+        //tests.add("HomePageTest2");
         tests.add("HomePageTest1");
         ParallelThread parallelThread = new ParallelThread();
         boolean hasFailures = parallelThread.runner("com.test.site",tests);

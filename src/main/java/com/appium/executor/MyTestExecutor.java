@@ -52,7 +52,7 @@ public class MyTestExecutor {
     private ArrayList<String> groupsInclude = new ArrayList<>();
     private ArrayList<String> groupsExclude = new ArrayList<>();
 
-    public MyTestExecutor() throws IOException {
+    public MyTestExecutor() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         prop = ConfigFileManager.getInstance();
     }
