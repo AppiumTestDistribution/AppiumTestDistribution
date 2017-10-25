@@ -46,13 +46,14 @@ class TestLogger {
         Capabilities capabilities = AppiumDriverManager.getDriver().getCapabilities();
         if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (capabilities.getCapability("browserName") == null) {
-//                System.out.println("Starting ADB logs" + DeviceManager.getDeviceUDID());
-//                logEntries = AppiumDriverManager.getDriver().manage()
-//                        .logs().get("logcat").filter(Level.ALL);
-//                logFile = new File(System.getProperty("user.dir") + "/target/adblogs/"
-//                        + DeviceManager.getDeviceUDID()
-//                        + "__" + methodName + ".txt");
-//                log_file_writer = new PrintWriter(logFile);
+                /*System.out.println("Starting ADB logs" + DeviceManager.getDeviceUDID());
+                logEntries = AppiumDriverManager.getDriver().manage()
+                        .logs().get("logcat").filter(Level.ALL);
+                logFile = new File(System.getProperty("user.dir") + "/target/adblogs/"
+                        + DeviceManager.getDeviceUDID()
+                        + "__" + methodName + ".txt");
+                log_file_writer = new PrintWriter(logFile);
+                */
                 startVideoRecording(methodName, className);
             }
 
@@ -83,6 +84,7 @@ class TestLogger {
                 + "__"
                 + result.getMethod().getMethodName()
                 + ".txt";
+        logs.put("adbLogs", adbPath);
 
         if (result.isSuccess()) {
             test.get().log(Status.PASS, result.getMethod().getMethodName());
@@ -127,7 +129,6 @@ class TestLogger {
         String failedScreen = screenShotManager.getFailedScreen();
         String framedFailureScreen = screenShotManager.getFramedFailedScreen();
 
-        logs.put("adbLogs", adbPath);
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotFailure;
             if (new File(System.getProperty("user.dir")
