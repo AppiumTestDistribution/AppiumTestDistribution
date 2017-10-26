@@ -40,8 +40,8 @@ public class AppiumDriverManager {
         appiumDriver.set(driver);
     }
 
-    private AppiumDriver<MobileElement>
-        getMobileAndroidElementAppiumDriver(Optional<DesiredCapabilities> androidCaps) {
+    private AppiumDriver<MobileElement> getMobileAndroidElementAppiumDriver(
+        Optional<DesiredCapabilities> androidCaps) {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = androidCaps.isPresent()
                 ? androidCaps.get() : desiredCapabilityManager.androidNative();
@@ -51,8 +51,8 @@ public class AppiumDriverManager {
         return currentDriverSession;
     }
 
-    private AppiumDriver<MobileElement>
-        getMobileiOSElementAppiumDriver(Optional<DesiredCapabilities> iOSCaps)
+    private AppiumDriver<MobileElement> getMobileiOSElementAppiumDriver(
+        Optional<DesiredCapabilities> iOSCaps)
             throws IOException, InterruptedException {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.isPresent()
@@ -94,25 +94,32 @@ public class AppiumDriverManager {
     // Should be used by Cucumber as well
     public void startAppiumDriverInstance()
             throws Exception {
+        String userSpecifiedCaps;
         DesiredCapabilities iOS = null;
         DesiredCapabilities android = null;
-        String userSpecifiedCaps = System.getProperty("user.dir")
-                + "/caps/capabilities.json";
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            android = getDesiredAndroidCapabilities(android, userSpecifiedCaps);
+        if (prop.getProperty("CAPS") == null) {
+            userSpecifiedCaps = System.getProperty("user.dir")
+                    + "/caps/capabilities.json";
         } else {
-            iOS = getDesiredIOSCapabilities(iOS, userSpecifiedCaps);
+            userSpecifiedCaps = prop.getProperty("CAPS");
         }
+
+        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            android = getDesiredAndroidCapabilities(userSpecifiedCaps);
+        } else {
+            iOS = getDesiredIOSCapabilities(userSpecifiedCaps);
+        }
+
+
         System.out.println("Caps generated" + android + iOS);
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
     }
 
-    public DesiredCapabilities getDesiredIOSCapabilities(DesiredCapabilities iOS,
-                                                         String userSpecifiediOSCaps)
+    public DesiredCapabilities getDesiredIOSCapabilities(String userSpecifiediOSCaps)
             throws Exception {
-        String iOSJsonFilePath;
-        if (prop.getProperty("CAPS") != null) {
-            iOSJsonFilePath = prop.getProperty("CAPS");
+
+        if (new File(userSpecifiediOSCaps).exists()) {
+            String iOSJsonFilePath = userSpecifiediOSCaps;
             Path path = FileSystems.getDefault().getPath(iOSJsonFilePath.toString());
             if (!path.getParent().isAbsolute()) {
                 iOSJsonFilePath = path.normalize()
@@ -120,22 +127,19 @@ public class AppiumDriverManager {
             }
             desiredCapabilityBuilder
                     .buildDesiredCapability("iOS", iOSJsonFilePath);
-            iOS = DesiredCapabilityBuilder.getDesiredCapability();
-        } else if (new File(userSpecifiediOSCaps).exists()) {
-            iOSJsonFilePath = userSpecifiediOSCaps;
-            desiredCapabilityBuilder
-                    .buildDesiredCapability("iOS", iOSJsonFilePath);
-            iOS = DesiredCapabilityBuilder.getDesiredCapability();
+            DesiredCapabilities iOS = DesiredCapabilityBuilder.getDesiredCapability();
+            return iOS;
+        } else {
+            System.out.println("Capability file not found");
+            return null;
         }
-        return iOS;
     }
 
-    public DesiredCapabilities getDesiredAndroidCapabilities(DesiredCapabilities android,
-                                                             String userSpecifiedAndroidCaps)
+    public DesiredCapabilities getDesiredAndroidCapabilities(String userSpecifiedAndroidCaps)
             throws Exception {
-        String androidJsonFilePath;
-        if (prop.getProperty("CAPS") != null) {
-            androidJsonFilePath = prop.getProperty("CAPS");
+
+        if (new File(userSpecifiedAndroidCaps).exists()) {
+            String androidJsonFilePath = userSpecifiedAndroidCaps;
             Path path = FileSystems.getDefault().getPath(androidJsonFilePath.toString());
             if (!path.getParent().isAbsolute()) {
                 androidJsonFilePath = path.normalize()
@@ -143,15 +147,13 @@ public class AppiumDriverManager {
             }
             desiredCapabilityBuilder
                     .buildDesiredCapability("android", androidJsonFilePath);
-            android = DesiredCapabilityBuilder.getDesiredCapability();
-        } else if (new File(userSpecifiedAndroidCaps).exists()) {
-            androidJsonFilePath = userSpecifiedAndroidCaps;
-            desiredCapabilityBuilder
-                    .buildDesiredCapability("android", androidJsonFilePath);
-            android = DesiredCapabilityBuilder.getDesiredCapability();
+            DesiredCapabilities android = DesiredCapabilityBuilder.getDesiredCapability();
+            return android;
+        } else {
+            System.out.println("Capability file not found");
+            return null;
         }
 
-        return android;
     }
 
     public void stopAppiumDriver() throws IOException, InterruptedException {
