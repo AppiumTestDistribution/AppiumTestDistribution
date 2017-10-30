@@ -83,6 +83,7 @@ class TestLogger {
                 + "__"
                 + result.getMethod().getMethodName()
                 + ".txt";
+        logs.put("adbLogs", adbPath);
 
         if (result.isSuccess()) {
             test.get().log(Status.PASS, result.getMethod().getMethodName());
@@ -127,7 +128,6 @@ class TestLogger {
         String failedScreen = screenShotManager.getFailedScreen();
         String framedFailureScreen = screenShotManager.getFramedFailedScreen();
 
-        logs.put("adbLogs", adbPath);
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotFailure;
             if (new File(System.getProperty("user.dir")

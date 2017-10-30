@@ -61,8 +61,8 @@ public class SimManager {
     public Object getSimulatorObject(JSONParser parser) throws IOException, ParseException {
         String defaultCapabilityLocation = System.getProperty("user.dir") + "/caps/"
                 + "capabilities.json";
-        String parserCapabilityFile = null;
-        if (new File(defaultCapabilityLocation).exists()) {
+        String parserCapabilityFile;
+        if (ConfigFileManager.getInstance().getProperty("CAPS") == null) {
             parserCapabilityFile = defaultCapabilityLocation;
         } else {
             String userCapabilityLocation = null;
