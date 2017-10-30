@@ -21,7 +21,7 @@ import java.util.HashMap;
 public class ReportManager {
 
     private TestLogger testLogger;
-    private DeviceManager deviceManager;
+    private AppiumDeviceManager appiumDeviceManager;
     public ThreadLocal<ExtentTest> parentTest = new ThreadLocal<ExtentTest>();
     public ThreadLocal<ExtentTest> test = new ThreadLocal<ExtentTest>();
     public ExtentTest parent;
@@ -32,7 +32,7 @@ public class ReportManager {
 
     public ReportManager() {
         testLogger = new TestLogger();
-        deviceManager = new DeviceManager();
+        appiumDeviceManager = new AppiumDeviceManager();
     }
 
     public void startLogResults(String methodName,String className) throws FileNotFoundException {
@@ -41,18 +41,18 @@ public class ReportManager {
 
     public HashMap<String, String> endLogTestResults(ITestResult result)
             throws IOException, InterruptedException {
-        return testLogger.endLog(result, deviceManager.getDeviceModel(), test);
+        return testLogger.endLog(result, appiumDeviceManager.getDeviceModel(), test);
     }
 
     public ExtentTest createParentNodeExtent(String methodName, String testDescription)
         throws IOException, InterruptedException {
         parent = ExtentTestManager.createTest(methodName, testDescription,
-            deviceManager.getDeviceModel()
-                    + DeviceManager.getDeviceUDID());
+            appiumDeviceManager.getDeviceModel()
+                    + AppiumDeviceManager.getDeviceUDID());
         parentTest.set(parent);
         ExtentTestManager.getTest().log(Status.INFO,
             "<a target=\"_parent\" href=" + "appiumlogs/"
-                + DeviceManager.getDeviceUDID() + "__" + methodName
+                + AppiumDeviceManager.getDeviceUDID() + "__" + methodName
                 + ".txt" + ">AppiumServerLogs</a>");
         return parent;
     }
@@ -78,9 +78,9 @@ public class ReportManager {
                 && System.getenv("Platform").equalsIgnoreCase("iOS")
                     || System.getenv("Platform")
                          .equalsIgnoreCase("Both")) {
-            category = deviceManager.getDeviceCategory();
+            category = appiumDeviceManager.getDeviceCategory();
         } else {
-            category = deviceManager.getDeviceModel();
+            category = appiumDeviceManager.getDeviceModel();
         }
         String testName = dataProvider == null ? descriptionMethodName
                 : descriptionMethodName + "[" + dataProvider + "]";
@@ -91,12 +91,12 @@ public class ReportManager {
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
                 .createNode(testName,
-                    category + "_" + DeviceManager.getDeviceUDID()).assignAuthor(
+                    category + "_" + AppiumDeviceManager.getDeviceUDID()).assignAuthor(
                     String.valueOf(listeners));
             test.set(child);
         } else {
             child = parentTest.get().createNode(testName,
-                category + "_" + DeviceManager.getDeviceUDID());
+                category + "_" + AppiumDeviceManager.getDeviceUDID());
             test.set(child);
         }
     }
@@ -104,7 +104,7 @@ public class ReportManager {
     public void createChildNodeWithCategory(String methodName,
         String tags) {
         child = parentTest.get().createNode(methodName, category
-            + DeviceManager.getDeviceUDID()).assignCategory(tags);
+            + AppiumDeviceManager.getDeviceUDID()).assignCategory(tags);
         test.set(child);
     }
 }

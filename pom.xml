@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>7.0.1</version>
+    <version>7.0.3</version>
     <packaging>jar</packaging>
 
     <name>AppiumTestDistribution</name>
@@ -126,11 +126,6 @@
             <version>4.11</version>
         </dependency>
         <dependency>
-            <groupId>com.github.SrinivasanTarget</groupId>
-            <artifactId>DeviceManager</artifactId>
-            <version>f8f69d3b11</version>
-        </dependency>
-        <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-testng</artifactId>
             <version>1.2.4</version>
@@ -152,8 +147,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.SrinivasanTarget</groupId>
-            <artifactId>iOSDeviceManager</artifactId>
-            <version>1.0</version>
+            <artifactId>DeviceManager</artifactId>
+            <version>9be2904865</version>
         </dependency>
     </dependencies>
 

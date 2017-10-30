@@ -19,10 +19,4 @@ public class IOSDeviceTest {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         cmd = new CommandPrompt();
     }
-
-    @Test
-    public void getDeviceUDID() {
-        ArrayList<String> iosudidHash = iosDeviceConfiguration.getIOSUDID();
-        System.out.println(iosudidHash);
-    }
 }

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,13 +23,13 @@ import java.util.Optional;
 public class SimManager {
     private SimulatorManager simulatorManager = new SimulatorManager();
 
-    public ArrayList<String> getAllSimulatorUDIDs() {
-        ArrayList<String> UDIDS = new ArrayList<>();
+    public List<Device> getAllSimulatorUDIDs() {
+        List<Device> UDIDS = new ArrayList<>();
         JSONParser parser = new JSONParser();
 
         try {
             Object getSimulatorObject = getSimulatorObject(parser);
-            Object simulators = ((JSONObject)((Optional) getSimulatorObject)
+            Object simulators = ((JSONObject) ((Optional) getSimulatorObject)
                     .get()).get("simulators");
 
             ((JSONArray) simulators).forEach(o -> {
@@ -43,7 +44,7 @@ public class SimManager {
                 try {
                     Device device = simulatorManager.getDevice(simulator.getDeviceName(),
                             simulator.getOS(), "iOS");
-                    UDIDS.add(device.getUdid());
+                    UDIDS.add(device);
                     //check for simulator state
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
@@ -88,15 +89,7 @@ public class SimManager {
     }
 
     public Device getSimulatorDetails(String UDID) {
-        Device iOS = null;
-        try {
-            iOS = simulatorManager.getSimulatorDetailsFromUDID(UDID);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return iOS;
+        return simulatorManager.getSimulatorDetailsFromUDID(UDID);
     }
 
     public boolean isSimulatorAvailable() {

@@ -3,8 +3,6 @@ package com.appium.executor;
 
 import static junit.framework.TestCase.assertTrue;
 
-import com.appium.entities.MobilePlatform;
-import com.appium.manager.DeviceManager;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
 

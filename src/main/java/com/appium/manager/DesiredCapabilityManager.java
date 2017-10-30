@@ -49,9 +49,9 @@ public class DesiredCapabilityManager {
                     .setCapability(MobileCapabilityType.APP,
                             configFileManager.getProperty("ANDROID_APP_PATH"));
         }
-        System.out.println(DeviceManager.getDeviceUDID() + Thread.currentThread().getId());
+        System.out.println(AppiumDeviceManager.getDeviceUDID() + Thread.currentThread().getId());
         androidCapabilities.setCapability(MobileCapabilityType.UDID,
-                DeviceManager.getDeviceUDID());
+                AppiumDeviceManager.getDeviceUDID());
         try {
             androidCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                     availablePorts.getPort());
@@ -69,7 +69,7 @@ public class DesiredCapabilityManager {
                         configFileManager.getProperty("BROWSER_TYPE"));
         androidWebCapabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, true);
         androidWebCapabilities.setCapability(MobileCapabilityType.UDID,
-                DeviceManager.getDeviceUDID());
+                AppiumDeviceManager.getDeviceUDID());
         return androidWebCapabilities;
     }
 
@@ -93,7 +93,8 @@ public class DesiredCapabilityManager {
         iOSCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
         iOSCapabilities
                 .setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone");
-        iOSCapabilities.setCapability(MobileCapabilityType.UDID, DeviceManager.getDeviceUDID());
+        iOSCapabilities.setCapability(MobileCapabilityType.UDID,
+                AppiumDeviceManager.getDeviceUDID());
         if (iosDevice.getIOSDeviceProductVersion()
                 .contains("10")) {
             iOSCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,

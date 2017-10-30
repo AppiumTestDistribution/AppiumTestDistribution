@@ -9,13 +9,13 @@ import java.io.IOException;
 /**
  * Device Manager - Handles all device related information's e.g UDID, Model, etc
  */
-public class DeviceManager {
+public class AppiumDeviceManager {
 
     private static ThreadLocal<String> deviceUDID = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
     private AndroidDeviceConfiguration androidDeviceConfiguration;
 
-    public DeviceManager() {
+    public AppiumDeviceManager() {
         try {
             iosDeviceConfiguration = new IOSDeviceConfiguration();
             androidDeviceConfiguration = new AndroidDeviceConfiguration();
@@ -33,9 +33,9 @@ public class DeviceManager {
     }
 
     public static MobilePlatform getMobilePlatform() {
-        if (DeviceManager.getDeviceUDID().length()
+        if (AppiumDeviceManager.getDeviceUDID().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH
-                || DeviceManager.getDeviceUDID().length()
+                || AppiumDeviceManager.getDeviceUDID().length()
                 == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
             return MobilePlatform.IOS;
         } else {
@@ -53,7 +53,7 @@ public class DeviceManager {
     }
 
     public String getDeviceCategory() throws Exception {
-        if (iosDeviceConfiguration.deviceUDIDiOS.contains(DeviceManager.getDeviceUDID())) {
+        if (iosDeviceConfiguration.deviceUDIDiOS.contains(AppiumDeviceManager.getDeviceUDID())) {
             return iosDeviceConfiguration.getDeviceName().replace(" ", "_");
         } else {
             return androidDeviceConfiguration.getDeviceModel();
