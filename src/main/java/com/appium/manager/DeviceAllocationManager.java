@@ -53,11 +53,12 @@ public class DeviceAllocationManager {
                     .checkIfUserSpecifiedSimulatorAndGetUDID();
             if (System.getenv("Platform").equalsIgnoreCase("iOS")) {
                 iosDevice.getAllAvailableDevices()
-                        .forEach(device -> this.devices.add(device.getUdid()));
+                        .forEach(device -> devices.add(device.getUdid()));
                 allSimulatorDetails.forEach(device -> deviceManager.add(device));
+                allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
                 if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
                     System.out.println("Adding iOS Devices from DeviceList Provided");
-                    this.devices.addAll(IOSDeviceConfiguration.validDeviceIds);
+                    devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                 }
             }
             if (System.getenv("Platform").equalsIgnoreCase("android")) {
@@ -66,6 +67,7 @@ public class DeviceAllocationManager {
             }
             if (System.getenv("Platform").equalsIgnoreCase("Both")) {
                 allSimulatorDetails.forEach(device -> deviceManager.add(device));
+                allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
                 getAllConnectedDevices();
             }
         } else {
