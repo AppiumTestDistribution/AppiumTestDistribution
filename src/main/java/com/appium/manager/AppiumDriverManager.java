@@ -20,13 +20,11 @@ public class AppiumDriverManager {
             = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
     private AppiumServerManager appiumServerManager;
-    private DesiredCapabilityManager desiredCapabilityManager;
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
 
     public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
-        desiredCapabilityManager = new DesiredCapabilityManager();
         appiumServerManager = new AppiumServerManager();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
@@ -41,10 +39,9 @@ public class AppiumDriverManager {
     }
 
     private AppiumDriver<MobileElement> getMobileAndroidElementAppiumDriver(
-        Optional<DesiredCapabilities> androidCaps) {
+            Optional<DesiredCapabilities> androidCaps) {
         AppiumDriver<MobileElement> currentDriverSession;
-        DesiredCapabilities desiredCapabilities = androidCaps.isPresent()
-                ? androidCaps.get() : desiredCapabilityManager.androidNative();
+        DesiredCapabilities desiredCapabilities = androidCaps.get();
 
         currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
@@ -52,11 +49,10 @@ public class AppiumDriverManager {
     }
 
     private AppiumDriver<MobileElement> getMobileiOSElementAppiumDriver(
-        Optional<DesiredCapabilities> iOSCaps)
+            Optional<DesiredCapabilities> iOSCaps)
             throws IOException, InterruptedException {
         AppiumDriver<MobileElement> currentDriverSession;
-        DesiredCapabilities desiredCapabilities = iOSCaps.isPresent()
-                ? iOSCaps.get() : desiredCapabilityManager.iosNative();
+        DesiredCapabilities desiredCapabilities = iOSCaps.get();
         currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
         return currentDriverSession;
@@ -66,28 +62,20 @@ public class AppiumDriverManager {
                                           Optional<DesiredCapabilities> androidCaps)
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
-        if (ConfigFileManager.configFileMap.get("APP_TYPE").equalsIgnoreCase("web")) {
-            currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
-                    desiredCapabilityManager.androidWeb());
-            AppiumDriverManager.setDriver(currentDriverSession);
-        } else {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")
-                    && System.getenv("Platform").equalsIgnoreCase("iOS")
-                    || System.getenv("Platform").equalsIgnoreCase("Both")) {
-                if (iosDeviceConfiguration.deviceUDIDiOS
-                        .contains(AppiumDeviceManager.getDeviceUDID())) {
-                    currentDriverSession = getMobileiOSElementAppiumDriver(iosCaps);
-                    AppiumDriverManager.setDriver(currentDriverSession);
+        if (System.getProperty("os.name").toLowerCase().contains("mac")
+                && System.getenv("Platform").equalsIgnoreCase("iOS")
+                || System.getenv("Platform").equalsIgnoreCase("Both")) {
+            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+                currentDriverSession = getMobileiOSElementAppiumDriver(iosCaps);
+                AppiumDriverManager.setDriver(currentDriverSession);
 
-                } else if (!iosDeviceConfiguration.deviceUDIDiOS
-                        .contains(AppiumDeviceManager.getDeviceUDID())) {
-                    currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
-                    AppiumDriverManager.setDriver(currentDriverSession);
-                }
-            } else {
+            } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);
             }
+        } else {
+            currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
+            AppiumDriverManager.setDriver(currentDriverSession);
         }
     }
 
@@ -108,8 +96,6 @@ public class AppiumDriverManager {
         } else {
             iOS = getDesiredIOSCapabilities(userSpecifiedCaps);
         }
-
-
         System.out.println("Caps generated" + android + iOS);
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
     }

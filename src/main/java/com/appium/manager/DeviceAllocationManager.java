@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 /**
  * DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
@@ -31,7 +34,7 @@ public class DeviceAllocationManager {
         try {
             iosDevice = new IOSManager();
             deviceMapping = new ConcurrentHashMap<>();
-            deviceManager = new DeviceManager().getDeviceProperties();
+            deviceManager = new CopyOnWriteArrayList<>(new DeviceManager().getDeviceProperties());
             androidManager = new AndroidManager();
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,7 +57,7 @@ public class DeviceAllocationManager {
             if (System.getenv("Platform").equalsIgnoreCase("iOS")) {
                 iosDevice.getAllAvailableDevices()
                         .forEach(device -> devices.add(device.getUdid()));
-                allSimulatorDetails.forEach(device -> deviceManager.add(device));
+                allocateUniqueSimulatorDetails(allSimulatorDetails);
                 allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
                 if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
                     System.out.println("Adding iOS Devices from DeviceList Provided");
@@ -66,8 +69,7 @@ public class DeviceAllocationManager {
                         .forEach(device -> this.devices.add(device.getUdid()));
             }
             if (System.getenv("Platform").equalsIgnoreCase("Both")) {
-                allSimulatorDetails.forEach(device -> deviceManager.add(device));
-                allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
+                allocateUniqueSimulatorDetails(allSimulatorDetails);
                 getAllConnectedDevices();
             }
         } else {
@@ -79,7 +81,17 @@ public class DeviceAllocationManager {
             deviceState.put("port", new AvailablePorts().getPort());
             deviceMapping.put(device, deviceState);
         }
-        System.out.println(deviceMapping);
+    }
+
+    private void allocateUniqueSimulatorDetails(List<Device> allSimulatorDetails) {
+        allSimulatorDetails.stream().forEach(device -> {
+            Optional<Device> first = deviceManager.stream().filter(device1 -> device.getUdid()
+                    .equals(device1.getUdid())).findFirst();
+            if(!first.isPresent()){
+                deviceManager.add(device);
+            }
+
+        });
     }
 
     private void isPlatformInEnv() {
