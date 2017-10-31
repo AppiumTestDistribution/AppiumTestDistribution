@@ -2,9 +2,8 @@ package com.appium.utils;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.DeviceAllocationManager;
-import com.appium.manager.DeviceManager;
-import com.thoughtworks.device.Device;
 import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
@@ -48,7 +47,7 @@ public class DesiredCapabilityBuilder {
         System.out.println("DeviceMappy-----" + DeviceAllocationManager
                 .getInstance().deviceMapping);
         Object port = ((HashMap) DeviceAllocationManager.getInstance()
-                .deviceMapping.get(DeviceManager
+                .deviceMapping.get(AppiumDeviceManager
                 .getDeviceUDID())).get("port");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
@@ -70,10 +69,10 @@ public class DesiredCapabilityBuilder {
                     }
                     if ("app".equals(caps)) {
                         if (values instanceof JSONObject) {
-                            if (DeviceManager.getDeviceUDID().length()
+                            if (AppiumDeviceManager.getDeviceUDID().length()
                                     == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                                 values = ((JSONObject) values).get("simulator");
-                            } else if (DeviceManager.getDeviceUDID().length()
+                            } else if (AppiumDeviceManager.getDeviceUDID().length()
                                     == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
                                 values = ((JSONObject) values).get("device");
                             }
@@ -91,7 +90,7 @@ public class DesiredCapabilityBuilder {
                         desiredCapabilities.setCapability(caps.toString(), values.toString());
                     }
                 });
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID) && !flag[0]) {
+        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID) && !flag[0]) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")
                     .toString() != "UIAutomator2") {
@@ -101,17 +100,18 @@ public class DesiredCapabilityBuilder {
                         Integer.parseInt(port.toString()));
             }
             appPackage(desiredCapabilities);
-        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+        } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             String version = iosDevice.getIOSDeviceProductVersion();
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
-            if (DeviceManager.getDeviceUDID().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+            if (AppiumDeviceManager.getDeviceUDID().length()
+                    == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                         simulatorManager.getSimulatorDetailsFromUDID(
-                                DeviceManager.getDeviceUDID()).getName());
+                                AppiumDeviceManager.getDeviceUDID()).getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                        simulatorManager.getSimulatorDetailsFromUDID(DeviceManager.getDeviceUDID())
-                                .getOsVersion());
+                        simulatorManager.getSimulatorDetailsFromUDID(
+                                AppiumDeviceManager.getDeviceUDID()).getOsVersion());
             } else {
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
                         new IOSDeviceConfiguration().startIOSWebKit());
@@ -124,10 +124,10 @@ public class DesiredCapabilityBuilder {
                         .WDA_LOCAL_PORT, Integer.parseInt(port.toString()));
             }
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                    DeviceManager.getDeviceUDID());
+                    AppiumDeviceManager.getDeviceUDID());
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                DeviceManager.getDeviceUDID());
+                AppiumDeviceManager.getDeviceUDID());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 

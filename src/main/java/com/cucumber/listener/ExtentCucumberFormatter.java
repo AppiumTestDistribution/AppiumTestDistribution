@@ -7,7 +7,7 @@ import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
 import com.appium.manager.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
-import com.appium.manager.DeviceManager;
+import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.DeviceSingleton;
 import com.appium.manager.ReportManager;
 import com.appium.utils.ImageUtils;
@@ -117,10 +117,10 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             if (contextChanged) {
                 AppiumDriverManager.getDriver().context(context);
             }
-            if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 deviceModel = androidDevice.getDeviceModel();
                 screenShotAndFrame(failed_StepName, scrFile, "android");
-            } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+            } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 try {
                     deviceModel =
                             iosDevice.getIOSDeviceProductTypeAndVersion();
@@ -187,8 +187,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                         .parseInt(deviceThreadNumber[1]));
                 deviceAllocationManager.allocateDevice(
                     device,
-                    DeviceManager.getDeviceUDID());
-                if (DeviceManager.getDeviceUDID() == null) {
+                    AppiumDeviceManager.getDeviceUDID());
+                if (AppiumDeviceManager.getDeviceUDID() == null) {
                     System.out.println("No devices are free to run test or Failed to run test");
                 }
                 reportManager.createParentNodeExtent(feature.getName(),"")
@@ -289,7 +289,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
-                            + DeviceManager.getDeviceUDID()
+                            + AppiumDeviceManager.getDeviceUDID()
                             + "/" + deviceModel
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
             File[] files1 = framePath.listFiles();
@@ -305,13 +305,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                                         files1[i].toString(),
                                         System.getProperty("user.dir")
                                                 + "/target/screenshot/" + device
-                                                + "/" + DeviceManager.getDeviceUDID()
+                                                + "/" + AppiumDeviceManager.getDeviceUDID()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_") + ".jpeg",
                                         System.getProperty("user.dir")
                                                 + "/target/screenshot/" + device
-                                                + "/" + DeviceManager.getDeviceUDID()
+                                                + "/" + AppiumDeviceManager.getDeviceUDID()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_")
@@ -335,14 +335,14 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
 
     public void attachScreenShotToReport(String stepName) throws IOException {
         String platform = null;
-        if (DeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             platform = "android";
-        } else if (DeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+        } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             platform = "iPhone";
         }
         File framedImageAndroid = new File(
                 System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + DeviceManager.getDeviceUDID() + "/" + deviceModel
+                        + AppiumDeviceManager.getDeviceUDID() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
         if (framedImageAndroid.exists()) {
             reportManager.test.get().log(Status.INFO,
@@ -350,7 +350,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                             System.getProperty("user.dir")
                                     + "/target/screenshot/"
                                     + platform + "/"
-                                    + DeviceManager.getDeviceUDID()
+                                    + AppiumDeviceManager.getDeviceUDID()
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg"));
         } else {
@@ -358,7 +358,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir") + "/target/screenshot/"
                                     + platform + "/"
-                                    + DeviceManager.getDeviceUDID()
+                                    + AppiumDeviceManager.getDeviceUDID()
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + ".jpeg"));
         }

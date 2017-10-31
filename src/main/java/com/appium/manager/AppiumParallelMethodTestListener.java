@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.android.AndroidDeviceConfiguration;
 import com.report.factory.ExtentManager;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -65,6 +66,7 @@ public final class AppiumParallelMethodTestListener
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        new AndroidDeviceConfiguration().getDeviceOS();
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {

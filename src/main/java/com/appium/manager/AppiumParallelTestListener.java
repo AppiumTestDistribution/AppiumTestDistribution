@@ -84,12 +84,12 @@ public final class AppiumParallelTestListener
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         JSONObject json = new JSONObject();
-        json.put("id", DeviceManager.getDeviceUDID());
-        json.put("version", new DeviceManager().getDeviceVersion());
-        json.put("platform", DeviceManager.getMobilePlatform());
-        //json.put("resolution", DeviceManager.getMobilePlatform());
+        json.put("id", AppiumDeviceManager.getDeviceUDID());
+        json.put("version", new AppiumDeviceManager().getDeviceVersion());
+        json.put("platform", AppiumDeviceManager.getMobilePlatform());
+        //json.put("resolution", AppiumDeviceManager.getMobilePlatform());
         try {
-            json.put("model", new DeviceManager().getDeviceModel());
+            json.put("model", new AppiumDeviceManager().getDeviceModel());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {

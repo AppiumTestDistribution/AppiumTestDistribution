@@ -43,7 +43,7 @@ public class ParallelThread {
     private HtmlReporter htmlReporter;
     ExtentManager extentManager;
 
-    public ParallelThread() throws IOException {
+    public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         configFileManager = ConfigFileManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
@@ -53,7 +53,7 @@ public class ParallelThread {
         extentManager = new ExtentManager();
     }
 
-    public ParallelThread(List<String> validDeviceIds) throws IOException {
+    public ParallelThread(List<String> validDeviceIds) throws Exception {
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
         configFileManager = ConfigFileManager.getInstance();
@@ -85,7 +85,7 @@ public class ParallelThread {
         createAppiumLogsFolder();
 
 
-        if (androidDevice.getDevices() != null && platform
+        if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase("android")
                 || platform.equalsIgnoreCase("Both")) {
             createAdblogs();

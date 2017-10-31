@@ -1,7 +1,7 @@
 package com.video.recorder;
 
 import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.manager.DeviceManager;
+import com.appium.manager.AppiumDeviceManager;
 import com.appium.utils.CommandPrompt;
 
 import java.io.BufferedReader;
@@ -53,9 +53,10 @@ public class Flick extends CommandPrompt {
         String videoPath = System.getProperty("user.dir");
         String android;
         String ios;
-        if (DeviceManager.getDeviceUDID().length() != 40) {
+        if (AppiumDeviceManager.getDeviceUDID().length() != 40) {
             String videoLocationAndroid =
-                videoPath + "/target/screenshot/android/" + DeviceManager.getDeviceUDID() + "/"
+                videoPath + "/target/screenshot/android/"
+                        + AppiumDeviceManager.getDeviceUDID() + "/"
                     + className + "/" + methodName;
             fileDirectoryCheck(videoLocationAndroid);
             if (command.equals("start")) {
@@ -73,7 +74,7 @@ public class Flick extends CommandPrompt {
                         Thread.sleep(1000);
                     } else {
                         android = "flick video -a " + command + " -p android -u "
-                                + DeviceManager.getDeviceUDID();
+                                + AppiumDeviceManager.getDeviceUDID();
                         runCommandThruProcess(android);
                     }
                 } catch (IOException e) {
@@ -92,7 +93,7 @@ public class Flick extends CommandPrompt {
                 } else {
                     android = "flick video -a " + command + " -p android -o "
                             + videoLocationAndroid + " -n " + videoFileName
-                            + " -u " + DeviceManager.getDeviceUDID() + " --trace";
+                            + " -u " + AppiumDeviceManager.getDeviceUDID() + " --trace";
                     runCommandThruProcess(android);
                     System.out.println("Stopping Video recording on Emulator");
                     Thread.sleep(10000);
@@ -100,14 +101,15 @@ public class Flick extends CommandPrompt {
             }
         } else {
             String videoLocationIOS =
-                videoPath + "/target/screenshot/iOS/" + DeviceManager.getDeviceUDID()
+                videoPath + "/target/screenshot/iOS/" + AppiumDeviceManager.getDeviceUDID()
                         + "/" + className + "/" + methodName;
             fileDirectoryCheck(videoLocationIOS);
             if (command.equals("start")) {
-                ios = "flick video -a " + command + " -p ios -u " + DeviceManager.getDeviceUDID();
+                ios = "flick video -a " + command + " -p ios -u "
+                        + AppiumDeviceManager.getDeviceUDID();
             } else {
                 ios = "flick video -a " + command + " -p ios -o " + videoLocationIOS + " -n "
-                    + videoFileName + " -u " + DeviceManager.getDeviceUDID();
+                    + videoFileName + " -u " + AppiumDeviceManager.getDeviceUDID();
             }
 
             System.out.println(ios);
