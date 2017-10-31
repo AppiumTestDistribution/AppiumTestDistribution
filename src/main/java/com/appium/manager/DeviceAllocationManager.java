@@ -1,8 +1,11 @@
 package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.AvailablePorts;
+import com.openstf.DeviceApi;
+import com.openstf.STFService;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
@@ -10,13 +13,14 @@ import com.thoughtworks.iOS.IOSManager;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 /**
  * DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
@@ -29,6 +33,10 @@ public class DeviceAllocationManager {
     private static IOSManager iosDevice;
     private static AndroidManager androidManager;
     public List<Device> deviceManager;
+    private DeviceApi deviceApi;
+    private static final String STF_SERVICE_URL = System.getenv("STF_URL");  // Change this URL
+    private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");  // Change this access token
+
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -87,7 +95,7 @@ public class DeviceAllocationManager {
         allSimulatorDetails.stream().forEach(device -> {
             Optional<Device> first = deviceManager.stream().filter(device1 -> device.getUdid()
                     .equals(device1.getUdid())).findFirst();
-            if(!first.isPresent()){
+            if (!first.isPresent()) {
                 deviceManager.add(device);
             }
 
@@ -138,6 +146,9 @@ public class DeviceAllocationManager {
     public void freeDevice() {
         System.out.println("DeviceMapping before free" + deviceMapping);
         ((HashMap) deviceMapping.get(AppiumDeviceManager.getDeviceUDID())).put("deviceState", true);
+        if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
+            this.deviceApi.releaseDevice(AppiumDeviceManager.getDeviceUDID());
+        }
         System.out.println("DeviceMapping after free" + deviceMapping);
     }
 
@@ -147,5 +158,23 @@ public class DeviceAllocationManager {
         } else {
             AppiumDeviceManager.setDeviceUDID(device);
         }
+        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            try {
+                if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
+                    connectToSTFServer();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void connectToSTFServer() throws MalformedURLException, URISyntaxException {
+        STFService stfService = new STFService(STF_SERVICE_URL,
+                ACCESS_TOKEN);
+        this.deviceApi = new DeviceApi(stfService);
+        this.deviceApi.connectDevice(AppiumDeviceManager.getDeviceUDID());
     }
 }
