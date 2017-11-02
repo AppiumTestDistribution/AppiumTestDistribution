@@ -155,6 +155,11 @@
             <artifactId>okhttp</artifactId>
             <version>3.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.yunusmete.stf</groupId>
+            <artifactId>openstf-java-client</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

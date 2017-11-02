@@ -1,11 +1,12 @@
 package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.AvailablePorts;
-import com.openstf.DeviceApi;
-import com.openstf.STFService;
+import com.github.yunusmete.stf.api.STFService;
+import com.github.yunusmete.stf.api.ServiceGenerator;
+import com.github.yunusmete.stf.model.DeviceBody;
+import com.github.yunusmete.stf.rest.DeviceResponse;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
@@ -33,10 +34,9 @@ public class DeviceAllocationManager {
     private static IOSManager iosDevice;
     private static AndroidManager androidManager;
     public List<Device> deviceManager;
-    private DeviceApi deviceApi;
     private static final String STF_SERVICE_URL = System.getenv("STF_URL");
     private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
-
+    static STFService service;
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -44,6 +44,8 @@ public class DeviceAllocationManager {
             deviceMapping = new ConcurrentHashMap<>();
             deviceManager = new CopyOnWriteArrayList<>(new DeviceManager().getDeviceProperties());
             androidManager = new AndroidManager();
+            service = ServiceGenerator.createService(STFService.class,
+                    STF_SERVICE_URL + "/api/v1", ACCESS_TOKEN);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,6 +75,7 @@ public class DeviceAllocationManager {
                 }
             }
             if (System.getenv("Platform").equalsIgnoreCase("android")) {
+                connectToSTF();
                 androidManager.getDeviceProperties()
                         .forEach(device -> this.devices.add(device.getUdid()));
             }
@@ -121,7 +124,20 @@ public class DeviceAllocationManager {
         } else {
             deviceManager.forEach(device -> devices.add(device.getUdid()));
         }
+        connectToSTF();
 
+    }
+
+    private void connectToSTF() {
+        try {
+            if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
+                connectToSTFServer();
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<String> getDevices() {
@@ -147,9 +163,6 @@ public class DeviceAllocationManager {
     public void freeDevice() {
         System.out.println("DeviceMapping before free" + deviceMapping);
         ((HashMap) deviceMapping.get(AppiumDeviceManager.getDeviceUDID())).put("deviceState", true);
-        if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
-            this.deviceApi.releaseDevice(AppiumDeviceManager.getDeviceUDID());
-        }
     }
 
     public void allocateDevice(String device, String deviceUDID) {
@@ -158,23 +171,16 @@ public class DeviceAllocationManager {
         } else {
             AppiumDeviceManager.setDeviceUDID(device);
         }
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            try {
-                if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
-                    connectToSTFServer();
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void connectToSTFServer() throws MalformedURLException, URISyntaxException {
-        STFService stfService = new STFService(STF_SERVICE_URL,
-                ACCESS_TOKEN);
-        this.deviceApi = new DeviceApi(stfService);
-        this.deviceApi.connectDevice(AppiumDeviceManager.getDeviceUDID());
+        DeviceResponse devices = service.getDevices();
+        List<com.github.yunusmete.stf.model.Device> deviceList = devices.getDevices();
+        for (com.github.yunusmete.stf.model.Device device : deviceList) {
+            if (device.isPresent()) {
+                if (device.getOwner() == null)
+                    service.addDeviceToUser(new DeviceBody(device.getSerial(), 90000));
+            }
+        }
     }
 }

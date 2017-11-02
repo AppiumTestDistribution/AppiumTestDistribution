@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.AvailablePorts;
+import com.github.yunusmete.stf.model.Device;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -10,6 +11,7 @@ import io.appium.java_client.service.local.flags.ServerArgument;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Appium Manager - this class contains method to start and stops appium server
@@ -102,5 +104,11 @@ public class AppiumServerManager {
 
     public void stopAppiumServer() throws IOException, InterruptedException {
         destroyAppiumNode();
+        List<Device> devices = DeviceAllocationManager.service.getDevices().getDevices();
+        for (Device device : devices) {
+            if (device.isPresent()) {
+                DeviceAllocationManager.service.deleteDeviceBySerial(device.getSerial());
+            }
+        }
     }
 }
