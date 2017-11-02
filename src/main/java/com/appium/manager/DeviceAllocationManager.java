@@ -34,8 +34,8 @@ public class DeviceAllocationManager {
     private static AndroidManager androidManager;
     public List<Device> deviceManager;
     private DeviceApi deviceApi;
-    private static final String STF_SERVICE_URL = System.getenv("STF_URL");  // Change this URL
-    private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");  // Change this access token
+    private static final String STF_SERVICE_URL = System.getenv("STF_URL");
+    private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
 
 
     private DeviceAllocationManager() throws Exception {
@@ -95,6 +95,7 @@ public class DeviceAllocationManager {
         allSimulatorDetails.stream().forEach(device -> {
             Optional<Device> first = deviceManager.stream().filter(device1 -> device.getUdid()
                     .equals(device1.getUdid())).findFirst();
+
             if (!first.isPresent()) {
                 deviceManager.add(device);
             }
@@ -149,7 +150,6 @@ public class DeviceAllocationManager {
         if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
             this.deviceApi.releaseDevice(AppiumDeviceManager.getDeviceUDID());
         }
-        System.out.println("DeviceMapping after free" + deviceMapping);
     }
 
     public void allocateDevice(String device, String deviceUDID) {
