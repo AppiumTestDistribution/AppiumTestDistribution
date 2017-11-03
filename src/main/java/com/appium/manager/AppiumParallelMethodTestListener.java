@@ -66,7 +66,6 @@ public final class AppiumParallelMethodTestListener
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        new AndroidDeviceConfiguration().getDeviceOS();
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {

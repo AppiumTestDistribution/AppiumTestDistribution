@@ -148,7 +148,12 @@
         <dependency>
             <groupId>com.github.SrinivasanTarget</groupId>
             <artifactId>DeviceManager</artifactId>
-            <version>9be2904865</version>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yunusmete.stf</groupId>
+            <artifactId>openstf-java-client</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
