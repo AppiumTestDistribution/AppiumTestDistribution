@@ -104,10 +104,13 @@ public class AppiumServerManager {
 
     public void stopAppiumServer() throws IOException, InterruptedException {
         destroyAppiumNode();
-        List<Device> devices = DeviceAllocationManager.service.getDevices().getDevices();
-        for (Device device : devices) {
-            if (device.isPresent()) {
-                DeviceAllocationManager.service.deleteDeviceBySerial(device.getSerial());
+        if(System.getenv("STF_URL") != null
+                && System.getenv("ACCESS_TOKEN") != null) {
+            List<Device> devices = DeviceAllocationManager.service.getDevices().getDevices();
+            for (Device device : devices) {
+                if (device.isPresent()) {
+                    DeviceAllocationManager.service.deleteDeviceBySerial(device.getSerial());
+                }
             }
         }
     }
