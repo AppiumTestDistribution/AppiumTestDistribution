@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver
@@ -22,6 +23,7 @@ public class AppiumDriverManager {
     private AppiumServerManager appiumServerManager;
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
@@ -45,6 +47,9 @@ public class AppiumDriverManager {
 
         currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
+        LOGGER.info("Session Created ---- " +
+                currentDriverSession.getSessionId() + "---" +
+                currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 
@@ -55,6 +60,9 @@ public class AppiumDriverManager {
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
         currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
+        LOGGER.info("Session Created ---- " +
+                currentDriverSession.getSessionId() + "---" +
+                currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 
@@ -96,7 +104,7 @@ public class AppiumDriverManager {
         } else {
             iOS = getDesiredIOSCapabilities(userSpecifiedCaps);
         }
-        System.out.println("Caps generated" + android + iOS);
+        LOGGER.info("Caps generated---" + android + iOS);
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
     }
 
@@ -147,6 +155,9 @@ public class AppiumDriverManager {
             iosDeviceConfiguration.destroyIOSWebKitProxy();
         }
         if (AppiumDriverManager.getDriver() != null) {
+            LOGGER.info("Session Deleting ---- " +
+                    AppiumDriverManager.getDriver().getSessionId() + "---" +
+                    AppiumDriverManager.getDriver().getSessionDetail("udid"));
             AppiumDriverManager.getDriver().quit();
         }
     }

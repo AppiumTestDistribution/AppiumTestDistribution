@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class IOSDeviceConfiguration {
     public static List<Device> deviceUDIDiOS = new ArrayList<>();
@@ -27,8 +28,7 @@ public class IOSDeviceConfiguration {
 
     public final static int IOS_UDID_LENGTH = 40;
     public final static int SIM_UDID_LENGTH = 36;
-    String profile = "system_profiler SPUSBDataType | sed -n -E -e '/(iPhone|iPad|iPod)/"
-            + ",/Serial/s/ *Serial Number: *(.+)/\\1/p'";
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     public static ConcurrentHashMap<Long, Integer> iosDebugProxyProcess = new ConcurrentHashMap<>();
 
@@ -115,7 +115,7 @@ public class IOSDeviceConfiguration {
         String webkitRunner = "ios_webkit_debug_proxy -c " + AppiumDeviceManager.getDeviceUDID()
                 + ":" + deviceMap.get(AppiumDeviceManager.getDeviceUDID());
         p1 = Runtime.getRuntime().exec(webkitRunner);
-        System.out.println(
+        LOGGER.info(
                 "WebKit Proxy is started on device " + AppiumDeviceManager.getDeviceUDID()
                         + " and with port number "
                         + deviceMap.get(AppiumDeviceManager.getDeviceUDID())
@@ -127,21 +127,6 @@ public class IOSDeviceConfiguration {
         return String.valueOf(deviceMap.get(AppiumDeviceManager.getDeviceUDID()));
     }
 
-    public long getPidOfProcess(Process p) {
-        long pid = -1;
-
-        try {
-            if (p1.getClass().getName().equals("java.lang.UNIXProcess")) {
-                Field f = p1.getClass().getDeclaredField("pid");
-                f.setAccessible(true);
-                pid = f.getLong(p1);
-                f.setAccessible(false);
-            }
-        } catch (Exception e) {
-            pid = -1;
-        }
-        return pid;
-    }
 
     public int getPid(Process process) {
 
@@ -160,8 +145,7 @@ public class IOSDeviceConfiguration {
     public void destroyIOSWebKitProxy() throws IOException, InterruptedException {
         if (iosDebugProxyProcess.get(Thread.currentThread().getId()) != -1) {
             String command = "kill -9 " + iosDebugProxyProcess.get(Thread.currentThread().getId());
-            System.out.println("Kills webkit proxy");
-            System.out.println("******************" + command);
+            LOGGER.info("Kills webkit proxy" + "******************" + command);
             Runtime.getRuntime().exec(command);
         }
     }

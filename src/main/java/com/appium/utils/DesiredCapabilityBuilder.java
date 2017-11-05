@@ -44,8 +44,6 @@ public class DesiredCapabilityBuilder {
     public void buildDesiredCapability(String platform,
                                                       String jsonPath) throws Exception {
         final boolean[] flag = {false};
-        System.out.println("DeviceMappy-----" + DeviceAllocationManager
-                .getInstance().deviceMapping);
         Object port = ((HashMap) DeviceAllocationManager.getInstance()
                 .deviceMapping.get(AppiumDeviceManager
                 .getDeviceUDID())).get("port");

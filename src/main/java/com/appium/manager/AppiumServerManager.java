@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Appium Manager - this class contains method to start and stops appium server
@@ -22,6 +23,7 @@ public class AppiumServerManager {
 
     private AvailablePorts ap;
     private IOSDeviceConfiguration iosDeviceConfiguration;
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
 
     public static AppiumDriverLocalService getAppiumDriverLocalService() {
         return appiumDriverLocalService;
@@ -93,7 +95,7 @@ public class AppiumServerManager {
     private void destroyAppiumNode() {
         getAppiumDriverLocalService().stop();
         if (getAppiumDriverLocalService().isRunning()) {
-            System.out.println("AppiumServer didn't shut... Trying to quit again....");
+            LOGGER.info("AppiumServer didn't shut... Trying to quit again....");
             getAppiumDriverLocalService().stop();
         }
     }

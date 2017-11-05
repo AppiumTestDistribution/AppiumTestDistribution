@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 /**
  * DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
@@ -37,6 +38,7 @@ public class DeviceAllocationManager {
     private static final String STF_SERVICE_URL = System.getenv("STF_URL");
     private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
     static STFService service;
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -65,12 +67,13 @@ public class DeviceAllocationManager {
             List<Device> allSimulatorDetails = new IOSDeviceConfiguration()
                     .checkIfUserSpecifiedSimulatorAndGetUDID();
             if (System.getenv("Platform").equalsIgnoreCase("iOS")) {
+                LOGGER.info("Adding only iOS Devices");
                 iosDevice.getAllAvailableDevices()
                         .forEach(device -> devices.add(device.getUdid()));
                 allocateUniqueSimulatorDetails(allSimulatorDetails);
                 allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
                 if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
-                    System.out.println("Adding iOS Devices from DeviceList Provided");
+                    LOGGER.info("Adding iOS Devices from DeviceList Provided");
                     devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                 }
             }
@@ -141,6 +144,7 @@ public class DeviceAllocationManager {
     }
 
     public ArrayList<String> getDevices() {
+        LOGGER.info("All devices connected" + devices);
         return devices;
     }
 
@@ -161,14 +165,17 @@ public class DeviceAllocationManager {
     }
 
     public void freeDevice() {
-        System.out.println("DeviceMapping before free" + deviceMapping);
         ((HashMap) deviceMapping.get(AppiumDeviceManager.getDeviceUDID())).put("deviceState", true);
+        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDeviceUDID()
+                + " from execution list");
     }
 
     public void allocateDevice(String device, String deviceUDID) {
         if (device.isEmpty()) {
+            LOGGER.info("Allocated Device " + deviceUDID + " for Execution");
             AppiumDeviceManager.setDeviceUDID(deviceUDID);
         } else {
+            LOGGER.info("Allocated Device " + deviceUDID + " for Execution");
             AppiumDeviceManager.setDeviceUDID(device);
         }
     }
