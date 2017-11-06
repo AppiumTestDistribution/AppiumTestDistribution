@@ -14,12 +14,8 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
 import org.testng.collections.Lists;
-import org.testng.xml.XmlClass;
-import org.testng.xml.XmlInclude;
-import org.testng.xml.XmlPackage;
-import org.testng.xml.XmlSuite;
+import org.testng.xml.*;
 import org.testng.xml.XmlSuite.ParallelMode;
-import org.testng.xml.XmlTest;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,16 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -116,10 +103,13 @@ public class MyTestExecutor {
         Set<Method> resources =
                 reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
         boolean hasFailure;
+
+        String runnerLevel = System.getenv("RUNNER_LEVEL") != null ?
+                System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
+
         if (executionType.equalsIgnoreCase("distribute")) {
-            if (prop.getProperty("RUNNER_LEVEL") != null
-                    && prop.getProperty("RUNNER_LEVEL")
-                        .equalsIgnoreCase("class")) {
+            if (runnerLevel != null
+                    && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
                         devicecount);
             } else {
@@ -242,7 +232,7 @@ public class MyTestExecutor {
     }
 
 
-    public XmlSuite constructXmlSuiteForDistributionMethods(String pack,List<String> tests,
+    public XmlSuite constructXmlSuiteForDistributionMethods(String pack, List<String> tests,
                                                             Map<String, List<Method>> methods,
                                                             int deviceCount) {
         include(listeners, "LISTENERS");
