@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.ios.SimManager;
 import com.appium.utils.AvailablePorts;
 import com.github.yunusmete.stf.api.STFService;
 import com.github.yunusmete.stf.api.ServiceGenerator;
@@ -39,6 +40,7 @@ public class DeviceAllocationManager {
     private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
     static STFService service;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private SimManager simManager = new SimManager();
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -70,8 +72,11 @@ public class DeviceAllocationManager {
                 LOGGER.info("Adding only iOS Devices");
                 iosDevice.getAllAvailableDevices()
                         .forEach(device -> devices.add(device.getUdid()));
-                allocateUniqueSimulatorDetails(allSimulatorDetails);
-                allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
+
+                if (simManager.isSimulatorAvailable()) {
+                    allocateUniqueSimulatorDetails(allSimulatorDetails);
+                    allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
+                }
                 if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
                     LOGGER.info("Adding iOS Devices from DeviceList Provided");
                     devices.addAll(IOSDeviceConfiguration.validDeviceIds);
@@ -83,7 +88,9 @@ public class DeviceAllocationManager {
                         .forEach(device -> this.devices.add(device.getUdid()));
             }
             if (System.getenv("Platform").equalsIgnoreCase("Both")) {
-                allocateUniqueSimulatorDetails(allSimulatorDetails);
+                if (simManager.isSimulatorAvailable()) {
+                    allocateUniqueSimulatorDetails(allSimulatorDetails);
+                }
                 getAllConnectedDevices();
             }
         } else {
@@ -125,7 +132,16 @@ public class DeviceAllocationManager {
             System.out.println("Adding Android Devices from DeviceList Provided");
             devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
         } else {
-            deviceManager.forEach(device -> devices.add(device.getUdid()));
+            deviceManager.forEach(device -> {
+                if (device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH
+                        && new SimManager().isSimulatorAvailable()) {
+                    devices.add(device.getUdid());
+                } else if (device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                    devices.add(device.getUdid());
+                } else if (device.getUdid().length() < IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                    devices.add(device.getUdid());
+                }
+            });
         }
         connectToSTF();
 
@@ -185,8 +201,9 @@ public class DeviceAllocationManager {
         List<com.github.yunusmete.stf.model.Device> deviceList = devices.getDevices();
         for (com.github.yunusmete.stf.model.Device device : deviceList) {
             if (device.isPresent()) {
-                if (device.getOwner() == null)
+                if (device.getOwner() == null) {
                     service.addDeviceToUser(new DeviceBody(device.getSerial(), 90000));
+                }
             }
         }
     }
