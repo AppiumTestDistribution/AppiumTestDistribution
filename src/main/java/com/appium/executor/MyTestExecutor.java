@@ -104,8 +104,8 @@ public class MyTestExecutor {
                 reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
         boolean hasFailure;
 
-        String runnerLevel = System.getenv("RUNNER_LEVEL") != null ?
-                System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
+        String runnerLevel = System.getenv("RUNNER_LEVEL") != null
+                ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
