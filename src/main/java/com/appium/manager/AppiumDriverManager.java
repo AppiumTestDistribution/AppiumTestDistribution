@@ -47,9 +47,9 @@ public class AppiumDriverManager {
 
         currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
-        LOGGER.info("Session Created ---- " +
-                currentDriverSession.getSessionId() + "---" +
-                currentDriverSession.getSessionDetail("udid"));
+        LOGGER.info("Session Created ---- "
+                + currentDriverSession.getSessionId()
+                + "---" + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 
@@ -60,9 +60,9 @@ public class AppiumDriverManager {
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
         currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
                 desiredCapabilities);
-        LOGGER.info("Session Created ---- " +
-                currentDriverSession.getSessionId() + "---" +
-                currentDriverSession.getSessionDetail("udid"));
+        LOGGER.info("Session Created ---- "
+                + currentDriverSession.getSessionId() + "---"
+                + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 
@@ -155,9 +155,9 @@ public class AppiumDriverManager {
             iosDeviceConfiguration.destroyIOSWebKitProxy();
         }
         if (AppiumDriverManager.getDriver() != null) {
-            LOGGER.info("Session Deleting ---- " +
-                    AppiumDriverManager.getDriver().getSessionId() + "---" +
-                    AppiumDriverManager.getDriver().getSessionDetail("udid"));
+            LOGGER.info("Session Deleting ---- "
+                    + AppiumDriverManager.getDriver().getSessionId() + "---"
+                    + AppiumDriverManager.getDriver().getSessionDetail("udid"));
             AppiumDriverManager.getDriver().quit();
         }
     }
