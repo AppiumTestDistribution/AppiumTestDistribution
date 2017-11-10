@@ -154,7 +154,8 @@ public class AppiumDriverManager {
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             iosDeviceConfiguration.destroyIOSWebKitProxy();
         }
-        if (AppiumDriverManager.getDriver() != null) {
+        if (AppiumDriverManager.getDriver() != null
+                && AppiumDriverManager.getDriver().getSessionId() !=null) {
             LOGGER.info("Session Deleting ---- "
                     + AppiumDriverManager.getDriver().getSessionId() + "---"
                     + AppiumDriverManager.getDriver().getSessionDetail("udid"));
