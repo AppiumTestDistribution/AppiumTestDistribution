@@ -68,7 +68,8 @@ public class DeviceAllocationManager {
         if (SystemUtils.IS_OS_MAC) {
             List<Device> allSimulatorDetails = new IOSDeviceConfiguration()
                     .checkIfUserSpecifiedSimulatorAndGetUDID();
-            if (System.getenv("Platform").equalsIgnoreCase("iOS")) {
+            String platform = System.getenv("Platform");
+            if (platform.equalsIgnoreCase("iOS")) {
                 LOGGER.info("Adding only iOS Devices");
                 iosDevice.getAllAvailableDevices()
                         .forEach(device -> devices.add(device.getUdid()));
@@ -82,12 +83,12 @@ public class DeviceAllocationManager {
                     devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                 }
             }
-            if (System.getenv("Platform").equalsIgnoreCase("android")) {
+            if (platform.equalsIgnoreCase("android")) {
                 connectToSTF();
                 androidManager.getDeviceProperties()
                         .forEach(device -> this.devices.add(device.getUdid()));
             }
-            if (System.getenv("Platform").equalsIgnoreCase("Both")) {
+            if (platform.equalsIgnoreCase("Both")) {
                 if (simManager.isSimulatorAvailable()) {
                     allocateUniqueSimulatorDetails(allSimulatorDetails);
                 }

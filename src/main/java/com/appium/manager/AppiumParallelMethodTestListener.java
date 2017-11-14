@@ -85,9 +85,10 @@ public final class AppiumParallelMethodTestListener
             }
             appiumDriverManager.stopAppiumDriver();
             ExtentManager.getExtent().flush();
-            deviceAllocationManager.freeDevice();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            deviceAllocationManager.freeDevice();
         }
     }
 
