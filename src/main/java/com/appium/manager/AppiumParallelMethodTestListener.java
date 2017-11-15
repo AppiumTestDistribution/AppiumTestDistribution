@@ -53,8 +53,7 @@ public final class AppiumParallelMethodTestListener
                             .getMethod().getAnnotation(SkipIf.class);
             if (skip != null) {
                 String info = skip.platform();
-                if (AppiumDriverManager.getDriver().toString()
-                        .split("\\(")[0].trim().toString().contains(info)) {
+                if (AppiumDriverManager.getDriver().getPlatformName().contains(info)) {
                     System.out.println("skipping test");
                     throw new SkipException("Skipped because property was set to :::" + info);
                 }
