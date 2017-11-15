@@ -46,21 +46,23 @@ public final class AppiumParallelMethodTestListener
             appiumDriverManager.startAppiumDriverInstance();
             reportManager.startLogResults(method.getTestMethod().getMethodName(),
                     testResult.getTestClass().getRealClass().getSimpleName());
-
-            SkipIf skip =
-                    method.getTestMethod()
-                            .getConstructorOrMethod()
-                            .getMethod().getAnnotation(SkipIf.class);
-            if (skip != null) {
-                String info = skip.platform();
-                if (AppiumDriverManager.getDriver().getPlatformName().contains(info)) {
-                    System.out.println("skipping test");
-                    throw new SkipException("Skipped because property was set to :::" + info);
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        SkipIf skip = getSkipIf(method);
+        if (skip != null) {
+            String info = skip.platform();
+            if (AppiumDriverManager.getDriver().getPlatformName().contains(info)) {
+                System.out.println("skipping test");
+                throw new SkipException("Skipped because property was set to :::" + info);
+            }
+        }
+    }
+
+    private SkipIf getSkipIf(IInvokedMethod method) {
+        return method.getTestMethod()
+                .getConstructorOrMethod()
+                .getMethod().getAnnotation(SkipIf.class);
     }
 
     @Override
