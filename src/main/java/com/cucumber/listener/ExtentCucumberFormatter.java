@@ -105,8 +105,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             reportManager.test.get().log(Status.FAIL, result.getErrorMessage());
             String context = AppiumDriverManager.getDriver().getContext();
             boolean contextChanged = false;
-            if ("Android".equals(AppiumDriverManager.getDriver()
-                    .getSessionDetails().get("platformName")
+            if ("Android".equalsIgnoreCase(AppiumDriverManager.getDriver()
+                    .getSessionDetails().get("platform")
                     .toString())
                     && !"NATIVE_APP".equals(context)) {
                 AppiumDriverManager.getDriver().context("NATIVE_APP");
