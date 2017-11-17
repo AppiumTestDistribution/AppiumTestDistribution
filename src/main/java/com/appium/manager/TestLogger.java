@@ -5,6 +5,7 @@ import com.appium.utils.ScreenShotManager;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
+import com.thoughtworks.device.SimulatorManager;
 import com.video.recorder.Flick;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.logging.LogEntry;

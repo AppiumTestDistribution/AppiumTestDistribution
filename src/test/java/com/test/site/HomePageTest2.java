@@ -3,7 +3,10 @@ package com.test.site;
 
 import com.annotation.values.Author;
 import com.annotation.values.Description;
+import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
+import com.thoughtworks.device.SimulatorManager;
+import org.junit.Assert;
 import org.testng.annotations.Test;
 
 
