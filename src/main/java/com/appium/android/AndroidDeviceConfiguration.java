@@ -21,7 +21,8 @@ public class AndroidDeviceConfiguration {
      */
     public String getDeviceModel() {
         Optional<Device> getModel = getDevice();
-        return getModel.get().getDeviceModel() + getModel.get().getBrand();
+        return (getModel.get().getDeviceModel() + getModel.get().getBrand())
+                .replaceAll("[^a-zA-Z0-9\\.\\-]", "");
     }
 
     /*

@@ -27,7 +27,7 @@ class TestLogger {
     private List<LogEntry> logEntries;
     private PrintWriter log_file_writer;
     private ScreenShotManager screenShotManager;
-    private  String videoPath;
+    private String videoPath;
 
     public String getVideoPath() {
         return videoPath;
@@ -42,7 +42,7 @@ class TestLogger {
         screenShotManager = new ScreenShotManager();
     }
 
-    public void startLogging(String methodName,String className) throws FileNotFoundException {
+    public void startLogging(String methodName, String className) throws FileNotFoundException {
         Capabilities capabilities = AppiumDriverManager.getDriver().getCapabilities();
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (capabilities.getCapability("browserName") == null) {
@@ -53,11 +53,11 @@ class TestLogger {
                         + AppiumDeviceManager.getDeviceUDID()
                         + "__" + methodName + ".txt");
                 log_file_writer = new PrintWriter(logFile);
-                startVideoRecording(methodName, className);
             }
-
         }
+        startVideoRecording(methodName, className);
     }
+
 
     private void startVideoRecording(String methodName, String className) {
         if (System.getenv("VIDEO_LOGS") != null) {
@@ -75,7 +75,7 @@ class TestLogger {
     public HashMap<String, String> endLog(ITestResult result, String deviceModel,
                                           ThreadLocal<ExtentTest> test)
             throws IOException, InterruptedException {
-        HashMap<String,String> logs = new HashMap<>();
+        HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
         stopViewRecording(result, className);
         String adbPath = "adblogs/"
@@ -107,23 +107,11 @@ class TestLogger {
                     + "/" + className + "/" + result.getMethod()
                     .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
             logs.put("videoLogs", getVideoPath());
-            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                boolean exists = new File(getVideoPath())
-                        .exists();
-                System.out.println("****************" + exists + getVideoPath());
-                if (exists) {
-                    test.get().log(Status.INFO, "<a target=\"_parent\" href="
-                            + getVideoPath() + ">Videologs</a>");
-                }
 
-            } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-                if (new File(getVideoPath())
-                        .exists()) {
-                    test.get().log(Status.INFO, "<a target=\"_parent\" href="
-                            + getVideoPath() + ">Videologs</a>");
-                }
+            if (new File(System.getProperty("user.dir") + "/target/" + getVideoPath()).exists()) {
+                test.get().log(Status.INFO, "<a target=\"_parent\" href="
+                        + getVideoPath() + ">Videologs</a>");
             }
-
         }
         String failedScreen = screenShotManager.getFailedScreen();
         String framedFailureScreen = screenShotManager.getFramedFailedScreen();
@@ -133,11 +121,11 @@ class TestLogger {
             if (new File(System.getProperty("user.dir")
                     + "/target/" + failedScreen).exists()) {
                 screenShotFailure = failedScreen;
-                logs.put("screenShotFailure",screenShotFailure);
+                logs.put("screenShotFailure", screenShotFailure);
             } else if (new File(System.getProperty("user.dir")
                     + "/target/" + framedFailureScreen).exists()) {
                 screenShotFailure = framedFailureScreen;
-                logs.put("screenShotFailure",screenShotFailure);
+                logs.put("screenShotFailure", screenShotFailure);
             }
         }
         ExtentManager.getExtent().flush();
