@@ -1,8 +1,11 @@
 package com.video.recorder;
 
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.AppiumDriverManager;
 import com.appium.utils.CommandPrompt;
+import com.thoughtworks.device.SimulatorManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +23,12 @@ public class Flick extends CommandPrompt {
         new ConcurrentHashMap<>();
     AndroidDeviceConfiguration androidDeviceConfiguration = new AndroidDeviceConfiguration();
     Process screenRecord;
+    private SimulatorManager simulatorManager;
+    ThreadLocal<Process> simulatorRecordSession = new ThreadLocal<>();
+
+    public Flick() {
+        simulatorManager = new SimulatorManager();
+    }
 
     /**
      * @param className     - Current test class name
@@ -31,7 +40,14 @@ public class Flick extends CommandPrompt {
     public void stopVideoRecording(String className, String methodName,
                                    String videoFileName) throws IOException, InterruptedException {
         System.out.println("**************Stopping Video Recording**************");
-        flickRecordingCommand("stop", className, methodName, videoFileName);
+        if (AppiumDeviceManager.getDeviceUDID().length()
+                == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+            stopRunningProcess(getPid(simulatorRecordSession.get()));
+            System.out.println("Killed .........");
+        } else {
+            flickRecordingCommand("stop", className, methodName, videoFileName);
+        }
+
     }
 
     /**
@@ -45,7 +61,23 @@ public class Flick extends CommandPrompt {
     public void startVideoRecording(String className, String methodName,
                                     String videoFileName) throws IOException, InterruptedException {
         System.out.println("**************Starting Video Recording**************");
-        flickRecordingCommand("start", className, methodName, videoFileName);
+        if (AppiumDeviceManager.getDeviceUDID().length()
+                == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+            String videoPath = System.getProperty("user.dir");
+            String videoLocationIOS =
+                    videoPath + "/target/screenshot/iOS/" + AppiumDeviceManager.getDeviceUDID()
+                            + "/" + className + "/" + methodName;
+            File file = new File(videoLocationIOS);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            simulatorRecordSession.set(simulatorManager
+                    .startScreenRecording(AppiumDeviceManager.getDeviceUDID(),
+                    videoLocationIOS + "/" + videoFileName + ".mp4"));
+        } else {
+            flickRecordingCommand("start", className, methodName, videoFileName);
+        }
+
     }
 
     public void flickRecordingCommand(String command,String className,
@@ -144,16 +176,20 @@ public class Flick extends CommandPrompt {
 
     public void stopRecording() throws IOException {
         Integer processId = androidScreenRecordProcess.get(Thread.currentThread().getId());
+        stopRunningProcess(processId);
+    }
+
+    private void stopRunningProcess(Integer processId) throws IOException {
         if (processId != -1) {
             String process = "pgrep -P " + processId;
             System.out.println(process);
             Process p2 = Runtime.getRuntime().exec(process);
             BufferedReader r = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-            String command = "kill " + processId;
+            String command = "kill -2 " + processId;
             System.out.println("Stopping Video Recording");
             System.out.println("******************" + command);
             try {
-                runCommandThruProcess(command);
+                runCommand(command);
                 Thread.sleep(10000);
                 System.out.println("Killed video recording with exit code :" + command);
             } catch (InterruptedException e) {
