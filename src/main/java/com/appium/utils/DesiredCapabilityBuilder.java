@@ -43,7 +43,6 @@ public class DesiredCapabilityBuilder {
 
     public void buildDesiredCapability(String platform,
                                                       String jsonPath) throws Exception {
-        final boolean[] flag = {false};
         Object port = ((HashMap) DeviceAllocationManager.getInstance()
                 .deviceMapping.get(AppiumDeviceManager
                 .getDeviceUDID())).get("port");
@@ -57,7 +56,6 @@ public class DesiredCapabilityBuilder {
         ((JSONObject) platFormCapabilities)
                 .forEach((caps, values) -> {
                     if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
-                        flag[0] = true;
                         try {
                             desiredCapabilities.setCapability("chromeDriverPort",
                                     availablePorts.getPort());
@@ -88,7 +86,7 @@ public class DesiredCapabilityBuilder {
                         desiredCapabilities.setCapability(caps.toString(), values.toString());
                     }
                 });
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID) && !flag[0]) {
+        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")
                     .toString() != "UIAutomator2") {
