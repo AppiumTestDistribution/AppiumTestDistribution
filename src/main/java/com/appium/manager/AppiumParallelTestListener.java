@@ -2,24 +2,17 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import org.testng.IClassListener;
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ISuite;
-import org.testng.ISuiteListener;
-import org.testng.ISuiteResult;
-import org.testng.ITestClass;
-import org.testng.ITestContext;
-import org.testng.ITestResult;
-import org.testng.SkipException;
+import org.testng.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
@@ -32,7 +25,7 @@ import java.util.Map;
 
 
 public final class AppiumParallelTestListener
-        implements IClassListener, IInvokedMethodListener, ISuiteListener {
+        implements IClassListener, IInvokedMethodListener, ISuiteListener,ITestListener {
 
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
@@ -61,9 +54,6 @@ public final class AppiumParallelTestListener
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
-            appiumDriverManager.startAppiumDriverInstance();
-            reportManager.startLogResults(method.getTestMethod().getMethodName(),
-                    testResult.getTestClass().getRealClass().getSimpleName());
             SkipIf skip =
                     method.getTestMethod()
                             .getConstructorOrMethod()
@@ -97,7 +87,6 @@ public final class AppiumParallelTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                reportManager.setAuthorName(testResult);
                 HashMap<String, String> getLogDetails = reportManager.endLogTestResults(testResult);
                 JSONObject status = getStatus(json, getExecutionStatus(testResult),
                         String.valueOf(testResult.getThrowable()),
@@ -263,5 +252,50 @@ public final class AppiumParallelTestListener
     public void onAfterClass(ITestClass iTestClass) {
         ExtentManager.getExtent().flush();
         deviceAllocationManager.freeDevice();
+    }
+
+    @Override
+    public void onTestStart(ITestResult iTestResult) {
+        try {
+            appiumDriverManager.startAppiumDriverInstance();
+            reportManager.setAuthorName(iTestResult);
+            reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
+                    iTestResult.getTestClass().getRealClass().getSimpleName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult iTestResult) {
+
+    }
+
+    @Override
+    public void onTestFailure(ITestResult iTestResult) {
+
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult iTestResult) {
+        System.out.println("Skipped...");
+        (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
+        (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
+        ExtentManager.getExtent().flush();
+    }
+
+    @Override
+    public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
+
+    }
+
+    @Override
+    public void onStart(ITestContext iTestContext) {
+
+    }
+
+    @Override
+    public void onFinish(ITestContext iTestContext) {
+
     }
 }
