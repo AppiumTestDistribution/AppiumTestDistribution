@@ -221,7 +221,7 @@ public class ParallelThread {
     }
 
     public void addPluginToCucumberRunner() throws IOException {
-        File dir = new File(System.getProperty("user.dir") + "/src/test/java/output/");
+        File dir = new File(System.getProperty("user.dir") + "/src/childTest/java/output/");
         System.out.println("Getting all files in " + dir.getCanonicalPath()
                 + " including those in subdirectories");
         List<File> files =

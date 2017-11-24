@@ -137,7 +137,7 @@ public class ImageUtils {
         JsonObject jsonObject = new JsonObject();
 
         String deviceName;
-        FileWriter file1 = new FileWriter("test.json");
+        FileWriter file1 = new FileWriter("childTest.json");
         for (File file : files) {
             JsonObject ja;
 

@@ -12,7 +12,7 @@ import java.util.List;
 public class Runner {
     @Test
     public static void testApp() throws Exception {
-        //udid="32085b6d8fdb71ff,FA66VBN01980" mvn clean -Dtest=Runner test
+        //udid="32085b6d8fdb71ff,FA66VBN01980" mvn clean -Dtest=Runner childTest
         /*String udidParam = System.getenv("udid");
         String[] parts = udidParam.split(",");
         List<String> deviceList = Arrays.asList(parts);
@@ -20,7 +20,7 @@ public class Runner {
         ExtentManager.setSystemInfoInReport("version","1.0.0");
         List<String> tests = new ArrayList<>();
         //tests.add("HomePageTest2");
-        tests.add("HomePageTest1");
+        tests.add("HomePageTest2");
         ParallelThread parallelThread = new ParallelThread();
         boolean hasFailures = parallelThread.runner("com.test.site",tests);
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");

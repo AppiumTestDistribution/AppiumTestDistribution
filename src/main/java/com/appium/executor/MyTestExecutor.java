@@ -65,7 +65,7 @@ public class MyTestExecutor {
         for (final Class testFile : testcases) {
             executorService[0].submit(new Runnable() {
                 public void run() {
-                    System.out.println("Running test file: " + testFile.getName());
+                    System.out.println("Running childTest file: " + testFile.getName());
                     hasFailures[0] = testRunnerTestNg(testFile);
                 }
             });
@@ -215,7 +215,7 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
-        listeners.add("com.appium.manager.AppiumParallelTestListener");
+        listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
         if (prop.getProperty("LISTENERS") != null) {
@@ -333,7 +333,7 @@ public class MyTestExecutor {
     }
 
     public void deleteOutputDirectory() {
-        File delete_output = new File(System.getProperty("user.dir") + "/src/test/java/output/");
+        File delete_output = new File(System.getProperty("user.dir") + "/src/childTest/java/output/");
         File[] files = delete_output.listFiles();
         for (File file : files) {
             file.delete();

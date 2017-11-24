@@ -71,7 +71,7 @@ public final class AppiumParallelTestListener
             if (skip != null) {
                 String info = skip.platform();
                 if (AppiumDriverManager.getDriver().getPlatformName().contains(info)) {
-                    System.out.println("skipping test");
+                    System.out.println("skipping childTest");
                     throw new SkipException("Skipped because property was set to :::" + info);
                 }
             }
@@ -97,7 +97,7 @@ public final class AppiumParallelTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                reportManager.setAuthorName(method);
+                reportManager.setAuthorName(testResult);
                 HashMap<String, String> getLogDetails = reportManager.endLogTestResults(testResult);
                 JSONObject status = getStatus(json, getExecutionStatus(testResult),
                         String.valueOf(testResult.getThrowable()),

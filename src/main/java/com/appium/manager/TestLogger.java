@@ -129,7 +129,6 @@ class TestLogger {
                 logs.put("screenShotFailure", screenShotFailure);
             }
         }
-        ExtentManager.getExtent().flush();
         return logs;
     }
 

@@ -31,8 +31,8 @@ public class Flick extends CommandPrompt {
     }
 
     /**
-     * @param className     - Current test class name
-     * @param methodName    - Current test method name
+     * @param className     - Current childTest class name
+     * @param methodName    - Current childTest method name
      * @param videoFileName - filename should have TimeStamp,deviceID with TestMethod name
      * @throws IOException
      * @throws InterruptedException
@@ -52,8 +52,8 @@ public class Flick extends CommandPrompt {
 
     /**
      *
-     * @param className     - Current test class name
-     * @param methodName    - Current test method name
+     * @param className     - Current childTest class name
+     * @param methodName    - Current childTest method name
      * @param videoFileName - filename should have TimeStamp,deviceID with TestMethod name
      * @throws IOException
      * @throws InterruptedException

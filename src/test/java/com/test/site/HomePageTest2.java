@@ -7,6 +7,7 @@ import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import com.thoughtworks.device.SimulatorManager;
 import org.junit.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 
@@ -17,21 +18,19 @@ public class HomePageTest2 {
     @Test(groups = "smoke", description = "Testing Skips")
     @Author(name = "AnsonLiao")
     public void testMethodOne1() throws Exception {
-        Thread.sleep(5000);
-        AppiumDriverManager.getDriver().findElementByAccessibilityId("login").click();
-        AppiumDriverManager.getDriver().findElementByAccessibilityId("doubleTap").click();
-        Thread.sleep(2000);
-        AppiumDriverManager.getDriver().quit();
+        throw new SkipException("Skipping HomepageTest");
     }
 
     @Test(groups = "smoke", description = "Testing Skips")
     @Author(name = "AnsonLiao")
     public void testMethodOne2() throws Exception {
-        Thread.sleep(5000);
-        AppiumDriverManager.getDriver().findElementByAccessibilityId("login").click();
-        AppiumDriverManager.getDriver().findElementByAccessibilityId("doubleTap").click();
-        Thread.sleep(2000);
-        AppiumDriverManager.getDriver().quit();
+        Assert.assertTrue(false);
+    }
+
+    @Test(groups = "smoke", description = "Testing Skips-- true")
+    @Author(name = "AnsonLiao")
+    public void testMethodOne3() throws Exception {
+        Assert.assertTrue(true);
     }
 
 }
