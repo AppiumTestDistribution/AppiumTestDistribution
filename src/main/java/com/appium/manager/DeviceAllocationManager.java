@@ -120,7 +120,7 @@ public class DeviceAllocationManager {
     private void isPlatformInEnv() {
         if (System.getenv("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
-                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner childTest");
+                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
         }
     }
 

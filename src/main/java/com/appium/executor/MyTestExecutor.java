@@ -27,7 +27,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -333,7 +342,8 @@ public class MyTestExecutor {
     }
 
     public void deleteOutputDirectory() {
-        File delete_output = new File(System.getProperty("user.dir") + "/src/childTest/java/output/");
+        File delete_output = new File(System.getProperty("user.dir")
+                + "/src/test/java/output/");
         File[] files = delete_output.listFiles();
         for (File file : files) {
             file.delete();

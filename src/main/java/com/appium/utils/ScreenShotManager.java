@@ -141,7 +141,7 @@ public class ScreenShotManager {
         try {
             File framePath =
                     new File(System.getProperty("user.dir")
-                            + "/src/childTest/resources/frames/");
+                            + "/src/test/resources/frames/");
             if (status == ITestResult.FAILURE) {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")
                         + "/target/" + getFailedScreen().trim()));

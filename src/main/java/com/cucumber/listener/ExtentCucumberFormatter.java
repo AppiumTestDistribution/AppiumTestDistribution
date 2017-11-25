@@ -189,7 +189,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                     device,
                     AppiumDeviceManager.getDeviceUDID());
                 if (AppiumDeviceManager.getDeviceUDID() == null) {
-                    System.out.println("No devices are free to run childTest or Failed to run childTest");
+                    System.out.println("No devices are free to run test "
+                            + "or Failed to run childTest");
                 }
                 reportManager.createParentNodeExtent(feature.getName(),"")
                     .assignCategory(tags);
@@ -286,7 +287,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     public void screenShotAndFrame(String failed_StepName, File scrFile, String device) {
         try {
             File framePath =
-                    new File(System.getProperty("user.dir") + "/src/childTest/resources/frames/");
+                    new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
                             + AppiumDeviceManager.getDeviceUDID()
