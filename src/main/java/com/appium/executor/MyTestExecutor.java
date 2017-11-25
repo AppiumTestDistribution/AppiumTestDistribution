@@ -27,7 +27,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +74,7 @@ public class MyTestExecutor {
         for (final Class testFile : testcases) {
             executorService[0].submit(new Runnable() {
                 public void run() {
-                    System.out.println("Running test file: " + testFile.getName());
+                    System.out.println("Running childTest file: " + testFile.getName());
                     hasFailures[0] = testRunnerTestNg(testFile);
                 }
             });
@@ -215,7 +224,7 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
-        listeners.add("com.appium.manager.AppiumParallelTestListener");
+        listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
         if (prop.getProperty("LISTENERS") != null) {
@@ -333,7 +342,8 @@ public class MyTestExecutor {
     }
 
     public void deleteOutputDirectory() {
-        File delete_output = new File(System.getProperty("user.dir") + "/src/test/java/output/");
+        File delete_output = new File(System.getProperty("user.dir")
+                + "/src/test/java/output/");
         File[] files = delete_output.listFiles();
         for (File file : files) {
             file.delete();

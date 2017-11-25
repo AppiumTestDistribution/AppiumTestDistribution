@@ -99,10 +99,10 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
 
     public void result(Result result) {
         if ("passed".equals(result.getStatus())) {
-            reportManager.test.get().log(Status.PASS, testSteps.poll().getName());
+            reportManager.childTest.get().log(Status.PASS, testSteps.poll().getName());
         } else if ("failed".equals(result.getStatus())) {
             String failed_StepName = testSteps.poll().getName();
-            reportManager.test.get().log(Status.FAIL, result.getErrorMessage());
+            reportManager.childTest.get().log(Status.FAIL, result.getErrorMessage());
             String context = AppiumDriverManager.getDriver().getContext();
             boolean contextChanged = false;
             if ("Android".equalsIgnoreCase(AppiumDriverManager.getDriver()
@@ -137,9 +137,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                 e.printStackTrace();
             }
         } else if ("skipped".equals(result.getStatus())) {
-            reportManager.test.get().log(Status.SKIP, testSteps.poll().getName());
+            reportManager.childTest.get().log(Status.SKIP, testSteps.poll().getName());
         } else if ("undefined".equals(result.getStatus())) {
-            reportManager.test.get().log(Status.WARNING, testSteps.poll().getName());
+            reportManager.childTest.get().log(Status.WARNING, testSteps.poll().getName());
         }
     }
 
@@ -189,7 +189,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                     device,
                     AppiumDeviceManager.getDeviceUDID());
                 if (AppiumDeviceManager.getDeviceUDID() == null) {
-                    System.out.println("No devices are free to run test or Failed to run test");
+                    System.out.println("No devices are free to run test "
+                            + "or Failed to run childTest");
                 }
                 reportManager.createParentNodeExtent(feature.getName(),"")
                     .assignCategory(tags);
@@ -345,7 +346,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                         + AppiumDeviceManager.getDeviceUDID() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
         if (framedImageAndroid.exists()) {
-            reportManager.test.get().log(Status.INFO,
+            reportManager.childTest.get().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir")
                                     + "/target/screenshot/"
@@ -354,7 +355,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg"));
         } else {
-            reportManager.test.get().log(Status.INFO,
+            reportManager.childTest.get().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir") + "/target/screenshot/"
                                     + platform + "/"

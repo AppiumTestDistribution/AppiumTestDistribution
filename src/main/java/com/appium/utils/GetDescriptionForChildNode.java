@@ -1,18 +1,18 @@
 package com.appium.utils;
 
 import com.annotation.values.Author;
-import org.testng.IInvokedMethod;
+import org.testng.ITestResult;
 
 /**
  * Created by saikrisv on 20/05/17.
  */
 public class GetDescriptionForChildNode {
-    private IInvokedMethod methodName;
+    private ITestResult methodName;
     private String description;
     private boolean methodNamePresent;
     private String descriptionMethodName;
 
-    public GetDescriptionForChildNode(IInvokedMethod methodName, String description) {
+    public GetDescriptionForChildNode(ITestResult methodName, String description) {
         this.methodName = methodName;
         this.description = description;
     }
@@ -27,11 +27,11 @@ public class GetDescriptionForChildNode {
 
     public GetDescriptionForChildNode invoke() {
         if (description.isEmpty()) {
-            descriptionMethodName = methodName.getTestMethod().getMethodName();
+            descriptionMethodName = methodName.getMethod().getMethodName();
         } else {
             descriptionMethodName = description;
         }
-        if (methodName.getTestMethod().getConstructorOrMethod()
+        if (methodName.getMethod().getConstructorOrMethod()
                 .getMethod().getAnnotation(Author.class) != null) {
             methodNamePresent = true;
         } else {

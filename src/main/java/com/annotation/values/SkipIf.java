@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * This annotation is processed by {@link } class.
  * <p>
- * Use this annotation if you want to skip a test based plaform.
+ * Use this annotation if you want to skip a childTest based plaform.
  *
  * @author saikrisv
  */

@@ -5,7 +5,6 @@ import com.appium.utils.GetDescriptionForChildNode;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentTestManager;
-import org.testng.IInvokedMethod;
 import org.testng.ITestResult;
 import org.testng.annotations.Test;
 
@@ -23,7 +22,7 @@ public class ReportManager {
     private TestLogger testLogger;
     private AppiumDeviceManager appiumDeviceManager;
     public ThreadLocal<ExtentTest> parentTest = new ThreadLocal<ExtentTest>();
-    public ThreadLocal<ExtentTest> test = new ThreadLocal<ExtentTest>();
+    public ThreadLocal<ExtentTest> childTest = new ThreadLocal<ExtentTest>();
     public ExtentTest parent;
     public ExtentTest child;
     private GetDescriptionForChildNode getDescriptionForChildNode;
@@ -41,7 +40,7 @@ public class ReportManager {
 
     public HashMap<String, String> endLogTestResults(ITestResult result)
             throws IOException, InterruptedException {
-        return testLogger.endLog(result, appiumDeviceManager.getDeviceModel(), test);
+        return testLogger.endLog(result, appiumDeviceManager.getDeviceModel(), childTest);
     }
 
     public ExtentTest createParentNodeExtent(String methodName, String testDescription)
@@ -57,15 +56,15 @@ public class ReportManager {
         return parent;
     }
 
-    public void setAuthorName(IInvokedMethod methodName) throws Exception {
+    public void setAuthorName(ITestResult methodName) throws Exception {
         String authorName;
         String dataProvider = null;
         boolean methodNamePresent;
         ArrayList<String> listeners = new ArrayList<>();
-        String description = methodName.getTestMethod()
+        String description = methodName.getMethod()
             .getConstructorOrMethod().getMethod()
             .getAnnotation(Test.class).description();
-        Object dataParameter = methodName.getTestResult().getParameters();
+        Object dataParameter = methodName.getParameters();
         if (((Object[]) dataParameter).length > 0) {
             dataProvider = (String) ((Object[]) dataParameter)[0];
         }
@@ -85,7 +84,7 @@ public class ReportManager {
         String testName = dataProvider == null ? descriptionMethodName
                 : descriptionMethodName + "[" + dataProvider + "]";
         if (methodNamePresent) {
-            authorName = methodName.getTestMethod()
+            authorName = methodName.getMethod()
                 .getConstructorOrMethod().getMethod()
                 .getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
@@ -93,11 +92,11 @@ public class ReportManager {
                 .createNode(testName,
                     category + "_" + AppiumDeviceManager.getDeviceUDID()).assignAuthor(
                     String.valueOf(listeners));
-            test.set(child);
+            childTest.set(child);
         } else {
             child = parentTest.get().createNode(testName,
                 category + "_" + AppiumDeviceManager.getDeviceUDID());
-            test.set(child);
+            childTest.set(child);
         }
     }
 
@@ -105,6 +104,6 @@ public class ReportManager {
         String tags) {
         child = parentTest.get().createNode(methodName, category
             + AppiumDeviceManager.getDeviceUDID()).assignCategory(tags);
-        test.set(child);
+        childTest.set(child);
     }
 }
