@@ -15,22 +15,23 @@ import org.testng.annotations.Test;
 public class HomePageTest2 {
 
 
-    @Test(groups = "smoke", description = "Testing Skips")
+    @Test(groups = "smoke")
     @Author(name = "AnsonLiao")
-    public void testMethodOne1() throws Exception {
-        throw new SkipException("Skipping HomepageTest");
+    public void testMethodOne11() throws Exception {
+       Assert.assertTrue(false);
     }
 
-    @Test(groups = "smoke", description = "Testing Skips")
+    @Test(groups = "smoke")
     @Author(name = "AnsonLiao")
     public void testMethodOne2() throws Exception {
-        Assert.assertTrue(false);
+        Assert.assertTrue(true);
     }
 
-    @Test(groups = "smoke", description = "Testing Skips-- true")
+
+    @Test(groups = "smoke")
     @Author(name = "AnsonLiao")
     public void testMethodOne3() throws Exception {
-        Assert.assertTrue(true);
+        throw new SkipException("testing");
     }
 
 }
