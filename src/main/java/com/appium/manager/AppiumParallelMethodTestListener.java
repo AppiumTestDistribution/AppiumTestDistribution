@@ -2,10 +2,12 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.utils.Retry;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
+import org.testng.IRetryAnalyzer;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
@@ -58,7 +60,22 @@ public final class AppiumParallelMethodTestListener
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
-            reportManager.endLogTestResults(testResult);
+            if (testResult.getStatus() == ITestResult.SUCCESS
+                    || testResult.getStatus() == ITestResult.FAILURE) {
+                try {
+                    String className = testResult.getMethod().getRealClass().getSimpleName()
+                            + "-------" + method.getTestMethod().getMethodName();
+                    if (getClass().getAnnotation(Description.class) != null) {
+                        testDescription = getClass().getAnnotation(Description.class).value();
+                    }
+                    reportManager.createParentNodeExtent(className, testDescription);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                reportManager.setAuthorName(testResult);
+
+                reportManager.endLogTestResults(testResult);
+            }
             appiumDriverManager.stopAppiumDriver();
             ExtentManager.getExtent().flush();
         } catch (Exception e) {
@@ -70,33 +87,17 @@ public final class AppiumParallelMethodTestListener
 
     @Override
     public void onTestStart(ITestResult iTestResult) {
-        System.out.println("Inside");
-        try {
-            System.out.println(Thread.currentThread().getId());
-            deviceAllocationManager.allocateDevice("",
-                    deviceAllocationManager.getNextAvailableDeviceId());
-            appiumDriverManager.startAppiumDriverInstance();
-            reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
-                    iTestResult.getTestClass().getRealClass().getSimpleName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            String className = iTestResult.getMethod().getRealClass().getSimpleName()
-                    + "-------" + iTestResult.getMethod().getMethodName();
-            if (getClass().getAnnotation(Description.class) != null) {
-                testDescription = getClass().getAnnotation(Description.class).value();
+            try {
+                System.out.println(Thread.currentThread().getId());
+                deviceAllocationManager.allocateDevice("",
+                        deviceAllocationManager.getNextAvailableDeviceId());
+                appiumDriverManager.startAppiumDriverInstance();
+                reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
+                        iTestResult.getTestClass().getRealClass().getSimpleName());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            reportManager.createParentNodeExtent(className, testDescription);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        try {
-            reportManager.setAuthorName(iTestResult);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onTestSuccess(ITestResult result) {
@@ -114,9 +115,12 @@ public final class AppiumParallelMethodTestListener
     @Override
     public void onTestSkipped(ITestResult result) {
         System.out.println("Skipped...");
-        (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
-        (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
-        ExtentManager.getExtent().flush();
+        IRetryAnalyzer retryAnalyzer = result.getMethod().getRetryAnalyzer();
+        if(((Retry) retryAnalyzer).retryCountForTest == ((Retry) retryAnalyzer).maxRetryCount) {
+            (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
+            (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
+            ExtentManager.getExtent().flush();
+        }
     }
 
     @Override

@@ -94,12 +94,6 @@ class TestLogger {
          * Failure Block
          */
         handleTestFailure(result, className, test, deviceModel);
-        /*
-         * Skip block
-         */
-        if (result.getStatus() == ITestResult.SKIP) {
-            test.get().log(Status.SKIP, "Test skipped");
-        }
 
         if (System.getenv("VIDEO_LOGS") != null) {
             setVideoPath("screenshot/" + AppiumDeviceManager.getMobilePlatform()
