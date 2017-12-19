@@ -3,9 +3,9 @@ package com.report.factory;
 import com.appium.manager.ConfigFileManager;
 import com.appium.utils.CommandPrompt;
 import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.aventstack.extentreports.reporter.ExtentXReporter;
+import com.aventstack.extentreports.reporter.KlovReporter;
 import com.aventstack.extentreports.reporter.configuration.ChartLocation;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.apache.commons.io.FileUtils;
@@ -13,8 +13,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 
 public class ExtentManager {
 
@@ -22,6 +20,8 @@ public class ExtentManager {
     private static ExtentReports extent;
     private static String filePath = System.getProperty("user.dir") + "/target/ExtentReports.html";
     private static CommandPrompt commandPrompt = new CommandPrompt();
+    private static String mongoHost;
+    private static Integer mongoPort;
 
     public synchronized static ExtentReports getExtent() {
         if (extent == null) {
@@ -31,7 +31,7 @@ public class ExtentManager {
                 extent.attachReporter(getHtmlReporter());
                 if (System.getenv("ExtentX") != null && System.getenv("ExtentX")
                         .equalsIgnoreCase("true")) {
-                    extent.attachReporter(getExtentXReporter());
+                    extent.attachReporter(klovReporter());
                 }
                 extent.setSystemInfo("Selenium Java Version", "3.3.1");
                 String appiumVersion = null;
@@ -45,17 +45,8 @@ public class ExtentManager {
                 extent.setSystemInfo("AppiumClient", "5.0.0-BETA6");
                 extent.setSystemInfo("AppiumServer", appiumVersion.replace("\n", ""));
                 extent.setSystemInfo("Runner", configFileManager.getProperty("RUNNER"));
-                List statusHierarchy = Arrays.asList(
-                        Status.FATAL,
-                        Status.FAIL,
-                        Status.ERROR,
-                        Status.WARNING,
-                        Status.PASS,
-                        Status.SKIP,
-                        Status.DEBUG,
-                        Status.INFO
-                );
-                extent.config().statusConfigurator().setStatusHierarchy(statusHierarchy);
+                extent.setSystemInfo("AppiumServerLogs", "<a target=\"_parent\" href=" + "/appiumlogs/appiumlogs/"
+                        + ".txt" + ">AppiumServerLogs</a>");
                 return extent;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -114,6 +105,25 @@ public class ExtentManager {
         return extentx;
     }
 
+    private static KlovReporter klovReporter() {
+        KlovReporter klov = new KlovReporter();
+        if (isMongoPortHostProvided()) {
+            klov.initMongoDbConnection(getMongoHost(), getMongoPort());
+            String klovProjectName = System.getenv("projectname");
+            String klovReportName = System.getenv("reportname");
+            String projectname = klovProjectName;
+            String reportname = klovReportName;
+            if (klovProjectName == null || klovReportName == null) {
+                projectname = "AppiumTestDistribution";
+                reportname = "ExtentReports";
+            }
+            klov.setProjectName(projectname);
+            klov.setReportName(reportname);
+            klov.setKlovUrl("http://" + getMongoHost() + ":1337");
+        }
+        return klov;
+    }
+
     public synchronized static void setSystemInfoInReport(String parameter, String value) {
         if (extent == null) {
             getExtent();
@@ -121,5 +131,34 @@ public class ExtentManager {
         extent.setSystemInfo(parameter, value);
     }
 
+    private static boolean isMongoPortHostProvided() {
+        if (configFileManager.getProperty("MONGODB_SERVER") != null
+                && configFileManager.getProperty("MONGODB_PORT") != null) {
+            setMongoHost(configFileManager.getProperty("MONGODB_SERVER"));
+            setMongoPort(Integer.parseInt(configFileManager.getProperty("MONGODB_PORT")));
+            return true;
+        } else {
+            setMongoHost("localhost");
+            setMongoPort(27017);
+            return true;
+        }
+
+    }
+
+    private static String getMongoHost() {
+        return mongoHost;
+    }
+
+    private static void setMongoHost(String mongo) {
+        mongoHost = mongo;
+    }
+
+    private static Integer getMongoPort() {
+        return mongoPort;
+    }
+
+    private static void setMongoPort(Integer port) {
+        mongoPort = port;
+    }
 
 }

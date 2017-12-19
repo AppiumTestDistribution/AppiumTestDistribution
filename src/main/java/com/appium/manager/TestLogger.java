@@ -79,7 +79,7 @@ class TestLogger {
         HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
         stopViewRecording(result, className);
-        String adbPath = "adblogs/"
+        String adbPath = System.getProperty("user.dir") + "/target/adblogs/"
                 + AppiumDeviceManager.getDeviceUDID()
                 + "__"
                 + result.getMethod().getMethodName()
@@ -94,12 +94,6 @@ class TestLogger {
          * Failure Block
          */
         handleTestFailure(result, className, test, deviceModel);
-        /*
-         * Skip block
-         */
-        if (result.getStatus() == ITestResult.SKIP) {
-            test.get().log(Status.SKIP, "Test skipped");
-        }
 
         if (System.getenv("VIDEO_LOGS") != null) {
             setVideoPath("screenshot/" + AppiumDeviceManager.getMobilePlatform()
@@ -196,15 +190,15 @@ class TestLogger {
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 if (framedImageAndroid.exists()) {
-                    log.addScreenCaptureFromPath(
-                            "screenshot/android/" + AppiumDeviceManager.getDeviceUDID() + "/"
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
+                            + "screenshot/android/" + AppiumDeviceManager.getDeviceUDID() + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
                                     + "_failed_" + result
                                     .getMethod().getMethodName() + "_framed.jpeg");
                 } else {
-                    log.addScreenCaptureFromPath(
-                            "screenshot/android/" + AppiumDeviceManager.getDeviceUDID() + "/"
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
+                            + "screenshot/android/" + AppiumDeviceManager.getDeviceUDID() + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
                                     + screenShotNameWithTimeStamp + "_" + result
                                     .getMethod().getMethodName() + "_failed.jpeg");
@@ -222,14 +216,16 @@ class TestLogger {
                 System.out.println("************************" + framedImageIOS.exists()
                         + "***********************");
                 if (framedImageIOS.exists()) {
-                    log.addScreenCaptureFromPath("screenshot/iOS/"
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
+                            + "screenshot/iOS/"
                             + AppiumDeviceManager.getDeviceUDID()
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_failed_" + result
                             .getMethod().getMethodName() + "_framed.jpeg");
                 } else {
-                    log.addScreenCaptureFromPath("screenshot/iOS/"
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
+                            + "screenshot/iOS/"
                             + AppiumDeviceManager.getDeviceUDID()
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"

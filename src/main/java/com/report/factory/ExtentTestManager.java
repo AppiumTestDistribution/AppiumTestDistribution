@@ -12,7 +12,7 @@ public class ExtentTestManager { // new
 
     public static ThreadLocal<ExtentTest> extentTest = new ThreadLocal<ExtentTest>();
     public static ExtentReports extent = ExtentManager.getExtent();
-    private static ExtentTest test;
+    public static ExtentTest test;
 
     public synchronized static ExtentTest getTest() {
         return extentTest.get();

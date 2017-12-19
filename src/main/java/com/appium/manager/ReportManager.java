@@ -49,10 +49,6 @@ public class ReportManager {
             appiumDeviceManager.getDeviceModel()
                     + AppiumDeviceManager.getDeviceUDID());
         parentTest.set(parent);
-        ExtentTestManager.getTest().log(Status.INFO,
-            "<a target=\"_parent\" href=" + "appiumlogs/"
-                + AppiumDeviceManager.getDeviceUDID() + "__" + methodName
-                + ".txt" + ">AppiumServerLogs</a>");
         return parent;
     }
 

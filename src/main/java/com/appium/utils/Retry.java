@@ -12,8 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Retry implements IRetryAnalyzer {
-    private int maxRetryCount;
+    public int maxRetryCount;
     private ConfigFileManager prop;
+    public int retryCountForTest = 0;
     private Map<String, Integer> retryCounts = new HashMap<String, Integer>();
 
     public Retry() {
@@ -27,7 +28,6 @@ public class Retry implements IRetryAnalyzer {
     @Override
     public boolean retry(ITestResult iTestResult) {
         int counter = 0;
-        int retryCountForTest = 0;
         String methodName = iTestResult.getMethod().getMethodName();
         Object[] obj = iTestResult.getParameters();
         Method[] methods = iTestResult.getInstance().getClass().getMethods();
