@@ -113,13 +113,13 @@ public class ExtentManager {
             String klovReportName = System.getenv("reportname");
             String projectname = klovProjectName;
             String reportname = klovReportName;
-            if ( klovProjectName == null || klovReportName == null) {
+            if (klovProjectName == null || klovReportName == null) {
                 projectname = "AppiumTestDistribution";
                 reportname = "ExtentReports";
             }
             klov.setProjectName(projectname);
             klov.setReportName(reportname);
-            klov.setKlovUrl("http://"+getMongoHost()+":1337");
+            klov.setKlovUrl("http://" + getMongoHost() + ":1337");
         }
         return klov;
     }
@@ -132,8 +132,8 @@ public class ExtentManager {
     }
 
     private static boolean isMongoPortHostProvided() {
-        if (configFileManager.getProperty("MONGODB_SERVER") != null &&
-                configFileManager.getProperty("MONGODB_PORT") != null) {
+        if (configFileManager.getProperty("MONGODB_SERVER") != null
+                && configFileManager.getProperty("MONGODB_PORT") != null) {
             setMongoHost(configFileManager.getProperty("MONGODB_SERVER"));
             setMongoPort(Integer.parseInt(configFileManager.getProperty("MONGODB_PORT")));
             return true;

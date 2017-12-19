@@ -49,6 +49,22 @@ public final class AppiumParallelMethodTestListener
                 throw new SkipException("Skipped because property was set to :::" + info);
             }
         }
+        try {
+            String className = testResult.getMethod().getRealClass().getSimpleName()
+                    + "-------" + method.getTestMethod().getMethodName();
+            if (getClass().getAnnotation(Description.class) != null) {
+                testDescription = getClass().getAnnotation(Description.class).value();
+            }
+            reportManager.createParentNodeExtent(className, testDescription);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            reportManager.setAuthorName(testResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private SkipIf getSkipIf(IInvokedMethod method) {
@@ -62,18 +78,6 @@ public final class AppiumParallelMethodTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                try {
-                    String className = testResult.getMethod().getRealClass().getSimpleName()
-                            + "-------" + method.getTestMethod().getMethodName();
-                    if (getClass().getAnnotation(Description.class) != null) {
-                        testDescription = getClass().getAnnotation(Description.class).value();
-                    }
-                    reportManager.createParentNodeExtent(className, testDescription);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                reportManager.setAuthorName(testResult);
-
                 reportManager.endLogTestResults(testResult);
             }
             appiumDriverManager.stopAppiumDriver();
@@ -87,17 +91,17 @@ public final class AppiumParallelMethodTestListener
 
     @Override
     public void onTestStart(ITestResult iTestResult) {
-            try {
-                System.out.println(Thread.currentThread().getId());
-                deviceAllocationManager.allocateDevice("",
-                        deviceAllocationManager.getNextAvailableDeviceId());
-                appiumDriverManager.startAppiumDriverInstance();
-                reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
-                        iTestResult.getTestClass().getRealClass().getSimpleName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            System.out.println(Thread.currentThread().getId());
+            deviceAllocationManager.allocateDevice("",
+                    deviceAllocationManager.getNextAvailableDeviceId());
+            appiumDriverManager.startAppiumDriverInstance();
+            reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
+                    iTestResult.getTestClass().getRealClass().getSimpleName());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
     @Override
     public void onTestSuccess(ITestResult result) {
@@ -116,7 +120,7 @@ public final class AppiumParallelMethodTestListener
     public void onTestSkipped(ITestResult result) {
         System.out.println("Skipped...");
         IRetryAnalyzer retryAnalyzer = result.getMethod().getRetryAnalyzer();
-        if(((Retry) retryAnalyzer).retryCountForTest == ((Retry) retryAnalyzer).maxRetryCount) {
+        if (((Retry) retryAnalyzer).retryCountForTest == ((Retry) retryAnalyzer).maxRetryCount) {
             (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
             (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
             ExtentManager.getExtent().flush();
