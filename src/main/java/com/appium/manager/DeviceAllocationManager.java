@@ -12,6 +12,7 @@ import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
 import com.thoughtworks.iOS.IOSManager;
+import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.IOException;
@@ -71,22 +72,29 @@ public class DeviceAllocationManager {
             String platform = System.getenv("Platform");
             if (platform.equalsIgnoreCase("iOS")) {
                 LOGGER.info("Adding only iOS Devices");
-                iosDevice.getAllAvailableDevices()
-                        .forEach(device -> devices.add(device.getUdid()));
 
-                if (simManager.isSimulatorAvailable()) {
-                    allocateUniqueSimulatorDetails(allSimulatorDetails);
-                    allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
-                }
                 if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
                     LOGGER.info("Adding iOS Devices from DeviceList Provided");
                     devices.addAll(IOSDeviceConfiguration.validDeviceIds);
+                } else {
+                    iosDevice.getAllAvailableDevices()
+                            .forEach(device -> devices.add(device.getUdid()));
+
+                    if (simManager.isSimulatorAvailable()) {
+                        allocateUniqueSimulatorDetails(allSimulatorDetails);
+                        allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
+                    }
                 }
             }
             if (platform.equalsIgnoreCase("android")) {
                 connectToSTF();
-                androidManager.getDeviceProperties()
-                        .forEach(device -> this.devices.add(device.getUdid()));
+                if (AndroidDeviceConfiguration.validDeviceIds.size() > 0) {
+                    LOGGER.info("Adding Android Devices from DeviceList Provided");
+                    devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
+                } else {
+                    androidManager.getDeviceProperties()
+                            .forEach(device -> this.devices.add(device.getUdid()));
+                }
             }
             if (platform.equalsIgnoreCase("Both")) {
                 if (simManager.isSimulatorAvailable()) {
