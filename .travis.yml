@@ -3,4 +3,4 @@ language: java
 jdk:
   - oraclejdk8
 
-script: mvn clean site install -Dmaven.childTest.skip=true
+script: mvn clean site install -Dmaven.test.skip=true
