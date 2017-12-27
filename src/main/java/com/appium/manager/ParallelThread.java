@@ -43,6 +43,7 @@ public class ParallelThread {
     private MyTestExecutor myTestExecutor;
     private HtmlReporter htmlReporter;
     ExtentManager extentManager;
+    AppiumDriverManager appiumDriverManager;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -52,6 +53,7 @@ public class ParallelThread {
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
         extentManager = new ExtentManager();
+        appiumDriverManager = new AppiumDriverManager();
     }
 
     public ParallelThread(List<String> validDeviceIds) throws Exception {
@@ -64,6 +66,7 @@ public class ParallelThread {
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
         extentManager = new ExtentManager();
+        appiumDriverManager = new AppiumDriverManager();
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
