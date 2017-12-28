@@ -43,7 +43,7 @@ public class ParallelThread {
     private MyTestExecutor myTestExecutor;
     private HtmlReporter htmlReporter;
     ExtentManager extentManager;
-    AppiumDriverManager appiumDriverManager;
+    private AppiumDriverManager appiumDriverManager;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();

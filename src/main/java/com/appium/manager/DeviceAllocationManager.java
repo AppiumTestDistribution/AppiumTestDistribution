@@ -48,7 +48,8 @@ public class DeviceAllocationManager {
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private SimManager simManager = new SimManager();
     private AppiumDriverManager appiumDriverManager;
-    static boolean simCapsPresent, deviceCapsPresent = false;
+    private static boolean simCapsPresent = false;
+    private static boolean deviceCapsPresent = false;
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -126,7 +127,6 @@ public class DeviceAllocationManager {
     private void setFlagsForCapsValues() {
         String filePath = getCapsFilePath();
         JSONArray jsonParsedObject = new JsonParser(filePath).getJsonParsedObject();
-
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get("iOS") != null)
                 .findFirst();
@@ -135,14 +135,12 @@ public class DeviceAllocationManager {
 
         ((JSONObject) platFormCapabilities).forEach((caps, values) -> {
             if ("app".equals(caps)) {
-                if (values instanceof JSONObject) {
-
-                    if ((((JSONObject) values).get("simulator") != null)) {
-                        simCapsPresent = true;
-                    }
-                    if ((((JSONObject) values).get("device") != null)) {
-                        deviceCapsPresent = true;
-                    }
+                if (values instanceof JSONObject
+                        && (((JSONObject) values).get("simulator") != null)) {
+                    simCapsPresent = true;
+                } else if (values instanceof JSONObject
+                        && (((JSONObject) values).get("device") != null)) {
+                    deviceCapsPresent = true;
                 }
             }
         });
@@ -151,7 +149,7 @@ public class DeviceAllocationManager {
     private String getCapsFilePath() {
         String filePath = appiumDriverManager.getCapsPath();
         if (new File(filePath).exists()) {
-            Path path = FileSystems.getDefault().getPath(filePath.toString());
+            Path path = FileSystems.getDefault().getPath(filePath);
             if (!path.getParent().isAbsolute()) {
                 filePath = path.normalize()
                         .toAbsolutePath().toString();
@@ -195,7 +193,8 @@ public class DeviceAllocationManager {
                 if (device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH
                         && new SimManager().isSimulatorAvailable() && simCapsPresent) {
                     devices.add(device.getUdid());
-                } else if (device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH && deviceCapsPresent) {
+                } else if (device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH
+                        && deviceCapsPresent) {
                     devices.add(device.getUdid());
                 } else if (device.getUdid().length() < IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                     devices.add(device.getUdid());
