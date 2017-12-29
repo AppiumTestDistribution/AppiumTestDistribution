@@ -18,6 +18,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -124,7 +125,7 @@ public class DeviceAllocationManager {
         }
     }
 
-    private void setFlagsForCapsValues() {
+    private void setFlagsForCapsValues() throws FileNotFoundException {
         String filePath = getCapsFilePath();
         JSONArray jsonParsedObject = new JsonParser(filePath).getJsonParsedObject();
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
@@ -134,19 +135,17 @@ public class DeviceAllocationManager {
                 .get()).get("iOS");
 
         ((JSONObject) platFormCapabilities).forEach((caps, values) -> {
-            if ("app".equals(caps)) {
-                if (values instanceof JSONObject
-                        && (((JSONObject) values).get("simulator") != null)) {
+            if ("app".equals(caps) && values instanceof JSONObject) {
+                if ((((JSONObject) values).get("simulator") != null)) {
                     simCapsPresent = true;
-                } else if (values instanceof JSONObject
-                        && (((JSONObject) values).get("device") != null)) {
+                } else if ((((JSONObject) values).get("device") != null)) {
                     deviceCapsPresent = true;
                 }
             }
         });
     }
 
-    private String getCapsFilePath() {
+    private String getCapsFilePath() throws FileNotFoundException {
         String filePath = appiumDriverManager.getCapsPath();
         if (new File(filePath).exists()) {
             Path path = FileSystems.getDefault().getPath(filePath);
@@ -156,8 +155,7 @@ public class DeviceAllocationManager {
             }
             return filePath;
         } else {
-            System.out.println("Capability file not found");
-            return null;
+            throw new FileNotFoundException("Capability file not found");
         }
     }
 
