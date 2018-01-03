@@ -45,7 +45,7 @@ public class ExtentManager {
                 extent.setSystemInfo("AppiumClient", "5.0.0-BETA6");
                 extent.setSystemInfo("AppiumServer", appiumVersion.replace("\n", ""));
                 extent.setSystemInfo("Runner", configFileManager.getProperty("RUNNER"));
-                extent.setSystemInfo("AppiumServerLogs", "<a target=\"_parent\" href=" + "/appiumlogs/appiumlogs/"
+                extent.setSystemInfo("AppiumServerLogs","<a target=\"_parent\" href=" + "/appiumlogs/appiumlogs/"
                         + ".txt" + ">AppiumServerLogs</a>");
                 return extent;
             } catch (IOException e) {
