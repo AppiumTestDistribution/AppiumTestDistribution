@@ -4,6 +4,7 @@ import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.ios.SimManager;
 import com.appium.utils.AvailablePorts;
+import com.appium.utils.JsonParser;
 import com.github.yunusmete.stf.api.STFService;
 import com.github.yunusmete.stf.api.ServiceGenerator;
 import com.github.yunusmete.stf.model.DeviceBody;
@@ -12,12 +13,17 @@ import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
 import com.thoughtworks.iOS.IOSManager;
-import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.lang3.SystemUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +48,9 @@ public class DeviceAllocationManager {
     static STFService service;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private SimManager simManager = new SimManager();
+    private AppiumDriverManager appiumDriverManager;
+    private static boolean simCapsPresent = false;
+    private static boolean deviceCapsPresent = false;
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -49,11 +58,13 @@ public class DeviceAllocationManager {
             deviceMapping = new ConcurrentHashMap<>();
             deviceManager = new CopyOnWriteArrayList<>(new DeviceManager().getDeviceProperties());
             androidManager = new AndroidManager();
+            appiumDriverManager = new AppiumDriverManager();
             service = ServiceGenerator.createService(STFService.class,
                     STF_SERVICE_URL + "/api/v1", ACCESS_TOKEN);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setFlagsForCapsValues();
         initializeDevices();
     }
 
@@ -77,10 +88,11 @@ public class DeviceAllocationManager {
                     LOGGER.info("Adding iOS Devices from DeviceList Provided");
                     devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                 } else {
-                    iosDevice.getAllAvailableDevices()
-                            .forEach(device -> devices.add(device.getUdid()));
-
-                    if (simManager.isSimulatorAvailable()) {
+                    if (deviceCapsPresent) {
+                        iosDevice.getAllAvailableDevices()
+                                .forEach(device -> devices.add(device.getUdid()));
+                    }
+                    if (simManager.isSimulatorAvailable() && simCapsPresent) {
                         allocateUniqueSimulatorDetails(allSimulatorDetails);
                         allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
                     }
@@ -110,6 +122,40 @@ public class DeviceAllocationManager {
             deviceState.put("deviceState", true);
             deviceState.put("port", new AvailablePorts().getPort());
             deviceMapping.put(device, deviceState);
+        }
+    }
+
+    private void setFlagsForCapsValues() throws FileNotFoundException {
+        String filePath = getCapsFilePath();
+        JSONArray jsonParsedObject = new JsonParser(filePath).getJsonParsedObject();
+        Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
+                .get("iOS") != null)
+                .findFirst();
+        Object platFormCapabilities = ((JSONObject) ((Optional) getPlatformObject)
+                .get()).get("iOS");
+
+        ((JSONObject) platFormCapabilities).forEach((caps, values) -> {
+            if ("app".equals(caps) && values instanceof JSONObject) {
+                if ((((JSONObject) values).get("simulator") != null)) {
+                    simCapsPresent = true;
+                } else if ((((JSONObject) values).get("device") != null)) {
+                    deviceCapsPresent = true;
+                }
+            }
+        });
+    }
+
+    private String getCapsFilePath() throws FileNotFoundException {
+        String filePath = appiumDriverManager.getCapsPath();
+        if (new File(filePath).exists()) {
+            Path path = FileSystems.getDefault().getPath(filePath);
+            if (!path.getParent().isAbsolute()) {
+                filePath = path.normalize()
+                        .toAbsolutePath().toString();
+            }
+            return filePath;
+        } else {
+            throw new FileNotFoundException("Capability file not found");
         }
     }
 
@@ -143,9 +189,10 @@ public class DeviceAllocationManager {
         } else {
             deviceManager.forEach(device -> {
                 if (device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH
-                        && new SimManager().isSimulatorAvailable()) {
+                        && new SimManager().isSimulatorAvailable() && simCapsPresent) {
                     devices.add(device.getUdid());
-                } else if (device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                } else if (device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH
+                        && deviceCapsPresent) {
                     devices.add(device.getUdid());
                 } else if (device.getUdid().length() < IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                     devices.add(device.getUdid());
@@ -153,7 +200,6 @@ public class DeviceAllocationManager {
             });
         }
         connectToSTF();
-
     }
 
     private void connectToSTF() {

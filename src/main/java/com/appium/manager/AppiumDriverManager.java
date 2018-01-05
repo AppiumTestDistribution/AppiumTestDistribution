@@ -93,12 +93,7 @@ public class AppiumDriverManager {
         String userSpecifiedCaps;
         DesiredCapabilities iOS = null;
         DesiredCapabilities android = null;
-        if (prop.getProperty("CAPS") == null) {
-            userSpecifiedCaps = System.getProperty("user.dir")
-                    + "/caps/capabilities.json";
-        } else {
-            userSpecifiedCaps = prop.getProperty("CAPS");
-        }
+        userSpecifiedCaps = getCapsPath();
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             android = getDesiredAndroidCapabilities(userSpecifiedCaps);
         } else {
@@ -106,6 +101,17 @@ public class AppiumDriverManager {
         }
         LOGGER.info("Caps generated---" + android + iOS);
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
+    }
+
+    public String getCapsPath() {
+        String userSpecifiedCaps;
+        if (prop.getProperty("CAPS") == null) {
+            userSpecifiedCaps = System.getProperty("user.dir")
+                    + "/caps/capabilities.json";
+        } else {
+            userSpecifiedCaps = prop.getProperty("CAPS");
+        }
+        return userSpecifiedCaps;
     }
 
     public DesiredCapabilities getDesiredIOSCapabilities(String userSpecifiediOSCaps)
