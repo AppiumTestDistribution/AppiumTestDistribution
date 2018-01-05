@@ -120,16 +120,13 @@ A. Yes, with a Valid provisioning profile this app can be installed on your devi
 
 ## Organizations :blue_heart:
 
-ThoughtWorks             |  CeX
-:-------------------------:|:-------------------------:
-[![ThoughtWorks](https://static1.squarespace.com/static/5914a98815cf7d683358255d/t/5914b14d17bffc60d36cf2a7/1494531166569/)](https://www.thoughtworks.com)  |  [![Cex](https://uk.webuy.com/images/logo/CeX_Logo_Rich_black_RGB-01.png)](https://in.webuy.com/)
+ThoughtWorks             |  CeX                      |  Travelstart
+:-------------------------:|:-------------------------:|:-------------------------:
+[![ThoughtWorks](https://static1.squarespace.com/static/5914a98815cf7d683358255d/t/5914b14d17bffc60d36cf2a7/1494531166569/)](https://www.thoughtworks.com)  |  [![Cex](https://uk.webuy.com/images/logo/CeX_Logo_Rich_black_RGB-01.png)](https://in.webuy.com/)  |  [![Travelstart](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRahsNjFIF2pQGOxKoinf4Au1gGjyMUQEArL8Mv_gyCl1Aaxuu-)](http://www.travelstart.com/)
 
 Jio India             |  M800 | Reward Gateway
 :-:|:-:|:-:
 [![Jio](http://images.indianexpress.com/2016/07/reliancejio_newlogo_1.jpg)](https://www.jio.com/)  |  [![M800](https://i.stack.imgur.com/nY9CC.jpg)](http://www.m800.com/) | [![Reward](http://www.greathillpartners.com/wp-content/uploads/2016/01/reward-gateway-logo-horizontal-tagline-on-white-1.png)](https://www.rewardgateway.com/)
-
-Travelstart
-[![Travelstart](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRahsNjFIF2pQGOxKoinf4Au1gGjyMUQEArL8Mv_gyCl1Aaxuu-)](http://www.travelstart.com/)
 
 ## License
 
