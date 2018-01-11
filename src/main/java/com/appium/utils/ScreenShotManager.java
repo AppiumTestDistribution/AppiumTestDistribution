@@ -72,9 +72,9 @@ public class ScreenShotManager {
             throws IOException, InterruptedException {
 
         String getDeviceModel = null;
-        System.out.println("Current Running Thread Status"
-                + AppiumDriverManager.getDriver().getSessionId());
         if (AppiumDriverManager.getDriver().getSessionId() != null) {
+            System.out.println("Current Running Thread Status"
+                    + AppiumDriverManager.getDriver().getSessionId());
             File scrFile = AppiumDriverManager.getDriver()
                     .getScreenshotAs(OutputType.FILE);
             screenShotNameWithTimeStamp = currentDateAndTime();

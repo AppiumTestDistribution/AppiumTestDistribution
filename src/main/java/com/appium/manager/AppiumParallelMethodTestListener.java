@@ -120,8 +120,6 @@ public final class AppiumParallelMethodTestListener
      */
     @Override
     public void onTestSkipped(ITestResult result) {
-        System.out.println("Skipped...");
-        ExtentTest extentTest = reportManager.parentTest.get();
         ExtentTestManager.extent.removeTest(ExtentTestManager.getTest());
         IRetryAnalyzer retryAnalyzer = result.getMethod().getRetryAnalyzer();
         if (((Retry) retryAnalyzer).retryCountForTest == ((Retry) retryAnalyzer).maxRetryCount) {
