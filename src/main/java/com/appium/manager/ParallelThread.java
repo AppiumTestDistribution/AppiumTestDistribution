@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /*
  * This class picks the devices connected
@@ -92,7 +91,7 @@ public class ParallelThread {
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase("android")
                 || platform.equalsIgnoreCase("Both")) {
-            createAdblogs();
+            generateDirectoryForAdbLogs();
             createSnapshotFolderAndroid("android");
         }
 
@@ -154,7 +153,7 @@ public class ParallelThread {
         return hasFailures;
     }
 
-    private void createAdblogs() {
+    private void generateDirectoryForAdbLogs() {
         File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
         if (!adb_logs.exists()) {
             System.out.println("creating directory: " + "ADBLogs");

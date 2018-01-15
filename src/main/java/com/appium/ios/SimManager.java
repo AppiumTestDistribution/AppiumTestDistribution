@@ -1,108 +1,67 @@
 package com.appium.ios;
 
-import com.appium.manager.ConfigFileManager;
+import com.appium.utils.CapabilityManager;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.SimulatorManager;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by saikrisv on 27/05/16.
  */
 public class SimManager {
     private SimulatorManager simulatorManager = new SimulatorManager();
+    private CapabilityManager capabilityManager;
 
-    public List<Device> getAllSimulatorUDIDs() {
-        List<Device> UDIDS = new ArrayList<>();
-        JSONParser parser = new JSONParser();
-
+    public SimManager() {
         try {
-            Object getSimulatorObject = getSimulatorObject(parser);
-            Object simulators = ((JSONObject) ((Optional) getSimulatorObject)
-                    .get()).get("simulators");
-
-            ((JSONArray) simulators).forEach(o -> {
-                Simulator simulator = new Simulator();
-                ((JSONObject) o).forEach((key, value) -> {
-                    if ("OS".equals(key)) {
-                        simulator.OS = (java.lang.String) value;
-                    } else {
-                        simulator.DeviceName = (java.lang.String) value;
-                    }
-                });
-                try {
-                    Device device = simulatorManager.getDevice(simulator.getDeviceName(),
-                            simulator.getOS(), "iOS");
-                    UDIDS.add(device);
-                    //check for simulator state
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }
-            });
-
-
+            capabilityManager = CapabilityManager.getInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return UDIDS;
     }
 
-    public Object getSimulatorObject(JSONParser parser) throws IOException, ParseException {
-        String defaultCapabilityLocation = System.getProperty("user.dir") + "/caps/"
-                + "capabilities.json";
-        String parserCapabilityFile;
-        if (ConfigFileManager.getInstance().getProperty("CAPS") == null) {
-            parserCapabilityFile = defaultCapabilityLocation;
-        } else {
-            String userCapabilityLocation = null;
-            try {
-                userCapabilityLocation = ConfigFileManager.getInstance()
-                        .getProperty("CAPS");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Path path = FileSystems.getDefault().getPath(userCapabilityLocation);
-            if (!path.getParent().isAbsolute()) {
-                parserCapabilityFile = path.normalize()
-                        .toAbsolutePath().toString();
-            } else {
-                parserCapabilityFile = path.toString();
+    public List<Device> getAllSimulatorUDIDs() {
+        List<Device> UDIDS = new ArrayList<>();
+        /*JSONParser parser = new JSONParser();
+
+        try {
+            //localhost
+            Object simulators = capabilityManager.getCapabilityObjectFromKey("simulators");
+            Object hostMachines = capabilityManager.getCapabilityObjectFromKey("hostMachines");
+
+            if (hostMachines != null) {
+                ((JSONObject) hostMachines).forEach((key, value) -> {
+                    if (((JSONObject) key).get("simulators") != null) {
+
+                    }
+                });
+                Object isSim = ((JSONObject) hostMachines).get("simulators");
+                if (isSim != null) {
+
+                }
             }
 
-        }
-        Object obj = parser.parse(new FileReader(parserCapabilityFile));
-        JSONArray jsonObject = (JSONArray) obj;
-        return jsonObject.stream().filter(o -> ((JSONObject) o)
-                .get("simulators") != null)
-                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+        return UDIDS;
     }
 
     public Device getSimulatorDetails(String UDID) {
         return simulatorManager.getSimulatorDetailsFromUDID(UDID);
     }
 
-    public boolean isSimulatorAvailable() {
-        JSONParser parser = new JSONParser();
-        Object simulatorObjectPreset = null;
-        try {
-            simulatorObjectPreset = getSimulatorObject(parser);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public boolean isSimulatorObjectAvailableInCapsJson() {
+        Object simulators = capabilityManager.getCapabilityObjectFromKey("simulators");
+        Object hostMachines = capabilityManager.getCapabilityObjectFromKey("hostMachines");
+        JSONObject firstSimulatorObject = null;
+        if (hostMachines != null) {
+            firstSimulatorObject = ((JSONObject)hostMachines).getJSONObject("simulators");
         }
-        return ((Optional) simulatorObjectPreset).isPresent();
+        return simulators != null || firstSimulatorObject !=null;
     }
 
     public class Simulator {

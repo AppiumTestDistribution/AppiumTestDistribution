@@ -45,7 +45,7 @@ public class IOSDeviceConfiguration {
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
-        if (new SimManager().isSimulatorAvailable()) {
+        if (new SimManager().isSimulatorObjectAvailableInCapsJson()) {
             if (xcode_version.contains("9")) {
                 deviceUDIDiOS = simulatorManager.getAllSimulatorUDIDs();
             } else {

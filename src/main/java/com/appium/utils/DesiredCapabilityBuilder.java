@@ -9,15 +9,13 @@ import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -47,45 +45,47 @@ public class DesiredCapabilityBuilder {
                 .deviceMapping.get(AppiumDeviceManager
                 .getDeviceUDID())).get("port");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObjectAsJsonArray();
-        Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
-                .get(platform) != null)
-                .findFirst();
-        Object platFormCapabilities = ((JSONObject) ((Optional) getPlatformObject)
-                .get()).get(platform);
-        ((JSONObject) platFormCapabilities)
-                .forEach((caps, values) -> {
-                    if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
-                        try {
-                            desiredCapabilities.setCapability("chromeDriverPort",
-                                    availablePorts.getPort());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if ("app".equals(caps)) {
-                        if (values instanceof JSONObject) {
-                            if (AppiumDeviceManager.getDeviceUDID().length()
-                                    == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                                values = ((JSONObject) values).get("simulator");
-                            } else if (AppiumDeviceManager.getDeviceUDID().length()
-                                    == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-                                values = ((JSONObject) values).get("device");
-                            }
+        JSONObject jsonParsedObject = new JsonParser(jsonPath).getObjectFromJSON();
+        JSONObject platFormCapabilities = jsonParsedObject.getJSONObject(platform);
 
-                        }
-                        Path path = FileSystems.getDefault().getPath(values.toString());
-                        if (!path.getParent().isAbsolute()) {
-                            desiredCapabilities.setCapability(caps.toString(), path.normalize()
-                                    .toAbsolutePath().toString());
-                        } else {
-                            desiredCapabilities.setCapability(caps.toString(), path
-                                    .toString());
-                        }
-                    } else {
-                        desiredCapabilities.setCapability(caps.toString(), values.toString());
+        platFormCapabilities.keySet().forEach(key -> {
+            if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
+                try {
+                    desiredCapabilities.setCapability("chromeDriverPort",
+                            availablePorts.getPort());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            String appCapability = "app";
+            if (appCapability.equals(key)) {
+                Object values = platFormCapabilities.get(appCapability);
+
+                String appPath = "";
+                if (values instanceof JSONObject) {
+                    if (AppiumDeviceManager.getDeviceUDID().length()
+                            == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                        appPath = (((JSONObject) values).getString("simulator"));
+                    } else if (AppiumDeviceManager.getDeviceUDID().length()
+                            == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                        appPath = ((JSONObject) values).getString("device");
                     }
-                });
+                } else {
+                  appPath = platFormCapabilities.getString(appCapability);
+                }
+                Path path = FileSystems.getDefault().getPath(appPath);
+                if (!path.getParent().isAbsolute()) {
+                    desiredCapabilities.setCapability(appCapability, path.normalize()
+                            .toAbsolutePath().toString());
+                } else {
+                    desiredCapabilities.setCapability(appCapability, path
+                            .toString());
+                }
+            } else {
+                desiredCapabilities.setCapability(key, platFormCapabilities.getString(key));
+            }
+        });
+
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")

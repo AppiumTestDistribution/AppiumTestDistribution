@@ -1,36 +1,33 @@
 package com.appium.utils;
 
 import com.appium.manager.ConfigFileManager;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class CapabilityManager {
 
     private static CapabilityManager instance;
-    private static JsonParser jsonParser;
-    private static Object obj;
+    private JSONObject capabilities;
 
-    private CapabilityManager() {
+    private CapabilityManager() throws IOException {
+        String capabilitiesFilePath = getCapabilityLocation();
+        JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
+        capabilities = jsonParser.getObjectFromJSON();
     }
+
     public static CapabilityManager getInstance() throws Exception {
         if (instance == null) {
-            String capabilititesFilePath =getCapabilityLocation();
             instance = new CapabilityManager();
-            jsonParser=new JsonParser(capabilititesFilePath);
-            obj = jsonParser.getObjectFromJSON();
-
         }
-
         return instance;
     }
 
-    private static String getCapabilityLocation() throws IOException {
-        String path  = System.getProperty("user.dir") + "/caps/"
+    private String getCapabilityLocation() throws IOException {
+        String path = System.getProperty("user.dir") + "/caps/"
                 + "capabilities.json";
         String caps = ConfigFileManager.getInstance()
                 .getProperty("CAPS");
@@ -47,18 +44,13 @@ public class CapabilityManager {
     }
 
 
-    public Object getCapabilityFromKey(String key){
-        JSONArray jsonArray = (JSONArray) obj;
-
-        Optional first = jsonArray.stream().filter(o -> ((JSONObject) o)
-                .get(key) != null)
-                .findFirst();
-        return ((JSONObject) first.get()).get(key);
+    public JSONObject getCapabilityObjectFromKey(String key) {
+        return (JSONObject) capabilities.get(key);
     }
 
-
-
-
+    public JSONArray getCapabitiesArrayFromKey(String key){
+        return capabilities.getJSONArray(key);
+    }
 
 
 }

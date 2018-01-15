@@ -6,8 +6,6 @@ import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -164,41 +162,7 @@ public final class AppiumParallelTestListener
     public void onFinish(ISuite iSuite) {
         try {
             appiumServerManager.stopAppiumServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        FileWriter file = null;
-        try {
-            file = new FileWriter(System.getProperty("user.dir")
-                    + "/target/finalReport.json");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        JSONObject jsonReport = new JSONObject();
-        JSONArray jsonTest = new JSONArray();
-        JSONParser parser = new JSONParser();
-        for (int i = 0; i < syncal.size(); i++) {
-            try {
-                jsonTest.put(parser.parse(syncal.get(i)));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        Map<String, ISuiteResult> results = iSuite.getResults();
-        JSONObject summaryDetails = getSummaryDetails(results);
-        summaryDetails.put("num_tests", iSuite.getAllInvokedMethods().size());
-
-        jsonReport.put("summary", summaryDetails);
-        jsonReport.put("tests", jsonTest);
-        try {
-            userLogs.put("Appium", "1.6.6.beta4");
-            jsonReport.put("userMetaData", userLogs);
-            file.write(new JSONObject().put("report", jsonReport).toString());
-            file.close();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

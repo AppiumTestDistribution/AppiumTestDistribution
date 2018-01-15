@@ -3,46 +3,77 @@ package com.appium.utils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.testng.annotations.Test;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.net.URLEncoder;
+import java.util.*;
 
 public class HostMachineDeviceManager {
 
-    @Test
-    public void testApp() throws Exception {
-        List<Device> device = getDevices();
-        System.out.println(device);
+    private static DevicesByHost instance;
+
+    public static DevicesByHost getInstance() {
+        if (instance == null) {
+            try {
+                Map<String, List<Device>> devices = getDevices();
+                instance = new DevicesByHost(devices);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return instance;
     }
 
+    private static Map<String, List<Device>> getDevices() throws Exception {
+        final Map<String, List<Device>> deviceProperties = new HashMap<>();
+        CapabilityManager capabilityManager = CapabilityManager.getInstance();
+        JSONArray hostMachines = capabilityManager.getCapabitiesArrayFromKey("hostMachines");
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        if (hostMachines != null) {
+            hostMachines.forEach(hostMachine -> {
+                JSONObject hostMachineJson = (JSONObject) hostMachine;
+                String machineIP = hostMachineJson.getString("machineIP");
 
-    public List<Device> getDevices() throws Exception {
-        List<String> ipAddress = new ArrayList<>();
-        JSONArray hostMachines = (JSONArray)CapabilityManager.getInstance().getCapabilityFromKey("hostMachines");
-        hostMachines.forEach(hostMachine -> {
-            String machineIP = ((JSONObject) hostMachine).get("machineIP").toString();
-            ipAddress.add(machineIP);
-        });
-        final List<Device> deviceProperties = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper().
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        ipAddress.forEach(s -> {
+                try {
+                    ArrayList<Device> deviceList = new ArrayList<>();
+                    List<Device> physicalDevices = Arrays.asList(mapper.readValue(new URL("http://" + machineIP + ":4567/devices"),
+                            Device[].class));
+                    deviceList.addAll(physicalDevices);
+                    if (hostMachineJson.has("simulators")) {
+                        JSONArray simulators = hostMachineJson.getJSONArray("simulators");
+                        List<Device> simulatorsToBoot = getSimulators(machineIP, simulators, mapper);
+                        deviceList.addAll(simulatorsToBoot);
+                    }
+                    deviceProperties.put(machineIP, deviceList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        return deviceProperties;
+    }
+
+    private static List<Device> getSimulators(String ipAddress, JSONArray simulators, ObjectMapper mapper) throws Exception {
+        List<Device> devices = new ArrayList<>();
+        simulators.forEach(simulator -> {
+            JSONObject simulatorJson = (JSONObject) simulator;
+            String deviceName = simulatorJson.getString("deviceName");
+            String os = simulatorJson.getString("OS");
             try {
-                List listOfDevices = mapper.readValue(new URL("http://" + s + ":4567/devices"),
-                        deviceProperties.getClass());
-                deviceProperties.addAll(listOfDevices);
+                String url = String.format("http://%s:4567/device/ios/simulators?simulatorName=%s&simulatorOSVersion=%s",
+                        ipAddress, URLEncoder.encode(deviceName, "UTF-8"), URLEncoder.encode(os, "UTF-8"));
+                Device device = mapper.readValue(new URL(url),
+                        Device.class);
+                devices.add(device);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
-        return deviceProperties;
+        return devices;
     }
-    
 }
+

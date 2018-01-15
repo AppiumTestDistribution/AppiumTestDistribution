@@ -36,7 +36,7 @@ public class AndroidDeviceConfiguration {
     private Optional<Device> getDevice() {
         Optional<Device> deviceOS = null;
         try {
-            deviceOS = DeviceAllocationManager.getInstance().deviceManager.stream().filter(device ->
+            deviceOS = DeviceAllocationManager.getInstance().deviceList.stream().filter(device ->
                     device.getUdid().equals(AppiumDeviceManager.getDeviceUDID())).findFirst();
         } catch (Exception e) {
             e.printStackTrace();
