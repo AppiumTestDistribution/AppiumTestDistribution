@@ -154,6 +154,21 @@
             <groupId>com.github.yunusmete.stf</groupId>
             <artifactId>openstf-java-client</artifactId>
             <version>1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.appium</groupId>
+                    <artifactId>java-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.squareup.okhttp</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.9.1</version>
         </dependency>
     </dependencies>
 
