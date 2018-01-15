@@ -1,5 +1,6 @@
 package com.appium.utils;
 
+import com.appium.manager.ConfigFileManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -7,6 +8,8 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 /**
  * Created by saikrisv on 23/05/17.
@@ -28,7 +31,12 @@ public class JsonParser {
         array.add(object);
     }
 
-    public JSONArray getJsonParsedObject() {
+    public JSONArray getJsonParsedObjectAsJsonArray() {
         return (JSONArray) object;
     }
+
+    public  Object getObjectFromJSON(){
+        return object;
+    }
+
 }

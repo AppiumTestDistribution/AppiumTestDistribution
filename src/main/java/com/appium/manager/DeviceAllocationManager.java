@@ -4,6 +4,7 @@ import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.ios.SimManager;
 import com.appium.utils.AvailablePorts;
+import com.appium.utils.HostMachineDeviceManager;
 import com.appium.utils.JsonParser;
 import com.github.yunusmete.stf.api.STFService;
 import com.github.yunusmete.stf.api.ServiceGenerator;
@@ -11,7 +12,6 @@ import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
-import com.thoughtworks.device.DeviceManager;
 import com.thoughtworks.iOS.IOSManager;
 import org.apache.commons.lang3.SystemUtils;
 import org.json.simple.JSONArray;
@@ -56,7 +56,7 @@ public class DeviceAllocationManager {
         try {
             iosDevice = new IOSManager();
             deviceMapping = new ConcurrentHashMap<>();
-            deviceManager = new CopyOnWriteArrayList<>(new DeviceManager().getDeviceProperties());
+            deviceManager = new CopyOnWriteArrayList<>(new HostMachineDeviceManager().getDevices());
             androidManager = new AndroidManager();
             appiumDriverManager = new AppiumDriverManager();
             service = ServiceGenerator.createService(STFService.class,
@@ -89,7 +89,7 @@ public class DeviceAllocationManager {
                     devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                 } else {
                     if (deviceCapsPresent) {
-                        iosDevice.getAllAvailableDevices()
+                        iosDevice.getDevices()
                                 .forEach(device -> devices.add(device.getUdid()));
                     }
                     if (simManager.isSimulatorAvailable() && simCapsPresent) {
@@ -104,7 +104,7 @@ public class DeviceAllocationManager {
                     LOGGER.info("Adding Android Devices from DeviceList Provided");
                     devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
                 } else {
-                    androidManager.getDeviceProperties()
+                    androidManager.getDevices()
                             .forEach(device -> this.devices.add(device.getUdid()));
                 }
             }
@@ -115,7 +115,7 @@ public class DeviceAllocationManager {
                 getAllConnectedDevices();
             }
         } else {
-            androidManager.getDeviceProperties().forEach(device -> devices.add(device.getUdid()));
+            androidManager.getDevices().forEach(device -> devices.add(device.getUdid()));
         }
         for (String device : devices) {
             HashMap<Object, Object> deviceState = new HashMap<>();
@@ -127,7 +127,7 @@ public class DeviceAllocationManager {
 
     private void setFlagsForCapsValues() throws FileNotFoundException {
         String filePath = getCapsFilePath();
-        JSONArray jsonParsedObject = new JsonParser(filePath).getJsonParsedObject();
+        JSONArray jsonParsedObject = new JsonParser(filePath).getJsonParsedObjectAsJsonArray();
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get("iOS") != null)
                 .findFirst();

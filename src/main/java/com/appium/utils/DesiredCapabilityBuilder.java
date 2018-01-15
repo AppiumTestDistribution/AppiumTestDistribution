@@ -47,7 +47,7 @@ public class DesiredCapabilityBuilder {
                 .deviceMapping.get(AppiumDeviceManager
                 .getDeviceUDID())).get("port");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
+        JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObjectAsJsonArray();
         Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
                 .get(platform) != null)
                 .findFirst();
