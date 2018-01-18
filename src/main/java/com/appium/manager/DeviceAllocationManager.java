@@ -138,7 +138,8 @@ public class DeviceAllocationManager {
             if ("app".equals(caps) && values instanceof JSONObject) {
                 if ((((JSONObject) values).get("simulator") != null)) {
                     simCapsPresent = true;
-                } else if ((((JSONObject) values).get("device") != null)) {
+                }
+                if ((((JSONObject) values).get("device") != null)) {
                     deviceCapsPresent = true;
                 }
             }
