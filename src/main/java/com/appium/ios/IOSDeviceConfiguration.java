@@ -4,6 +4,8 @@ import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.ConfigFileManager;
 import com.appium.utils.AvailablePorts;
 import com.appium.utils.CommandPrompt;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import com.thoughtworks.device.Device;
 
 import java.io.File;
@@ -25,6 +27,7 @@ public class IOSDeviceConfiguration {
     public Process p1;
     public static List<String> validDeviceIds = new ArrayList<>();
     private SimManager simulatorManager;
+    private DevicesByHost devicesByHost;
 
     public final static int IOS_UDID_LENGTH = 40;
     public final static int SIM_UDID_LENGTH = 36;
@@ -36,6 +39,7 @@ public class IOSDeviceConfiguration {
     public IOSDeviceConfiguration() throws IOException {
         prop = ConfigFileManager.getInstance();
         simulatorManager = new SimManager();
+        devicesByHost = HostMachineDeviceManager.getInstance();
     }
 
     public List<Device> checkIfUserSpecifiedSimulatorAndGetUDID() {
@@ -47,7 +51,7 @@ public class IOSDeviceConfiguration {
         }
         if (new SimManager().isSimulatorObjectAvailableInCapsJson()) {
             if (xcode_version.contains("9")) {
-                deviceUDIDiOS = simulatorManager.getAllSimulatorUDIDs();
+                deviceUDIDiOS = devicesByHost.getAllSimulators();
             } else {
                 new RuntimeException("Xcode version should be 9.0 to run parallel simulators");
             }

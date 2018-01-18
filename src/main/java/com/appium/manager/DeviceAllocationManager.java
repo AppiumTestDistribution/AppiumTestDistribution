@@ -39,7 +39,6 @@ public class DeviceAllocationManager {
     private ArrayList<String> devices = new ArrayList<>();
     public ConcurrentHashMap<String, Object> deviceMapping;
     private static DeviceAllocationManager instance;
-    private static IOSManager iosDevice;
     private static AndroidManager androidManager;
     public List<Device> deviceList;
     private static final String STF_SERVICE_URL = System.getenv("STF_URL");
@@ -50,17 +49,14 @@ public class DeviceAllocationManager {
     private AppiumDriverManager appiumDriverManager;
     private static boolean simCapsPresent = false;
     private static boolean deviceCapsPresent = false;
+    private DevicesByHost devicesByHost;
 
     private DeviceAllocationManager() throws Exception {
         try {
-            iosDevice = new IOSManager();
             deviceMapping = new ConcurrentHashMap<>();
             deviceList = new ArrayList<>();
-            DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance();
-
+            devicesByHost = HostMachineDeviceManager.getInstance();
             deviceList = devicesByHost.getAllDevices();
-
-            devicesByHost.getHostOfDevice("uuid");
 
             androidManager = new AndroidManager();
             appiumDriverManager = new AppiumDriverManager();
@@ -111,7 +107,7 @@ public class DeviceAllocationManager {
                     devices.addAll(IOSDeviceConfiguration.validDeviceIds);
                 } else {
                     if (deviceCapsPresent) {
-                        iosDevice.getDevices()
+                        devicesByHost.getAllIOSDevices()
                                 .forEach(device -> devices.add(device.getUdid()));
                     }
                     if (simManager.isSimulatorObjectAvailableInCapsJson() && simCapsPresent) {
@@ -121,12 +117,11 @@ public class DeviceAllocationManager {
                 }
             }
             if (platform.equalsIgnoreCase("android")) {
-                connectToSTF();
                 if (AndroidDeviceConfiguration.validDeviceIds.size() > 0) {
                     LOGGER.info("Adding Android Devices from DeviceList Provided");
                     devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
                 } else {
-                    androidManager.getDevices()
+                    devicesByHost.getAllAndroidDevices()
                             .forEach(device -> this.devices.add(device.getUdid()));
                 }
             }
@@ -159,7 +154,7 @@ public class DeviceAllocationManager {
                     simCapsPresent = true;
                 }
                 if (app
-                        && iOSCaps.getJSONObject(key).get("simulator") != null) {
+                        && iOSCaps.getJSONObject(key).get("device") != null) {
                     deviceCapsPresent = true;
                 }
             });
@@ -220,7 +215,6 @@ public class DeviceAllocationManager {
                 }
             });
         }
-        connectToSTF();
     }
 
     private void connectToSTF() {

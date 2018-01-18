@@ -8,9 +8,12 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -42,11 +45,15 @@ public class AppiumDriverManager {
 
     private AppiumDriver<MobileElement> getMobileAndroidElementAppiumDriver(
             Optional<DesiredCapabilities> androidCaps) {
-        AppiumDriver<MobileElement> currentDriverSession;
+        AppiumDriver<MobileElement> currentDriverSession = null;
         DesiredCapabilities desiredCapabilities = androidCaps.get();
 
-        currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
-                desiredCapabilities);
+        try {
+            currentDriverSession = new AndroidDriver<>(new URL("http://10.234.1.76:48699/wd/hub"),
+                    desiredCapabilities);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId()
                 + "---" + currentDriverSession.getSessionDetail("udid"));
@@ -58,7 +65,8 @@ public class AppiumDriverManager {
             throws IOException, InterruptedException {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
-        currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
+        currentDriverSession = (AppiumDriver<MobileElement>) new RemoteWebDriver
+                (new URL("http://10.234.1.76:32598/wd/hub"),
                 desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId() + "---"

@@ -4,6 +4,7 @@ import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.DeviceAllocationManager;
+import com.thoughtworks.device.Device;
 import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -25,6 +27,7 @@ public class DesiredCapabilityBuilder {
     private AvailablePorts availablePorts;
     private IOSDeviceConfiguration iosDevice;
     private SimulatorManager simulatorManager;
+    private DevicesByHost devicesByHost;
 
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
@@ -33,6 +36,7 @@ public class DesiredCapabilityBuilder {
         availablePorts = new AvailablePorts();
         iosDevice = new IOSDeviceConfiguration();
         simulatorManager = new SimulatorManager();
+        devicesByHost = HostMachineDeviceManager.getInstance();
     }
 
     public static DesiredCapabilities getDesiredCapability() {
@@ -82,7 +86,7 @@ public class DesiredCapabilityBuilder {
                             .toString());
                 }
             } else {
-                desiredCapabilities.setCapability(key, platFormCapabilities.getString(key));
+                desiredCapabilities.setCapability(key, platFormCapabilities.get(key).toString());
             }
         });
 
@@ -97,17 +101,18 @@ public class DesiredCapabilityBuilder {
             }
             appPackage(desiredCapabilities);
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            String version = iosDevice.getIOSDeviceProductVersion();
+            //String version = iosDevice.getIOSDeviceProductVersion();
+            String version = "11.0";
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
             if (AppiumDeviceManager.getDeviceUDID().length()
                     == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+
+                Device deviceProperty = devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID());
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                        simulatorManager.getSimulatorDetailsFromUDID(
-                                AppiumDeviceManager.getDeviceUDID()).getName());
+                        deviceProperty.getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                        simulatorManager.getSimulatorDetailsFromUDID(
-                                AppiumDeviceManager.getDeviceUDID()).getOsVersion());
+                        deviceProperty.getOsVersion());
             } else {
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
                         new IOSDeviceConfiguration().startIOSWebKit());

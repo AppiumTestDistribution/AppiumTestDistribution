@@ -55,13 +55,17 @@ public class SimManager {
     }
 
     public boolean isSimulatorObjectAvailableInCapsJson() {
-        Object simulators = capabilityManager.getCapabilityObjectFromKey("simulators");
-        Object hostMachines = capabilityManager.getCapabilityObjectFromKey("hostMachines");
-        JSONObject firstSimulatorObject = null;
+        JSONArray hostMachines = capabilityManager.getCapabitiesArrayFromKey("hostMachines");
+        final boolean[] firstSimulatorObject = {false};
+
         if (hostMachines != null) {
-            firstSimulatorObject = ((JSONObject)hostMachines).getJSONObject("simulators");
+              hostMachines.forEach(simulatorObject -> {
+                 if (((JSONObject)simulatorObject).has("simulators")) {
+                     firstSimulatorObject[0] = true;
+                 }
+             });
         }
-        return simulators != null || firstSimulatorObject !=null;
+        return firstSimulatorObject[0];
     }
 
     public class Simulator {
