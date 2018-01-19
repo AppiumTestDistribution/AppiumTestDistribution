@@ -12,7 +12,6 @@ import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
-import com.thoughtworks.iOS.IOSManager;
 import com.thoughtworks.utils.CommandPromptUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;

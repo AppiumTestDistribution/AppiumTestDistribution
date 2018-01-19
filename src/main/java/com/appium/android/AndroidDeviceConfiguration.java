@@ -2,8 +2,11 @@ package com.appium.android;
 
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.CommandPrompt;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import com.thoughtworks.device.Device;
 
 import java.io.IOException;
@@ -15,6 +18,11 @@ public class AndroidDeviceConfiguration {
 
     private CommandPrompt cmd = new CommandPrompt();
     public static List<String> validDeviceIds = new ArrayList<>();
+    private DevicesByHost devicesByHost;
+
+    public AndroidDeviceConfiguration() {
+        devicesByHost = HostMachineDeviceManager.getInstance();
+    }
 
     /*
      * This method gets the device model name
@@ -64,9 +72,8 @@ public class AndroidDeviceConfiguration {
 
     public String getDeviceManufacturer()
             throws IOException, InterruptedException {
-        return cmd.runCommand("adb -s " + AppiumDeviceManager.getDeviceUDID()
-                + " shell getprop ro.product.manufacturer")
-                .trim();
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
+                .getDeviceManufacturer();
     }
 
     public AndroidDeviceConfiguration pullVideoFromDevice(String fileName, String destination)

@@ -26,7 +26,6 @@ public class IOSDeviceConfiguration {
     public Process p;
     public Process p1;
     public static List<String> validDeviceIds = new ArrayList<>();
-    private SimManager simulatorManager;
     private DevicesByHost devicesByHost;
 
     public final static int IOS_UDID_LENGTH = 40;
@@ -38,7 +37,6 @@ public class IOSDeviceConfiguration {
 
     public IOSDeviceConfiguration() throws IOException {
         prop = ConfigFileManager.getInstance();
-        simulatorManager = new SimManager();
         devicesByHost = HostMachineDeviceManager.getInstance();
     }
 
@@ -69,36 +67,16 @@ public class IOSDeviceConfiguration {
 
     public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
-        if (AppiumDeviceManager.getDeviceUDID().length() == IOS_UDID_LENGTH) {
-            return commandPrompt
-                    .runCommandThruProcessBuilder("ideviceinfo --udid "
-                            + AppiumDeviceManager.getDeviceUDID() + " | grep ProductType");
-        } else {
-            return simulatorManager.getSimulatorDetails(
-                    AppiumDeviceManager.getDeviceUDID()).getName();
-        }
+            return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getName();
     }
 
     public String getDeviceName() throws InterruptedException, IOException {
-        if (AppiumDeviceManager.getDeviceUDID().length() == IOS_UDID_LENGTH) {
-            return commandPrompt.runCommand("idevicename --udid "
-                    + AppiumDeviceManager.getDeviceUDID());
-        } else {
-            return simulatorManager.getSimulatorDetails(
-                    AppiumDeviceManager.getDeviceUDID()).getName();
-        }
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getName();
     }
 
     public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
-        if (AppiumDeviceManager.getDeviceUDID().length() == IOS_UDID_LENGTH) {
-            return commandPrompt
-                    .runCommandThruProcessBuilder("ideviceinfo --udid "
-                            + AppiumDeviceManager.getDeviceUDID()
-                            + " | grep ProductVersion").replace("\n", "");
-        } else {
-            return simulatorManager.getSimulatorDetails(AppiumDeviceManager.getDeviceUDID())
+            return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
                     .getOsVersion();
-        }
     }
 
     public HashMap<String, String> setIOSWebKitProxyPorts() {

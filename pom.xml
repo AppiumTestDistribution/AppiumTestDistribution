@@ -144,7 +144,7 @@
         <dependency>
             <groupId>com.github.SrinivasanTarget</groupId>
             <artifactId>DeviceManager</artifactId>
-            <version>4c69aedbd3</version>
+            <version>2644c31be4</version>
         </dependency>
         <dependency>
             <groupId>com.github.yunusmete.stf</groupId>
@@ -166,6 +166,13 @@
             <artifactId>okhttp</artifactId>
             <version>3.9.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20171018</version>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>

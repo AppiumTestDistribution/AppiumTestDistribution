@@ -65,8 +65,8 @@ public class AppiumDriverManager {
             throws IOException, InterruptedException {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
-        currentDriverSession = (AppiumDriver<MobileElement>) new RemoteWebDriver
-                (new URL("http://10.234.1.76:32598/wd/hub"),
+        currentDriverSession = new AppiumDriver<>
+                (new URL("http://10.234.1.87:30967/wd/hub"),
                 desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId() + "---"
