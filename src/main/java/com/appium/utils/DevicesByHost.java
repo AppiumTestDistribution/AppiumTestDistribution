@@ -6,6 +6,8 @@ import com.thoughtworks.device.Device;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class DevicesByHost {
     private Map<String, List<Device>> devicesByHost;
@@ -15,11 +17,9 @@ public class DevicesByHost {
     }
 
     public List<Device> getAllDevices() {
-        ArrayList<Device> deviceList = new ArrayList<>();
-        devicesByHost.forEach((host, devicesInHost) -> {
-            deviceList.addAll(devicesInHost);
-        });
-        return deviceList;
+        return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
+                stringListEntry.getValue().parallelStream())
+                .collect(Collectors.toList());
     }
 
     public String getHostOfDevice(String uuid) {
@@ -36,52 +36,31 @@ public class DevicesByHost {
     }
 
     public List<Device> getAllSimulators() {
-        List<Device> simulators = new ArrayList<>();
-        devicesByHost.entrySet().forEach(hostIP -> {
-            hostIP.getValue().forEach(device -> {
-                   if(device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                       simulators.add(device);
-                   }
-            });
-        });
-        return simulators;
+        return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
+                stringListEntry.getValue().parallelStream().filter(device ->
+                        device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH))
+                .collect(Collectors.toList());
     }
 
     public List<Device> getAllIOSDevices() {
-        List<Device> simulators = new ArrayList<>();
-        devicesByHost.entrySet().forEach(hostIP -> {
-            hostIP.getValue().forEach(device -> {
-                if(device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-                    simulators.add(device);
-                }
-            });
-        });
-        return simulators;
+        return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
+                stringListEntry.getValue().parallelStream().filter(device ->
+                        device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH))
+                .collect(Collectors.toList());
     }
 
     public List<Device> getAllAndroidDevices() {
-        List<Device> simulators = new ArrayList<>();
-        devicesByHost.entrySet().forEach(hostIP -> {
-            hostIP.getValue().forEach(device -> {
-                if(device.getUdid().length() != IOSDeviceConfiguration.IOS_UDID_LENGTH
-                        && device.getUdid().length() != IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                    simulators.add(device);
-                }
-            });
-        });
-        return simulators;
+        return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
+                stringListEntry.getValue().parallelStream().filter(device ->
+                        (device.getUdid().length() != IOSDeviceConfiguration.IOS_UDID_LENGTH
+                                && device.getUdid().length() != IOSDeviceConfiguration.SIM_UDID_LENGTH)))
+                .collect(Collectors.toList());
     }
 
     public Device getDeviceProperty(String uuid) {
-        final Device[] deviceProperty = new Device[1];
-        devicesByHost.entrySet().forEach(hostIP -> {
-            hostIP.getValue().forEach(device -> {
-                if (device.getUdid().equals(uuid)) {
-                     deviceProperty[0] = device;
-                }
-            });
-
-        });
-        return deviceProperty[0];
+        return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
+                stringListEntry.getValue().parallelStream().filter(device ->
+                        device.getUdid().equalsIgnoreCase(uuid)))
+                .collect(Collectors.toList()).get(0);
     }
 }
