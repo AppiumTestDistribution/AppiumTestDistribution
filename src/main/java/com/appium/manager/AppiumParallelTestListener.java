@@ -4,6 +4,7 @@ import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
+import io.appium.java_client.AppiumDriver;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.IClassListener;

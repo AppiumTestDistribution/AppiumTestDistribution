@@ -3,6 +3,7 @@ package com.appium.utils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
+import com.thoughtworks.device.DeviceManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,7 +29,17 @@ public class HostMachineDeviceManager {
     }
 
     private static Map<String, List<Device>> getDevices() throws Exception {
-        final Map<String, List<Device>> deviceProperties = new HashMap<>();
+        Map<String, List<Device>> devicesByHost = new HashMap<>();
+        Map<String, List<Device>> remoteDevices = getRemoteDevices();
+        DeviceManager deviceManager = new DeviceManager();
+        List<Device> devices = deviceManager.getDevices();
+        devicesByHost.put("127.0.0.1", devices);
+        devicesByHost.putAll(remoteDevices);
+        return devicesByHost;
+    }
+
+    private static Map<String, List<Device>> getRemoteDevices() throws Exception {
+        Map<String, List<Device>> devices = new HashMap<>();
         CapabilityManager capabilityManager = CapabilityManager.getInstance();
         JSONArray hostMachines = capabilityManager.getCapabitiesArrayFromKey("hostMachines");
         ObjectMapper mapper = new ObjectMapper()
@@ -48,13 +59,13 @@ public class HostMachineDeviceManager {
                         List<Device> simulatorsToBoot = getSimulators(machineIP, simulators, mapper);
                         deviceList.addAll(simulatorsToBoot);
                     }
-                    deviceProperties.put(machineIP, deviceList);
+                    devices.put(machineIP, deviceList);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         }
-        return deviceProperties;
+        return devices;
     }
 
     private static List<Device> getSimulators(String ipAddress, JSONArray simulators, ObjectMapper mapper) throws Exception {

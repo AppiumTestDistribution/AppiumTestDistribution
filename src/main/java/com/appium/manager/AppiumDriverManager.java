@@ -3,16 +3,15 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.DesiredCapabilityBuilder;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -23,16 +22,16 @@ public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver
             = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
-    private AppiumServerManager appiumServerManager;
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private DevicesByHost devicesByHost;
 
     public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
-        appiumServerManager = new AppiumServerManager();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
+        devicesByHost = HostMachineDeviceManager.getInstance();
     }
 
     public static AppiumDriver getDriver() {
@@ -44,16 +43,12 @@ public class AppiumDriverManager {
     }
 
     private AppiumDriver<MobileElement> getMobileAndroidElementAppiumDriver(
-            Optional<DesiredCapabilities> androidCaps) {
+            Optional<DesiredCapabilities> androidCaps) throws IOException {
         AppiumDriver<MobileElement> currentDriverSession = null;
         DesiredCapabilities desiredCapabilities = androidCaps.get();
-
-        try {
-            currentDriverSession = new AndroidDriver<>(new URL("http://10.234.1.76:48699/wd/hub"),
+        String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
+            currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
                     desiredCapabilities);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId()
                 + "---" + currentDriverSession.getSessionDetail("udid"));
@@ -65,13 +60,23 @@ public class AppiumDriverManager {
             throws IOException, InterruptedException {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
+        String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
+        System.out.println(remoteWDHubIP);
         currentDriverSession = new AppiumDriver<>
-                (new URL("http://10.234.1.87:30967/wd/hub"),
-                desiredCapabilities);
+                (new URL(remoteWDHubIP),
+                        desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId() + "---"
                 + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
+    }
+
+    private String getRemoteWDHubIP(DesiredCapabilities desiredCapabilities) throws IOException {
+        RemoteAppiumManager remoteAppiumManager = new RemoteAppiumManager();
+        String appiumUrl = remoteAppiumManager.getRemoteWDHubIP(devicesByHost
+                .getHostOfDevice(String.valueOf(desiredCapabilities
+                                .getCapability("udid"))));
+        return appiumUrl;
     }
 
     public void startAppiumDriverInstance(Optional<DesiredCapabilities> iosCaps,

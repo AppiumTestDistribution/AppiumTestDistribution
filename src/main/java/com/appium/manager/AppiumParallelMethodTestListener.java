@@ -7,6 +7,7 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
+import io.appium.java_client.AppiumDriver;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.IRetryAnalyzer;

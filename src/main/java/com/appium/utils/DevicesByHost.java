@@ -3,10 +3,9 @@ package com.appium.utils;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.thoughtworks.device.Device;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DevicesByHost {
@@ -63,4 +62,9 @@ public class DevicesByHost {
                         device.getUdid().equalsIgnoreCase(uuid)))
                 .collect(Collectors.toList()).get(0);
     }
+
+    public Set<String> getAllHosts(){
+        return devicesByHost.keySet();
+    }
+
 }
