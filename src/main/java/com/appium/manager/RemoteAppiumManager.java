@@ -1,7 +1,6 @@
 package com.appium.manager;
 
 import com.appium.utils.Api;
-import com.appium.utils.AvailablePorts;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -37,7 +36,8 @@ public class RemoteAppiumManager {
                 getAppiumDriverLocalService().stop();
             }
         } else {
-
+            new Api().getResponse("http://" + host + ":4567"
+                    + "/appium/stop").body().string();
         }
 
     }
@@ -59,7 +59,7 @@ public class RemoteAppiumManager {
         if (host.equals("127.0.0.1")) {
             System.out.println(
                     "**************************************************************************\n");
-            System.out.println("Starting Appium Server......");
+            System.out.println("Starting Appium Server on Localhost......");
             System.out.println(
                     "**************************************************************************\n");
             AppiumDriverLocalService appiumDriverLocalService;
@@ -83,8 +83,24 @@ public class RemoteAppiumManager {
                     "**************************************************************************\n");
             setAppiumDriverLocalService(appiumDriverLocalService);
         } else {
-              new Api().getResponse(host + ":4567"
+            System.out.println(
+                    "**************************************************************************\n");
+            System.out.println("Starting Appium Server on host " + host);
+            System.out.println(
+                    "**************************************************************************\n");
+            new Api().getResponse("http://" + host + ":4567"
                     + "/appium/start").body().string();
+
+            boolean status = Boolean.getBoolean(new JSONObject(new Api().getResponse("http://" + host + ":4567"
+                    + "/appium/isRunning").body().string()).get("status").toString());
+            if (status)
+                System.out.println(
+                        "**************************************************************************\n");
+            System.out.println("Appium Server started successfully on  " + host);
+            System.out.println(
+                    "**************************************************************************\n");
+
+
         }
 
     }

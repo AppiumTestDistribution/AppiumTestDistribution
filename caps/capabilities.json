@@ -3,17 +3,16 @@
     "platformName": "android",
     "noSign": true,
     "deviceName": "android",
-    "app": "./AndroidCalculator.apk"
+    "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
   },
   "iOS": {
     "platformName": "iOS",
     "app": {
-      "device": "./VodQAReactNative.ipa",
-      "simulator": "./VodQAReactNative.zip"
+      "simulator": "https://github.com/saikrishna321/VodQaAdvancedAppium/raw/master/vodqa.zip"
     },
     "wdaLaunchTimeout": "80000",
     "wdaConnectionTimeout": "80000",
-    "preventWDAAttachments": true,
+    "preventWDAAttachments": false,
     "clearSystemFiles": true,
     "shouldUseSingletonTestManager": false,
     "simpleIsVisibleCheck": true,

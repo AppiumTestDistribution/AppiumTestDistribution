@@ -149,11 +149,11 @@ public class DeviceAllocationManager {
             iOSCaps.keySet().forEach(key -> {
                 boolean app = key.equals("app");
                 if (app
-                        && iOSCaps.getJSONObject(key).get("simulator") != null) {
+                        && iOSCaps.getJSONObject(key).has("simulator")) {
                     simCapsPresent = true;
                 }
                 if (app
-                        && iOSCaps.getJSONObject(key).get("device") != null) {
+                        && iOSCaps.getJSONObject(key).has("device")) {
                     deviceCapsPresent = true;
                 }
             });

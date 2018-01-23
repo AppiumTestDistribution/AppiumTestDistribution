@@ -12,6 +12,7 @@ import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.json.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -25,8 +26,6 @@ import java.util.List;
 public class DesiredCapabilityBuilder {
 
     private AvailablePorts availablePorts;
-    private IOSDeviceConfiguration iosDevice;
-    private SimulatorManager simulatorManager;
     private DevicesByHost devicesByHost;
 
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
@@ -34,8 +33,6 @@ public class DesiredCapabilityBuilder {
 
     public DesiredCapabilityBuilder() throws IOException {
         availablePorts = new AvailablePorts();
-        iosDevice = new IOSDeviceConfiguration();
-        simulatorManager = new SimulatorManager();
         devicesByHost = HostMachineDeviceManager.getInstance();
     }
 
@@ -44,10 +41,10 @@ public class DesiredCapabilityBuilder {
     }
 
     public void buildDesiredCapability(String platform,
-                                                      String jsonPath) throws Exception {
+                                       String jsonPath) throws Exception {
         Object port = ((HashMap) DeviceAllocationManager.getInstance()
                 .deviceMapping.get(AppiumDeviceManager
-                .getDeviceUDID())).get("port");
+                        .getDeviceUDID())).get("port");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getObjectFromJSON();
         JSONObject platFormCapabilities = jsonParsedObject.getJSONObject(platform);
@@ -75,10 +72,12 @@ public class DesiredCapabilityBuilder {
                         appPath = ((JSONObject) values).getString("device");
                     }
                 } else {
-                  appPath = platFormCapabilities.getString(appCapability);
+                    appPath = platFormCapabilities.getString(appCapability);
                 }
                 Path path = FileSystems.getDefault().getPath(appPath);
-                if (!path.getParent().isAbsolute()) {
+                if (ResourceUtils.isUrl(appPath)) {
+                    desiredCapabilities.setCapability(appCapability, appPath);
+                } else if (!path.getParent().isAbsolute()) {
                     desiredCapabilities.setCapability(appCapability, path.normalize()
                             .toAbsolutePath().toString());
                 } else {
