@@ -69,24 +69,6 @@ public class DeviceAllocationManager {
 
     public static DeviceAllocationManager getInstance() throws Exception {
         if (instance == null) {
-            URL inputUrl = null;
-            try {
-                inputUrl = Thread.currentThread().getContextClassLoader()
-                        .getResource(
-                                "RemoteAppiumManager-1.0-SNAPSHOT.jar");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            File dest = new File(System.getProperty("user.dir") + "/target/");
-            try {
-                FileUtils.copyFileToDirectory(new File(inputUrl.getPath()), dest);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            new CommandPromptUtil().execForProcessToExecute("java -jar "
-                    + System.getProperty("user.dir")
-                    + "/target/RemoteAppiumManager-1.0-SNAPSHOT.jar")
-                    .waitFor(1, TimeUnit.SECONDS);
             instance = new DeviceAllocationManager();
         }
         return instance;
