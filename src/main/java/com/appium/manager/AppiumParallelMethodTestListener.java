@@ -77,6 +77,9 @@ public final class AppiumParallelMethodTestListener
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        if (testResult.getStatus() == ITestResult.SKIP) {
+            ExtentTestManager.extent.removeTest(ExtentTestManager.getTest());
+        }
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
