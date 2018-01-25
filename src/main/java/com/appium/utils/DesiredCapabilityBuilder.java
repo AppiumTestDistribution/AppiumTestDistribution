@@ -5,7 +5,6 @@ import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.thoughtworks.device.Device;
-import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by saikrisv on 20/05/17.

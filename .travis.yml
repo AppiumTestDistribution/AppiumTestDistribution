@@ -3,4 +3,13 @@ language: java
 jdk:
   - oraclejdk8
 
-script: mvn clean site install -Dmaven.test.skip=true
+os: osx
+
+osx_image: xcode9.2
+
+before_install:
+  - brew update
+  - brew outdated xctool || brew upgrade xctool
+  - npm install -g appium
+
+script: Platform="ios" mvn clean -Dtest=Runner test
