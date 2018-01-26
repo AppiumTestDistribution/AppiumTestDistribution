@@ -46,10 +46,9 @@ public class HostMachineDeviceManager {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (hostMachines != null) {
             hostMachines.forEach(hostMachine -> {
-                if (hostMachine != "127.0.0.1") {
-                    JSONObject hostMachineJson = (JSONObject) hostMachine;
-                    String machineIP = hostMachineJson.getString("machineIP");
-
+                JSONObject hostMachineJson = (JSONObject) hostMachine;
+                String machineIP = hostMachineJson.getString("machineIP");
+                if (!machineIP.equals("127.0.0.1")) {
                     try {
                         ArrayList<Device> deviceList = new ArrayList<>();
                         List<Device> physicalDevices = Arrays.asList(mapper.readValue(new URL("http://" + machineIP + ":4567/devices"),
