@@ -8,5 +8,6 @@ before_install:
   - brew update
   - brew outdated xctool || brew upgrade xctool
   - npm install -g appium
+  - xcrun simctl list -j devices
 
 script: Platform="ios" mvn clean -Dtest=Runner test

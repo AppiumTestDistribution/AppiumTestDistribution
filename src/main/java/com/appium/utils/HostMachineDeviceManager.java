@@ -46,22 +46,24 @@ public class HostMachineDeviceManager {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (hostMachines != null) {
             hostMachines.forEach(hostMachine -> {
-                JSONObject hostMachineJson = (JSONObject) hostMachine;
-                String machineIP = hostMachineJson.getString("machineIP");
+                if (hostMachine != "127.0.0.1") {
+                    JSONObject hostMachineJson = (JSONObject) hostMachine;
+                    String machineIP = hostMachineJson.getString("machineIP");
 
-                try {
-                    ArrayList<Device> deviceList = new ArrayList<>();
-                    List<Device> physicalDevices = Arrays.asList(mapper.readValue(new URL("http://" + machineIP + ":4567/devices"),
-                            Device[].class));
-                    deviceList.addAll(physicalDevices);
-                    if (hostMachineJson.has("simulators")) {
-                        JSONArray simulators = hostMachineJson.getJSONArray("simulators");
-                        List<Device> simulatorsToBoot = getSimulators(machineIP, simulators, mapper);
-                        deviceList.addAll(simulatorsToBoot);
+                    try {
+                        ArrayList<Device> deviceList = new ArrayList<>();
+                        List<Device> physicalDevices = Arrays.asList(mapper.readValue(new URL("http://" + machineIP + ":4567/devices"),
+                                Device[].class));
+                        deviceList.addAll(physicalDevices);
+                        if (hostMachineJson.has("simulators")) {
+                            JSONArray simulators = hostMachineJson.getJSONArray("simulators");
+                            List<Device> simulatorsToBoot = getSimulators(machineIP, simulators, mapper);
+                            deviceList.addAll(simulatorsToBoot);
+                        }
+                        devices.put(machineIP, deviceList);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    devices.put(machineIP, deviceList);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             });
         }
