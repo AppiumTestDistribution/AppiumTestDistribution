@@ -11,7 +11,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HostMachineDeviceManager {
 
@@ -46,15 +50,17 @@ public class HostMachineDeviceManager {
             hostMachines.forEach(hostMachine -> {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
                 String machineIP = hostMachineJson.getString("machineIP");
-                if (!machineIP.equals("127.0.0.1")) {
+                if (!"127.0.0.1".equals(machineIP)) {
                     try {
                         ArrayList<Device> deviceList = new ArrayList<>();
-                        List<Device> physicalDevices = Arrays.asList(mapper.readValue(new URL("http://" + machineIP + ":4567/devices"),
+                        List<Device> physicalDevices = Arrays.asList(mapper.readValue(new URL(
+                                        "http://" + machineIP + ":4567/devices"),
                                 Device[].class));
                         deviceList.addAll(physicalDevices);
                         if (hostMachineJson.has("simulators")) {
                             JSONArray simulators = hostMachineJson.getJSONArray("simulators");
-                            List<Device> simulatorsToBoot = getSimulators(machineIP, simulators, mapper);
+                            List<Device> simulatorsToBoot = getSimulators(
+                                    machineIP, simulators, mapper);
                             deviceList.addAll(simulatorsToBoot);
                         }
                         devices.put(machineIP, deviceList);
@@ -67,18 +73,25 @@ public class HostMachineDeviceManager {
         return devices;
     }
 
-    private static List<Device> getSimulators(String ipAddress, JSONArray simulators, ObjectMapper mapper) throws Exception {
+    private static List<Device> getSimulators(String ipAddress, JSONArray simulators,
+                                              ObjectMapper mapper) throws Exception {
         List<Device> devices = new ArrayList<>();
         simulators.forEach(simulator -> {
             JSONObject simulatorJson = (JSONObject) simulator;
             String deviceName = simulatorJson.getString("deviceName");
             String os = simulatorJson.getString("OS");
             try {
-                String url = String.format("http://%s:4567/device/ios/simulators?simulatorName=%s&simulatorOSVersion=%s",
-                        ipAddress, URLEncoder.encode(deviceName, "UTF-8"), URLEncoder.encode(os, "UTF-8"));
+                String url = String.format("http://%s:4567/device/ios/simulators"
+                                + "?simulatorName=%s&simulatorOSVersion=%s",
+                        ipAddress, URLEncoder.encode(deviceName, "UTF-8"),
+                        URLEncoder.encode(os, "UTF-8"));
                 Device device = mapper.readValue(new URL(url),
                         Device.class);
-                devices.add(device);
+                //Booted the same simulators(as in json) on remoteMachine
+                // and check unique devices are picked
+                if (!device.getState().equals("Booted")) {
+                    devices.add(device);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -94,7 +107,7 @@ public class HostMachineDeviceManager {
         hostMachines.forEach(hostMachine -> {
             JSONObject hostMachineJson = (JSONObject) hostMachine;
             String machineIP = hostMachineJson.getString("machineIP");
-            if (machineIP.equals("127.0.0.1")) {
+            if ("127.0.0.1".equals(machineIP)) {
                 if (hostMachineJson.has("simulators")) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     simulators.forEach(sim -> {
@@ -104,7 +117,9 @@ public class HostMachineDeviceManager {
                         try {
                             Device simulatorDetails = new SimulatorManager()
                                     .getDevice(deviceName, os, "iOS");
-                            devices.add(simulatorDetails);
+                            if (!simulatorDetails.getState().equals("Booted")) {
+                                devices.add(simulatorDetails);
+                            }
                         } catch (InterruptedException | IOException e) {
                             e.printStackTrace();
                         }
@@ -114,8 +129,7 @@ public class HostMachineDeviceManager {
         });
         List<Device> allBootedDevices = new DeviceManager().getDevices();
         devices.addAll(allBootedDevices);
-        simulatorsToBoot.put("127.0.0.1",devices);
-        //keep unique simulator details, currently map holds simulators booted and from json
+        simulatorsToBoot.put("127.0.0.1", devices);
         return simulatorsToBoot;
     }
 }

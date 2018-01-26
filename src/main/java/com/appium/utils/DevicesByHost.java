@@ -52,7 +52,8 @@ public class DevicesByHost {
         return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
                 stringListEntry.getValue().parallelStream().filter(device ->
                         (device.getUdid().length() != IOSDeviceConfiguration.IOS_UDID_LENGTH
-                                && device.getUdid().length() != IOSDeviceConfiguration.SIM_UDID_LENGTH)))
+                                && device.getUdid().length()
+                                != IOSDeviceConfiguration.SIM_UDID_LENGTH)))
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +64,7 @@ public class DevicesByHost {
                 .collect(Collectors.toList()).get(0);
     }
 
-    public Set<String> getAllHosts(){
+    public Set<String> getAllHosts() {
         return devicesByHost.keySet();
     }
 

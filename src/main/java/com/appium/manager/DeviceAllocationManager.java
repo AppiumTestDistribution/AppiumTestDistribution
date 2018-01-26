@@ -12,8 +12,6 @@ import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
-import com.thoughtworks.utils.CommandPromptUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.json.JSONObject;
 
@@ -22,12 +20,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -186,7 +185,8 @@ public class DeviceAllocationManager {
         } else {
             deviceList.forEach(device -> {
                 if (device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH
-                        && new SimManager().isSimulatorObjectAvailableInCapsJson() && simCapsPresent) {
+                        && new SimManager()
+                        .isSimulatorObjectAvailableInCapsJson() && simCapsPresent) {
                     devices.add(device.getUdid());
                 } else if (device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH
                         && deviceCapsPresent) {

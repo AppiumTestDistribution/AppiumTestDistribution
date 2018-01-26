@@ -48,7 +48,7 @@ public class CapabilityManager {
         return (JSONObject) capabilities.get(key);
     }
 
-    public JSONArray getCapabitiesArrayFromKey(String key){
+    public JSONArray getCapabitiesArrayFromKey(String key) {
         return capabilities.getJSONArray(key);
     }
 

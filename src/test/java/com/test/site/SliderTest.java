@@ -17,9 +17,11 @@ public class SliderTest extends  UserBaseTest {
         waitForElement("slider1").click();
         MobileElement slider = (MobileElement) waitForElement("slider");
         Dimension size = slider.getSize();
-        TouchAction swipe = new TouchAction(driver).press(ElementOption.element(slider, 0, size.height / 2))
+        TouchAction swipe = new TouchAction(driver).press(ElementOption.element(slider,
+                0, size.height / 2))
                 .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(3)))
-                .moveTo(ElementOption.element(slider, size.width / 2, size.height / 2)).release();
+                .moveTo(ElementOption.element(slider, size.width / 2,
+                        size.height / 2)).release();
         swipe.perform();
     }
 }

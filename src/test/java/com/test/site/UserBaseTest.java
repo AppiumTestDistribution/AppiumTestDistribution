@@ -22,7 +22,7 @@ public class UserBaseTest {
     }
 
     public WebElement waitForElement(String locator) {
-        return new WebDriverWait(getDriver(),30).until(ExpectedConditions.
-                elementToBeClickable(MobileBy.AccessibilityId(locator)));
+        return new WebDriverWait(getDriver(),30).until(ExpectedConditions
+                .elementToBeClickable(MobileBy.AccessibilityId(locator)));
     }
 }

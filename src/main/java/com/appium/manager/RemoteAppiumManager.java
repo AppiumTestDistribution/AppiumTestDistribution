@@ -12,24 +12,24 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 public class RemoteAppiumManager {
-    static AppiumDriverLocalService appiumDriverLocalService;
+    private static AppiumDriverLocalService appiumDriverLocalService;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
 
-    public static AppiumDriverLocalService getAppiumDriverLocalService() {
+    private static AppiumDriverLocalService getAppiumDriverLocalService() {
         return appiumDriverLocalService;
     }
 
-    public static void setAppiumDriverLocalService(
+    private static void setAppiumDriverLocalService(
             AppiumDriverLocalService appiumDriverLocalService) {
         RemoteAppiumManager.appiumDriverLocalService = appiumDriverLocalService;
     }
 
-    public URL getAppiumUrl() {
+    private URL getAppiumUrl() {
         return getAppiumDriverLocalService().getUrl();
     }
 
     public void destroyAppiumNode(String host) throws IOException {
-        if (host.equals("127.0.0.1")) {
+        if ("127.0.0.1".equals(host)) {
             getAppiumDriverLocalService().stop();
             if (getAppiumDriverLocalService().isRunning()) {
                 LOGGER.info("AppiumServer didn't shut... Trying to quit again....");
@@ -44,7 +44,7 @@ public class RemoteAppiumManager {
 
 
     public String getRemoteWDHubIP(String host) throws IOException {
-        if (host.equals("127.0.0.1")) {
+        if ("127.0.0.1".equals(host)) {
             return getAppiumUrl().toString();
         } else {
             String hostIP = "http://" + host;
@@ -56,7 +56,7 @@ public class RemoteAppiumManager {
     }
 
     public void startAppiumServer(String host) throws Exception {
-        if (host.equals("127.0.0.1")) {
+        if ("127.0.0.1".equals(host)) {
             System.out.println(
                     "**************************************************************************\n");
             System.out.println("Starting Appium Server on Localhost......");
@@ -67,12 +67,10 @@ public class RemoteAppiumManager {
                     getAppiumServerBuilder()
                             .withArgument(GeneralServerFlag.LOG_LEVEL, "info")
                             .withLogFile(new File(
-                            System.getProperty("user.dir")
-                                    + "/target/appiumlogs/appium_logs.txt"))
+                                    System.getProperty("user.dir")
+                                            + "/target/appiumlogs/appium_logs.txt"))
                             .withIPAddress(host)
                             .usingAnyFreePort();
-        /* and so on */
-            ;
             appiumDriverLocalService = builder.build();
             appiumDriverLocalService.start();
             System.out.println(
@@ -93,14 +91,13 @@ public class RemoteAppiumManager {
 
             boolean status = Boolean.getBoolean(new JSONObject(new Api().getResponse("http://" + host + ":4567"
                     + "/appium/isRunning").body().string()).get("status").toString());
-            if (status)
+            if (status) {
                 System.out.println(
-                        "**************************************************************************\n");
-            System.out.println("Appium Server started successfully on  " + host);
-            System.out.println(
-                    "**************************************************************************\n");
-
-
+                        "***************************************************************\n");
+                System.out.println("Appium Server started successfully on  " + host);
+                System.out.println(
+                        "****************************************************************\n");
+            }
         }
 
     }

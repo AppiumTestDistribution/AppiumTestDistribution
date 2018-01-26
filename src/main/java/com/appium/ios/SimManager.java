@@ -25,11 +25,11 @@ public class SimManager {
         final boolean[] firstSimulatorObject = {false};
 
         if (hostMachines != null) {
-              hostMachines.forEach(simulatorObject -> {
-                 if (((JSONObject)simulatorObject).has("simulators")) {
-                     firstSimulatorObject[0] = true;
-                 }
-             });
+            hostMachines.forEach(simulatorObject -> {
+                if (((JSONObject) simulatorObject).has("simulators")) {
+                    firstSimulatorObject[0] = true;
+                }
+            });
         }
         return firstSimulatorObject[0];
     }

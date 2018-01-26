@@ -105,7 +105,8 @@ public class DesiredCapabilityBuilder {
             if (AppiumDeviceManager.getDeviceUDID().length()
                     == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
 
-                Device deviceProperty = devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID());
+                Device deviceProperty = devicesByHost.getDeviceProperty(
+                        AppiumDeviceManager.getDeviceUDID());
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                         deviceProperty.getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,

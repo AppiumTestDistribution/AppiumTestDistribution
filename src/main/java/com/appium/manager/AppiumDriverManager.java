@@ -47,8 +47,8 @@ public class AppiumDriverManager {
         AppiumDriver<MobileElement> currentDriverSession = null;
         DesiredCapabilities desiredCapabilities = androidCaps.get();
         String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
-            currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                    desiredCapabilities);
+        currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
+                desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId()
                 + "---" + currentDriverSession.getSessionDetail("udid"));
@@ -62,8 +62,7 @@ public class AppiumDriverManager {
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
         String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
         System.out.println(remoteWDHubIP);
-        currentDriverSession = new AppiumDriver<>
-                (new URL(remoteWDHubIP),
+        currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
                         desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId() + "---"
@@ -75,7 +74,7 @@ public class AppiumDriverManager {
         RemoteAppiumManager remoteAppiumManager = new RemoteAppiumManager();
         String appiumUrl = remoteAppiumManager.getRemoteWDHubIP(devicesByHost
                 .getHostOfDevice(String.valueOf(desiredCapabilities
-                                .getCapability("udid"))));
+                        .getCapability("udid"))));
         return appiumUrl;
     }
 

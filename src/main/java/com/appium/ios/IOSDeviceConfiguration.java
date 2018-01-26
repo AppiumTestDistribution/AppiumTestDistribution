@@ -67,7 +67,7 @@ public class IOSDeviceConfiguration {
 
     public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
-            return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getName();
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getName();
     }
 
     public String getDeviceName() throws InterruptedException, IOException {
@@ -75,8 +75,8 @@ public class IOSDeviceConfiguration {
     }
 
     public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
-            return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
-                    .getOsVersion();
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
+                .getOsVersion();
     }
 
     public HashMap<String, String> setIOSWebKitProxyPorts() {
