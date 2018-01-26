@@ -100,7 +100,7 @@ public class ParallelThread {
         if (os.contains("mac") && platform.equalsIgnoreCase("iOS")
                 || platform.equalsIgnoreCase("Both")) {
             if (deviceCount > 0) {
-                iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
+                //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
                 createSnapshotFolderiOS("iPhone");
             }
         }

@@ -64,9 +64,9 @@ public class RemoteAppiumManager {
                     "**************************************************************************\n");
             AppiumDriverLocalService appiumDriverLocalService;
             AppiumServiceBuilder builder =
-                    new AppiumServiceBuilder().withAppiumJS(new File(ConfigFileManager
-                            .configFileMap.get("APPIUM_JS_PATH")))
-                            .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
+                    getAppiumServerBuilder()
+                            .withArgument(GeneralServerFlag.LOG_LEVEL, "info")
+                            .withLogFile(new File(
                             System.getProperty("user.dir")
                                     + "/target/appiumlogs/appium_logs.txt"))
                             .withIPAddress(host)
@@ -105,4 +105,22 @@ public class RemoteAppiumManager {
 
     }
 
+    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath() {
+        return new AppiumServiceBuilder().withAppiumJS(new File(ConfigFileManager
+                .configFileMap.get("APPIUM_JS_PATH")));
+    }
+
+    private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath() {
+        return new AppiumServiceBuilder();
+    }
+
+    private AppiumServiceBuilder getAppiumServerBuilder() {
+        if (ConfigFileManager.configFileMap.get("APPIUM_JS_PATH") == null) {
+            System.out.println("Picking Default Path for AppiumServiceBuilder");
+            return getAppiumServiceBuilderWithDefaultPath();
+        } else {
+            System.out.println("Picking UserSpecified Path for AppiumServiceBuilder");
+            return getAppiumServiceBuilderWithUserAppiumPath();
+        }
+    }
 }
