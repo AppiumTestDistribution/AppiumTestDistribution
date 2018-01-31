@@ -55,7 +55,6 @@ public class DeviceAllocationManager {
             deviceList = new ArrayList<>();
             devicesByHost = HostMachineDeviceManager.getInstance();
             deviceList = devicesByHost.getAllDevices();
-
             androidManager = new AndroidManager();
             appiumDriverManager = new AppiumDriverManager();
         } catch (IOException e) {
@@ -91,7 +90,6 @@ public class DeviceAllocationManager {
                                 .forEach(device -> devices.add(device.getUdid()));
                     }
                     if (simManager.isSimulatorObjectAvailableInCapsJson() && simCapsPresent) {
-                        allocateUniqueSimulatorDetails(allSimulatorDetails);
                         allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
                     }
                 }
@@ -106,9 +104,6 @@ public class DeviceAllocationManager {
                 }
             }
             if (platform.equalsIgnoreCase("Both")) {
-                if (simManager.isSimulatorObjectAvailableInCapsJson()) {
-                    allocateUniqueSimulatorDetails(allSimulatorDetails);
-                }
                 getAllConnectedDevices();
             }
         } else {
@@ -153,18 +148,6 @@ public class DeviceAllocationManager {
         } else {
             throw new FileNotFoundException("Capability file not found");
         }
-    }
-
-    private void allocateUniqueSimulatorDetails(List<Device> allSimulatorDetails) {
-        allSimulatorDetails.stream().forEach(device -> {
-            Optional<Device> first = deviceList.stream().filter(device1 -> device.getUdid()
-                    .equals(device1.getUdid())).findFirst();
-
-            if (!first.isPresent()) {
-                deviceList.add(device);
-            }
-
-        });
     }
 
     private void isPlatformInEnv() {
