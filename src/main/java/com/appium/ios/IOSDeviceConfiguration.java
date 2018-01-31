@@ -67,7 +67,8 @@ public class IOSDeviceConfiguration {
 
     public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getName();
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
+                .getDeviceModel();
     }
 
     public String getDeviceName() throws InterruptedException, IOException {
