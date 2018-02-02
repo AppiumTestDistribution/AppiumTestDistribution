@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
 import com.thoughtworks.device.SimulatorManager;
+import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -42,8 +43,7 @@ public class HostMachineDeviceManager {
 
     private static Map<String, List<Device>> getRemoteDevices() throws Exception {
         Map<String, List<Device>> devices = new HashMap<>();
-        CapabilityManager capabilityManager = CapabilityManager.getInstance();
-        JSONArray hostMachines = capabilityManager.getCapabitiesArrayFromKey("hostMachines");
+        JSONArray hostMachines = getHostMachineObject();
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (hostMachines != null) {
@@ -102,8 +102,7 @@ public class HostMachineDeviceManager {
     public static Map<String, List<Device>> getLocalDevices() throws Exception {
         List<Device> devices = new ArrayList<>();
         Map<String, List<Device>> simulatorsToBoot = new HashMap<>();
-        CapabilityManager capabilityManager = CapabilityManager.getInstance();
-        JSONArray hostMachines = capabilityManager.getCapabitiesArrayFromKey("hostMachines");
+        JSONArray hostMachines = getHostMachineObject();
         hostMachines.forEach(hostMachine -> {
             JSONObject hostMachineJson = (JSONObject) hostMachine;
             String machineIP = hostMachineJson.getString("machineIP");
@@ -131,6 +130,11 @@ public class HostMachineDeviceManager {
         devices.addAll(allBootedDevices);
         simulatorsToBoot.put("127.0.0.1", devices);
         return simulatorsToBoot;
+    }
+
+    private static JSONArray getHostMachineObject() throws Exception {
+        CapabilityManager capabilityManager = CapabilityManager.getInstance();
+        return capabilityManager.getCapabitiesArrayFromKey("hostMachines");
     }
 }
 

@@ -67,5 +67,4 @@ public class DevicesByHost {
     public Set<String> getAllHosts() {
         return devicesByHost.keySet();
     }
-
 }

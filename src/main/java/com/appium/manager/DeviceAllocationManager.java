@@ -112,7 +112,7 @@ public class DeviceAllocationManager {
         for (String device : devices) {
             HashMap<Object, Object> deviceState = new HashMap<>();
             deviceState.put("deviceState", true);
-            deviceState.put("port", new AvailablePorts().getPort());
+            deviceState.put("port", new AvailablePorts().getAvailablePort());
             deviceMapping.put(device, deviceState);
         }
     }

@@ -82,7 +82,7 @@ public class IOSDeviceConfiguration {
 
     public HashMap<String, String> setIOSWebKitProxyPorts() {
         try {
-            int webkitproxyport = ap.getPort();
+            int webkitproxyport = ap.getAvailablePort();
             deviceMap.put(AppiumDeviceManager.getDeviceUDID(), Integer.toString(webkitproxyport));
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();

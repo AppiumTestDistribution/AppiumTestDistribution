@@ -51,7 +51,7 @@ public class DesiredCapabilityBuilder {
             if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
                 try {
                     desiredCapabilities.setCapability("chromeDriverPort",
-                            availablePorts.getPort());
+                            availablePorts.getAvailablePort());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
