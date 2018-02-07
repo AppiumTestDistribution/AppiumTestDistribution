@@ -25,7 +25,7 @@ public class HostMachineDeviceManager {
     public static DevicesByHost getInstance() {
         if (instance == null) {
             try {
-                Map<String, List<Device>> devices = getDevices();
+                Map<String, List<AppiumDevice>> devices = getDevices();
                 instance = new DevicesByHost(devices);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -34,15 +34,15 @@ public class HostMachineDeviceManager {
         return instance;
     }
 
-    private static Map<String, List<Device>> getDevices() throws Exception {
-        Map<String, List<Device>> devicesByHost = new HashMap<>();
+    private static Map<String, List<AppiumDevice>> getDevices() throws Exception {
+        Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
         devicesByHost.putAll(getLocalDevices());
         devicesByHost.putAll(getRemoteDevices());
         return devicesByHost;
     }
 
-    private static Map<String, List<Device>> getRemoteDevices() throws Exception {
-        Map<String, List<Device>> devices = new HashMap<>();
+    private static Map<String, List<AppiumDevice>> getRemoteDevices() throws Exception {
+        Map<String, List<AppiumDevice>> devices = new HashMap<>();
         JSONArray hostMachines = getHostMachineObject();
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -52,16 +52,26 @@ public class HostMachineDeviceManager {
                 String machineIP = hostMachineJson.getString("machineIP");
                 if (!"127.0.0.1".equals(machineIP)) {
                     try {
-                        ArrayList<Device> deviceList = new ArrayList<>();
+                        ArrayList<AppiumDevice> deviceList = new ArrayList<>();
                         List<Device> physicalDevices = Arrays.asList(mapper.readValue(new URL(
                                         "http://" + machineIP + ":4567/devices"),
                                 Device[].class));
-                        deviceList.addAll(physicalDevices);
+                        physicalDevices.forEach(physicalDevice -> {
+                            AppiumDevice appiumDevice = new AppiumDevice();
+                            appiumDevice.setDevice(physicalDevice);
+                            appiumDevice.setPort(new AvailablePorts().getAvailablePort());
+                            deviceList.add(appiumDevice);
+                        });
                         if (hostMachineJson.has("simulators")) {
                             JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                             List<Device> simulatorsToBoot = getSimulators(
                                     machineIP, simulators, mapper);
-                            deviceList.addAll(simulatorsToBoot);
+                            simulatorsToBoot.forEach(simulator -> {
+                                AppiumDevice appiumDevice = new AppiumDevice();
+                                appiumDevice.setDevice(simulator);
+                                appiumDevice.setPort(new AvailablePorts().getAvailablePort());
+                                deviceList.add(appiumDevice);
+                            });
                         }
                         devices.put(machineIP, deviceList);
                     } catch (Exception e) {
@@ -99,9 +109,9 @@ public class HostMachineDeviceManager {
         return devices;
     }
 
-    public static Map<String, List<Device>> getLocalDevices() throws Exception {
-        List<Device> devices = new ArrayList<>();
-        Map<String, List<Device>> simulatorsToBoot = new HashMap<>();
+    public static Map<String, List<AppiumDevice>> getLocalDevices() throws Exception {
+        List<AppiumDevice> devices = new ArrayList<>();
+        Map<String, List<AppiumDevice>> simulatorsToBoot = new HashMap<>();
         JSONArray hostMachines = getHostMachineObject();
         hostMachines.forEach(hostMachine -> {
             JSONObject hostMachineJson = (JSONObject) hostMachine;
@@ -117,7 +127,10 @@ public class HostMachineDeviceManager {
                             Device simulatorDetails = new SimulatorManager()
                                     .getDevice(deviceName, os, "iOS");
                             if (!simulatorDetails.getState().equals("Booted")) {
-                                devices.add(simulatorDetails);
+                                AppiumDevice appiumDevice = new AppiumDevice();
+                                appiumDevice.setDevice(simulatorDetails);
+                                appiumDevice.setPort(new AvailablePorts().getAvailablePort());
+                                devices.add(appiumDevice);
                             }
                         } catch (InterruptedException | IOException e) {
                             e.printStackTrace();
@@ -126,8 +139,12 @@ public class HostMachineDeviceManager {
                 }
             }
         });
-        List<Device> allBootedDevices = new DeviceManager().getDevices();
-        devices.addAll(allBootedDevices);
+        new DeviceManager().getDevices().forEach(allBootedDevice -> {
+            AppiumDevice appiumDevice = new AppiumDevice();
+            appiumDevice.setDevice(allBootedDevice);
+            appiumDevice.setPort(new AvailablePorts().getAvailablePort());
+            devices.add(appiumDevice);
+        } );
         simulatorsToBoot.put("127.0.0.1", devices);
         return simulatorsToBoot;
     }

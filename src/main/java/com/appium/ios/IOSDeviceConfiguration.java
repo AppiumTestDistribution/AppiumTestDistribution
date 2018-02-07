@@ -2,11 +2,7 @@ package com.appium.ios;
 
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.ConfigFileManager;
-import com.appium.utils.AvailablePorts;
-import com.appium.utils.CommandPrompt;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.HostMachineDeviceManager;
-import com.thoughtworks.device.Device;
+import com.appium.utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class IOSDeviceConfiguration {
-    public static List<Device> deviceUDIDiOS = new ArrayList<>();
+    public static List<AppiumDevice> deviceUDIDiOS = new ArrayList<>();
     private final ConfigFileManager prop;
     CommandPrompt commandPrompt = new CommandPrompt();
     AvailablePorts ap = new AvailablePorts();
@@ -40,7 +36,7 @@ public class IOSDeviceConfiguration {
         devicesByHost = HostMachineDeviceManager.getInstance();
     }
 
-    public List<Device> checkIfUserSpecifiedSimulatorAndGetUDID() {
+    public List<AppiumDevice> checkIfUserSpecifiedSimulatorAndGetUDID() {
         String xcode_version = "";
         try {
             xcode_version = commandPrompt.runCommand("xcodebuild -version");
@@ -68,24 +64,23 @@ public class IOSDeviceConfiguration {
     public String getIOSDeviceProductTypeAndVersion()
             throws InterruptedException, IOException {
         return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
-                .getDeviceModel();
+                .getDevice().getDeviceModel();
     }
 
     public String getDeviceName() throws InterruptedException, IOException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getName();
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
+                .getDevice().getName();
     }
 
     public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
         return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
-                .getOsVersion();
+                .getDevice().getOsVersion();
     }
 
     public HashMap<String, String> setIOSWebKitProxyPorts() {
         try {
             int webkitproxyport = ap.getAvailablePort();
             deviceMap.put(AppiumDeviceManager.getDeviceUDID(), Integer.toString(webkitproxyport));
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

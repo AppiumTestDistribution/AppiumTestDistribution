@@ -98,19 +98,18 @@ public class DesiredCapabilityBuilder {
             }
             appPackage(desiredCapabilities);
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            //String version = iosDevice.getIOSDeviceProductVersion();
-            String version = "11.0";
+            String version = new IOSDeviceConfiguration().getIOSDeviceProductVersion();
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
             if (AppiumDeviceManager.getDeviceUDID().length()
                     == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
 
-                Device deviceProperty = devicesByHost.getDeviceProperty(
+                AppiumDevice deviceProperty = devicesByHost.getDeviceProperty(
                         AppiumDeviceManager.getDeviceUDID());
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                        deviceProperty.getName());
+                        deviceProperty.getDevice().getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                        deviceProperty.getOsVersion());
+                        deviceProperty.getDevice().getOsVersion());
             } else {
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
                         new IOSDeviceConfiguration().startIOSWebKit());

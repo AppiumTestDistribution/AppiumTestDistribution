@@ -84,7 +84,7 @@ public class ParallelThread {
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         String platform = System.getenv("Platform");
-        int deviceCount = deviceAllocationManager.getDevices().size();
+        int deviceCount = 10;
         createAppiumLogsFolder();
 
 

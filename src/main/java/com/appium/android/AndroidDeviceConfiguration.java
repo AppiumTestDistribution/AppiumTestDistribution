@@ -2,12 +2,11 @@ package com.appium.android;
 
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumDriverManager;
-import com.appium.manager.DeviceAllocationManager;
+
+import com.appium.utils.AppiumDevice;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.HostMachineDeviceManager;
-import com.thoughtworks.device.Device;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +27,9 @@ public class AndroidDeviceConfiguration {
      * This method gets the device model name
      */
     public String getDeviceModel() {
-        Optional<Device> getModel = getDevice();
-        return (getModel.get().getDeviceModel() + getModel.get().getBrand())
+        Optional<AppiumDevice> getModel = getDevice();
+        return (getModel.get().getDevice().getDeviceModel()
+                + getModel.get().getDevice().getBrand())
                 .replaceAll("[^a-zA-Z0-9\\.\\-]", "");
     }
 
@@ -37,15 +37,17 @@ public class AndroidDeviceConfiguration {
      * This method gets the device OS API Level
      */
     public String getDeviceOS() {
-        Optional<Device> deviceOS = getDevice();
-        return deviceOS.get().getOsVersion();
+        Optional<AppiumDevice> deviceOS = getDevice();
+        return deviceOS.get().getDevice().getOsVersion();
     }
 
-    private Optional<Device> getDevice() {
-        Optional<Device> deviceOS = null;
+    private Optional<AppiumDevice> getDevice() {
+        Optional<AppiumDevice> deviceOS = null;
         try {
-            deviceOS = DeviceAllocationManager.getInstance().deviceList.stream().filter(device ->
-                    device.getUdid().equals(AppiumDeviceManager.getDeviceUDID())).findFirst();
+            deviceOS = HostMachineDeviceManager.getInstance()
+                    .getAllAndroidDevices().stream().filter(device ->
+                    device.getDevice().getUdid()
+                            .equals(AppiumDeviceManager.getDeviceUDID())).findFirst();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,7 +75,7 @@ public class AndroidDeviceConfiguration {
     public String getDeviceManufacturer()
             throws IOException, InterruptedException {
         return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
-                .getDeviceManufacturer();
+                .getDevice().getDeviceManufacturer();
     }
 
     public AndroidDeviceConfiguration pullVideoFromDevice(String fileName, String destination)
