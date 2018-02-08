@@ -1,9 +1,7 @@
 package com.test.unit;
 
-import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.AppiumDevice;
 import com.appium.utils.CapabilityManager;
-import com.appium.utils.DevicesByHost;
 import com.appium.utils.HostMachineDeviceManager;
 import org.testng.annotations.Test;
 
@@ -17,8 +15,8 @@ public class CapabilityManagerTest {
 
     @Test
     public void testApp() throws Exception {
-        DevicesByHost instance = HostMachineDeviceManager.getInstance();
-        System.out.println(instance);
+        List<AppiumDevice> allDevices = HostMachineDeviceManager.getDevicesByHost().getAllDevices();
+        System.out.println(allDevices);
 
     }
 }

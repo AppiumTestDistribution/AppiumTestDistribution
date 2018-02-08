@@ -3,6 +3,7 @@ package com.appium.manager;
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.AppiumDevice;
 
 import java.io.IOException;
 
@@ -12,6 +13,7 @@ import java.io.IOException;
 public class AppiumDeviceManager {
 
     private static ThreadLocal<String> deviceUDID = new ThreadLocal<>();
+    private static ThreadLocal<AppiumDevice> appiumDevice = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
     private AndroidDeviceConfiguration androidDeviceConfiguration;
 
@@ -28,9 +30,14 @@ public class AppiumDeviceManager {
         return deviceUDID.get();
     }
 
-    protected static void setDeviceUDID(String UDID) {
-        deviceUDID.set(UDID);
+    public static AppiumDevice getDevice() {
+        return appiumDevice.get();
     }
+
+    protected static void setDevice(AppiumDevice device) {
+        appiumDevice.set(device);
+    }
+
 
     public static MobilePlatform getMobilePlatform() {
         if (AppiumDeviceManager.getDeviceUDID().length()

@@ -172,7 +172,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
         String[] tagsArray = getTagArray(feature.getTags());
         String tags = String.join(",", tagsArray);
         if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-            deviceAllocationManager.getNextAvailableDeviceId();
+            deviceAllocationManager.getNextAvailableDevice();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
             System.out.println(deviceThreadNumber);
             System.out.println("Feature Tag Name::" + feature.getTags());
@@ -185,9 +185,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                 }
                 String device = xpathXML.parseXML(Integer
                         .parseInt(deviceThreadNumber[1]));
-                deviceAllocationManager.allocateDevice(
-                    device,
-                    AppiumDeviceManager.getDeviceUDID());
+//                deviceAllocationManager.allocateDevice(
+//                    device,
+//                    AppiumDeviceManager.getDeviceUDID());
                 if (AppiumDeviceManager.getDeviceUDID() == null) {
                     System.out.println("No devices are free to run test "
                             + "or Failed to run childTest");
@@ -199,8 +199,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             }
         } else {
             try {
-                deviceAllocationManager.allocateDevice("",
-                    deviceSingleton.getDeviceUDID());
+//                deviceAllocationManager.allocateDevice("",
+//                    deviceSingleton.getDeviceUDID());
                 reportManager.createParentNodeExtent(feature.getName(),"")
                         .assignCategory(tags);
                 //appiumServerManager.startAppiumServer();

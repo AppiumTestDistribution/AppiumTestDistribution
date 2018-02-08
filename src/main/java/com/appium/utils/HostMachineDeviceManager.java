@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
 import com.thoughtworks.device.SimulatorManager;
-import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,7 +21,7 @@ public class HostMachineDeviceManager {
 
     private static DevicesByHost instance;
 
-    public static DevicesByHost getInstance() {
+    public static DevicesByHost getDevicesByHost() {
         if (instance == null) {
             try {
                 Map<String, List<AppiumDevice>> devices = getDevices();
@@ -57,8 +56,7 @@ public class HostMachineDeviceManager {
                                         "http://" + machineIP + ":4567/devices"),
                                 Device[].class));
                         physicalDevices.forEach(physicalDevice -> {
-                            AppiumDevice appiumDevice = new AppiumDevice();
-                            appiumDevice.setDevice(physicalDevice);
+                            AppiumDevice appiumDevice = new AppiumDevice(physicalDevice, machineIP);
                             appiumDevice.setPort(new AvailablePorts().getAvailablePort());
                             deviceList.add(appiumDevice);
                         });
@@ -67,8 +65,7 @@ public class HostMachineDeviceManager {
                             List<Device> simulatorsToBoot = getSimulators(
                                     machineIP, simulators, mapper);
                             simulatorsToBoot.forEach(simulator -> {
-                                AppiumDevice appiumDevice = new AppiumDevice();
-                                appiumDevice.setDevice(simulator);
+                                AppiumDevice appiumDevice = new AppiumDevice(simulator, machineIP);
                                 appiumDevice.setPort(new AvailablePorts().getAvailablePort());
                                 deviceList.add(appiumDevice);
                             });
@@ -109,14 +106,15 @@ public class HostMachineDeviceManager {
         return devices;
     }
 
-    public static Map<String, List<AppiumDevice>> getLocalDevices() throws Exception {
+    private static Map<String, List<AppiumDevice>> getLocalDevices() throws Exception {
         List<AppiumDevice> devices = new ArrayList<>();
         Map<String, List<AppiumDevice>> simulatorsToBoot = new HashMap<>();
         JSONArray hostMachines = getHostMachineObject();
+        String localIpAddress = "127.0.0.1";
         hostMachines.forEach(hostMachine -> {
             JSONObject hostMachineJson = (JSONObject) hostMachine;
             String machineIP = hostMachineJson.getString("machineIP");
-            if ("127.0.0.1".equals(machineIP)) {
+            if (localIpAddress.equals(machineIP)) {
                 if (hostMachineJson.has("simulators")) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     simulators.forEach(sim -> {
@@ -127,8 +125,7 @@ public class HostMachineDeviceManager {
                             Device simulatorDetails = new SimulatorManager()
                                     .getDevice(deviceName, os, "iOS");
                             if (!simulatorDetails.getState().equals("Booted")) {
-                                AppiumDevice appiumDevice = new AppiumDevice();
-                                appiumDevice.setDevice(simulatorDetails);
+                                AppiumDevice appiumDevice = new AppiumDevice(simulatorDetails, localIpAddress);
                                 appiumDevice.setPort(new AvailablePorts().getAvailablePort());
                                 devices.add(appiumDevice);
                             }
@@ -140,12 +137,11 @@ public class HostMachineDeviceManager {
             }
         });
         new DeviceManager().getDevices().forEach(allBootedDevice -> {
-            AppiumDevice appiumDevice = new AppiumDevice();
-            appiumDevice.setDevice(allBootedDevice);
+            AppiumDevice appiumDevice = new AppiumDevice(allBootedDevice, localIpAddress);
             appiumDevice.setPort(new AvailablePorts().getAvailablePort());
             devices.add(appiumDevice);
         } );
-        simulatorsToBoot.put("127.0.0.1", devices);
+        simulatorsToBoot.put(localIpAddress, devices);
         return simulatorsToBoot;
     }
 

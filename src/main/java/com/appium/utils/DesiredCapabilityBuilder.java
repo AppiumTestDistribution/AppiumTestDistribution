@@ -3,8 +3,6 @@ package com.appium.utils;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.DeviceAllocationManager;
-import com.thoughtworks.device.Device;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -16,7 +14,6 @@ import org.springframework.util.ResourceUtils;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.HashMap;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -31,7 +28,7 @@ public class DesiredCapabilityBuilder {
 
     public DesiredCapabilityBuilder() throws IOException {
         availablePorts = new AvailablePorts();
-        devicesByHost = HostMachineDeviceManager.getInstance();
+        devicesByHost = HostMachineDeviceManager.getDevicesByHost();
     }
 
     public static DesiredCapabilities getDesiredCapability() {
@@ -40,7 +37,7 @@ public class DesiredCapabilityBuilder {
 
     public void buildDesiredCapability(String platform,
                                        String jsonPath) throws Exception {
-        int port = HostMachineDeviceManager.getInstance()
+        int port = HostMachineDeviceManager.getDevicesByHost()
                 .getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getPort();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getObjectFromJSON();
@@ -103,8 +100,7 @@ public class DesiredCapabilityBuilder {
             if (AppiumDeviceManager.getDeviceUDID().length()
                     == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
 
-                AppiumDevice deviceProperty = devicesByHost.getDeviceProperty(
-                        AppiumDeviceManager.getDeviceUDID());
+                AppiumDevice deviceProperty = AppiumDeviceManager.getDevice();
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
                         deviceProperty.getDevice().getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,

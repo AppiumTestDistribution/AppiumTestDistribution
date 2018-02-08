@@ -5,13 +5,14 @@ import com.appium.ios.IOSDeviceConfiguration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class DevicesByHost {
-    private Map<String, List<AppiumDevice>> devicesByHost;
+    private ConcurrentHashMap<String, List<AppiumDevice>> devicesByHost;
 
-    public DevicesByHost(Map<String, List<AppiumDevice>> devicesByHost) {
-        this.devicesByHost = devicesByHost;
+    DevicesByHost(Map<String, List<AppiumDevice>> devicesByHost) {
+        this.devicesByHost = new ConcurrentHashMap<>(devicesByHost);
     }
 
     public List<AppiumDevice> getAllDevices() {
@@ -69,5 +70,10 @@ public class DevicesByHost {
 
     public Map<String, List<AppiumDevice>> getAllHostDevices() {
         return devicesByHost;
+    }
+
+    public AppiumDevice getAppiumDevice(String deviceUdid, String hostName) {
+        List<AppiumDevice> devicesInHost = devicesByHost.get(hostName);
+        return devicesInHost.stream().filter(appiumDevice -> appiumDevice.getDevice().getUdid().equals(deviceUdid)).findFirst().get();
     }
 }

@@ -19,7 +19,7 @@ public class AndroidDeviceConfiguration {
     private DevicesByHost devicesByHost;
 
     public AndroidDeviceConfiguration() {
-        devicesByHost = HostMachineDeviceManager.getInstance();
+        devicesByHost = HostMachineDeviceManager.getDevicesByHost();
     }
 
     /*
@@ -41,14 +41,7 @@ public class AndroidDeviceConfiguration {
     }
 
     private AppiumDevice getDevice() {
-        AppiumDevice deviceOS = null;
-        try {
-            deviceOS = HostMachineDeviceManager.getInstance()
-                    .getDeviceProperty(AppiumDeviceManager.getDeviceUDID());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return deviceOS;
+        return AppiumDeviceManager.getDevice();
     }
 
     public String screenRecord(String fileName)

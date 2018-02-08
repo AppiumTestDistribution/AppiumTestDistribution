@@ -1,11 +1,12 @@
 package com.appium.manager;
 
-import com.appium.ios.SimManager;
-import com.appium.utils.*;
+import com.appium.utils.AppiumDevice;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
+import com.appium.utils.JsonParser;
 import com.github.yunusmete.stf.api.STFService;
 import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
-import com.thoughtworks.android.AndroidManager;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -15,8 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -24,25 +24,20 @@ import java.util.logging.Logger;
  */
 public class DeviceAllocationManager {
 
-    public ConcurrentHashMap<String, List<AppiumDevice>> deviceMapping;
     private static DeviceAllocationManager instance;
-    private static AndroidManager androidManager;
     private static final String STF_SERVICE_URL = System.getenv("STF_URL");
     private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
     static STFService service;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
-    private SimManager simManager = new SimManager();
+    private List<AppiumDevice> allDevices;
     private AppiumDriverManager appiumDriverManager;
     private static boolean simCapsPresent = false;
     private static boolean deviceCapsPresent = false;
-    private DevicesByHost appiumDeviceByHost;
 
     private DeviceAllocationManager() throws Exception {
         try {
-            deviceMapping = new ConcurrentHashMap<>();
-            appiumDeviceByHost = HostMachineDeviceManager.getInstance();
-            deviceMapping.putAll(appiumDeviceByHost.getAllHostDevices());
-            androidManager = new AndroidManager();
+            DevicesByHost appiumDeviceByHost = HostMachineDeviceManager.getDevicesByHost();
+            allDevices = appiumDeviceByHost.getAllDevices();
             appiumDriverManager = new AppiumDriverManager();
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,45 +107,34 @@ public class DeviceAllocationManager {
 
     public List<AppiumDevice> getDevices() {
         LOGGER.info("All devices connected");
-        return HostMachineDeviceManager.getInstance().getAllDevices();
+        return HostMachineDeviceManager.getDevicesByHost().getAllDevices();
     }
 
-    public synchronized String getNextAvailableDeviceId() {
-        ConcurrentHashMap.KeySetView<String, List<AppiumDevice>> devices =
-                deviceMapping.keySet();
-        final String[] deviceReadyForExecution = new String[1];
+    public synchronized AppiumDevice getNextAvailableDevice() {
         int i = 0;
-        for (String device : devices) {
+
+        for (AppiumDevice device : allDevices) {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
             i++;
-
-            deviceMapping.get(device).forEach(appiumDevice -> {
-                if (appiumDevice.getDeviceState().equalsIgnoreCase("Available")) {
-                    appiumDevice.setDeviceState("Busy");
-                     deviceReadyForExecution[0] = appiumDevice.getDevice().getUdid();
-                }
-            });
-            return deviceReadyForExecution[0];
+            if (device.isAvailable()) {
+                device.blockDevice();
+                return device;
+            }
         }
         return null;
     }
 
     public void freeDevice() {
-        HostMachineDeviceManager.getInstance()
-                .getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).setDeviceState("Available");
+        HostMachineDeviceManager.getDevicesByHost()
+                .getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).freeDevice();
         LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDeviceUDID()
                 + " from execution list");
     }
 
-    public void allocateDevice(String device, String deviceUDID) {
-        if (device.isEmpty()) {
-            LOGGER.info("Allocated Device " + deviceUDID + " for Execution");
-            AppiumDeviceManager.setDeviceUDID(deviceUDID);
-        } else {
-            LOGGER.info("Allocated Device " + deviceUDID + " for Execution");
-            AppiumDeviceManager.setDeviceUDID(device);
-        }
+    public void allocateDevice(AppiumDevice appiumDevice) {
+        LOGGER.info("Allocated Device " + appiumDevice + " for Execution");
+        AppiumDeviceManager.setDevice(appiumDevice);
     }
 
     private void connectToSTFServer() throws MalformedURLException, URISyntaxException {

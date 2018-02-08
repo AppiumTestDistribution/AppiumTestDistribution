@@ -17,6 +17,7 @@ public class DeviceSingleton {
     }
 
     public String getDeviceUDID() {
-        return deviceID.getNextAvailableDeviceId();
+       //return deviceID.getNextAvailableDevice();
+        return null;
     }
 }

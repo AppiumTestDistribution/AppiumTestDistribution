@@ -33,7 +33,7 @@ public class IOSDeviceConfiguration {
 
     public IOSDeviceConfiguration() throws IOException {
         prop = ConfigFileManager.getInstance();
-        devicesByHost = HostMachineDeviceManager.getInstance();
+        devicesByHost = HostMachineDeviceManager.getDevicesByHost();
     }
 
     public List<AppiumDevice> checkIfUserSpecifiedSimulatorAndGetUDID() {
