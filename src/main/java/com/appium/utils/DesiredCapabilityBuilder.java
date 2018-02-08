@@ -40,9 +40,8 @@ public class DesiredCapabilityBuilder {
 
     public void buildDesiredCapability(String platform,
                                        String jsonPath) throws Exception {
-        Object port = ((HashMap) DeviceAllocationManager.getInstance()
-                .deviceMapping.get(AppiumDeviceManager
-                        .getDeviceUDID())).get("port");
+        int port = HostMachineDeviceManager.getInstance()
+                .getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getPort();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getObjectFromJSON();
         JSONObject platFormCapabilities = jsonParsedObject.getJSONObject(platform);
@@ -94,7 +93,7 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.ANDROID_UIAUTOMATOR2);
                 desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
-                        Integer.parseInt(port.toString()));
+                        port);
             }
             appPackage(desiredCapabilities);
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
@@ -119,7 +118,7 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.IOS_XCUI_TEST);
                 desiredCapabilities.setCapability(IOSMobileCapabilityType
-                        .WDA_LOCAL_PORT, Integer.parseInt(port.toString()));
+                        .WDA_LOCAL_PORT, port);
             }
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                     AppiumDeviceManager.getDeviceUDID());

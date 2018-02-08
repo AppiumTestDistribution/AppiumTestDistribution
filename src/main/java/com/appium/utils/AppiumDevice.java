@@ -15,6 +15,15 @@ public class AppiumDevice {
     }
 
     int port;
+
+    public void setDeviceState(String deviceState) {
+        this.deviceState = deviceState;
+    }
+
+    public String getDeviceState() {
+        return deviceState;
+    }
+
     String deviceState = "Available";
 
     public Device getDevice() {

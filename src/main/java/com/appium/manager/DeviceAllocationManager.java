@@ -1,15 +1,11 @@
 package com.appium.manager;
 
-import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.ios.SimManager;
 import com.appium.utils.*;
 import com.github.yunusmete.stf.api.STFService;
 import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
 import com.thoughtworks.android.AndroidManager;
-import com.thoughtworks.device.Device;
-import org.apache.commons.lang3.SystemUtils;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -114,31 +110,35 @@ public class DeviceAllocationManager {
         }
     }
 
-    public ArrayList<String> getDevices() {
+    public List<AppiumDevice> getDevices() {
         LOGGER.info("All devices connected");
-        //Fix this
-        return null;
+        return HostMachineDeviceManager.getInstance().getAllDevices();
     }
 
     public synchronized String getNextAvailableDeviceId() {
         ConcurrentHashMap.KeySetView<String, List<AppiumDevice>> devices =
                 deviceMapping.keySet();
+        final String[] deviceReadyForExecution = new String[1];
         int i = 0;
         for (String device : devices) {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
             i++;
-            if (((HashMap) deviceMapping.get(device))
-                    .get("deviceState").toString().equals("true")) {
-                ((HashMap) deviceMapping.get(device)).put("deviceState", false);
-                return device;
-            }
+
+            deviceMapping.get(device).forEach(appiumDevice -> {
+                if (appiumDevice.getDeviceState().equalsIgnoreCase("Available")) {
+                    appiumDevice.setDeviceState("Busy");
+                     deviceReadyForExecution[0] = appiumDevice.getDevice().getUdid();
+                }
+            });
+            return deviceReadyForExecution[0];
         }
         return null;
     }
 
     public void freeDevice() {
-        ((HashMap) deviceMapping.get(AppiumDeviceManager.getDeviceUDID())).put("deviceState", true);
+        HostMachineDeviceManager.getInstance()
+                .getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).setDeviceState("Available");
         LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDeviceUDID()
                 + " from execution list");
     }

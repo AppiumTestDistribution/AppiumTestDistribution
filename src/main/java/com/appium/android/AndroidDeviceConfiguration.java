@@ -11,7 +11,6 @@ import com.appium.utils.HostMachineDeviceManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class AndroidDeviceConfiguration {
 
@@ -27,9 +26,9 @@ public class AndroidDeviceConfiguration {
      * This method gets the device model name
      */
     public String getDeviceModel() {
-        Optional<AppiumDevice> getModel = getDevice();
-        return (getModel.get().getDevice().getDeviceModel()
-                + getModel.get().getDevice().getBrand())
+        AppiumDevice getModel = getDevice();
+        return (getModel.getDevice().getDeviceModel()
+                + getModel.getDevice().getBrand())
                 .replaceAll("[^a-zA-Z0-9\\.\\-]", "");
     }
 
@@ -37,17 +36,15 @@ public class AndroidDeviceConfiguration {
      * This method gets the device OS API Level
      */
     public String getDeviceOS() {
-        Optional<AppiumDevice> deviceOS = getDevice();
-        return deviceOS.get().getDevice().getOsVersion();
+        AppiumDevice deviceOS = getDevice();
+        return deviceOS.getDevice().getOsVersion();
     }
 
-    private Optional<AppiumDevice> getDevice() {
-        Optional<AppiumDevice> deviceOS = null;
+    private AppiumDevice getDevice() {
+        AppiumDevice deviceOS = null;
         try {
             deviceOS = HostMachineDeviceManager.getInstance()
-                    .getAllAndroidDevices().stream().filter(device ->
-                    device.getDevice().getUdid()
-                            .equals(AppiumDeviceManager.getDeviceUDID())).findFirst();
+                    .getDeviceProperty(AppiumDeviceManager.getDeviceUDID());
         } catch (Exception e) {
             e.printStackTrace();
         }
