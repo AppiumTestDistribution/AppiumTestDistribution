@@ -19,7 +19,7 @@ public class AndroidDeviceConfiguration {
     private DevicesByHost devicesByHost;
 
     public AndroidDeviceConfiguration() {
-        devicesByHost = HostMachineDeviceManager.getDevicesByHost();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     /*

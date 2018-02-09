@@ -31,7 +31,7 @@ public class AppiumDriverManager {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
-        devicesByHost = HostMachineDeviceManager.getDevicesByHost();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     public static AppiumDriver getDriver() {

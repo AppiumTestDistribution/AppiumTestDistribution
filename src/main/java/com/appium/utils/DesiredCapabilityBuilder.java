@@ -28,7 +28,7 @@ public class DesiredCapabilityBuilder {
 
     public DesiredCapabilityBuilder() throws IOException {
         availablePorts = new AvailablePorts();
-        devicesByHost = HostMachineDeviceManager.getDevicesByHost();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     public static DesiredCapabilities getDesiredCapability() {

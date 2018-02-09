@@ -15,9 +15,8 @@ public class CapabilityManagerTest {
 
     @Test
     public void testApp() throws Exception {
-        List<AppiumDevice> allDevices = HostMachineDeviceManager.getDevicesByHost().getAllDevices();
+        List<AppiumDevice> allDevices = HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices();
         System.out.println(allDevices);
-
     }
 }
 

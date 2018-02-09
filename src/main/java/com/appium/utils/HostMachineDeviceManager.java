@@ -11,29 +11,74 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class HostMachineDeviceManager {
 
-    private static DevicesByHost devicesByHost;
+    private static final String PLATFORM = "Platform";
+    private static final String UDIDS = "udids";
+    private DevicesByHost devicesByHost;
+    private static HostMachineDeviceManager instance;
 
-    public static void initialize(){
-
+    private HostMachineDeviceManager() {
+        initializeDevicesByHost();
     }
 
-    public static DevicesByHost getDevicesByHost() {
+    public static HostMachineDeviceManager getInstance() {
+        if (instance == null) {
+            instance = new HostMachineDeviceManager();
+        }
+        return instance;
+    }
+
+    private void initializeDevicesByHost() {
         if (devicesByHost == null) {
             try {
-                Map<String, List<AppiumDevice>> devices = getDevices();
-                devicesByHost = new DevicesByHost(devices);
+                Map<String, List<AppiumDevice>> allDevices = getDevices();
+                Map<String, List<AppiumDevice>> devicesFilteredByPlatform = filterByDevicePlatform(allDevices);
+                Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
+                devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(Map<String, List<AppiumDevice>> devicesByHost) {
+        String udidsString = System.getenv(UDIDS);
+        List<String> udids = udidsString == null ? Collections.emptyList() : Arrays.asList(udidsString.split(","));
+
+        if (udids.size() == 0) {
+            return devicesByHost;
+        } else {
+            HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
+            devicesByHost.forEach((hostName, appiumDevices) -> {
+                List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice -> udids.contains(appiumDevice.getDevice().getUdid())).collect(Collectors.toList());
+                if (!filteredDevices.isEmpty()) {
+                    filteredDevicesHostName.put(hostName, filteredDevices);
+                }
+            });
+            return filteredDevicesHostName;
+        }
+    }
+
+    private Map<String, List<AppiumDevice>> filterByDevicePlatform(Map<String, List<AppiumDevice>> devicesByHost) {
+        String platform = System.getenv(PLATFORM);
+        if (platform.equalsIgnoreCase("BOTH")) {
+            return devicesByHost;
+        } else {
+            HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
+            devicesByHost.forEach((hostName, appiumDevices) -> {
+                List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice -> appiumDevice.getDevice().getOs().equalsIgnoreCase(platform)).collect(Collectors.toList());
+                if (!filteredDevices.isEmpty())
+                    filteredDevicesHostName.put(hostName, filteredDevices);
+            });
+            return filteredDevicesHostName;
+        }
+    }
+
+    public DevicesByHost getDevicesByHost() {
         return devicesByHost;
     }
 
@@ -144,7 +189,7 @@ public class HostMachineDeviceManager {
             AppiumDevice appiumDevice = new AppiumDevice(allBootedDevice, localIpAddress);
             appiumDevice.setPort(new AvailablePorts().getAvailablePort());
             devices.add(appiumDevice);
-        } );
+        });
         simulatorsToBoot.put(localIpAddress, devices);
         return simulatorsToBoot;
     }

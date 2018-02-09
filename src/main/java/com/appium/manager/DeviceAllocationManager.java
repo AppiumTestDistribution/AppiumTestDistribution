@@ -29,6 +29,7 @@ public class DeviceAllocationManager {
     private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
     static STFService service;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;
     private AppiumDriverManager appiumDriverManager;
     private static boolean simCapsPresent = false;
@@ -36,7 +37,8 @@ public class DeviceAllocationManager {
 
     private DeviceAllocationManager() throws Exception {
         try {
-            DevicesByHost appiumDeviceByHost = HostMachineDeviceManager.getDevicesByHost();
+            hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+            DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
             appiumDriverManager = new AppiumDriverManager();
         } catch (IOException e) {
@@ -107,7 +109,7 @@ public class DeviceAllocationManager {
 
     public List<AppiumDevice> getDevices() {
         LOGGER.info("All devices connected");
-        return HostMachineDeviceManager.getDevicesByHost().getAllDevices();
+        return hostMachineDeviceManager.getDevicesByHost().getAllDevices();
     }
 
     public synchronized AppiumDevice getNextAvailableDevice() {

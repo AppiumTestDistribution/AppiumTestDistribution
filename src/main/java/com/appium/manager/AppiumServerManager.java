@@ -20,7 +20,7 @@ public class AppiumServerManager {
 
     public AppiumServerManager() throws IOException {
         remoteAppiumManager = new RemoteAppiumManager();
-        devicesByHost = HostMachineDeviceManager.getDevicesByHost();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     /**

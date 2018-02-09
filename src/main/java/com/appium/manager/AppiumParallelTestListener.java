@@ -210,7 +210,7 @@ public final class AppiumParallelTestListener
         try {
             String device = testClass.getXmlClass().getAllParameters().get("device");
             String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
-            DevicesByHost devicesByHost = HostMachineDeviceManager.getDevicesByHost();
+            DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
             AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
             String className = testClass.getRealClass().getSimpleName();
             deviceAllocationManager.allocateDevice(appiumDevice);
