@@ -19,18 +19,22 @@ import java.util.Map;
 
 public class HostMachineDeviceManager {
 
-    private static DevicesByHost instance;
+    private static DevicesByHost devicesByHost;
+
+    public static void initialize(){
+
+    }
 
     public static DevicesByHost getDevicesByHost() {
-        if (instance == null) {
+        if (devicesByHost == null) {
             try {
                 Map<String, List<AppiumDevice>> devices = getDevices();
-                instance = new DevicesByHost(devices);
+                devicesByHost = new DevicesByHost(devices);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return instance;
+        return devicesByHost;
     }
 
     private static Map<String, List<AppiumDevice>> getDevices() throws Exception {

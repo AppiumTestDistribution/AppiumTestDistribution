@@ -121,14 +121,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                 deviceModel = androidDevice.getDeviceModel();
                 screenShotAndFrame(failed_StepName, scrFile, "android");
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-                try {
-                    deviceModel =
-                            iosDevice.getIOSDeviceProductTypeAndVersion();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                deviceModel =
+                        AppiumDeviceManager.getDevice().getDevice().getDeviceModel();
                 screenShotAndFrame(failed_StepName, scrFile, "iPhone");
             }
             try {

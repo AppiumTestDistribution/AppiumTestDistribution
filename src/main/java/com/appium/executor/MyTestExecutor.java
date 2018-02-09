@@ -180,6 +180,7 @@ public class MyTestExecutor {
             test.setName("TestNG Test" + i);
             test.setPreserveOrder("false");
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
+            test.addParameter("hostName", deviceSerail.get(i).getHostName());
             test.setIncludedGroups(groupsInclude);
             test.setExcludedGroups(groupsExclude);
             List<XmlClass> xmlClasses = new ArrayList<>();

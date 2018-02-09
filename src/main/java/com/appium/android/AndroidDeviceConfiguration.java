@@ -46,14 +46,14 @@ public class AndroidDeviceConfiguration {
 
     public String screenRecord(String fileName)
             throws IOException, InterruptedException {
-        return "adb -s " + AppiumDeviceManager.getDeviceUDID()
+        return "adb -s " + AppiumDeviceManager.getDevice().getDevice().getUdid()
                 + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
                 + ".mp4";
     }
 
     public boolean checkIfRecordable() throws IOException, InterruptedException {
         String screenrecord =
-                cmd.runCommand("adb -s " + AppiumDeviceManager.getDeviceUDID()
+                cmd.runCommand("adb -s " + AppiumDeviceManager.getDevice().getDevice().getUdid()
                         + " shell ls /system/bin/screenrecord");
         if (screenrecord.trim().equals("/system/bin/screenrecord")) {
             return true;
@@ -64,14 +64,15 @@ public class AndroidDeviceConfiguration {
 
     public String getDeviceManufacturer()
             throws IOException, InterruptedException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDevice().getDevice().getUdid())
                 .getDevice().getDeviceManufacturer();
     }
 
     public AndroidDeviceConfiguration pullVideoFromDevice(String fileName, String destination)
             throws IOException, InterruptedException {
         ProcessBuilder pb =
-                new ProcessBuilder("adb", "-s", AppiumDeviceManager.getDeviceUDID(),
+                new ProcessBuilder("adb", "-s",
+                        AppiumDeviceManager.getDevice().getDevice().getUdid(),
                         "pull", "/sdcard/" + fileName + ".mp4",
                         destination);
         Process pc = pb.start();
@@ -84,7 +85,7 @@ public class AndroidDeviceConfiguration {
 
     public void removeVideoFileFromDevice(String fileName)
             throws IOException, InterruptedException {
-        cmd.runCommand("adb -s " + AppiumDeviceManager.getDeviceUDID() + " shell rm -f /sdcard/"
+        cmd.runCommand("adb -s " + AppiumDeviceManager.getDevice().getDevice().getUdid() + " shell rm -f /sdcard/"
                 + fileName + ".mp4");
     }
 

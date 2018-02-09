@@ -37,8 +37,7 @@ public class DesiredCapabilityBuilder {
 
     public void buildDesiredCapability(String platform,
                                        String jsonPath) throws Exception {
-        int port = HostMachineDeviceManager.getDevicesByHost()
-                .getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).getPort();
+        int port = AppiumDeviceManager.getDevice().getPort();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getObjectFromJSON();
         JSONObject platFormCapabilities = jsonParsedObject.getJSONObject(platform);
@@ -58,10 +57,12 @@ public class DesiredCapabilityBuilder {
 
                 String appPath = "";
                 if (values instanceof JSONObject) {
-                    if (AppiumDeviceManager.getDeviceUDID().length()
+                    int length = AppiumDeviceManager.getDevice()
+                            .getDevice().getUdid().length();
+                    if (length
                             == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                         appPath = (((JSONObject) values).getString("simulator"));
-                    } else if (AppiumDeviceManager.getDeviceUDID().length()
+                    } else if (length
                             == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
                         appPath = ((JSONObject) values).getString("device");
                     }
@@ -94,10 +95,10 @@ public class DesiredCapabilityBuilder {
             }
             appPackage(desiredCapabilities);
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            String version = new IOSDeviceConfiguration().getIOSDeviceProductVersion();
+            String version = AppiumDeviceManager.getDevice().getDevice().getOsVersion();
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
-            if (AppiumDeviceManager.getDeviceUDID().length()
+            if (AppiumDeviceManager.getDevice().getDevice().getUdid().length()
                     == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
 
                 AppiumDevice deviceProperty = AppiumDeviceManager.getDevice();
@@ -117,10 +118,10 @@ public class DesiredCapabilityBuilder {
                         .WDA_LOCAL_PORT, port);
             }
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                    AppiumDeviceManager.getDeviceUDID());
+                    AppiumDeviceManager.getDevice().getDevice().getUdid());
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                AppiumDeviceManager.getDeviceUDID());
+                AppiumDeviceManager.getDevice().getDevice().getUdid());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 

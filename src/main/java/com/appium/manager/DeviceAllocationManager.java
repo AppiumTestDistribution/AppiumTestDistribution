@@ -126,9 +126,9 @@ public class DeviceAllocationManager {
     }
 
     public void freeDevice() {
-        HostMachineDeviceManager.getDevicesByHost()
-                .getDeviceProperty(AppiumDeviceManager.getDeviceUDID()).freeDevice();
-        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDeviceUDID()
+        AppiumDeviceManager.getDevice().freeDevice();
+        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDevice().getDevice()
+                .getUdid()
                 + " from execution list");
     }
 

@@ -29,7 +29,7 @@ public class AppiumDevice {
         return device;
     }
 
-    public String getIpAddress() {
+    public String getHostName() {
         return ipAddress;
     }
 

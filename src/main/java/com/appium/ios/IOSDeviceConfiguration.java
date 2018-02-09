@@ -53,34 +53,10 @@ public class IOSDeviceConfiguration {
         return deviceUDIDiOS;
     }
 
-
-    /**
-     * @throws InterruptedException
-     * @throws IOException          Need to fix bug not fetching the version and product type for
-     *                              report category
-     *                              iPhone 7,1
-     */
-
-    public String getIOSDeviceProductTypeAndVersion()
-            throws InterruptedException, IOException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
-                .getDevice().getDeviceModel();
-    }
-
-    public String getDeviceName() throws InterruptedException, IOException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
-                .getDevice().getName();
-    }
-
-    public String getIOSDeviceProductVersion() throws InterruptedException, IOException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDeviceUDID())
-                .getDevice().getOsVersion();
-    }
-
     public HashMap<String, String> setIOSWebKitProxyPorts() {
         try {
             int webkitproxyport = ap.getAvailablePort();
-            deviceMap.put(AppiumDeviceManager.getDeviceUDID(), Integer.toString(webkitproxyport));
+            deviceMap.put(AppiumDeviceManager.getDevice().getDevice().getUdid(), Integer.toString(webkitproxyport));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,19 +66,20 @@ public class IOSDeviceConfiguration {
     public String startIOSWebKit() throws IOException, InterruptedException {
         setIOSWebKitProxyPorts();
 
-        String webkitRunner = "ios_webkit_debug_proxy -c " + AppiumDeviceManager.getDeviceUDID()
-                + ":" + deviceMap.get(AppiumDeviceManager.getDeviceUDID());
+        String webkitRunner = "ios_webkit_debug_proxy -c "
+                + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                + ":" + deviceMap.get(AppiumDeviceManager.getDevice().getDevice().getUdid());
         p1 = Runtime.getRuntime().exec(webkitRunner);
         LOGGER.info(
-                "WebKit Proxy is started on device " + AppiumDeviceManager.getDeviceUDID()
+                "WebKit Proxy is started on device " + AppiumDeviceManager.getDevice().getDevice().getUdid()
                         + " and with port number "
-                        + deviceMap.get(AppiumDeviceManager.getDeviceUDID())
+                        + deviceMap.get(AppiumDeviceManager.getDevice().getDevice().getUdid())
                         + " and in thread "
                         + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         iosDebugProxyProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + iosDebugProxyProcess);
-        return String.valueOf(deviceMap.get(AppiumDeviceManager.getDeviceUDID()));
+        return String.valueOf(deviceMap.get(AppiumDeviceManager.getDevice().getDevice().getUdid()));
     }
 
 

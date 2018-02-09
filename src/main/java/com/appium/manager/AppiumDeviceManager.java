@@ -40,9 +40,10 @@ public class AppiumDeviceManager {
 
 
     public static MobilePlatform getMobilePlatform() {
-        if (AppiumDeviceManager.getDeviceUDID().length()
+        int length = AppiumDeviceManager.getDevice().getDevice().getUdid().length();
+        if (length
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH
-                || AppiumDeviceManager.getDeviceUDID().length()
+                || length
                 == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
             return MobilePlatform.IOS;
         } else {
@@ -54,14 +55,15 @@ public class AppiumDeviceManager {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceModel();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
-            return iosDeviceConfiguration.getIOSDeviceProductTypeAndVersion();
+            return AppiumDeviceManager.getDevice().getDevice().getDeviceModel();
         }
         throw new IllegalArgumentException("DeviceModel is Empty");
     }
 
     public String getDeviceCategory() throws Exception {
-        if (iosDeviceConfiguration.deviceUDIDiOS.contains(AppiumDeviceManager.getDeviceUDID())) {
-            return iosDeviceConfiguration.getDeviceName().replace(" ", "_");
+        if (iosDeviceConfiguration.deviceUDIDiOS
+                .contains(AppiumDeviceManager.getDevice().getDevice().getUdid())) {
+            return AppiumDeviceManager.getDevice().getDevice().getName().replace(" ", "_");
         } else {
             return androidDeviceConfiguration.getDeviceModel();
         }
@@ -71,13 +73,7 @@ public class AppiumDeviceManager {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceOS();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
-            try {
-                return iosDeviceConfiguration.getIOSDeviceProductVersion();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            return AppiumDeviceManager.getDevice().getDevice().getOsVersion();
         }
         throw new IllegalArgumentException("DeviceVersion is Empty");
     }

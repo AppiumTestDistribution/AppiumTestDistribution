@@ -47,7 +47,7 @@ public class ReportManager {
         throws IOException, InterruptedException {
         parent = ExtentTestManager.createTest(methodName, testDescription,
             appiumDeviceManager.getDeviceModel()
-                    + AppiumDeviceManager.getDeviceUDID());
+                    + AppiumDeviceManager.getDevice().getDevice().getUdid());
         parentTest.set(parent);
         return parent;
     }
@@ -86,12 +86,12 @@ public class ReportManager {
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
             child = parentTest.get()
                 .createNode(testName,
-                    category + "_" + AppiumDeviceManager.getDeviceUDID()).assignAuthor(
+                    category + "_" + AppiumDeviceManager.getDevice().getDevice().getUdid()).assignAuthor(
                     String.valueOf(listeners));
             childTest.set(child);
         } else {
             child = parentTest.get().createNode(testName,
-                category + "_" + AppiumDeviceManager.getDeviceUDID());
+                category + "_" + AppiumDeviceManager.getDevice().getDevice().getUdid());
             childTest.set(child);
         }
     }
@@ -99,7 +99,7 @@ public class ReportManager {
     public void createChildNodeWithCategory(String methodName,
         String tags) {
         child = parentTest.get().createNode(methodName, category
-            + AppiumDeviceManager.getDeviceUDID()).assignCategory(tags);
+            + AppiumDeviceManager.getDevice().getDevice().getUdid()).assignCategory(tags);
         childTest.set(child);
     }
 }
