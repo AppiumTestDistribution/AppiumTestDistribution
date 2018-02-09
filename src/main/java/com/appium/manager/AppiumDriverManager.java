@@ -88,7 +88,6 @@ public class AppiumDriverManager {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 currentDriverSession = getMobileiOSElementAppiumDriver(iosCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);
-
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);

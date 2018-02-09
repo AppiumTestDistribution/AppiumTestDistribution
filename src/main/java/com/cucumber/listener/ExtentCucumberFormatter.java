@@ -166,23 +166,14 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
         String[] tagsArray = getTagArray(feature.getTags());
         String tags = String.join(",", tagsArray);
         if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-            deviceAllocationManager.getNextAvailableDevice();
             String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
             System.out.println(deviceThreadNumber);
             System.out.println("Feature Tag Name::" + feature.getTags());
             try {
-
-                if (prop.getProperty("CI_BASE_URI") != null) {
-                    CI_BASE_URI = prop.getProperty("CI_BASE_URI").toString().trim();
-                } else if (CI_BASE_URI == null || CI_BASE_URI.isEmpty()) {
-                    CI_BASE_URI = System.getProperty("user.dir");
-                }
-                String device = xpathXML.parseXML(Integer
-                        .parseInt(deviceThreadNumber[1]));
-//                deviceAllocationManager.allocateDevice(
-//                    device,
-//                    AppiumDeviceManager.getDeviceUDID());
-                if (AppiumDeviceManager.getDeviceUDID() == null) {
+                //Broken needs a fix
+                deviceAllocationManager.allocateDevice(
+                        deviceAllocationManager.getNextAvailableDevice());
+                if (AppiumDeviceManager.getDevice().getDevice().getUdid() == null) {
                     System.out.println("No devices are free to run test "
                             + "or Failed to run childTest");
                 }
@@ -193,8 +184,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             }
         } else {
             try {
-//                deviceAllocationManager.allocateDevice("",
-//                    deviceSingleton.getDeviceUDID());
+                deviceAllocationManager.allocateDevice(AppiumDeviceManager.getDevice());
                 reportManager.createParentNodeExtent(feature.getName(),"")
                         .assignCategory(tags);
                 //appiumServerManager.startAppiumServer();

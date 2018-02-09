@@ -100,9 +100,7 @@ public class DeviceAllocationManager {
             if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
                 connectToSTFServer();
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -114,7 +112,6 @@ public class DeviceAllocationManager {
 
     public synchronized AppiumDevice getNextAvailableDevice() {
         int i = 0;
-
         for (AppiumDevice device : allDevices) {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);

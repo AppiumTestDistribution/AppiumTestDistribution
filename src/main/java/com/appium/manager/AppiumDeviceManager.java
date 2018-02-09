@@ -40,11 +40,8 @@ public class AppiumDeviceManager {
 
 
     public static MobilePlatform getMobilePlatform() {
-        int length = AppiumDeviceManager.getDevice().getDevice().getUdid().length();
-        if (length
-                == IOSDeviceConfiguration.IOS_UDID_LENGTH
-                || length
-                == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+        String os = AppiumDeviceManager.getDevice().getDevice().getOs();
+        if (os.equalsIgnoreCase("ios")) {
             return MobilePlatform.IOS;
         } else {
             return MobilePlatform.ANDROID;
