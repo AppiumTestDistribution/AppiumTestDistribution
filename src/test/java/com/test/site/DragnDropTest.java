@@ -17,7 +17,7 @@ public class DragnDropTest extends  UserBaseTest {
     @Test
     public void dragNDrop() {
         login("login").click();
-        driver.findElementByAccessibilityId("dragAndDrop").click();
+        waitForElement("dragAndDrop").click();
         MobileElement dragMe = (MobileElement) new WebDriverWait(driver, 30).until(ExpectedConditions
                 .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
         System.out.println("Element Source X-Co-ordinates::" + dragMe.getSize().getWidth() / 2
