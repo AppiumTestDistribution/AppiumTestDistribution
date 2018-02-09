@@ -1,21 +1,21 @@
 package com.appium.utils;
 
 import com.appium.ios.IOSDeviceConfiguration;
-import com.thoughtworks.device.Device;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class DevicesByHost {
-    private Map<String, List<Device>> devicesByHost;
+    private ConcurrentHashMap<String, List<AppiumDevice>> devicesByHost;
 
-    public DevicesByHost(Map<String, List<Device>> devicesByHost) {
-        this.devicesByHost = devicesByHost;
+    DevicesByHost(Map<String, List<AppiumDevice>> devicesByHost) {
+        this.devicesByHost = new ConcurrentHashMap<>(devicesByHost);
     }
 
-    public List<Device> getAllDevices() {
+    public List<AppiumDevice> getAllDevices() {
         return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
                 stringListEntry.getValue().parallelStream())
                 .collect(Collectors.toList());
@@ -25,7 +25,7 @@ public class DevicesByHost {
         final String[] hostIPKey = new String[1];
         devicesByHost.entrySet().forEach(hostIP -> {
             hostIP.getValue().forEach(device -> {
-                if (device.getUdid().equals(uuid)) {
+                if (device.getDevice().getUdid().equals(uuid)) {
                     hostIPKey[0] = hostIP.getKey();
                 }
             });
@@ -34,37 +34,46 @@ public class DevicesByHost {
         return String.valueOf(hostIPKey[0]);
     }
 
-    public List<Device> getAllSimulators() {
+    public List<AppiumDevice> getAllSimulators() {
         return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
                 stringListEntry.getValue().parallelStream().filter(device ->
-                        device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH))
+                        device.getDevice().getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH))
                 .collect(Collectors.toList());
     }
 
-    public List<Device> getAllIOSDevices() {
+    public List<AppiumDevice> getAllIOSDevices() {
         return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
                 stringListEntry.getValue().parallelStream().filter(device ->
-                        device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH))
+                        device.getDevice().getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH))
                 .collect(Collectors.toList());
     }
 
-    public List<Device> getAllAndroidDevices() {
+    public List<AppiumDevice> getAllAndroidDevices() {
         return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
                 stringListEntry.getValue().parallelStream().filter(device ->
-                        (device.getUdid().length() != IOSDeviceConfiguration.IOS_UDID_LENGTH
-                                && device.getUdid().length()
+                        (device.getDevice().getUdid().length() != IOSDeviceConfiguration.IOS_UDID_LENGTH
+                                && device.getDevice().getUdid().length()
                                 != IOSDeviceConfiguration.SIM_UDID_LENGTH)))
                 .collect(Collectors.toList());
     }
 
-    public Device getDeviceProperty(String uuid) {
+    public AppiumDevice getDeviceProperty(String uuid) {
         return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
                 stringListEntry.getValue().parallelStream().filter(device ->
-                        device.getUdid().equalsIgnoreCase(uuid)))
+                        device.getDevice().getUdid().equalsIgnoreCase(uuid)))
                 .collect(Collectors.toList()).get(0);
     }
 
     public Set<String> getAllHosts() {
         return devicesByHost.keySet();
+    }
+
+    public Map<String, List<AppiumDevice>> getAllHostDevices() {
+        return devicesByHost;
+    }
+
+    public AppiumDevice getAppiumDevice(String deviceUdid, String hostName) {
+        List<AppiumDevice> devicesInHost = devicesByHost.get(hostName);
+        return devicesInHost.stream().filter(appiumDevice -> appiumDevice.getDevice().getUdid().equals(deviceUdid)).findFirst().get();
     }
 }

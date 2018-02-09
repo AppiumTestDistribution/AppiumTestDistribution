@@ -1,10 +1,8 @@
 package com.appium.executor;
 
 import com.appium.cucumber.report.HtmlReporter;
-import com.appium.manager.ConfigFileManager;
-import com.appium.manager.DeviceAllocationManager;
-import com.appium.manager.PackageUtil;
-import com.appium.manager.ParallelThread;
+import com.appium.manager.*;
+import com.appium.utils.AppiumDevice;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -162,7 +160,8 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
                                                  Map<String, List<Method>> methods,
-                                                 int deviceCount, ArrayList<String> deviceSerail) {
+                                                 int deviceCount,
+                                                 List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.appium.manager.AppiumParallelTestListener");
         listeners.add("com.appium.utils.RetryListener");
@@ -180,7 +179,8 @@ public class MyTestExecutor {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
             test.setPreserveOrder("false");
-            test.addParameter("device", deviceSerail.get(i));
+            test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
+            test.addParameter("hostName", deviceSerail.get(i).getHostName());
             test.setIncludedGroups(groupsInclude);
             test.setExcludedGroups(groupsExclude);
             List<XmlClass> xmlClasses = new ArrayList<>();
@@ -351,7 +351,7 @@ public class MyTestExecutor {
     }
 
     public XmlSuite constructXmlSuiteForParallelCucumber(
-            int deviceCount, ArrayList<String> deviceSerail) {
+            int deviceCount, List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.cucumber.listener.ExtentCucumberFormatter");
         XmlSuite suite = new XmlSuite();
@@ -364,7 +364,7 @@ public class MyTestExecutor {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
             test.setPreserveOrder("false");
-            test.addParameter("device", deviceSerail.get(i));
+            test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
             test.setPackages(getPackages());
         }
         File file = new File(System.getProperty("user.dir") + "/target/parallel.xml");

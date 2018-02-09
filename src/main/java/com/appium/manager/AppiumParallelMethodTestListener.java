@@ -97,8 +97,7 @@ public final class AppiumParallelMethodTestListener
     public void onTestStart(ITestResult iTestResult) {
         try {
             System.out.println(Thread.currentThread().getId());
-            deviceAllocationManager.allocateDevice("",
-                    deviceAllocationManager.getNextAvailableDeviceId());
+            deviceAllocationManager.allocateDevice(deviceAllocationManager.getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
             reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass().getRealClass().getSimpleName());

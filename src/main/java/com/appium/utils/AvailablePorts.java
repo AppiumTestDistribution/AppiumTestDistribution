@@ -9,9 +9,14 @@ import java.net.ServerSocket;
 
 public class AvailablePorts {
 
-    public int getAvailablePort() throws Exception {
+    public int getAvailablePort() {
         final int[] port = new int[1];
-        JSONArray hostMachines = getHostMachineObject();
+        JSONArray hostMachines = null;
+        try {
+            hostMachines = getHostMachineObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         hostMachines.forEach(hostMachine -> {
             JSONObject hostMachineJson = (JSONObject) hostMachine;
             String machineIP = hostMachineJson.getString("machineIP");

@@ -4,6 +4,7 @@ import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.HostMachineDeviceManager;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.report.factory.ExtentManager;
 import org.apache.commons.io.FileUtils;
@@ -84,10 +85,8 @@ public class ParallelThread {
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         String platform = System.getenv("Platform");
-        int deviceCount = deviceAllocationManager.getDevices().size();
+        int deviceCount = HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices().size();
         createAppiumLogsFolder();
-
-
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase("android")
                 || platform.equalsIgnoreCase("Both")) {
@@ -145,7 +144,7 @@ public class ParallelThread {
                 //addPluginToCucumberRunner();
                 myTestExecutor
                         .constructXmlSuiteForParallelCucumber(deviceCount,
-                                deviceAllocationManager.getDevices());
+                                HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices());
                 hasFailures = myTestExecutor.runMethodParallel();
                 htmlReporter.generateReports();
             }

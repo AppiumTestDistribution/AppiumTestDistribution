@@ -2,6 +2,9 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.utils.AppiumDevice;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 
@@ -78,7 +81,7 @@ public final class AppiumParallelTestListener
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         JSONObject json = new JSONObject();
-        json.put("id", AppiumDeviceManager.getDeviceUDID());
+        json.put("id", AppiumDeviceManager.getDevice().getDevice().getUdid());
         json.put("version", new AppiumDeviceManager().getDeviceVersion());
         json.put("platform", AppiumDeviceManager.getMobilePlatform());
         //json.put("resolution", AppiumDeviceManager.getMobilePlatform());
@@ -205,10 +208,13 @@ public final class AppiumParallelTestListener
     @Override
     public void onBeforeClass(ITestClass testClass) {
         try {
-            String device = testClass.getXmlClass().getAllParameters().get("device").toString();
+            String device = testClass.getXmlClass().getAllParameters().get("device");
+            String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
+            DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
+            AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
             String className = testClass.getRealClass().getSimpleName();
-            deviceAllocationManager.allocateDevice(device,
-                    deviceAllocationManager.getNextAvailableDeviceId());
+            deviceAllocationManager.allocateDevice(appiumDevice);
+
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }

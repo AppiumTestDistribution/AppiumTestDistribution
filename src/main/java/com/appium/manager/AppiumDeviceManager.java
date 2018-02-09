@@ -3,6 +3,7 @@ package com.appium.manager;
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.AppiumDevice;
 
 import java.io.IOException;
 
@@ -12,6 +13,7 @@ import java.io.IOException;
 public class AppiumDeviceManager {
 
     private static ThreadLocal<String> deviceUDID = new ThreadLocal<>();
+    private static ThreadLocal<AppiumDevice> appiumDevice = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
     private AndroidDeviceConfiguration androidDeviceConfiguration;
 
@@ -28,15 +30,18 @@ public class AppiumDeviceManager {
         return deviceUDID.get();
     }
 
-    protected static void setDeviceUDID(String UDID) {
-        deviceUDID.set(UDID);
+    public static AppiumDevice getDevice() {
+        return appiumDevice.get();
     }
 
+    protected static void setDevice(AppiumDevice device) {
+        appiumDevice.set(device);
+    }
+
+
     public static MobilePlatform getMobilePlatform() {
-        if (AppiumDeviceManager.getDeviceUDID().length()
-                == IOSDeviceConfiguration.IOS_UDID_LENGTH
-                || AppiumDeviceManager.getDeviceUDID().length()
-                == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+        String os = AppiumDeviceManager.getDevice().getDevice().getOs();
+        if (os.equalsIgnoreCase("ios")) {
             return MobilePlatform.IOS;
         } else {
             return MobilePlatform.ANDROID;
@@ -47,14 +52,15 @@ public class AppiumDeviceManager {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceModel();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
-            return iosDeviceConfiguration.getIOSDeviceProductTypeAndVersion();
+            return AppiumDeviceManager.getDevice().getDevice().getDeviceModel();
         }
         throw new IllegalArgumentException("DeviceModel is Empty");
     }
 
     public String getDeviceCategory() throws Exception {
-        if (iosDeviceConfiguration.deviceUDIDiOS.contains(AppiumDeviceManager.getDeviceUDID())) {
-            return iosDeviceConfiguration.getDeviceName().replace(" ", "_");
+        if (iosDeviceConfiguration.deviceUDIDiOS
+                .contains(AppiumDeviceManager.getDevice().getDevice().getUdid())) {
+            return AppiumDeviceManager.getDevice().getDevice().getName().replace(" ", "_");
         } else {
             return androidDeviceConfiguration.getDeviceModel();
         }
@@ -64,13 +70,7 @@ public class AppiumDeviceManager {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceOS();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
-            try {
-                return iosDeviceConfiguration.getIOSDeviceProductVersion();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            return AppiumDeviceManager.getDevice().getDevice().getOsVersion();
         }
         throw new IllegalArgumentException("DeviceVersion is Empty");
     }

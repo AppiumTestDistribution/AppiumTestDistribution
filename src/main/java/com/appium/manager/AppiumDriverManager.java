@@ -31,7 +31,7 @@ public class AppiumDriverManager {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
-        devicesByHost = HostMachineDeviceManager.getInstance();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     public static AppiumDriver getDriver() {
@@ -88,7 +88,6 @@ public class AppiumDriverManager {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 currentDriverSession = getMobileiOSElementAppiumDriver(iosCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);
-
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);
@@ -168,7 +167,7 @@ public class AppiumDriverManager {
     }
 
     public void stopAppiumDriver() throws IOException, InterruptedException {
-        if (AppiumDeviceManager.getDeviceUDID().length()
+        if (AppiumDeviceManager.getDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             iosDeviceConfiguration.destroyIOSWebKitProxy();
         }

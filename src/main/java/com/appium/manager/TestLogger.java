@@ -47,11 +47,12 @@ class TestLogger {
         Capabilities capabilities = AppiumDriverManager.getDriver().getCapabilities();
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (capabilities.getCapability("browserName") == null) {
-                System.out.println("Starting ADB logs" + AppiumDeviceManager.getDeviceUDID());
+                String udid = AppiumDeviceManager.getDevice().getDevice().getUdid();
+                System.out.println("Starting ADB logs" + udid);
                 logEntries = AppiumDriverManager.getDriver().manage()
                         .logs().get("logcat").filter(Level.ALL);
                 logFile = new File(System.getProperty("user.dir") + "/target/adblogs/"
-                        + AppiumDeviceManager.getDeviceUDID()
+                        + udid
                         + "__" + methodName + ".txt");
                 log_file_writer = new PrintWriter(logFile);
             }
@@ -80,7 +81,7 @@ class TestLogger {
         String className = result.getInstance().getClass().getSimpleName();
         stopViewRecording(result, className);
         String adbPath = System.getProperty("user.dir") + "/target/adblogs/"
-                + AppiumDeviceManager.getDeviceUDID()
+                + AppiumDeviceManager.getDevice().getDevice().getUdid()
                 + "__"
                 + result.getMethod().getMethodName()
                 + ".txt";
@@ -98,7 +99,7 @@ class TestLogger {
         if (System.getenv("VIDEO_LOGS") != null) {
             setVideoPath("screenshot/" + AppiumDeviceManager.getMobilePlatform()
                     .toString().toLowerCase()
-                    + "/" + AppiumDeviceManager.getDeviceUDID()
+                    + "/" + AppiumDeviceManager.getDevice().getDevice().getUdid()
                     + "/" + className + "/" + result.getMethod()
                     .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
             logs.put("videoLogs", getVideoPath());
@@ -146,7 +147,7 @@ class TestLogger {
         if (result.isSuccess()) {
             File videoFile = new File(System.getProperty("user.dir")
                     + "/target/screenshot/android/"
-                    + AppiumDeviceManager.getDeviceUDID() + "/"
+                    + AppiumDeviceManager.getDevice().getDevice().getUdid() + "/"
                     + className + "/" + result.getMethod().getMethodName()
                     + "/" + result.getMethod().getMethodName() + ".mp4");
             System.out.println(videoFile);
@@ -184,21 +185,20 @@ class TestLogger {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 File framedImageAndroid = new File(
                         System.getProperty("user.dir")
-                                + "/target/screenshot/android/" + AppiumDeviceManager
-                                .getDeviceUDID()
+                                + "/target/screenshot/android/" + AppiumDeviceManager.getDevice().getDevice().getUdid()
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 if (framedImageAndroid.exists()) {
                     log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
-                            + "screenshot/android/" + AppiumDeviceManager.getDeviceUDID() + "/"
+                            + "screenshot/android/" + AppiumDeviceManager.getDevice().getDevice().getUdid() + "/"
                                     + className + "/" + result.getMethod().getMethodName()
                                     + "/" + screenShotNameWithTimeStamp
                                     + "_failed_" + result
                                     .getMethod().getMethodName() + "_framed.jpeg");
                 } else {
                     log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
-                            + "screenshot/android/" + AppiumDeviceManager.getDeviceUDID() + "/"
+                            + "screenshot/android/" + AppiumDeviceManager.getDevice().getDevice().getUdid() + "/"
                                     + className + "/" + result.getMethod().getMethodName() + "/"
                                     + screenShotNameWithTimeStamp + "_" + result
                                     .getMethod().getMethodName() + "_failed.jpeg");
@@ -209,7 +209,7 @@ class TestLogger {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 File framedImageIOS = new File(
                         System.getProperty("user.dir")
-                                + "/target/screenshot/iOS/" + AppiumDeviceManager.getDeviceUDID()
+                                + "/target/screenshot/iOS/" + AppiumDeviceManager.getDevice().getDevice().getUdid()
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
@@ -218,7 +218,7 @@ class TestLogger {
                 if (framedImageIOS.exists()) {
                     log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
                             + "screenshot/iOS/"
-                            + AppiumDeviceManager.getDeviceUDID()
+                            + AppiumDeviceManager.getDevice().getDevice().getUdid()
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_failed_" + result
@@ -226,7 +226,7 @@ class TestLogger {
                 } else {
                     log.addScreenCaptureFromPath(System.getProperty("user.dir") + "/target/"
                             + "screenshot/iOS/"
-                            + AppiumDeviceManager.getDeviceUDID()
+                            + AppiumDeviceManager.getDevice().getDevice().getUdid()
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_" + result
@@ -235,7 +235,7 @@ class TestLogger {
 
             }
             String adbPath = "adblogs/"
-                    + AppiumDeviceManager.getDeviceUDID()
+                    + AppiumDeviceManager.getDevice().getDevice().getUdid()
                     + "__"
                     + result.getMethod().getMethodName()
                     + ".txt";

@@ -98,7 +98,7 @@ public class ScreenShotManager {
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            deviceModel = new IOSDeviceConfiguration().getIOSDeviceProductTypeAndVersion();
+            deviceModel = AppiumDeviceManager.getDevice().getDevice().getDeviceModel();
         }
         captureScreenShot(1, className, screenShotName, deviceModel);
     }
@@ -115,25 +115,26 @@ public class ScreenShotManager {
                                     File scrFile, String methodName,
                                     String className, String model,
                                     String platform, String deviceModel) {
+        String udid = AppiumDeviceManager.getDevice().getDevice().getUdid();
         setFailedScreen(
-                  "screenshot/" + platform + "/" + AppiumDeviceManager.getDeviceUDID()
+                  "screenshot/" + platform + "/" + udid
                         + "/" + className + "/"
                         + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
                         + methodName + "_failed" + ".jpeg");
         setCapturedScreen(
-                "screenshot/" + platform + "/" + AppiumDeviceManager.getDeviceUDID()
+                "screenshot/" + platform + "/" + udid
                         + "/" + className
                         + "/" + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
                         + methodName + "_results.jpeg");
 
-        setFramedCapturedScreen("screenshot/" + platform + "/" + AppiumDeviceManager.getDeviceUDID()
+        setFramedCapturedScreen("screenshot/" + platform + "/" + udid
                         + "/" + className
                         + "/" + methodName + "/" + model + "_"
                         + methodName + "_results_framed.jpeg");
         setFramedFailedScreen(
-                "screenshot/" + platform + "/" + AppiumDeviceManager.getDeviceUDID()
+                "screenshot/" + platform + "/" + udid
                         + "/" + className
                         + "/" + methodName + "/" + model
                         + "_failed_" + methodName + "_framed.jpeg");
