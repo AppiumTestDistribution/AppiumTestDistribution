@@ -1,17 +1,10 @@
 package com.appium.manager;
 
-import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.utils.AvailablePorts;
-import com.github.yunusmete.stf.model.Device;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
-import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import io.appium.java_client.service.local.flags.ServerArgument;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -21,60 +14,24 @@ import java.util.logging.Logger;
  */
 public class AppiumServerManager {
 
-    private AvailablePorts ap;
-    private IOSDeviceConfiguration iosDeviceConfiguration;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
-
-    public static AppiumDriverLocalService getAppiumDriverLocalService() {
-        return appiumDriverLocalService;
-    }
-
-    public static void setAppiumDriverLocalService(
-            AppiumDriverLocalService appiumDriverLocalService) {
-        AppiumServerManager.appiumDriverLocalService = appiumDriverLocalService;
-    }
-
-    static AppiumDriverLocalService appiumDriverLocalService;
-
+    RemoteAppiumManager remoteAppiumManager;
+    DevicesByHost devicesByHost;
 
     public AppiumServerManager() throws IOException {
-        iosDeviceConfiguration = new IOSDeviceConfiguration();
-        ap = new AvailablePorts();
+        remoteAppiumManager = new RemoteAppiumManager();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     /**
      * start appium with auto generated ports : appium port, chrome port,
      * bootstrap port and device UDID
+     * @param host
      */
 
-    private void startAppiumServerSingleSession()
+    private void startAppiumServerSingleSession(String host)
             throws Exception {
-        System.out.println(
-                "**************************************************************************\n");
-        System.out.println("Starting Appium Server......");
-        System.out.println(
-                "**************************************************************************\n");
-        AppiumDriverLocalService appiumDriverLocalService;
-        int port = ap.getPort();
-        AppiumServiceBuilder builder =
-                new AppiumServiceBuilder().withAppiumJS(new File(ConfigFileManager
-                        .configFileMap.get("APPIUM_JS_PATH")))
-                        .withArgument(GeneralServerFlag.LOG_LEVEL, "info").withLogFile(new File(
-                        System.getProperty("user.dir")
-                                + "/target/appiumlogs/appium_logs.txt"))
-                        .withIPAddress("127.0.0.1")
-                        .usingPort(port);
-        /* and so on */
-        ;
-        appiumDriverLocalService = builder.build();
-        appiumDriverLocalService.start();
-        System.out.println(
-                "**************************************************************************\n");
-        System.out.println("Appium Server Started at......"
-                + appiumDriverLocalService.getUrl());
-        System.out.println(
-                "**************************************************************************\n");
-        setAppiumDriverLocalService(appiumDriverLocalService);
+        remoteAppiumManager.startAppiumServer(host);
     }
 
     /**
@@ -88,32 +45,17 @@ public class AppiumServerManager {
         }
     };
 
-    public URL getAppiumUrl() {
-        return getAppiumDriverLocalService().getUrl();
-    }
 
-    private void destroyAppiumNode() {
-        getAppiumDriverLocalService().stop();
-        if (getAppiumDriverLocalService().isRunning()) {
-            LOGGER.info("AppiumServer didn't shut... Trying to quit again....");
-            getAppiumDriverLocalService().stop();
+
+    public void startAppiumServer() throws Exception {
+        for (String host : devicesByHost.getAllHosts()) {
+            startAppiumServerSingleSession(host);
         }
     }
 
-    public void startAppiumServer() throws Exception {
-        startAppiumServerSingleSession();
-    }
-
     public void stopAppiumServer() throws IOException, InterruptedException {
-        destroyAppiumNode();
-        if (System.getenv("STF_URL") != null
-                && System.getenv("ACCESS_TOKEN") != null) {
-            List<Device> devices = DeviceAllocationManager.service.getDevices().getDevices();
-            devices.forEach(device -> {
-                if (device.isPresent()) {
-                    DeviceAllocationManager.service.deleteDeviceBySerial(device.getSerial());
-                }
-            });
+        for ( String host: devicesByHost.getAllHosts()) {
+            remoteAppiumManager.destroyAppiumNode(host);
         }
     }
 }

@@ -1,21 +1,13 @@
 package com.appium.manager;
 
-import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.ios.SimManager;
-import com.appium.utils.AvailablePorts;
+import com.appium.utils.AppiumDevice;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import com.appium.utils.JsonParser;
 import com.github.yunusmete.stf.api.STFService;
-import com.github.yunusmete.stf.api.ServiceGenerator;
 import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
-import com.thoughtworks.android.AndroidManager;
-import com.thoughtworks.device.Device;
-import com.thoughtworks.device.DeviceManager;
-import com.thoughtworks.iOS.IOSManager;
-import org.apache.commons.lang3.SystemUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,12 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -37,36 +24,29 @@ import java.util.logging.Logger;
  */
 public class DeviceAllocationManager {
 
-    private ArrayList<String> devices = new ArrayList<>();
-    public ConcurrentHashMap<String, Object> deviceMapping;
     private static DeviceAllocationManager instance;
-    private static IOSManager iosDevice;
-    private static AndroidManager androidManager;
-    public List<Device> deviceManager;
     private static final String STF_SERVICE_URL = System.getenv("STF_URL");
     private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
     static STFService service;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
-    private SimManager simManager = new SimManager();
+    private HostMachineDeviceManager hostMachineDeviceManager;
+    private List<AppiumDevice> allDevices;
     private AppiumDriverManager appiumDriverManager;
     private static boolean simCapsPresent = false;
     private static boolean deviceCapsPresent = false;
 
     private DeviceAllocationManager() throws Exception {
         try {
-            iosDevice = new IOSManager();
-            deviceMapping = new ConcurrentHashMap<>();
-            deviceManager = new CopyOnWriteArrayList<>(new DeviceManager().getDeviceProperties());
-            androidManager = new AndroidManager();
+            hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+            DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
+            allDevices = appiumDeviceByHost.getAllDevices();
             appiumDriverManager = new AppiumDriverManager();
-            service = ServiceGenerator.createService(STFService.class,
-                    STF_SERVICE_URL + "/api/v1", ACCESS_TOKEN);
         } catch (IOException e) {
             e.printStackTrace();
         }
         setFlagsForCapsValues();
-        initializeDevices();
     }
+
 
     public static DeviceAllocationManager getInstance() throws Exception {
         if (instance == null) {
@@ -75,75 +55,23 @@ public class DeviceAllocationManager {
         return instance;
     }
 
-    private void initializeDevices() throws Exception {
-        isPlatformInEnv();
-        if (SystemUtils.IS_OS_MAC) {
-            List<Device> allSimulatorDetails = new IOSDeviceConfiguration()
-                    .checkIfUserSpecifiedSimulatorAndGetUDID();
-            String platform = System.getenv("Platform");
-            if (platform.equalsIgnoreCase("iOS")) {
-                LOGGER.info("Adding only iOS Devices");
-
-                if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
-                    LOGGER.info("Adding iOS Devices from DeviceList Provided");
-                    devices.addAll(IOSDeviceConfiguration.validDeviceIds);
-                } else {
-                    if (deviceCapsPresent) {
-                        iosDevice.getAllAvailableDevices()
-                                .forEach(device -> devices.add(device.getUdid()));
-                    }
-                    if (simManager.isSimulatorAvailable() && simCapsPresent) {
-                        allocateUniqueSimulatorDetails(allSimulatorDetails);
-                        allSimulatorDetails.forEach(device -> devices.add(device.getUdid()));
-                    }
-                }
-            }
-            if (platform.equalsIgnoreCase("android")) {
-                connectToSTF();
-                if (AndroidDeviceConfiguration.validDeviceIds.size() > 0) {
-                    LOGGER.info("Adding Android Devices from DeviceList Provided");
-                    devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
-                } else {
-                    androidManager.getDeviceProperties()
-                            .forEach(device -> this.devices.add(device.getUdid()));
-                }
-            }
-            if (platform.equalsIgnoreCase("Both")) {
-                if (simManager.isSimulatorAvailable()) {
-                    allocateUniqueSimulatorDetails(allSimulatorDetails);
-                }
-                getAllConnectedDevices();
-            }
-        } else {
-            androidManager.getDeviceProperties().forEach(device -> devices.add(device.getUdid()));
-        }
-        for (String device : devices) {
-            HashMap<Object, Object> deviceState = new HashMap<>();
-            deviceState.put("deviceState", true);
-            deviceState.put("port", new AvailablePorts().getPort());
-            deviceMapping.put(device, deviceState);
-        }
-    }
-
     private void setFlagsForCapsValues() throws FileNotFoundException {
         String filePath = getCapsFilePath();
-        JSONArray jsonParsedObject = new JsonParser(filePath).getJsonParsedObject();
-        Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
-                .get("iOS") != null)
-                .findFirst();
-        Object platFormCapabilities = ((JSONObject) ((Optional) getPlatformObject)
-                .get()).get("iOS");
-
-        ((JSONObject) platFormCapabilities).forEach((caps, values) -> {
-            if ("app".equals(caps) && values instanceof JSONObject) {
-                if ((((JSONObject) values).get("simulator") != null)) {
+        JSONObject jsonParsedObject = new JsonParser(filePath).getObjectFromJSON();
+        JSONObject iOSCaps = jsonParsedObject.getJSONObject("iOS");
+        if (iOSCaps != null) {
+            iOSCaps.keySet().forEach(key -> {
+                boolean app = key.equals("app");
+                if (app
+                        && iOSCaps.getJSONObject(key).has("simulator")) {
                     simCapsPresent = true;
                 }
-                if ((((JSONObject) values).get("device") != null)) {
+                if (app
+                        && iOSCaps.getJSONObject(key).has("device")) {
                     deviceCapsPresent = true;
                 }
-            }
-        });
+            });
+        }
     }
 
     private String getCapsFilePath() throws FileNotFoundException {
@@ -160,18 +88,6 @@ public class DeviceAllocationManager {
         }
     }
 
-    private void allocateUniqueSimulatorDetails(List<Device> allSimulatorDetails) {
-        allSimulatorDetails.stream().forEach(device -> {
-            Optional<Device> first = deviceManager.stream().filter(device1 -> device.getUdid()
-                    .equals(device1.getUdid())).findFirst();
-
-            if (!first.isPresent()) {
-                deviceManager.add(device);
-            }
-
-        });
-    }
-
     private void isPlatformInEnv() {
         if (System.getenv("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
@@ -179,57 +95,29 @@ public class DeviceAllocationManager {
         }
     }
 
-    private void getAllConnectedDevices() {
-        if (IOSDeviceConfiguration.validDeviceIds.size() > 0) {
-            System.out.println("Adding iOS Devices from DeviceList Provided");
-            devices.addAll(IOSDeviceConfiguration.validDeviceIds);
-        }
-        if (AndroidDeviceConfiguration.validDeviceIds.size() > 0) {
-            System.out.println("Adding Android Devices from DeviceList Provided");
-            devices.addAll(AndroidDeviceConfiguration.validDeviceIds);
-        } else {
-            deviceManager.forEach(device -> {
-                if (device.getUdid().length() == IOSDeviceConfiguration.SIM_UDID_LENGTH
-                        && new SimManager().isSimulatorAvailable() && simCapsPresent) {
-                    devices.add(device.getUdid());
-                } else if (device.getUdid().length() == IOSDeviceConfiguration.IOS_UDID_LENGTH
-                        && deviceCapsPresent) {
-                    devices.add(device.getUdid());
-                } else if (device.getUdid().length() < IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                    devices.add(device.getUdid());
-                }
-            });
-        }
-        connectToSTF();
-    }
-
     private void connectToSTF() {
         try {
             if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
                 connectToSTFServer();
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<String> getDevices() {
-        LOGGER.info("All devices connected" + devices);
-        return devices;
+    public List<AppiumDevice> getDevices() {
+        LOGGER.info("All devices connected");
+        return hostMachineDeviceManager.getDevicesByHost().getAllDevices();
     }
 
-    public synchronized String getNextAvailableDeviceId() {
-        ConcurrentHashMap.KeySetView<String, Object> devices = deviceMapping.keySet();
+    public synchronized AppiumDevice getNextAvailableDevice() {
         int i = 0;
-        for (String device : devices) {
+        for (AppiumDevice device : allDevices) {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
             i++;
-            if (((HashMap) deviceMapping.get(device))
-                    .get("deviceState").toString().equals("true")) {
-                ((HashMap) deviceMapping.get(device)).put("deviceState", false);
+            if (device.isAvailable()) {
+                device.blockDevice();
                 return device;
             }
         }
@@ -237,19 +125,15 @@ public class DeviceAllocationManager {
     }
 
     public void freeDevice() {
-        ((HashMap) deviceMapping.get(AppiumDeviceManager.getDeviceUDID())).put("deviceState", true);
-        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDeviceUDID()
+        AppiumDeviceManager.getDevice().freeDevice();
+        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDevice().getDevice()
+                .getUdid()
                 + " from execution list");
     }
 
-    public void allocateDevice(String device, String deviceUDID) {
-        if (device.isEmpty()) {
-            LOGGER.info("Allocated Device " + deviceUDID + " for Execution");
-            AppiumDeviceManager.setDeviceUDID(deviceUDID);
-        } else {
-            LOGGER.info("Allocated Device " + deviceUDID + " for Execution");
-            AppiumDeviceManager.setDeviceUDID(device);
-        }
+    public void allocateDevice(AppiumDevice appiumDevice) {
+        LOGGER.info("Allocated Device " + appiumDevice + " for Execution");
+        AppiumDeviceManager.setDevice(appiumDevice);
     }
 
     private void connectToSTFServer() throws MalformedURLException, URISyntaxException {

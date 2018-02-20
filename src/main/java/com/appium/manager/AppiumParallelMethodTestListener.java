@@ -3,7 +3,6 @@ package com.appium.manager;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.utils.Retry;
-import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
@@ -98,8 +97,7 @@ public final class AppiumParallelMethodTestListener
     public void onTestStart(ITestResult iTestResult) {
         try {
             System.out.println(Thread.currentThread().getId());
-            deviceAllocationManager.allocateDevice("",
-                    deviceAllocationManager.getNextAvailableDeviceId());
+            deviceAllocationManager.allocateDevice(deviceAllocationManager.getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
             reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass().getRealClass().getSimpleName());

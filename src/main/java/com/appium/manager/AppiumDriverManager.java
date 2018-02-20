@@ -3,14 +3,16 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.DesiredCapabilityBuilder;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -20,16 +22,16 @@ public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver
             = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
-    private AppiumServerManager appiumServerManager;
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private DevicesByHost devicesByHost;
 
     public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
-        appiumServerManager = new AppiumServerManager();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     public static AppiumDriver getDriver() {
@@ -41,11 +43,11 @@ public class AppiumDriverManager {
     }
 
     private AppiumDriver<MobileElement> getMobileAndroidElementAppiumDriver(
-            Optional<DesiredCapabilities> androidCaps) {
-        AppiumDriver<MobileElement> currentDriverSession;
+            Optional<DesiredCapabilities> androidCaps) throws IOException {
+        AppiumDriver<MobileElement> currentDriverSession = null;
         DesiredCapabilities desiredCapabilities = androidCaps.get();
-
-        currentDriverSession = new AndroidDriver<>(appiumServerManager.getAppiumUrl(),
+        String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
+        currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
                 desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId()
@@ -58,12 +60,22 @@ public class AppiumDriverManager {
             throws IOException, InterruptedException {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
-        currentDriverSession = new IOSDriver<>(appiumServerManager.getAppiumUrl(),
-                desiredCapabilities);
+        String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
+        System.out.println(remoteWDHubIP);
+        currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
+                        desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId() + "---"
                 + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
+    }
+
+    private String getRemoteWDHubIP(DesiredCapabilities desiredCapabilities) throws IOException {
+        RemoteAppiumManager remoteAppiumManager = new RemoteAppiumManager();
+        String appiumUrl = remoteAppiumManager.getRemoteWDHubIP(devicesByHost
+                .getHostOfDevice(String.valueOf(desiredCapabilities
+                        .getCapability("udid"))));
+        return appiumUrl;
     }
 
     public void startAppiumDriverInstance(Optional<DesiredCapabilities> iosCaps,
@@ -76,7 +88,6 @@ public class AppiumDriverManager {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 currentDriverSession = getMobileiOSElementAppiumDriver(iosCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);
-
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);
@@ -156,7 +167,7 @@ public class AppiumDriverManager {
     }
 
     public void stopAppiumDriver() throws IOException, InterruptedException {
-        if (AppiumDeviceManager.getDeviceUDID().length()
+        if (AppiumDeviceManager.getDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             iosDeviceConfiguration.destroyIOSWebKitProxy();
         }

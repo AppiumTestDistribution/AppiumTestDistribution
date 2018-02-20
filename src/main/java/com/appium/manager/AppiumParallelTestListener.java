@@ -2,12 +2,13 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.utils.AppiumDevice;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
-import org.json.JSONArray;
+
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -21,7 +22,6 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -81,7 +81,7 @@ public final class AppiumParallelTestListener
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         JSONObject json = new JSONObject();
-        json.put("id", AppiumDeviceManager.getDeviceUDID());
+        json.put("id", AppiumDeviceManager.getDevice().getDevice().getUdid());
         json.put("version", new AppiumDeviceManager().getDeviceVersion());
         json.put("platform", AppiumDeviceManager.getMobilePlatform());
         //json.put("resolution", AppiumDeviceManager.getMobilePlatform());
@@ -164,41 +164,7 @@ public final class AppiumParallelTestListener
     public void onFinish(ISuite iSuite) {
         try {
             appiumServerManager.stopAppiumServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        FileWriter file = null;
-        try {
-            file = new FileWriter(System.getProperty("user.dir")
-                    + "/target/finalReport.json");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        JSONObject jsonReport = new JSONObject();
-        JSONArray jsonTest = new JSONArray();
-        JSONParser parser = new JSONParser();
-        for (int i = 0; i < syncal.size(); i++) {
-            try {
-                jsonTest.put(parser.parse(syncal.get(i)));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        Map<String, ISuiteResult> results = iSuite.getResults();
-        JSONObject summaryDetails = getSummaryDetails(results);
-        summaryDetails.put("num_tests", iSuite.getAllInvokedMethods().size());
-
-        jsonReport.put("summary", summaryDetails);
-        jsonReport.put("tests", jsonTest);
-        try {
-            userLogs.put("Appium", "1.6.6.beta4");
-            jsonReport.put("userMetaData", userLogs);
-            file.write(new JSONObject().put("report", jsonReport).toString());
-            file.close();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -242,10 +208,13 @@ public final class AppiumParallelTestListener
     @Override
     public void onBeforeClass(ITestClass testClass) {
         try {
-            String device = testClass.getXmlClass().getAllParameters().get("device").toString();
+            String device = testClass.getXmlClass().getAllParameters().get("device");
+            String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
+            DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
+            AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
             String className = testClass.getRealClass().getSimpleName();
-            deviceAllocationManager.allocateDevice(device,
-                    deviceAllocationManager.getNextAvailableDeviceId());
+            deviceAllocationManager.allocateDevice(appiumDevice);
+
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }

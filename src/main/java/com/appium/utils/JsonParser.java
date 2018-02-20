@@ -1,10 +1,11 @@
 package com.appium.utils;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -13,22 +14,31 @@ import java.io.IOException;
  */
 public class JsonParser {
 
-    JSONParser parser = new JSONParser();
-    Object object;
+    private String filePath;
 
     public JsonParser(String filePath) {
-        try {
-            object = parser.parse(new FileReader(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        JSONArray array = new JSONArray();
-        array.add(object);
+        this.filePath = filePath;
     }
 
-    public JSONArray getJsonParsedObject() {
-        return (JSONArray) object;
+    public JSONArray getJsonParsedObjectAsJsonArray() {
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(filePath)));
+            String jsonContent = IOUtils.toString(bufferedReader);
+            return new JSONArray(jsonContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public JSONObject getObjectFromJSON() {
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(filePath)));
+            String jsonContent = IOUtils.toString(bufferedReader);
+            return new JSONObject(jsonContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

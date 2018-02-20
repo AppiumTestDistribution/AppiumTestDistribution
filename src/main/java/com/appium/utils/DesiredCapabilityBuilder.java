@@ -3,21 +3,17 @@ package com.appium.utils;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.DeviceAllocationManager;
-import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -25,16 +21,14 @@ import java.util.Optional;
 public class DesiredCapabilityBuilder {
 
     private AvailablePorts availablePorts;
-    private IOSDeviceConfiguration iosDevice;
-    private SimulatorManager simulatorManager;
+    private DevicesByHost devicesByHost;
 
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
 
     public DesiredCapabilityBuilder() throws IOException {
         availablePorts = new AvailablePorts();
-        iosDevice = new IOSDeviceConfiguration();
-        simulatorManager = new SimulatorManager();
+        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     public static DesiredCapabilities getDesiredCapability() {
@@ -42,50 +36,54 @@ public class DesiredCapabilityBuilder {
     }
 
     public void buildDesiredCapability(String platform,
-                                                      String jsonPath) throws Exception {
-        Object port = ((HashMap) DeviceAllocationManager.getInstance()
-                .deviceMapping.get(AppiumDeviceManager
-                .getDeviceUDID())).get("port");
+                                       String jsonPath) throws Exception {
+        int port = AppiumDeviceManager.getDevice().getPort();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        JSONArray jsonParsedObject = new JsonParser(jsonPath).getJsonParsedObject();
-        Object getPlatformObject = jsonParsedObject.stream().filter(o -> ((JSONObject) o)
-                .get(platform) != null)
-                .findFirst();
-        Object platFormCapabilities = ((JSONObject) ((Optional) getPlatformObject)
-                .get()).get(platform);
-        ((JSONObject) platFormCapabilities)
-                .forEach((caps, values) -> {
-                    if ("browserName".equals(caps) && "chrome".equals(values.toString())) {
-                        try {
-                            desiredCapabilities.setCapability("chromeDriverPort",
-                                    availablePorts.getPort());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if ("app".equals(caps)) {
-                        if (values instanceof JSONObject) {
-                            if (AppiumDeviceManager.getDeviceUDID().length()
-                                    == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                                values = ((JSONObject) values).get("simulator");
-                            } else if (AppiumDeviceManager.getDeviceUDID().length()
-                                    == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-                                values = ((JSONObject) values).get("device");
-                            }
+        JSONObject jsonParsedObject = new JsonParser(jsonPath).getObjectFromJSON();
+        JSONObject platFormCapabilities = jsonParsedObject.getJSONObject(platform);
 
-                        }
-                        Path path = FileSystems.getDefault().getPath(values.toString());
-                        if (!path.getParent().isAbsolute()) {
-                            desiredCapabilities.setCapability(caps.toString(), path.normalize()
-                                    .toAbsolutePath().toString());
-                        } else {
-                            desiredCapabilities.setCapability(caps.toString(), path
-                                    .toString());
-                        }
-                    } else {
-                        desiredCapabilities.setCapability(caps.toString(), values.toString());
+        platFormCapabilities.keySet().forEach(key -> {
+            if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
+                try {
+                    desiredCapabilities.setCapability("chromeDriverPort",
+                            availablePorts.getAvailablePort());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            String appCapability = "app";
+            if (appCapability.equals(key)) {
+                Object values = platFormCapabilities.get(appCapability);
+
+                String appPath = "";
+                if (values instanceof JSONObject) {
+                    int length = AppiumDeviceManager.getDevice()
+                            .getDevice().getUdid().length();
+                    if (length
+                            == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                        appPath = (((JSONObject) values).getString("simulator"));
+                    } else if (length
+                            == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                        appPath = ((JSONObject) values).getString("device");
                     }
-                });
+                } else {
+                    appPath = platFormCapabilities.getString(appCapability);
+                }
+                Path path = FileSystems.getDefault().getPath(appPath);
+                if (ResourceUtils.isUrl(appPath)) {
+                    desiredCapabilities.setCapability(appCapability, appPath);
+                } else if (!path.getParent().isAbsolute()) {
+                    desiredCapabilities.setCapability(appCapability, path.normalize()
+                            .toAbsolutePath().toString());
+                } else {
+                    desiredCapabilities.setCapability(appCapability, path
+                            .toString());
+                }
+            } else {
+                desiredCapabilities.setCapability(key, platFormCapabilities.get(key).toString());
+            }
+        });
+
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             if (desiredCapabilities.getCapability("automationName") == null
                     || desiredCapabilities.getCapability("automationName")
@@ -93,21 +91,21 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.ANDROID_UIAUTOMATOR2);
                 desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
-                        Integer.parseInt(port.toString()));
+                        port);
             }
             appPackage(desiredCapabilities);
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            String version = iosDevice.getIOSDeviceProductVersion();
+            String version = AppiumDeviceManager.getDevice().getDevice().getOsVersion();
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
-            if (AppiumDeviceManager.getDeviceUDID().length()
+            if (AppiumDeviceManager.getDevice().getDevice().getUdid().length()
                     == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+
+                AppiumDevice deviceProperty = AppiumDeviceManager.getDevice();
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                        simulatorManager.getSimulatorDetailsFromUDID(
-                                AppiumDeviceManager.getDeviceUDID()).getName());
+                        deviceProperty.getDevice().getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                        simulatorManager.getSimulatorDetailsFromUDID(
-                                AppiumDeviceManager.getDeviceUDID()).getOsVersion());
+                        deviceProperty.getDevice().getOsVersion());
             } else {
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
                         new IOSDeviceConfiguration().startIOSWebKit());
@@ -117,13 +115,13 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.IOS_XCUI_TEST);
                 desiredCapabilities.setCapability(IOSMobileCapabilityType
-                        .WDA_LOCAL_PORT, Integer.parseInt(port.toString()));
+                        .WDA_LOCAL_PORT, port);
             }
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                    AppiumDeviceManager.getDeviceUDID());
+                    AppiumDeviceManager.getDevice().getDevice().getUdid());
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                AppiumDeviceManager.getDeviceUDID());
+                AppiumDeviceManager.getDevice().getDevice().getUdid());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 

@@ -4,6 +4,7 @@ import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.HostMachineDeviceManager;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.report.factory.ExtentManager;
 import org.apache.commons.io.FileUtils;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /*
  * This class picks the devices connected
@@ -85,14 +85,12 @@ public class ParallelThread {
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         String platform = System.getenv("Platform");
-        int deviceCount = deviceAllocationManager.getDevices().size();
+        int deviceCount = HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices().size();
         createAppiumLogsFolder();
-
-
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase("android")
                 || platform.equalsIgnoreCase("Both")) {
-            createAdblogs();
+            generateDirectoryForAdbLogs();
             createSnapshotFolderAndroid("android");
         }
 
@@ -101,7 +99,7 @@ public class ParallelThread {
         if (os.contains("mac") && platform.equalsIgnoreCase("iOS")
                 || platform.equalsIgnoreCase("Both")) {
             if (deviceCount > 0) {
-                iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
+                //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
                 createSnapshotFolderiOS("iPhone");
             }
         }
@@ -146,7 +144,7 @@ public class ParallelThread {
                 //addPluginToCucumberRunner();
                 myTestExecutor
                         .constructXmlSuiteForParallelCucumber(deviceCount,
-                                deviceAllocationManager.getDevices());
+                                HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices());
                 hasFailures = myTestExecutor.runMethodParallel();
                 htmlReporter.generateReports();
             }
@@ -154,7 +152,7 @@ public class ParallelThread {
         return hasFailures;
     }
 
-    private void createAdblogs() {
+    private void generateDirectoryForAdbLogs() {
         File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
         if (!adb_logs.exists()) {
             System.out.println("creating directory: " + "ADBLogs");
