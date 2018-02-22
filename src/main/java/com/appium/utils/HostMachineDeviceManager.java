@@ -178,7 +178,7 @@ public class HostMachineDeviceManager {
                                 appiumDevice.setPort(new AvailablePorts().getAvailablePort());
                                 devices.add(appiumDevice);
                             }
-                        } catch (InterruptedException | IOException e) {
+                        } catch (InterruptedException | IOException | RuntimeException e) {
                             e.printStackTrace();
                         }
                     });
