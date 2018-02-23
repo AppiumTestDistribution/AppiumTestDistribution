@@ -1,7 +1,9 @@
 package com.appium.utils;
 
+import com.appium.manager.ArtifactsUploader;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Multimap;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
 import com.thoughtworks.device.SimulatorManager;
@@ -197,6 +199,12 @@ public class HostMachineDeviceManager {
     private static JSONArray getHostMachineObject() throws Exception {
         CapabilityManager capabilityManager = CapabilityManager.getInstance();
         return capabilityManager.getCapabitiesArrayFromKey("hostMachines");
+    }
+
+
+    public List<String> getAppsPerHost(String hostName) throws IOException {
+        Multimap<String, String> appsByAllHosts = new ArtifactsUploader().upLoadFilesToRemoteMachines();
+        return (List<String>) appsByAllHosts.asMap().get(hostName);
     }
 }
 
