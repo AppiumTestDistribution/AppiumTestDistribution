@@ -122,7 +122,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                 screenShotAndFrame(failed_StepName, scrFile, "android");
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 deviceModel =
-                        AppiumDeviceManager.getDevice().getDevice().getDeviceModel();
+                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel();
                 screenShotAndFrame(failed_StepName, scrFile, "iPhone");
             }
             try {
@@ -173,7 +173,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                 //Broken needs a fix
                 deviceAllocationManager.allocateDevice(
                         deviceAllocationManager.getNextAvailableDevice());
-                if (AppiumDeviceManager.getDevice().getDevice().getUdid() == null) {
+                if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() == null) {
                     System.out.println("No devices are free to run test "
                             + "or Failed to run childTest");
                 }
@@ -184,7 +184,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             }
         } else {
             try {
-                deviceAllocationManager.allocateDevice(AppiumDeviceManager.getDevice());
+                deviceAllocationManager.allocateDevice(AppiumDeviceManager.getAppiumDevice());
                 reportManager.createParentNodeExtent(feature.getName(),"")
                         .assignCategory(tags);
                 //appiumServerManager.startAppiumServer();
@@ -274,7 +274,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
-                            + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                            + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                             + "/" + deviceModel
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
             File[] files1 = framePath.listFiles();
@@ -290,13 +290,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                                         files1[i].toString(),
                                         System.getProperty("user.dir")
                                                 + "/target/screenshot/" + device
-                                                + "/" + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                                                + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_") + ".jpeg",
                                         System.getProperty("user.dir")
                                                 + "/target/screenshot/" + device
-                                                + "/" + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                                                + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_")
@@ -327,7 +327,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
         }
         File framedImageAndroid = new File(
                 System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
-                        + AppiumDeviceManager.getDevice().getDevice().getUdid() + "/" + deviceModel
+                        + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
         if (framedImageAndroid.exists()) {
             reportManager.childTest.get().log(Status.INFO,
@@ -335,7 +335,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                             System.getProperty("user.dir")
                                     + "/target/screenshot/"
                                     + platform + "/"
-                                    + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg"));
         } else {
@@ -343,7 +343,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir") + "/target/screenshot/"
                                     + platform + "/"
-                                    + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                     + "/" + deviceModel
                                     + "/failed_" + stepName.replaceAll(" ", "_") + ".jpeg"));
         }

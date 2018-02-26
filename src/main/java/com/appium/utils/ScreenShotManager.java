@@ -2,7 +2,6 @@ package com.appium.utils;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import org.apache.commons.io.FileUtils;
@@ -98,7 +97,7 @@ public class ScreenShotManager {
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            deviceModel = AppiumDeviceManager.getDevice().getDevice().getDeviceModel();
+            deviceModel = AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel();
         }
         captureScreenShot(1, className, screenShotName, deviceModel);
     }
@@ -115,7 +114,7 @@ public class ScreenShotManager {
                                     File scrFile, String methodName,
                                     String className, String model,
                                     String platform, String deviceModel) {
-        String udid = AppiumDeviceManager.getDevice().getDevice().getUdid();
+        String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
         setFailedScreen(
                   "screenshot/" + platform + "/" + udid
                         + "/" + className + "/"
