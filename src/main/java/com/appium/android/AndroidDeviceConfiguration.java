@@ -41,19 +41,19 @@ public class AndroidDeviceConfiguration {
     }
 
     private AppiumDevice getDevice() {
-        return AppiumDeviceManager.getDevice();
+        return AppiumDeviceManager.getAppiumDevice();
     }
 
     public String screenRecord(String fileName)
             throws IOException, InterruptedException {
-        return "adb -s " + AppiumDeviceManager.getDevice().getDevice().getUdid()
+        return "adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                 + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
                 + ".mp4";
     }
 
     public boolean checkIfRecordable() throws IOException, InterruptedException {
         String screenrecord =
-                cmd.runCommand("adb -s " + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                cmd.runCommand("adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                         + " shell ls /system/bin/screenrecord");
         if (screenrecord.trim().equals("/system/bin/screenrecord")) {
             return true;
@@ -64,7 +64,7 @@ public class AndroidDeviceConfiguration {
 
     public String getDeviceManufacturer()
             throws IOException, InterruptedException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getDevice().getDevice().getUdid())
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())
                 .getDevice().getDeviceManufacturer();
     }
 
@@ -72,7 +72,7 @@ public class AndroidDeviceConfiguration {
             throws IOException, InterruptedException {
         ProcessBuilder pb =
                 new ProcessBuilder("adb", "-s",
-                        AppiumDeviceManager.getDevice().getDevice().getUdid(),
+                        AppiumDeviceManager.getAppiumDevice().getDevice().getUdid(),
                         "pull", "/sdcard/" + fileName + ".mp4",
                         destination);
         Process pc = pb.start();
@@ -85,7 +85,7 @@ public class AndroidDeviceConfiguration {
 
     public void removeVideoFileFromDevice(String fileName)
             throws IOException, InterruptedException {
-        cmd.runCommand("adb -s " + AppiumDeviceManager.getDevice().getDevice().getUdid() + " shell rm -f /sdcard/"
+        cmd.runCommand("adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + " shell rm -f /sdcard/"
                 + fileName + ".mp4");
     }
 

@@ -56,7 +56,7 @@ public class IOSDeviceConfiguration {
     public HashMap<String, String> setIOSWebKitProxyPorts() {
         try {
             int webkitproxyport = ap.getAvailablePort();
-            deviceMap.put(AppiumDeviceManager.getDevice().getDevice().getUdid(), Integer.toString(webkitproxyport));
+            deviceMap.put(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid(), Integer.toString(webkitproxyport));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,19 +67,19 @@ public class IOSDeviceConfiguration {
         setIOSWebKitProxyPorts();
 
         String webkitRunner = "ios_webkit_debug_proxy -c "
-                + AppiumDeviceManager.getDevice().getDevice().getUdid()
-                + ":" + deviceMap.get(AppiumDeviceManager.getDevice().getDevice().getUdid());
+                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                + ":" + deviceMap.get(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         p1 = Runtime.getRuntime().exec(webkitRunner);
         LOGGER.info(
-                "WebKit Proxy is started on device " + AppiumDeviceManager.getDevice().getDevice().getUdid()
+                "WebKit Proxy is started on device " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                         + " and with port number "
-                        + deviceMap.get(AppiumDeviceManager.getDevice().getDevice().getUdid())
+                        + deviceMap.get(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())
                         + " and in thread "
                         + Thread.currentThread().getId());
         //Add the Process ID to hashMap, which would be needed to kill IOSwebProxywhen required
         iosDebugProxyProcess.put(Thread.currentThread().getId(), getPid(p1));
         System.out.println("Process ID's:" + iosDebugProxyProcess);
-        return String.valueOf(deviceMap.get(AppiumDeviceManager.getDevice().getDevice().getUdid()));
+        return String.valueOf(deviceMap.get(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()));
     }
 
 
