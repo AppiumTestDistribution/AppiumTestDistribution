@@ -44,6 +44,7 @@ public class ParallelThread {
     private HtmlReporter htmlReporter;
     ExtentManager extentManager;
     private AppiumDriverManager appiumDriverManager;
+    private ArtifactsUploader artifactsUploader;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();

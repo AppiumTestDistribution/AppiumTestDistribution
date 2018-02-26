@@ -4,11 +4,7 @@ package com.appium.manager;
 import com.appium.utils.Api;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.HostMachineDeviceManager;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import org.json.JSONObject;
-import org.testng.annotations.Test;
-import org.testng.collections.ListMultiMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,60 +12,78 @@ import java.util.*;
 
 public class ArtifactsUploader {
 
+    private static ArtifactsUploader instance;
     private CapabilityManager capabilityManager;
     private final HostMachineDeviceManager hostMachineDeviceManager;
     private Api api = new Api();
+    private List<HostArtifact> hostArtifacts;
 
 
-    public ArtifactsUploader() {
+    private ArtifactsUploader() throws IOException {
         try {
             capabilityManager = CapabilityManager.getInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+        hostArtifacts = new ArrayList<>();
+    }
+    
+    public static ArtifactsUploader getInstance() throws IOException {
+        if(instance == null){
+            instance = new ArtifactsUploader();
+        }
+        return instance;
     }
 
-    public Multimap<String,String> upLoadFilesToRemoteMachines() throws IOException {
-        Multimap<String,String> appPerHostMachine = ArrayListMultimap.create();
-        hostMachineDeviceManager.getDevicesByHost().getAllHosts().forEach(hostMachines -> {
-            if (hostMachines.equals("127.0.0.1")) {
-                   getAppPathsToUpload().forEach(appPath -> {
-                       try {
-                           JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(new File(appPath), hostMachines));
-                           appPerHostMachine.put(hostMachines, jsonObject.get("filePath").toString());
-                       } catch (IOException e) {
-                           e.printStackTrace();
-                       }
-                   });
+    public void uploadFilesToRemoteMachines() throws IOException {
+        hostArtifacts = new ArrayList<>();
+        for (String hostMachine : hostMachineDeviceManager.getDevicesByHost().getAllHosts()) {
+            if (!hostMachine.equals("127.0.0.1")) {
+                HashMap<String, String> artifactPaths = uploadArtifacts(hostMachine);
+                HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
+                hostArtifacts.add(hostArtifact);
             }
-        });
-        return appPerHostMachine;
+        }
     }
 
-    public List<String> getAppPathsToUpload() {
+    public List<HostArtifact> getHostArtifacts(){
+        return hostArtifacts;
+    }
+
+    private String uploadFile(String hostMachines, String appPath) throws IOException {
+        JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(new File(appPath), hostMachines));
+        return jsonObject.getString("filePath");
+    }
+
+    private HashMap<String, String> uploadArtifacts(String hostMachine) throws IOException {
         //check for app as url
         String app = "app";
-        List<String> appPaths = new ArrayList<>();
+        HashMap<String, String> artifactPaths = new HashMap<>();
         JSONObject android = capabilityManager
                 .getCapabilityObjectFromKey("android");
         JSONObject iOSAppPath = capabilityManager
                 .getCapabilityObjectFromKey("iOS");
         if (android != null && android.has(app)) {
-            appPaths.add((String) android.get(app));
+            String apkPath = uploadFile(hostMachine, android.getString("app"));
+            artifactPaths.put("APK",apkPath);
         }
-        if (iOSAppPath!=null && iOSAppPath.has("app")) {
-            if (iOSAppPath.get("app") instanceof  JSONObject) {
-                if (((JSONObject)iOSAppPath.get("app")).has("simulator")) {
-                    Object simulator = ((JSONObject)iOSAppPath.get("app")).get("simulator");
-                    appPaths.add((String) simulator);
+        if (iOSAppPath != null && iOSAppPath.has("app")) {
+            if (iOSAppPath.get("app") instanceof JSONObject) {
+                JSONObject iOSApp = iOSAppPath.getJSONObject("app");
+                if (iOSApp.has("simulator")) {
+                    String simulatorApp = iOSApp.getString("simulator");
+                    String appPath = uploadFile(hostMachine, simulatorApp);
+                    artifactPaths.put("APP", appPath);
                 }
-                if (((JSONObject)iOSAppPath.get("app")).has("device")) {
-                    Object device = ((JSONObject)iOSAppPath.get("app")).get("device");
-                    appPaths.add((String) device);
+                if (iOSApp.has("device")) {
+                    String deviceIPA = iOSApp.getString("device");
+                    String ipaPath = uploadFile(hostMachine, deviceIPA);
+                    artifactPaths.put("IPA", ipaPath);
                 }
             }
         }
-        return appPaths;
+        return artifactPaths;
     }
 }
+

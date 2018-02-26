@@ -37,7 +37,9 @@ public class DeviceAllocationManager {
 
     private DeviceAllocationManager() throws Exception {
         try {
+            isPlatformInEnv();
             hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+            ArtifactsUploader.getInstance().uploadFilesToRemoteMachines();
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
             appiumDriverManager = new AppiumDriverManager();
