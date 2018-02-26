@@ -12,7 +12,6 @@ import java.io.IOException;
  */
 public class AppiumDeviceManager {
 
-    private static ThreadLocal<String> deviceUDID = new ThreadLocal<>();
     private static ThreadLocal<AppiumDevice> appiumDevice = new ThreadLocal<>();
     private IOSDeviceConfiguration iosDeviceConfiguration;
     private AndroidDeviceConfiguration androidDeviceConfiguration;
@@ -24,10 +23,6 @@ public class AppiumDeviceManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static String getDeviceUDID() {
-        return deviceUDID.get();
     }
 
     public static AppiumDevice getDevice() {
