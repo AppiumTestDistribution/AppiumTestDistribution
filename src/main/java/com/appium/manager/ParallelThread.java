@@ -33,6 +33,11 @@ public class ParallelThread {
     private static final String ANDROID = "android";
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
+
+    private static final String ADB_LOGS_DIR = "/target/adblogs/";
+    private static final String APPIUM_LOGS_DIR = "/target/appiumlogs/";
+    private static final String SCREENSHOT_DIR = "/target/screenshot/";
+
     private ConfigFileManager configFileManager;
     private DeviceAllocationManager deviceAllocationManager;
     Map<String, String> devices = new HashMap<String, String>();
@@ -148,7 +153,7 @@ public class ParallelThread {
     }
 
     private void generateDirectoryForAdbLogs() {
-        File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+        File adb_logs = new File(System.getProperty("user.dir") + ADB_LOGS_DIR);
         if (!adb_logs.exists()) {
             System.out.println("creating directory: " + "ADBLogs");
             try {
@@ -160,7 +165,7 @@ public class ParallelThread {
     }
 
     private void createAppiumLogsFolder() {
-        File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
+        File f = new File(System.getProperty("user.dir") + APPIUM_LOGS_DIR);
         if (!f.exists()) {
             System.out.println("creating directory: " + "Logs");
             try {
@@ -177,7 +182,7 @@ public class ParallelThread {
             if (deviceSerial != null) {
                 createPlatformDirectory(platform);
                 File file = new File(
-                        System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                        System.getProperty("user.dir") + SCREENSHOT_DIR + platform + "/"
                                 + deviceSerial);
                 if (!file.exists()) {
                     if (file.mkdir()) {
@@ -195,7 +200,7 @@ public class ParallelThread {
             String deviceSerial = iOSdevices.get(i);
             createPlatformDirectory(platform);
             File file = new File(
-                    System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                    System.getProperty("user.dir") + SCREENSHOT_DIR + platform + "/"
                             + deviceSerial);
             if (!file.exists()) {
                 if (file.mkdir()) {
@@ -208,9 +213,9 @@ public class ParallelThread {
     }
 
 
-    public void createPlatformDirectory(String platform) {
+    private void createPlatformDirectory(String platform) {
         File platformDirectory = new File(System.getProperty("user.dir")
-                + "/target/screenshot/" + platform);
+                + SCREENSHOT_DIR + platform);
         if (!platformDirectory.exists()) {
             platformDirectory.mkdirs();
         }
