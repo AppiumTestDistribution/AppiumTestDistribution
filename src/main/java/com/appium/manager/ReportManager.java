@@ -28,7 +28,7 @@ public class ReportManager {
     public String category = null;
 
 
-    public ReportManager() {
+    public ReportManager() throws IOException {
         testLogger = new TestLogger();
         appiumDeviceManager = new AppiumDeviceManager();
     }

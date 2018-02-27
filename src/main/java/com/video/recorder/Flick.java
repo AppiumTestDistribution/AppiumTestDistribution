@@ -20,12 +20,12 @@ public class Flick extends CommandPrompt {
 
     public static ConcurrentHashMap<Long, Integer> androidScreenRecordProcess =
         new ConcurrentHashMap<>();
-    AndroidDeviceConfiguration androidDeviceConfiguration = new AndroidDeviceConfiguration();
-    Process screenRecord;
+    private AndroidDeviceConfiguration androidDeviceConfiguration = new AndroidDeviceConfiguration();
+    private Process screenRecord;
     private SimulatorManager simulatorManager;
-    ThreadLocal<Process> simulatorRecordSession = new ThreadLocal<>();
+    private ThreadLocal<Process> simulatorRecordSession = new ThreadLocal<>();
 
-    public Flick() {
+    public Flick() throws IOException {
         simulatorManager = new SimulatorManager();
     }
 

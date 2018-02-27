@@ -36,7 +36,7 @@ class TestLogger {
         this.videoPath = videoPath;
     }
 
-    public TestLogger() {
+    public TestLogger() throws IOException {
         this.videoRecording = new Flick();
         screenShotManager = new ScreenShotManager();
     }

@@ -18,7 +18,7 @@ public class AndroidDeviceConfiguration {
     public static List<String> validDeviceIds = new ArrayList<>();
     private DevicesByHost devicesByHost;
 
-    public AndroidDeviceConfiguration() {
+    public AndroidDeviceConfiguration() throws IOException {
         devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 

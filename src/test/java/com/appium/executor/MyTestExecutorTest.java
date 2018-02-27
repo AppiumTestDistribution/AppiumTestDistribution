@@ -88,7 +88,7 @@ public class MyTestExecutorTest {
     }
 
 
-    public void testXmlSuiteCreationCucumber() {
+    public void testXmlSuiteCreationCucumber() throws IOException {
         Set<Method> methods = new HashSet<>();
         ArrayList<String> devices = new ArrayList<>();
         devices.add("192.168.0.1");
