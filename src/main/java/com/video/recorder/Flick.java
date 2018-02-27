@@ -1,6 +1,7 @@
 package com.video.recorder;
 
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.utils.CommandPrompt;
@@ -64,7 +65,7 @@ public class Flick extends CommandPrompt {
                 == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
             String videoPath = System.getProperty("user.dir");
             String videoLocationIOS =
-                    videoPath + "/target/screenshot/iOS/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                    videoPath + FileLocations.IOS_SCREENSHOTS_DIRECTORY + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                             + "/" + className + "/" + methodName;
             File file = new File(videoLocationIOS);
             if (!file.exists()) {
@@ -86,7 +87,7 @@ public class Flick extends CommandPrompt {
         String ios;
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length() != 40) {
             String videoLocationAndroid =
-                videoPath + "/target/screenshot/android/"
+                videoPath + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
                         + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/"
                     + className + "/" + methodName;
             fileDirectoryCheck(videoLocationAndroid);
@@ -132,7 +133,7 @@ public class Flick extends CommandPrompt {
             }
         } else {
             String videoLocationIOS =
-                videoPath + "/target/screenshot/iOS/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                videoPath + FileLocations.IOS_SCREENSHOTS_DIRECTORY + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                         + "/" + className + "/" + methodName;
             fileDirectoryCheck(videoLocationIOS);
             if (command.equals("start")) {

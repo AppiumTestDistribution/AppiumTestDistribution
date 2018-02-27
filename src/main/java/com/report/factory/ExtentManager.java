@@ -1,5 +1,6 @@
 package com.report.factory;
 
+import com.appium.filelocations.FileLocations;
 import com.appium.manager.ConfigFileManager;
 import com.appium.utils.CommandPrompt;
 import com.aventstack.extentreports.ExtentReports;
@@ -18,7 +19,7 @@ public class ExtentManager {
 
     private static ConfigFileManager configFileManager;
     private static ExtentReports extent;
-    private static String filePath = System.getProperty("user.dir") + "/target/ExtentReports.html";
+    private static String filePath = System.getProperty("user.dir") + FileLocations.EXTENT_REPORTS_LOCATION;
     private static CommandPrompt commandPrompt = new CommandPrompt();
     private static String mongoHost;
     private static Integer mongoPort;
@@ -64,13 +65,13 @@ public class ExtentManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        File dest = new File(System.getProperty("user.dir") + "/target/extent.xml");
+        File dest = new File(System.getProperty("user.dir") + FileLocations.EXTENT_XML_LOCATION);
         try {
             FileUtils.copyURLToFile(inputUrl, dest);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        htmlReporter.loadXMLConfig(System.getProperty("user.dir") + "/target/extent.xml");
+        htmlReporter.loadXMLConfig(System.getProperty("user.dir") + FileLocations.EXTENT_XML_LOCATION);
         // make the charts visible on report open
         htmlReporter.config().setChartVisibilityOnOpen(true);
 

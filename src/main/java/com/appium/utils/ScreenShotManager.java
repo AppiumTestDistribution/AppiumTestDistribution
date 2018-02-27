@@ -2,6 +2,7 @@ package com.appium.utils;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
+import com.appium.filelocations.FileLocations;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import org.apache.commons.io.FileUtils;
@@ -116,7 +117,7 @@ public class ScreenShotManager {
                                     String platform, String deviceModel) {
         String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
         setFailedScreen(
-                  "screenshot/" + platform + "/" + udid
+                "screenshot/" + platform + "/" + udid
                         + "/" + className + "/"
                         + methodName + "/"
                         + screenShotNameWithTimeStamp + deviceModel + "_"
@@ -129,9 +130,9 @@ public class ScreenShotManager {
                         + methodName + "_results.jpeg");
 
         setFramedCapturedScreen("screenshot/" + platform + "/" + udid
-                        + "/" + className
-                        + "/" + methodName + "/" + model + "_"
-                        + methodName + "_results_framed.jpeg");
+                + "/" + className
+                + "/" + methodName + "/" + model + "_"
+                + methodName + "_results_framed.jpeg");
         setFramedFailedScreen(
                 "screenshot/" + platform + "/" + udid
                         + "/" + className
@@ -144,10 +145,10 @@ public class ScreenShotManager {
                             + "/src/test/resources/frames/");
             if (status == ITestResult.FAILURE) {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")
-                        + "/target/" + getFailedScreen().trim()));
+                        + FileLocations.OUTPUT_DIRECTORY + getFailedScreen().trim()));
             } else {
                 FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")
-                        + "/target/" + getCapturedScreen().trim()));
+                        + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen().trim()));
             }
 
             File[] files1 = framePath.listFiles();
@@ -163,17 +164,17 @@ public class ScreenShotManager {
                             try {
                                 if (status == ITestResult.FAILURE) {
                                     String screenToFrame = System.getProperty("user.dir")
-                                            + "/target/" + getFailedScreen();
+                                            + FileLocations.OUTPUT_DIRECTORY + getFailedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                             System.getProperty("user.dir")
-                                                    + "/target/" + getFramedFailedScreen());
+                                                    + FileLocations.OUTPUT_DIRECTORY + getFramedFailedScreen());
                                     deleteFile(screenToFrame);
                                 } else {
                                     String screenToFrame = System.getProperty("user.dir")
-                                            + "/target/" + getCapturedScreen();
+                                            + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                             System.getProperty("user.dir")
-                                                    + "/target/" +  getFramedCapturedScreen());
+                                                    + FileLocations.OUTPUT_DIRECTORY + getFramedCapturedScreen());
                                     deleteFile(screenToFrame);
                                 }
 

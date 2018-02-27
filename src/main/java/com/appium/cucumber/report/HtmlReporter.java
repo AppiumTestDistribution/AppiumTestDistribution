@@ -1,5 +1,6 @@
 package com.appium.cucumber.report;
 
+import com.appium.filelocations.FileLocations;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 import org.apache.velocity.exception.VelocityException;
@@ -10,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HtmlReporter {
-    public File reportOutputDirectory = new File(System.getProperty("user.dir") + "/target/");
+
+    public File reportOutputDirectory = new File(System.getProperty("user.dir") + FileLocations.OUTPUT_DIRECTORY);
     public List<String> list = new ArrayList<String>();
 
     public void listFilesForFolder(final File folder) {

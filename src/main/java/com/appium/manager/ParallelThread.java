@@ -3,19 +3,14 @@ package com.appium.manager;
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
+import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.HostMachineDeviceManager;
-import com.github.lalyos.jfiglet.FigletFont;
 import com.report.factory.ExtentManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.appium.manager.FigletHelper.figlet;
 
 /*
  * This class picks the devices connected
@@ -34,6 +31,10 @@ import java.util.Map;
 
 
 public class ParallelThread {
+    private static final String ANDROID = "android";
+    private static final String BOTH = "Both";
+    private static final String IOS = "iOS";
+
     private ConfigFileManager configFileManager;
     private DeviceAllocationManager deviceAllocationManager;
     Map<String, String> devices = new HashMap<String, String>();
@@ -57,17 +58,12 @@ public class ParallelThread {
         appiumDriverManager = new AppiumDriverManager();
     }
 
+    @Deprecated
+    //Use system property udids to send list of valid device ids
     public ParallelThread(List<String> validDeviceIds) throws Exception {
-        iosDevice = new IOSDeviceConfiguration();
-        androidDevice = new AndroidDeviceConfiguration();
-        configFileManager = ConfigFileManager.getInstance();
+        this();
         androidDevice.setValidDevices(validDeviceIds);
         iosDevice.setValidDevices(validDeviceIds);
-        deviceAllocationManager = DeviceAllocationManager.getInstance();
-        myTestExecutor = new MyTestExecutor();
-        htmlReporter = new HtmlReporter();
-        extentManager = new ExtentManager();
-        appiumDriverManager = new AppiumDriverManager();
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
@@ -76,7 +72,7 @@ public class ParallelThread {
     }
 
     public boolean runner(String pack) throws Exception {
-        return runner(pack, new ArrayList<String>());
+        return runner(pack, new ArrayList<>());
     }
 
     private boolean triggerTest(String pack, List<String> tests) throws Exception {
@@ -88,32 +84,31 @@ public class ParallelThread {
         String platform = System.getenv("Platform");
         HostMachineDeviceManager hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         int deviceCount = hostMachineDeviceManager.getDevicesByHost().getAllDevices().size();
-        createAppiumLogsFolder();
-        if (deviceAllocationManager.getDevices() != null && platform
-                .equalsIgnoreCase("android")
-                || platform.equalsIgnoreCase("Both")) {
-            generateDirectoryForAdbLogs();
-            createSnapshotFolderAndroid("android");
-        }
-
-
-
-        if (os.contains("mac") && platform.equalsIgnoreCase("iOS")
-                || platform.equalsIgnoreCase("Both")) {
-            if (deviceCount > 0) {
-                //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-                createSnapshotFolderiOS("iPhone");
-            }
-        }
 
         if (deviceCount == 0) {
             figlet("No Devices Connected");
             System.exit(0);
         }
+
         System.out.println("***************************************************\n");
         System.out.println("Total Number of devices detected::" + deviceCount + "\n");
         System.out.println("***************************************************\n");
         System.out.println("starting running tests in threads");
+
+        createAppiumLogsFolder();
+
+        if (deviceAllocationManager.getDevices() != null && platform
+                .equalsIgnoreCase(ANDROID)
+                || platform.equalsIgnoreCase(BOTH)) {
+            generateDirectoryForAdbLogs();
+            createSnapshotFolderAndroid("android");
+        }
+
+        if (os.contains("mac") && platform.equalsIgnoreCase(IOS)
+                || platform.equalsIgnoreCase(BOTH)) {
+            //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
+            createSnapshotFolderiOS("iPhone");
+        }
 
         List<Class> testcases = new ArrayList<>();
 
@@ -155,7 +150,7 @@ public class ParallelThread {
     }
 
     private void generateDirectoryForAdbLogs() {
-        File adb_logs = new File(System.getProperty("user.dir") + "/target/adblogs/");
+        File adb_logs = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY);
         if (!adb_logs.exists()) {
             System.out.println("creating directory: " + "ADBLogs");
             try {
@@ -167,7 +162,7 @@ public class ParallelThread {
     }
 
     private void createAppiumLogsFolder() {
-        File f = new File(System.getProperty("user.dir") + "/target/appiumlogs/");
+        File f = new File(System.getProperty("user.dir") + FileLocations.APPIUM_LOGS_DIRECTORY);
         if (!f.exists()) {
             System.out.println("creating directory: " + "Logs");
             try {
@@ -184,7 +179,7 @@ public class ParallelThread {
             if (deviceSerial != null) {
                 createPlatformDirectory(platform);
                 File file = new File(
-                        System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                        System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
                                 + deviceSerial);
                 if (!file.exists()) {
                     if (file.mkdir()) {
@@ -202,7 +197,7 @@ public class ParallelThread {
             String deviceSerial = iOSdevices.get(i);
             createPlatformDirectory(platform);
             File file = new File(
-                    System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                    System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
                             + deviceSerial);
             if (!file.exists()) {
                 if (file.mkdir()) {
@@ -215,9 +210,9 @@ public class ParallelThread {
     }
 
 
-    public void createPlatformDirectory(String platform) {
+    private void createPlatformDirectory(String platform) {
         File platformDirectory = new File(System.getProperty("user.dir")
-                + "/target/screenshot/" + platform);
+                + FileLocations.SCREENSHOTS_DIRECTORY + platform);
         if (!platformDirectory.exists()) {
             platformDirectory.mkdirs();
         }
@@ -258,13 +253,6 @@ public class ParallelThread {
         }
     }
 
-    public static void figlet(String text) {
-        String asciiArt1 = null;
-        try {
-            asciiArt1 = FigletFont.convertOneLine(text);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(asciiArt1);
-    }
+
 }
+

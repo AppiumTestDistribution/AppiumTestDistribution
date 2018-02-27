@@ -1,6 +1,7 @@
 package com.appium.utils;
 
 import com.appium.android.AndroidDeviceConfiguration;
+import com.appium.filelocations.FileLocations;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -29,7 +30,6 @@ import static com.appium.utils.TestWriteUtils.GSON;
  */
 public class ImageUtils {
 
-
     public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed,
                                  String framedDeviceScreen)
             throws InterruptedException, IOException, IM4JavaException {
@@ -50,7 +50,7 @@ public class ImageUtils {
         List<TestResults> testResultList = new ArrayList<TestResults>();
 
 
-        File dir = new File(System.getProperty("user.dir") + "/target/screenshot");
+        File dir = new File(System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY);
 
         File[] oSList = dir.listFiles();
 
@@ -124,7 +124,7 @@ public class ImageUtils {
     }
 
     public static void createJSonForHtml() throws IOException {
-        File dir = new File(System.getProperty("user.dir") + "/target/screenshot/");
+        File dir = new File(System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY);
 
         System.out.println("Getting all files in " + dir.getCanonicalPath()
                 + " including those in subdirectories");
@@ -188,7 +188,7 @@ public class ImageUtils {
     }
 
     public static void createGif() throws IOException {
-        File[] files = new File(System.getProperty("user.dir") + "/target/screenshot/").listFiles();
+        File[] files = new File(System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY).listFiles();
         showFiles(files);
     }
 

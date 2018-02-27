@@ -3,6 +3,7 @@ package com.appium.executor;
 
 import static junit.framework.TestCase.assertTrue;
 
+import com.appium.filelocations.FileLocations;
 import com.appium.utils.HostMachineDeviceManager;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
@@ -113,7 +114,7 @@ public class MyTestExecutorTest {
             ex1.constructXmlSuiteForParallelCucumber(devices.size(),
                     HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices());
         System.out.println("xml:" + xmlSuite.toXml());
-        File file = new File(System.getProperty("user.dir") + "/target/parallel.xml");
+        File file = new File(System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION);
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());
