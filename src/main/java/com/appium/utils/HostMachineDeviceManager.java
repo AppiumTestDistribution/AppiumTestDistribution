@@ -90,6 +90,7 @@ public class HostMachineDeviceManager {
     }
 
     private static Map<String, List<AppiumDevice>> getRemoteDevices() throws Exception {
+        String platform = System.getenv(PLATFORM);
         Map<String, List<AppiumDevice>> devices = new HashMap<>();
         JSONArray hostMachines = getHostMachineObject();
         ObjectMapper mapper = new ObjectMapper()
@@ -109,7 +110,7 @@ public class HostMachineDeviceManager {
                             appiumDevice.setPort(new AvailablePorts().getAvailablePort());
                             deviceList.add(appiumDevice);
                         });
-                        if (hostMachineJson.has("simulators")) {
+                        if (!platform.equalsIgnoreCase("android") && hostMachineJson.has("simulators")) {
                             JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                             List<Device> simulatorsToBoot = getSimulators(
                                     machineIP, simulators, mapper);
@@ -156,6 +157,7 @@ public class HostMachineDeviceManager {
     }
 
     private static Map<String, List<AppiumDevice>> getLocalDevices() throws Exception {
+        String platform = System.getenv(PLATFORM);
         List<AppiumDevice> devices = new ArrayList<>();
         Map<String, List<AppiumDevice>> simulatorsToBoot = new HashMap<>();
         JSONArray hostMachines = getHostMachineObject();
@@ -163,26 +165,25 @@ public class HostMachineDeviceManager {
         hostMachines.forEach(hostMachine -> {
             JSONObject hostMachineJson = (JSONObject) hostMachine;
             String machineIP = hostMachineJson.getString("machineIP");
-            if (localIpAddress.equals(machineIP)) {
-                if (hostMachineJson.has("simulators")) {
-                    JSONArray simulators = hostMachineJson.getJSONArray("simulators");
-                    simulators.forEach(sim -> {
-                        JSONObject simulatorJson = (JSONObject) sim;
-                        String deviceName = simulatorJson.getString("deviceName");
-                        String os = simulatorJson.getString("OS");
-                        try {
-                            Device simulatorDetails = new SimulatorManager()
-                                    .getDevice(deviceName, os, "iOS");
-                            if (!simulatorDetails.getState().equals("Booted")) {
-                                AppiumDevice appiumDevice = new AppiumDevice(simulatorDetails, localIpAddress);
-                                appiumDevice.setPort(new AvailablePorts().getAvailablePort());
-                                devices.add(appiumDevice);
-                            }
-                        } catch (InterruptedException | IOException e) {
-                            e.printStackTrace();
+            if (!platform.equalsIgnoreCase("android") && localIpAddress.equals(machineIP) &&
+                    hostMachineJson.has("simulators")) {
+                JSONArray simulators = hostMachineJson.getJSONArray("simulators");
+                simulators.forEach(sim -> {
+                    JSONObject simulatorJson = (JSONObject) sim;
+                    String deviceName = simulatorJson.getString("deviceName");
+                    String os = simulatorJson.getString("OS");
+                    try {
+                        Device simulatorDetails = new SimulatorManager()
+                                .getDevice(deviceName, os, "iOS");
+                        if (!simulatorDetails.getState().equals("Booted")) {
+                            AppiumDevice appiumDevice = new AppiumDevice(simulatorDetails, localIpAddress);
+                            appiumDevice.setPort(new AvailablePorts().getAvailablePort());
+                            devices.add(appiumDevice);
                         }
-                    });
-                }
+                    } catch (InterruptedException | IOException e) {
+                        e.printStackTrace();
+                    }
+                });
             }
         });
         new DeviceManager().getDevices().forEach(allBootedDevice -> {
