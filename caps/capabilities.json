@@ -10,8 +10,8 @@
     "app": {
       "simulator": "https://github.com/saikrishna321/VodQaAdvancedAppium/raw/master/vodqa.zip"
     },
-    "wdaLaunchTimeout": "80000",
-    "wdaConnectionTimeout": "80000",
+    "wdaLaunchTimeout": 80000,
+    "wdaConnectionTimeout": 80000,
     "preventWDAAttachments": false,
     "clearSystemFiles": true,
     "shouldUseSingletonTestManager": false,
