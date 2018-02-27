@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 public class CapabilityManagerTest {
-    CapabilityManager capabilityManager = CapabilityManager.getInstance();
 
     public CapabilityManagerTest() throws Exception {
     }

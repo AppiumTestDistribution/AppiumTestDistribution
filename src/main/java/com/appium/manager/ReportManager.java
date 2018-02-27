@@ -1,10 +1,8 @@
 package com.appium.manager;
 
 import com.annotation.values.Author;
-import com.appium.utils.AppiumDevice;
 import com.appium.utils.GetDescriptionForChildNode;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentTestManager;
 import org.testng.ITestResult;
 import org.testng.annotations.Test;
@@ -30,7 +28,7 @@ public class ReportManager {
     public String category = null;
 
 
-    public ReportManager() {
+    public ReportManager() throws IOException {
         testLogger = new TestLogger();
         appiumDeviceManager = new AppiumDeviceManager();
     }
@@ -51,8 +49,8 @@ public class ReportManager {
             deviceModel = "";
         }
         parent = ExtentTestManager.createTest(methodName, testDescription,
-            deviceModel + "|" + AppiumDeviceManager.getDevice().getHostName()
-                    + "|"+ AppiumDeviceManager.getDevice().getDevice().getUdid());
+            deviceModel + "|" + AppiumDeviceManager.getAppiumDevice().getHostName()
+                    + "|"+ AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         parentTest.set(parent);
         return parent;
     }
@@ -84,7 +82,7 @@ public class ReportManager {
         }
         String testName = dataProvider == null ? descriptionMethodName
                 : descriptionMethodName + "[" + dataProvider + "]";
-        String udid = AppiumDeviceManager.getDevice().getDevice().getUdid();
+        String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
         if (methodNamePresent) {
             authorName = methodName.getMethod()
                 .getConstructorOrMethod().getMethod()
@@ -105,7 +103,7 @@ public class ReportManager {
     public void createChildNodeWithCategory(String methodName,
         String tags) {
         child = parentTest.get().createNode(methodName, category
-            + AppiumDeviceManager.getDevice().getDevice().getUdid()).assignCategory(tags);
+            + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()).assignCategory(tags);
         childTest.set(child);
     }
 }

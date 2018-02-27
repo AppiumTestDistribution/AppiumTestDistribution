@@ -37,7 +37,9 @@ public class DeviceAllocationManager {
 
     private DeviceAllocationManager() throws Exception {
         try {
+            isPlatformInEnv();
             hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+            ArtifactsUploader.getInstance().uploadFilesToRemoteMachines();
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
             appiumDriverManager = new AppiumDriverManager();
@@ -125,8 +127,8 @@ public class DeviceAllocationManager {
     }
 
     public void freeDevice() {
-        AppiumDeviceManager.getDevice().freeDevice();
-        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getDevice().getDevice()
+        AppiumDeviceManager.getAppiumDevice().freeDevice();
+        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getAppiumDevice().getDevice()
                 .getUdid()
                 + " from execution list");
     }

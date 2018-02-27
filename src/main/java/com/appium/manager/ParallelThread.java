@@ -44,6 +44,7 @@ public class ParallelThread {
     private HtmlReporter htmlReporter;
     ExtentManager extentManager;
     private AppiumDriverManager appiumDriverManager;
+    private ArtifactsUploader artifactsUploader;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -85,7 +86,8 @@ public class ParallelThread {
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         String platform = System.getenv("Platform");
-        int deviceCount = HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices().size();
+        HostMachineDeviceManager hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+        int deviceCount = hostMachineDeviceManager.getDevicesByHost().getAllDevices().size();
         createAppiumLogsFolder();
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase("android")
@@ -144,7 +146,7 @@ public class ParallelThread {
                 //addPluginToCucumberRunner();
                 myTestExecutor
                         .constructXmlSuiteForParallelCucumber(deviceCount,
-                                HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices());
+                                hostMachineDeviceManager.getDevicesByHost().getAllDevices());
                 hasFailures = myTestExecutor.runMethodParallel();
                 htmlReporter.generateReports();
             }

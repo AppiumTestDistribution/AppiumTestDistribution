@@ -167,7 +167,7 @@ public class AppiumDriverManager {
     }
 
     public void stopAppiumDriver() throws IOException, InterruptedException {
-        if (AppiumDeviceManager.getDevice().getDevice().getUdid().length()
+        if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             iosDeviceConfiguration.destroyIOSWebKitProxy();
         }

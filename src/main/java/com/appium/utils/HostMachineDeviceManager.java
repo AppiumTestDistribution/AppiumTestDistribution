@@ -1,5 +1,7 @@
 package com.appium.utils;
 
+import com.appium.manager.ArtifactsUploader;
+import com.appium.manager.HostArtifact;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
@@ -25,7 +27,7 @@ public class HostMachineDeviceManager {
         initializeDevicesByHost();
     }
 
-    public static HostMachineDeviceManager getInstance() {
+    public static HostMachineDeviceManager getInstance() throws IOException {
         if (instance == null) {
             instance = new HostMachineDeviceManager();
         }
@@ -198,6 +200,12 @@ public class HostMachineDeviceManager {
     private static JSONArray getHostMachineObject() throws Exception {
         CapabilityManager capabilityManager = CapabilityManager.getInstance();
         return capabilityManager.getCapabitiesArrayFromKey("hostMachines");
+    }
+
+
+    public List<HostArtifact> getAppsPerHost() throws IOException {
+        ArtifactsUploader artifactsUploader = ArtifactsUploader.getInstance();
+        return artifactsUploader.getHostArtifacts();
     }
 }
 
