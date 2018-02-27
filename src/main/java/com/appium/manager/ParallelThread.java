@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.appium.manager.FigletHelper.figlet;
+
 /*
  * This class picks the devices connected
  * and distributes across multiple thread.
@@ -255,13 +257,6 @@ public class ParallelThread {
         }
     }
 
-    public static void figlet(String text) {
-        String asciiArt1 = null;
-        try {
-            asciiArt1 = FigletFont.convertOneLine(text);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(asciiArt1);
-    }
+
 }
+

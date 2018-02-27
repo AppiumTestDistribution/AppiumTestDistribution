@@ -39,6 +39,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static com.appium.manager.FigletHelper.figlet;
+
 
 public class MyTestExecutor {
     private final ConfigFileManager prop;
@@ -135,7 +137,7 @@ public class MyTestExecutor {
             hasFailure = runMethodParallel();
         }
         System.out.println("Finally complete");
-        ParallelThread.figlet("Test Completed");
+        figlet("Test Completed");
         //ImageUtils.creatResultsSet();
         //ImageUtils.createJSonForHtml();
         return hasFailure;
