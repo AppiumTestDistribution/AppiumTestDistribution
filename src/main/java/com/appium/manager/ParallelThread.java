@@ -84,15 +84,25 @@ public class ParallelThread {
         String platform = System.getenv("Platform");
         HostMachineDeviceManager hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         int deviceCount = hostMachineDeviceManager.getDevicesByHost().getAllDevices().size();
+
+        if (deviceCount == 0) {
+            figlet("No Devices Connected");
+            System.exit(0);
+        }
+
+        System.out.println("***************************************************\n");
+        System.out.println("Total Number of devices detected::" + deviceCount + "\n");
+        System.out.println("***************************************************\n");
+        System.out.println("starting running tests in threads");
+
         createAppiumLogsFolder();
+
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase("android")
                 || platform.equalsIgnoreCase("Both")) {
             generateDirectoryForAdbLogs();
             createSnapshotFolderAndroid("android");
         }
-
-
 
         if (os.contains("mac") && platform.equalsIgnoreCase("iOS")
                 || platform.equalsIgnoreCase("Both")) {
@@ -101,15 +111,6 @@ public class ParallelThread {
                 createSnapshotFolderiOS("iPhone");
             }
         }
-
-        if (deviceCount == 0) {
-            figlet("No Devices Connected");
-            System.exit(0);
-        }
-        System.out.println("***************************************************\n");
-        System.out.println("Total Number of devices detected::" + deviceCount + "\n");
-        System.out.println("***************************************************\n");
-        System.out.println("starting running tests in threads");
 
         List<Class> testcases = new ArrayList<>();
 
