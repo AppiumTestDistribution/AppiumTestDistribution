@@ -43,6 +43,8 @@ import static com.appium.manager.FigletHelper.figlet;
 
 
 public class MyTestExecutor {
+    private static final String PARALLEL_FILE_LOCATION = "/target/parallel.xml";
+
     private final ConfigFileManager prop;
     private final DeviceAllocationManager deviceAllocationManager;
     public List<Class> testcases = new ArrayList<>();
@@ -58,7 +60,6 @@ public class MyTestExecutor {
     }
 
     @SuppressWarnings("rawtypes")
-
     public boolean[] distributeTests(int deviceCount) {
         final boolean[] hasFailures = {false};
         try {
@@ -97,7 +98,7 @@ public class MyTestExecutor {
 
     public boolean runMethodParallelAppium(List<String> test, String pack, int devicecount,
                                            String executionType) throws Exception {
-        URL newUrl = null;
+        URL newUrl;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
         int a = 0;
@@ -154,13 +155,13 @@ public class MyTestExecutor {
     public boolean runMethodParallel() {
         TestNG testNG = new TestNG();
         List<String> suites = Lists.newArrayList();
-        suites.add(System.getProperty("user.dir") + "/target/parallel.xml");
+        suites.add(System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);
         testNG.setTestSuites(suites);
         testNG.run();
         return testNG.hasFailure();
     }
 
-    public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
+    private XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
                                                  Map<String, List<Method>> methods,
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
@@ -194,7 +195,7 @@ public class MyTestExecutor {
         return suite;
     }
 
-    public List<XmlClass> writeXmlClass(List<String> testcases, Map<String,
+    private List<XmlClass> writeXmlClass(List<String> testcases, Map<String,
             List<Method>> methods, List<XmlClass> xmlClasses) {
         for (String className : methods.keySet()) {
             if (className.contains("Test")) {
@@ -285,7 +286,7 @@ public class MyTestExecutor {
     private void writeTestNGFile(XmlSuite suite) {
         try {
             FileWriter writer = new FileWriter(new File(
-                    System.getProperty("user.dir") + "/target/parallel.xml"));
+                    System.getProperty("user.dir") + PARALLEL_FILE_LOCATION));
             writer.write(suite.toXml());
             writer.flush();
             writer.close();
@@ -294,7 +295,7 @@ public class MyTestExecutor {
         }
     }
 
-    public void include(ArrayList<String> groupsInclude, String include) {
+    private void include(ArrayList<String> groupsInclude, String include) {
         if (prop.getProperty(include) != null) {
             Collections.addAll(groupsInclude, prop.getProperty(include).split("\\s*,\\s*"));
         } else if (System.getenv(include) != null) {
@@ -343,7 +344,7 @@ public class MyTestExecutor {
         }
     }
 
-    public void deleteOutputDirectory() {
+    private void deleteOutputDirectory() {
         File delete_output = new File(System.getProperty("user.dir")
                 + "/src/test/java/output/");
         File[] files = delete_output.listFiles();
@@ -369,7 +370,7 @@ public class MyTestExecutor {
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
             test.setPackages(getPackages());
         }
-        File file = new File(System.getProperty("user.dir") + "/target/parallel.xml");
+        File file = new File(System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());
@@ -404,7 +405,7 @@ public class MyTestExecutor {
         test.setName("TestNG Test");
         test.addParameter("device", "");
         test.setPackages(getPackages());
-        File file = new File(System.getProperty("user.dir") + "/target/parallel.xml");
+        File file = new File(System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());
@@ -425,7 +426,7 @@ public class MyTestExecutor {
         return suite;
     }
 
-    public static List<XmlPackage> getPackages() {
+    private static List<XmlPackage> getPackages() {
         List<XmlPackage> allPackages = new ArrayList<>();
         XmlPackage eachPackage = new XmlPackage();
         eachPackage.setName("output");
