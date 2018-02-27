@@ -7,6 +7,7 @@ import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.HostMachineDeviceManager;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.report.factory.ExtentManager;
+import cucumber.api.java.hu.De;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
@@ -57,17 +58,12 @@ public class ParallelThread {
         appiumDriverManager = new AppiumDriverManager();
     }
 
+    @Deprecated
+    //Use system property udids to send list of valid device ids
     public ParallelThread(List<String> validDeviceIds) throws Exception {
-        iosDevice = new IOSDeviceConfiguration();
-        androidDevice = new AndroidDeviceConfiguration();
-        configFileManager = ConfigFileManager.getInstance();
+        this();
         androidDevice.setValidDevices(validDeviceIds);
         iosDevice.setValidDevices(validDeviceIds);
-        deviceAllocationManager = DeviceAllocationManager.getInstance();
-        myTestExecutor = new MyTestExecutor();
-        htmlReporter = new HtmlReporter();
-        extentManager = new ExtentManager();
-        appiumDriverManager = new AppiumDriverManager();
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
