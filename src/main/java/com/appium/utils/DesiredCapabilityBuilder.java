@@ -3,6 +3,8 @@ package com.appium.utils;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.ArtifactsUploader;
+import com.appium.manager.HostArtifact;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -14,6 +16,10 @@ import org.springframework.util.ResourceUtils;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -38,6 +44,12 @@ public class DesiredCapabilityBuilder {
     public void buildDesiredCapability(String platform,
                                        String jsonPath) throws Exception {
         int port = AppiumDeviceManager.getAppiumDevice().getPort();
+        HostArtifact hostArtifact = ArtifactsUploader.getInstance()
+                .getHostArtifacts().stream().filter(s ->
+                s.getHost()
+                        .equalsIgnoreCase(AppiumDeviceManager.getAppiumDevice()
+                                .getHostName())).collect(toList()).parallelStream()
+                .findFirst().get();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject jsonParsedObject = new JsonParser(jsonPath).getObjectFromJSON();
         JSONObject platFormCapabilities = jsonParsedObject.getJSONObject(platform);
@@ -61,13 +73,13 @@ public class DesiredCapabilityBuilder {
                             .getDevice().getUdid().length();
                     if (length
                             == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                        appPath = (((JSONObject) values).getString("simulator"));
+                        appPath = hostArtifact.getArtifactPath("APP");
                     } else if (length
                             == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-                        appPath = ((JSONObject) values).getString("device");
+                        appPath = hostArtifact.getArtifactPath("IPA");
                     }
                 } else {
-                    appPath = platFormCapabilities.getString(appCapability);
+                    appPath = hostArtifact.getArtifactPath("APK");
                 }
                 Path path = FileSystems.getDefault().getPath(appPath);
                 if (ResourceUtils.isUrl(appPath)) {

@@ -64,19 +64,19 @@ public class ArtifactsUploader {
                 .getCapabilityObjectFromKey("android");
         JSONObject iOSAppPath = capabilityManager
                 .getCapabilityObjectFromKey("iOS");
-        if (android != null && android.has(app) && ResourceUtils.isUrl(android.getString("app"))) {
+        if (android != null && android.has(app) && !ResourceUtils.isUrl(android.getString("app"))) {
                 String apkPath = uploadFile(hostMachine, android.getString("app"));
                 artifactPaths.put("APK",apkPath);
         }
         if (iOSAppPath != null && iOSAppPath.has("app")) {
             if (iOSAppPath.get("app") instanceof JSONObject) {
                 JSONObject iOSApp = iOSAppPath.getJSONObject("app");
-                if (iOSApp.has("simulator") && ResourceUtils.isUrl(iOSApp.getString("simulator"))) {
+                if (iOSApp.has("simulator") && !ResourceUtils.isUrl(iOSApp.getString("simulator"))) {
                     String simulatorApp = iOSApp.getString("simulator");
                     String appPath = uploadFile(hostMachine, simulatorApp);
                     artifactPaths.put("APP", appPath);
                 }
-                if (iOSApp.has("device") && ResourceUtils.isUrl(iOSApp.getString("device"))) {
+                if (iOSApp.has("device") && !ResourceUtils.isUrl(iOSApp.getString("device"))) {
                     String deviceIPA = iOSApp.getString("device");
                     String ipaPath = uploadFile(hostMachine, deviceIPA);
                     artifactPaths.put("IPA", ipaPath);

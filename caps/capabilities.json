@@ -3,6 +3,7 @@
     "platformName": "android",
     "noSign": true,
     "deviceName": "android",
+    "uiautomator2ServerInstallTimeout":60000,
     "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
   },
   "iOS": {

@@ -72,7 +72,8 @@ public class HostMachineDeviceManager {
         } else {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
             devicesByHost.forEach((hostName, appiumDevices) -> {
-                List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice -> appiumDevice.getDevice().getOs().equalsIgnoreCase(platform)).collect(Collectors.toList());
+                List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice ->
+                        appiumDevice.getDevice().getOs().equalsIgnoreCase(platform)).collect(Collectors.toList());
                 if (!filteredDevices.isEmpty())
                     filteredDevicesHostName.put(hostName, filteredDevices);
             });
