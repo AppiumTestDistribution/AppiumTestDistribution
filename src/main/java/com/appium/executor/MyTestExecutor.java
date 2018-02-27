@@ -1,6 +1,7 @@
 package com.appium.executor;
 
 import com.appium.cucumber.report.HtmlReporter;
+import com.appium.filelocations.FileLocations;
 import com.appium.manager.*;
 import com.appium.utils.AppiumDevice;
 import org.junit.runner.JUnitCore;
@@ -43,7 +44,6 @@ import static com.appium.manager.FigletHelper.figlet;
 
 
 public class MyTestExecutor {
-    private static final String PARALLEL_FILE_LOCATION = "/target/parallel.xml";
 
     private final ConfigFileManager prop;
     private final DeviceAllocationManager deviceAllocationManager;
@@ -155,7 +155,7 @@ public class MyTestExecutor {
     public boolean runMethodParallel() {
         TestNG testNG = new TestNG();
         List<String> suites = Lists.newArrayList();
-        suites.add(System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);
+        suites.add(System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION);
         testNG.setTestSuites(suites);
         testNG.run();
         return testNG.hasFailure();
@@ -286,7 +286,7 @@ public class MyTestExecutor {
     private void writeTestNGFile(XmlSuite suite) {
         try {
             FileWriter writer = new FileWriter(new File(
-                    System.getProperty("user.dir") + PARALLEL_FILE_LOCATION));
+                    System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION));
             writer.write(suite.toXml());
             writer.flush();
             writer.close();
@@ -370,7 +370,7 @@ public class MyTestExecutor {
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
             test.setPackages(getPackages());
         }
-        File file = new File(System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);
+        File file = new File(System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION);
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());
@@ -405,7 +405,7 @@ public class MyTestExecutor {
         test.setName("TestNG Test");
         test.addParameter("device", "");
         test.setPackages(getPackages());
-        File file = new File(System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);
+        File file = new File(System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION);
         FileWriter fw = null;
         try {
             fw = new FileWriter(file.getAbsoluteFile());

@@ -2,6 +2,7 @@ package com.cucumber.listener;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
+import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
@@ -273,7 +274,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             File framePath =
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
-                    System.getProperty("user.dir") + "/target/screenshot/" + device + "/"
+                    System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + device + "/"
                             + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                             + "/" + deviceModel
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
@@ -289,13 +290,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                                 imageUtils.wrapDeviceFrames(
                                         files1[i].toString(),
                                         System.getProperty("user.dir")
-                                                + "/target/screenshot/" + device
+                                                + FileLocations.SCREENSHOTS_DIRECTORY + device
                                                 + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_") + ".jpeg",
                                         System.getProperty("user.dir")
-                                                + "/target/screenshot/" + device
+                                                + FileLocations.SCREENSHOTS_DIRECTORY + device
                                                 + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
@@ -326,14 +327,14 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             platform = "iPhone";
         }
         File framedImageAndroid = new File(
-                System.getProperty("user.dir") + "/target/screenshot/" + platform + "/"
+                System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
                         + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
         if (framedImageAndroid.exists()) {
             reportManager.childTest.get().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
                             System.getProperty("user.dir")
-                                    + "/target/screenshot/"
+                                    + FileLocations.SCREENSHOTS_DIRECTORY
                                     + platform + "/"
                                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                     + "/" + deviceModel
@@ -341,7 +342,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
         } else {
             reportManager.childTest.get().log(Status.INFO,
                     "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
-                            System.getProperty("user.dir") + "/target/screenshot/"
+                            System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY
                                     + platform + "/"
                                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                     + "/" + deviceModel

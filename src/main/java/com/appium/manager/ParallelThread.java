@@ -3,6 +3,7 @@ package com.appium.manager;
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
+import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.HostMachineDeviceManager;
 import com.report.factory.ExtentManager;
@@ -33,10 +34,6 @@ public class ParallelThread {
     private static final String ANDROID = "android";
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
-
-    private static final String ADB_LOGS_DIR = "/target/adblogs/";
-    private static final String APPIUM_LOGS_DIR = "/target/appiumlogs/";
-    private static final String SCREENSHOT_DIR = "/target/screenshot/";
 
     private ConfigFileManager configFileManager;
     private DeviceAllocationManager deviceAllocationManager;
@@ -153,7 +150,7 @@ public class ParallelThread {
     }
 
     private void generateDirectoryForAdbLogs() {
-        File adb_logs = new File(System.getProperty("user.dir") + ADB_LOGS_DIR);
+        File adb_logs = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY);
         if (!adb_logs.exists()) {
             System.out.println("creating directory: " + "ADBLogs");
             try {
@@ -165,7 +162,7 @@ public class ParallelThread {
     }
 
     private void createAppiumLogsFolder() {
-        File f = new File(System.getProperty("user.dir") + APPIUM_LOGS_DIR);
+        File f = new File(System.getProperty("user.dir") + FileLocations.APPIUM_LOGS_DIRECTORY);
         if (!f.exists()) {
             System.out.println("creating directory: " + "Logs");
             try {
@@ -182,7 +179,7 @@ public class ParallelThread {
             if (deviceSerial != null) {
                 createPlatformDirectory(platform);
                 File file = new File(
-                        System.getProperty("user.dir") + SCREENSHOT_DIR + platform + "/"
+                        System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
                                 + deviceSerial);
                 if (!file.exists()) {
                     if (file.mkdir()) {
@@ -200,7 +197,7 @@ public class ParallelThread {
             String deviceSerial = iOSdevices.get(i);
             createPlatformDirectory(platform);
             File file = new File(
-                    System.getProperty("user.dir") + SCREENSHOT_DIR + platform + "/"
+                    System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
                             + deviceSerial);
             if (!file.exists()) {
                 if (file.mkdir()) {
@@ -215,7 +212,7 @@ public class ParallelThread {
 
     private void createPlatformDirectory(String platform) {
         File platformDirectory = new File(System.getProperty("user.dir")
-                + SCREENSHOT_DIR + platform);
+                + FileLocations.SCREENSHOTS_DIRECTORY + platform);
         if (!platformDirectory.exists()) {
             platformDirectory.mkdirs();
         }

@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.filelocations.FileLocations;
 import com.appium.utils.Api;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -68,7 +69,8 @@ public class RemoteAppiumManager {
                             .withArgument(GeneralServerFlag.LOG_LEVEL, "info")
                             .withLogFile(new File(
                                     System.getProperty("user.dir")
-                                            + "/target/appiumlogs/appium_logs.txt"))
+                                            + FileLocations.APPIUM_LOGS_DIRECTORY
+                                            + "appium_logs.txt"))
                             .withIPAddress(host)
                             .usingAnyFreePort();
             appiumDriverLocalService = builder.build();

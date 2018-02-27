@@ -19,14 +19,17 @@ import javax.xml.xpath.XPathFactory;
  * Created by saikrisv on 2016/11/07.
  */
 public class XpathXML {
+
+    public static final String PARALLEL_FILE_LOCATION = "/target/parallel.xml";
+
     public String parseXML(int threadNumber)
-        throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+            throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         try {
             File inputFile = new File(
-                System.getProperty("user.dir") + "/target/parallel.xml");
+                    System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);
             if (inputFile.exists()) {
                 DocumentBuilderFactory dbFactory
-                    = DocumentBuilderFactory.newInstance();
+                        = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder;
 
                 dBuilder = dbFactory.newDocumentBuilder();
@@ -38,18 +41,12 @@ public class XpathXML {
 
                 String expression = "/suite/test/parameter";
                 NodeList nodeList = (NodeList) xPath.compile(expression)
-                    .evaluate(doc, XPathConstants.NODESET);
+                        .evaluate(doc, XPathConstants.NODESET);
                 String value = nodeList.item(threadNumber).getAttributes().getNamedItem("value")
-                    .getNodeValue();
+                        .getNodeValue();
                 return value;
             }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XPathExpressionException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
