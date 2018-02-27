@@ -88,7 +88,7 @@ public class DesiredCapabilityBuilder {
                     desiredCapabilities.setCapability(appCapability, path.normalize()
                             .toAbsolutePath().toString());
                 } else {
-                    desiredCapabilities.setCapability(appCapability, path);
+                    desiredCapabilities.setCapability(appCapability, path.toString());
                 }
             } else {
                 desiredCapabilities.setCapability(key, platFormCapabilities.get(key));

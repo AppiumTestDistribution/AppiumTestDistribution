@@ -29,61 +29,69 @@ public class ArtifactsUploader {
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         hostArtifacts = new ArrayList<>();
     }
-    
+
     public static ArtifactsUploader getInstance() throws IOException {
-        if(instance == null){
+        if (instance == null) {
             instance = new ArtifactsUploader();
         }
         return instance;
     }
 
-    public void uploadFilesToRemoteMachines() throws IOException {
-        hostArtifacts = new ArrayList<>();
+    public void initializeArtifacts() throws IOException {
         for (String hostMachine : hostMachineDeviceManager.getDevicesByHost().getAllHosts()) {
-            if (!hostMachine.equals("127.0.0.1")) {
-                HashMap<String, String> artifactPaths = uploadArtifacts(hostMachine);
-                HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
-                hostArtifacts.add(hostArtifact);
-            }
+            HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
+            HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
+            hostArtifacts.add(hostArtifact);
         }
     }
 
-    public List<HostArtifact> getHostArtifacts(){
+    private boolean isLocalhost(String hostMachine) {
+        return hostMachine.equals("127.0.0.1");
+    }
+
+    public List<HostArtifact> getHostArtifacts() {
         return hostArtifacts;
     }
 
-    private String uploadFile(String hostMachines, String appPath) throws IOException {
-        JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(new File(appPath), hostMachines));
+    private String uploadFile(String hostMachine, String appPath) throws IOException {
+        JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(new File(appPath), hostMachine));
         return jsonObject.getString("filePath");
     }
 
-    private HashMap<String, String> uploadArtifacts(String hostMachine) throws IOException {
+    private HashMap<String, String> getArtifactForHost(String hostMachine) throws IOException {
         String app = "app";
         HashMap<String, String> artifactPaths = new HashMap<>();
         JSONObject android = capabilityManager
                 .getCapabilityObjectFromKey("android");
         JSONObject iOSAppPath = capabilityManager
                 .getCapabilityObjectFromKey("iOS");
-        if (android != null && android.has(app) && !ResourceUtils.isUrl(android.getString("app"))) {
-                String apkPath = uploadFile(hostMachine, android.getString("app"));
-                artifactPaths.put("APK",apkPath);
+        if (android != null && android.has(app)) {
+            artifactPaths.put("APK", getArtifactPath(hostMachine, android.getString("app")));
         }
         if (iOSAppPath != null && iOSAppPath.has("app")) {
             if (iOSAppPath.get("app") instanceof JSONObject) {
                 JSONObject iOSApp = iOSAppPath.getJSONObject("app");
-                if (iOSApp.has("simulator") && !ResourceUtils.isUrl(iOSApp.getString("simulator"))) {
+                if (iOSApp.has("simulator")) {
                     String simulatorApp = iOSApp.getString("simulator");
-                    String appPath = uploadFile(hostMachine, simulatorApp);
-                    artifactPaths.put("APP", appPath);
+                    artifactPaths.put("APP", getArtifactPath(hostMachine, simulatorApp));
                 }
-                if (iOSApp.has("device") && !ResourceUtils.isUrl(iOSApp.getString("device"))) {
+                if (iOSApp.has("device")) {
                     String deviceIPA = iOSApp.getString("device");
-                    String ipaPath = uploadFile(hostMachine, deviceIPA);
-                    artifactPaths.put("IPA", ipaPath);
+                    artifactPaths.put("IPA", getArtifactPath(hostMachine, deviceIPA));
                 }
             }
         }
         return artifactPaths;
+    }
+
+    private String getArtifactPath(String hostMachine, String artifact) throws IOException {
+        String path;
+        if (!isLocalhost(hostMachine) && !ResourceUtils.isUrl(artifact)) {
+            path = uploadFile(hostMachine, artifact);
+        } else {
+            path = artifact;
+        }
+        return path;
     }
 }
 
