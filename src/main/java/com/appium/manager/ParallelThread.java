@@ -5,18 +5,11 @@ import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.HostMachineDeviceManager;
-import com.github.lalyos.jfiglet.FigletFont;
 import com.report.factory.ExtentManager;
-import cucumber.api.java.hu.De;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +30,9 @@ import static com.appium.manager.FigletHelper.figlet;
 
 
 public class ParallelThread {
+    private static final String ANDROID = "android";
+    private static final String BOTH = "Both";
+    private static final String IOS = "iOS";
     private ConfigFileManager configFileManager;
     private DeviceAllocationManager deviceAllocationManager;
     Map<String, String> devices = new HashMap<String, String>();
@@ -74,7 +70,7 @@ public class ParallelThread {
     }
 
     public boolean runner(String pack) throws Exception {
-        return runner(pack, new ArrayList<String>());
+        return runner(pack, new ArrayList<>());
     }
 
     private boolean triggerTest(String pack, List<String> tests) throws Exception {
@@ -100,18 +96,16 @@ public class ParallelThread {
         createAppiumLogsFolder();
 
         if (deviceAllocationManager.getDevices() != null && platform
-                .equalsIgnoreCase("android")
-                || platform.equalsIgnoreCase("Both")) {
+                .equalsIgnoreCase(ANDROID)
+                || platform.equalsIgnoreCase(BOTH)) {
             generateDirectoryForAdbLogs();
             createSnapshotFolderAndroid("android");
         }
 
-        if (os.contains("mac") && platform.equalsIgnoreCase("iOS")
-                || platform.equalsIgnoreCase("Both")) {
-            if (deviceCount > 0) {
-                //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-                createSnapshotFolderiOS("iPhone");
-            }
+        if (os.contains("mac") && platform.equalsIgnoreCase(IOS)
+                || platform.equalsIgnoreCase(BOTH)) {
+            //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
+            createSnapshotFolderiOS("iPhone");
         }
 
         List<Class> testcases = new ArrayList<>();
