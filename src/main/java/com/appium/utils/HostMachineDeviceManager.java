@@ -1,7 +1,5 @@
 package com.appium.utils;
 
-import com.appium.manager.ArtifactsUploader;
-import com.appium.manager.HostArtifact;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
@@ -163,38 +161,40 @@ public class HostMachineDeviceManager {
         String platform = System.getenv(PLATFORM);
         List<AppiumDevice> devices = new ArrayList<>();
         Map<String, List<AppiumDevice>> simulatorsToBoot = new HashMap<>();
-        JSONArray hostMachines = getHostMachineObject();
-        String localIpAddress = "127.0.0.1";
-        hostMachines.forEach(hostMachine -> {
-            JSONObject hostMachineJson = (JSONObject) hostMachine;
-            String machineIP = hostMachineJson.getString("machineIP");
-            if (!platform.equalsIgnoreCase("android") && localIpAddress.equals(machineIP) &&
-                    hostMachineJson.has("simulators")) {
-                JSONArray simulators = hostMachineJson.getJSONArray("simulators");
-                simulators.forEach(sim -> {
-                    JSONObject simulatorJson = (JSONObject) sim;
-                    String deviceName = simulatorJson.getString("deviceName");
-                    String os = simulatorJson.getString("OS");
-                    try {
-                        Device simulatorDetails = new SimulatorManager()
-                                .getDevice(deviceName, os, "iOS");
-                        if (!simulatorDetails.getState().equals("Booted")) {
-                            AppiumDevice appiumDevice = new AppiumDevice(simulatorDetails, localIpAddress);
-                            appiumDevice.setPort(new AvailablePorts().getAvailablePort());
-                            devices.add(appiumDevice);
+        if(!shouldExcludeLocalDevices()) {
+            JSONArray hostMachines = getHostMachineObject();
+            String localIpAddress = "127.0.0.1";
+            hostMachines.forEach(hostMachine -> {
+                JSONObject hostMachineJson = (JSONObject) hostMachine;
+                String machineIP = hostMachineJson.getString("machineIP");
+                if (!platform.equalsIgnoreCase("android") && localIpAddress.equals(machineIP) &&
+                        hostMachineJson.has("simulators")) {
+                    JSONArray simulators = hostMachineJson.getJSONArray("simulators");
+                    simulators.forEach(sim -> {
+                        JSONObject simulatorJson = (JSONObject) sim;
+                        String deviceName = simulatorJson.getString("deviceName");
+                        String os = simulatorJson.getString("OS");
+                        try {
+                            Device simulatorDetails = new SimulatorManager()
+                                    .getDevice(deviceName, os, "iOS");
+                            if (!simulatorDetails.getState().equals("Booted")) {
+                                AppiumDevice appiumDevice = new AppiumDevice(simulatorDetails, localIpAddress);
+                                appiumDevice.setPort(new AvailablePorts().getAvailablePort());
+                                devices.add(appiumDevice);
+                            }
+                        } catch (InterruptedException | IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (InterruptedException | IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-        });
-        new DeviceManager().getDevices().forEach(allBootedDevice -> {
-            AppiumDevice appiumDevice = new AppiumDevice(allBootedDevice, localIpAddress);
-            appiumDevice.setPort(new AvailablePorts().getAvailablePort());
-            devices.add(appiumDevice);
-        });
-        simulatorsToBoot.put(localIpAddress, devices);
+                    });
+                }
+            });
+            new DeviceManager().getDevices().forEach(allBootedDevice -> {
+                AppiumDevice appiumDevice = new AppiumDevice(allBootedDevice, localIpAddress);
+                appiumDevice.setPort(new AvailablePorts().getAvailablePort());
+                devices.add(appiumDevice);
+            });
+            simulatorsToBoot.put(localIpAddress, devices);
+        }
         return simulatorsToBoot;
     }
 
@@ -203,10 +203,9 @@ public class HostMachineDeviceManager {
         return capabilityManager.getCapabitiesArrayFromKey("hostMachines");
     }
 
-
-    public List<HostArtifact> getAppsPerHost() throws IOException {
-        ArtifactsUploader artifactsUploader = ArtifactsUploader.getInstance();
-        return artifactsUploader.getHostArtifacts();
+    private static Boolean shouldExcludeLocalDevices() throws Exception {
+        CapabilityManager capabilityManager = CapabilityManager.getInstance();
+        return capabilityManager.getCapabilityBoolean("excludeLocalDevices");
     }
 }
 

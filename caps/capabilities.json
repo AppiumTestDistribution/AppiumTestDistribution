@@ -35,5 +35,6 @@
         }
       ]
     }
-  ]
+  ],
+  "excludeLocalDevices": false
 }

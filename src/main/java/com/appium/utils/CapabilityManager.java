@@ -52,5 +52,11 @@ public class CapabilityManager {
         return capabilities.getJSONArray(key);
     }
 
-
+    public Boolean getCapabilityBoolean(String key) {
+        if (capabilities.has(key)) {
+            return (Boolean) capabilities.get(key);
+        } else {
+            return false;
+        }
+    }
 }
