@@ -31,7 +31,8 @@ public class AppiumServerManager {
 
     private void startAppiumServerSingleSession(String host)
             throws Exception {
-        remoteAppiumManager.startAppiumServer(host);
+        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
+        appiumManager.startAppiumServer(host);
     }
 
     /**
@@ -55,7 +56,8 @@ public class AppiumServerManager {
 
     public void stopAppiumServer() throws IOException, InterruptedException {
         for ( String host: devicesByHost.getAllHosts()) {
-            remoteAppiumManager.destroyAppiumNode(host);
+            IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
+            appiumManager.destroyAppiumNode(host);
         }
     }
 }

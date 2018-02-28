@@ -63,7 +63,7 @@ public class AppiumDriverManager {
         String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
         System.out.println(remoteWDHubIP);
         currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                        desiredCapabilities);
+                desiredCapabilities);
         LOGGER.info("Session Created ---- "
                 + currentDriverSession.getSessionId() + "---"
                 + currentDriverSession.getSessionDetail("udid"));
@@ -71,10 +71,12 @@ public class AppiumDriverManager {
     }
 
     private String getRemoteWDHubIP(DesiredCapabilities desiredCapabilities) throws IOException {
-        RemoteAppiumManager remoteAppiumManager = new RemoteAppiumManager();
-        String appiumUrl = remoteAppiumManager.getRemoteWDHubIP(devicesByHost
-                .getHostOfDevice(String.valueOf(desiredCapabilities
-                        .getCapability("udid"))));
+        String udid = String.valueOf(desiredCapabilities
+                .getCapability("udid"));
+        String host = devicesByHost
+                .getHostOfDevice(udid);
+        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
+        String appiumUrl = appiumManager.getRemoteWDHubIP(host);
         return appiumUrl;
     }
 
