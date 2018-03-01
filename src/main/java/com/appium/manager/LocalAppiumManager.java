@@ -1,16 +1,22 @@
 package com.appium.manager;
 
 import com.appium.filelocations.FileLocations;
+import com.thoughtworks.device.Device;
+import com.thoughtworks.device.DeviceManager;
+import com.thoughtworks.device.SimulatorManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class LocalAppiumManager implements IAppiumManager {
+
     private static AppiumDriverLocalService appiumDriverLocalService;
 
     private static AppiumDriverLocalService getAppiumDriverLocalService() {
@@ -69,6 +75,25 @@ public class LocalAppiumManager implements IAppiumManager {
         System.out.println(
                 "**************************************************************************\n");
         setAppiumDriverLocalService(appiumDriverLocalService);
+    }
+
+    @Override
+    public List<Device> getDevices(String machineIP) throws Exception {
+        return new DeviceManager().getDevices();
+    }
+
+    @Override
+    public Device getSimulator(String machineIP, String deviceName, String os) throws IOException, InterruptedException {
+        return new SimulatorManager().getDevice(deviceName, os, "iOS");
+    }
+
+    @Override
+    public int getAvailablePort(String hostMachine) throws IOException {
+        ServerSocket socket = new ServerSocket(0);
+        socket.setReuseAddress(true);
+        int port = socket.getLocalPort();
+        socket.close();
+        return port;
     }
 
     private AppiumServiceBuilder getAppiumServerBuilder() {

@@ -53,9 +53,9 @@ public class IOSDeviceConfiguration {
         return deviceUDIDiOS;
     }
 
-    public HashMap<String, String> setIOSWebKitProxyPorts() {
+    private HashMap<String, String> setIOSWebKitProxyPorts(String host) {
         try {
-            int webkitproxyport = ap.getAvailablePort();
+            int webkitproxyport = ap.getAvailablePort(host);
             deviceMap.put(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid(), Integer.toString(webkitproxyport));
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,8 +63,8 @@ public class IOSDeviceConfiguration {
         return deviceMap;
     }
 
-    public String startIOSWebKit() throws IOException, InterruptedException {
-        setIOSWebKitProxyPorts();
+    public String startIOSWebKit(String host) throws IOException, InterruptedException {
+        setIOSWebKitProxyPorts(host);
 
         String webkitRunner = "ios_webkit_debug_proxy -c "
                 + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()

@@ -58,7 +58,7 @@ public class DesiredCapabilityBuilder {
             if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
                 try {
                     desiredCapabilities.setCapability("chromeDriverPort",
-                            availablePorts.getAvailablePort());
+                            availablePorts.getAvailablePort(hostArtifact.getHost()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -119,7 +119,7 @@ public class DesiredCapabilityBuilder {
                         deviceProperty.getDevice().getOsVersion());
             } else {
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
-                        new IOSDeviceConfiguration().startIOSWebKit());
+                        new IOSDeviceConfiguration().startIOSWebKit(hostArtifact.getHost()));
             }
 
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
