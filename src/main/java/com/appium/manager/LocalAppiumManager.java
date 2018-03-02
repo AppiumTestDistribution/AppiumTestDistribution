@@ -1,9 +1,12 @@
 package com.appium.manager;
 
 import com.appium.filelocations.FileLocations;
+import com.appium.utils.OSType;
+import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
 import com.thoughtworks.device.DeviceManager;
 import com.thoughtworks.device.SimulatorManager;
+import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -78,13 +81,19 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public List<Device> getDevices(String machineIP) throws Exception {
-        return new DeviceManager().getDevices();
+    public List<Device> getDevices(String machineIP, String platform) throws Exception {
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name())) {
+            return new AndroidManager().getDevices();
+        } else if (platform.equalsIgnoreCase(OSType.IOS.name())) {
+            return new IOSManager().getDevices();
+        } else {
+            return new DeviceManager().getDevices();
+        }
     }
 
     @Override
     public Device getSimulator(String machineIP, String deviceName, String os) throws IOException, InterruptedException {
-        return new SimulatorManager().getDevice(deviceName, os, "iOS");
+        return new SimulatorManager().getDevice(deviceName, os, OSType.IOS.name());
     }
 
     @Override

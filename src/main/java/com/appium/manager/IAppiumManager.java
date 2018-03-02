@@ -15,7 +15,7 @@ public interface IAppiumManager {
 
     void startAppiumServer(String host) throws Exception;
 
-    List<Device> getDevices(String machineIP) throws Exception;
+    List<Device> getDevices(String machineIP,String platform) throws Exception;
 
     Device getSimulator(String machineIP, String deviceName, String os) throws IOException, InterruptedException;
 

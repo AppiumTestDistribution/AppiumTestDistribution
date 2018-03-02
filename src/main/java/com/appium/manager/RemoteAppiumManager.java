@@ -55,7 +55,7 @@ public class RemoteAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public List<Device> getDevices(String machineIP) throws IOException {
+    public List<Device> getDevices(String machineIP, String platform) throws IOException {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<Device> devices = Arrays.asList(mapper.readValue(new URL(
@@ -68,7 +68,7 @@ public class RemoteAppiumManager implements IAppiumManager {
     public Device getSimulator(String machineIP, String deviceName, String os) throws IOException {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String url = String.format("http://%s:4567/device/ios/simulators"
+        String url = String.format("http://%s:4567/device/ios/simulator"
                         + "?simulatorName=%s&simulatorOSVersion=%s",
                 machineIP, URLEncoder.encode(deviceName, "UTF-8"),
                 URLEncoder.encode(os, "UTF-8"));

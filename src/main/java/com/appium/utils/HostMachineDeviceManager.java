@@ -74,7 +74,7 @@ public class HostMachineDeviceManager {
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(Map<String, List<AppiumDevice>> devicesByHost) {
         String platform = System.getenv(PLATFORM);
-        if (platform.equalsIgnoreCase("BOTH")) {
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name())) {
             return devicesByHost;
         } else {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
@@ -101,9 +101,10 @@ public class HostMachineDeviceManager {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
                 String machineIP = hostMachineJson.getString("machineIP");
                 IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
-                List<Device> devices = appiumManager.getDevices(machineIP);
+                List<Device> devices = appiumManager.getDevices(machineIP,platform);
 
-                if (!platform.equalsIgnoreCase("android") && hostMachineJson.has("simulators")) {
+                if (!platform.equalsIgnoreCase("android") && isSimulatorAppPresentInCapsJson()
+                        && hostMachineJson.has("simulators")) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     List<Device> simulatorsToBoot = getSimulatorsToBoot(
                             machineIP, simulators);
@@ -118,18 +119,16 @@ public class HostMachineDeviceManager {
 
         }
 
-        if (!shouldExcludeLocalDevices() &&
-                (hostMachines == null || (hostMachines != null && !containsLocalhost(hostMachines)))) {
+        if (!shouldExcludeLocalDevices() && (hostMachines == null || !containsLocalhost(hostMachines))) {
             String localIp = "127.0.0.1";
             IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(localIp);
-            List<Device> devices = appiumManager.getDevices(localIp);
+            List<Device> devices = appiumManager.getDevices(localIp,platform);
             List<AppiumDevice> localAppiumDevices = getAppiumDevices(localIp, devices);
             if (devicesByHost.containsKey(localIp)) {
                 localAppiumDevices.addAll(devicesByHost.get(localIp));
             }
             devicesByHost.put(localIp, localAppiumDevices);
         }
-
 
         return devicesByHost;
     }
@@ -181,6 +180,10 @@ public class HostMachineDeviceManager {
 
     private Boolean shouldExcludeLocalDevices() throws Exception {
         return capabilityManager.getCapabilityBoolean("excludeLocalDevices");
+    }
+
+    private boolean isSimulatorAppPresentInCapsJson() {
+        return capabilityManager.getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
     }
 }
 
