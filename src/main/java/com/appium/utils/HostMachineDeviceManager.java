@@ -74,7 +74,7 @@ public class HostMachineDeviceManager {
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(Map<String, List<AppiumDevice>> devicesByHost) {
         String platform = System.getenv(PLATFORM);
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name())) {
+        if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
         } else {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
@@ -127,7 +127,8 @@ public class HostMachineDeviceManager {
             if (devicesByHost.containsKey(localIp)) {
                 localAppiumDevices.addAll(devicesByHost.get(localIp));
             }
-            devicesByHost.put(localIp, localAppiumDevices);
+            if (localAppiumDevices.size() > 0 )
+                devicesByHost.put(localIp, localAppiumDevices);
         }
 
         return devicesByHost;
