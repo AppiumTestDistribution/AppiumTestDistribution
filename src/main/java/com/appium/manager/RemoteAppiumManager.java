@@ -1,6 +1,7 @@
 package com.appium.manager;
 
 import com.appium.utils.Api;
+import com.appium.utils.CapabilityManager;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,8 +42,16 @@ public class RemoteAppiumManager implements IAppiumManager {
         System.out.println("Starting Appium Server on host " + host);
         System.out.println(
                 "**************************************************************************\n");
-        new Api().getResponse("http://" + host + ":4567"
-                + "/appium/start").body().string();
+        if(CapabilityManager.getInstance().getAppiumServerPath(host) == null) {
+            System.out.println("Picking Default Path for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":4567"
+                    + "/appium/start").body().string();
+        } else {
+            System.out.println("Picking UserSpecified Path for AppiumServiceBuilder");
+            String appiumServerPath = CapabilityManager.getInstance().getAppiumServerPath(host);
+            new Api().getResponse("http://" + host + ":4567"
+                    + "/appium/start?URL=" + appiumServerPath).body().string();
+        }
 
         boolean status = Boolean.getBoolean(new JSONObject(new Api().getResponse("http://" + host + ":4567"
                 + "/appium/isRunning").body().string()).get("status").toString());

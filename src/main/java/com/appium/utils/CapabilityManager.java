@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
 
 public class CapabilityManager {
 
@@ -71,4 +73,22 @@ public class CapabilityManager {
     public boolean isSimulatorAppPresentInCapsJson() {
         return getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
     }
+
+    public String getAppiumServerPath(String host) throws Exception {
+        JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
+        List<Object> objects = hostMachineObject.toList();
+        Object o = objects.stream().filter(object -> ((HashMap) object).get("machineIP")
+                .toString().equalsIgnoreCase(host)
+                && ((HashMap) object).get("appiumServerPath") != null)
+                .findFirst().orElse(null);
+        if (o!=null) {
+            return ((HashMap) o).get("appiumServerPath").toString();
+        }
+        return null;
+    }
+
+    public JSONObject getCapabilities() {
+        return capabilities;
+    }
+
 }

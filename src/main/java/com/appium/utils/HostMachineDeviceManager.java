@@ -89,8 +89,8 @@ public class HostMachineDeviceManager {
     private Map<String, List<AppiumDevice>> getDevices() throws Exception {
         String platform = System.getenv(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
-        JSONArray hostMachines = capabilityManager.getHostMachineObject();
-        if (hostMachines != null) {
+        if (capabilityManager.getCapabilities().has("hostMachines")) {
+            JSONArray hostMachines = capabilityManager.getHostMachineObject();
             for (Object hostMachine : hostMachines) {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
                 String machineIP = hostMachineJson.getString("machineIP");
@@ -110,35 +110,12 @@ public class HostMachineDeviceManager {
 
                 devicesByHost.put(machineIP, appiumDevices);
             }
-
-
+        } else {
+            throw new RuntimeException("Provide hostMachine in Caps.json for execution");
         }
-
-        if (!capabilityManager.shouldExcludeLocalDevices()
-                && (hostMachines == null || !containsLocalhost(hostMachines))) {
-            String localIp = "127.0.0.1";
-            IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(localIp);
-            List<Device> devices = appiumManager.getDevices(localIp, platform);
-            List<AppiumDevice> localAppiumDevices = getAppiumDevices(localIp, devices);
-            if (devicesByHost.containsKey(localIp)) {
-                localAppiumDevices.addAll(devicesByHost.get(localIp));
-            }
-            if (localAppiumDevices.size() > 0 )
-                devicesByHost.put(localIp, localAppiumDevices);
-        }
-
         return devicesByHost;
     }
 
-    private boolean containsLocalhost(JSONArray hostMachines) {
-        for(Object hostMachine:hostMachines){
-            JSONObject hostMachineJson = (JSONObject) hostMachine;
-            String machineIP = hostMachineJson.getString("machineIP");
-            if("127.0.0.1".equals(machineIP))
-                return true;
-        }
-        return false;
-    }
 
     private List<AppiumDevice> getAppiumDevices(String machineIP, List<Device> devices) {
         return devices.stream().map(getAppiumDevice(machineIP)).collect(Collectors.toList());

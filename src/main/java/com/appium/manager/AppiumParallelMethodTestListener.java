@@ -51,16 +51,6 @@ public final class AppiumParallelMethodTestListener
             }
         }
         try {
-            String className = testResult.getMethod().getRealClass().getSimpleName()
-                    + "-------" + method.getTestMethod().getMethodName();
-            if (getClass().getAnnotation(Description.class) != null) {
-                testDescription = getClass().getAnnotation(Description.class).value();
-            }
-            reportManager.createParentNodeExtent(className, testDescription);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             reportManager.setAuthorName(testResult);
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,6 +72,18 @@ public final class AppiumParallelMethodTestListener
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
+                try {
+                    String className = testResult.getMethod().getRealClass().getSimpleName()
+                            + "-------" + method.getTestMethod().getMethodName();
+                    if (getClass().getAnnotation(Description.class) != null) {
+                        testDescription = getClass().getAnnotation(Description.class).value();
+                    }
+                    reportManager.createParentNodeExtent(className, testDescription);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                reportManager.setAuthorName(testResult);
+
                 reportManager.endLogTestResults(testResult);
             }
             appiumDriverManager.stopAppiumDriver();
