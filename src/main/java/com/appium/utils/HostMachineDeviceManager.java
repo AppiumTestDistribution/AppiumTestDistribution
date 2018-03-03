@@ -101,7 +101,7 @@ public class HostMachineDeviceManager {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
                 String machineIP = hostMachineJson.getString("machineIP");
                 IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
-                List<Device> devices = appiumManager.getDevices(machineIP,platform);
+                List<Device> devices = appiumManager.getDevices(machineIP, platform);
 
                 if (!platform.equalsIgnoreCase("android") && isSimulatorAppPresentInCapsJson()
                         && hostMachineJson.has("simulators")) {
@@ -122,7 +122,7 @@ public class HostMachineDeviceManager {
         if (!shouldExcludeLocalDevices() && (hostMachines == null || !containsLocalhost(hostMachines))) {
             String localIp = "127.0.0.1";
             IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(localIp);
-            List<Device> devices = appiumManager.getDevices(localIp,platform);
+            List<Device> devices = appiumManager.getDevices(localIp, platform);
             List<AppiumDevice> localAppiumDevices = getAppiumDevices(localIp, devices);
             if (devicesByHost.containsKey(localIp)) {
                 localAppiumDevices.addAll(devicesByHost.get(localIp));

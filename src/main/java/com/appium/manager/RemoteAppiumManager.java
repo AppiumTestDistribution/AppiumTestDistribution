@@ -1,6 +1,7 @@
 package com.appium.manager;
 
 import com.appium.utils.Api;
+import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
@@ -58,9 +59,21 @@ public class RemoteAppiumManager implements IAppiumManager {
     public List<Device> getDevices(String machineIP, String platform) throws IOException {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        List<Device> devices = Arrays.asList(mapper.readValue(new URL(
-                        "http://" + machineIP + ":4567/devices"),
-                Device[].class));
+        List<Device> devices = null;
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name())) {
+            devices = Arrays.asList(mapper.readValue(new URL(
+                            "http://" + machineIP + ":4567/devices/android"),
+                    Device[].class));
+        } else if (platform.equalsIgnoreCase(OSType.IOS.name())) {
+            devices = Arrays.asList(mapper.readValue(new URL(
+                            "http://" + machineIP + ":4567/devices/ios"),
+                    Device[].class));
+        } else if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
+             devices = Arrays.asList(mapper.readValue(new URL(
+                            "http://" + machineIP + ":4567/devices"),
+                    Device[].class));
+        }
+        assert devices != null;
         return new ArrayList<>(devices);
     }
 
