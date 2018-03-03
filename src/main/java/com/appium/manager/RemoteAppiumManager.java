@@ -64,7 +64,7 @@ public class RemoteAppiumManager implements IAppiumManager {
             devices = Arrays.asList(mapper.readValue(new URL(
                             "http://" + machineIP + ":4567/devices/android"),
                     Device[].class));
-        } else if (platform.equalsIgnoreCase(OSType.IOS.name())) {
+        } else if (platform.equalsIgnoreCase(OSType.iOS.name())) {
             devices = Arrays.asList(mapper.readValue(new URL(
                             "http://" + machineIP + ":4567/devices/ios"),
                     Device[].class));

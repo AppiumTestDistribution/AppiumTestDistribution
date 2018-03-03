@@ -84,7 +84,7 @@ public class LocalAppiumManager implements IAppiumManager {
     public List<Device> getDevices(String machineIP, String platform) throws Exception {
         if (platform.equalsIgnoreCase(OSType.ANDROID.name())) {
             return new AndroidManager().getDevices();
-        } else if (platform.equalsIgnoreCase(OSType.IOS.name())) {
+        } else if (platform.equalsIgnoreCase(OSType.iOS.name())) {
             return new IOSManager().getDevices();
         } else {
             return new DeviceManager().getDevices();
@@ -93,7 +93,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public Device getSimulator(String machineIP, String deviceName, String os) throws IOException, InterruptedException {
-        return new SimulatorManager().getDevice(deviceName, os, OSType.IOS.name());
+        return new SimulatorManager().getDevice(deviceName, os, OSType.iOS.name());
     }
 
     @Override
