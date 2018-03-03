@@ -2,17 +2,11 @@ package com.appium.utils;
 
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
-import com.thoughtworks.device.DeviceManager;
-import com.thoughtworks.device.SimulatorManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,9 +15,9 @@ public class HostMachineDeviceManager {
 
     private static final String PLATFORM = "Platform";
     private static final String UDIDS = "udids";
+    private CapabilityManager capabilityManager;
     private DevicesByHost devicesByHost;
     private static HostMachineDeviceManager instance;
-    private CapabilityManager capabilityManager;
 
     private HostMachineDeviceManager() {
         try {
@@ -95,7 +89,7 @@ public class HostMachineDeviceManager {
     private Map<String, List<AppiumDevice>> getDevices() throws Exception {
         String platform = System.getenv(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
-        JSONArray hostMachines = getHostMachineObject();
+        JSONArray hostMachines = capabilityManager.getHostMachineObject();
         if (hostMachines != null) {
             for (Object hostMachine : hostMachines) {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
@@ -103,7 +97,8 @@ public class HostMachineDeviceManager {
                 IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
                 List<Device> devices = appiumManager.getDevices(machineIP, platform);
 
-                if (!platform.equalsIgnoreCase("android") && isSimulatorAppPresentInCapsJson()
+                if (!platform.equalsIgnoreCase("android")
+                        && capabilityManager.isSimulatorAppPresentInCapsJson()
                         && hostMachineJson.has("simulators")) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     List<Device> simulatorsToBoot = getSimulatorsToBoot(
@@ -119,7 +114,8 @@ public class HostMachineDeviceManager {
 
         }
 
-        if (!shouldExcludeLocalDevices() && (hostMachines == null || !containsLocalhost(hostMachines))) {
+        if (!capabilityManager.shouldExcludeLocalDevices()
+                && (hostMachines == null || !containsLocalhost(hostMachines))) {
             String localIp = "127.0.0.1";
             IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(localIp);
             List<Device> devices = appiumManager.getDevices(localIp, platform);
@@ -173,18 +169,6 @@ public class HostMachineDeviceManager {
             }
         }
         return devices;
-    }
-
-    private JSONArray getHostMachineObject() throws Exception {
-        return capabilityManager.getCapabitiesArrayFromKey("hostMachines");
-    }
-
-    private Boolean shouldExcludeLocalDevices() throws Exception {
-        return capabilityManager.getCapabilityBoolean("excludeLocalDevices");
-    }
-
-    private boolean isSimulatorAppPresentInCapsJson() {
-        return capabilityManager.getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
     }
 }
 

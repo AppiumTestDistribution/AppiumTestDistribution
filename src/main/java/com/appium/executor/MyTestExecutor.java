@@ -190,7 +190,6 @@ public class MyTestExecutor {
             writeXmlClass(testcases, methods, xmlClasses);
             test.setXmlClasses(xmlClasses);
         }
-        System.out.println(suite.toXml());
         writeTestNGFile(suite);
         return suite;
     }
@@ -242,7 +241,6 @@ public class MyTestExecutor {
         List<XmlClass> xmlClasses = new ArrayList<>();
         writeXmlClass(tests, methods, xmlClasses);
         test.setXmlClasses(xmlClasses);
-        System.out.println(suite.toXml());
         writeTestNGFile(suite);
         return suite;
     }
@@ -278,7 +276,6 @@ public class MyTestExecutor {
             writeXml.add(new XmlClass(xmlClasses.get(i).getName()));
             test.setClasses(writeXml);
         }
-        System.out.println(suite.toXml());
         writeTestNGFile(suite);
         return suite;
     }

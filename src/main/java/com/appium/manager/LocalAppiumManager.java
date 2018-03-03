@@ -1,6 +1,8 @@
 package com.appium.manager;
 
 import com.appium.filelocations.FileLocations;
+import com.appium.utils.CapabilityManager;
+import com.appium.utils.HostMachineDeviceManager;
 import com.appium.utils.OSType;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -82,10 +85,15 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public List<Device> getDevices(String machineIP, String platform) throws Exception {
+        List<Device> devices = new ArrayList<>();
         if (platform.equalsIgnoreCase(OSType.ANDROID.name())) {
             return new AndroidManager().getDevices();
         } else if (platform.equalsIgnoreCase(OSType.iOS.name())) {
-            return new IOSManager().getDevices();
+            if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
+                devices.addAll(new SimulatorManager().getAllBootedSimulators(OSType.iOS.name()));
+            }
+            devices.addAll(new IOSManager().getDevices());
+            return devices;
         } else {
             return new DeviceManager().getDevices();
         }

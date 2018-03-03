@@ -59,16 +59,19 @@ public class ArtifactsUploader {
     }
 
     private HashMap<String, String> getArtifactForHost(String hostMachine) throws IOException {
+        String platform = System.getenv("Platform");
         String app = "app";
         HashMap<String, String> artifactPaths = new HashMap<>();
         JSONObject android = capabilityManager
                 .getCapabilityObjectFromKey("android");
         JSONObject iOSAppPath = capabilityManager
                 .getCapabilityObjectFromKey("iOS");
-        if (android != null && android.has(app)) {
+        if (android != null && android.has(app)
+                && platform.equalsIgnoreCase("android")) {
             artifactPaths.put("APK", getArtifactPath(hostMachine, android.getString("app")));
         }
-        if (iOSAppPath != null && iOSAppPath.has("app")) {
+        if (iOSAppPath != null && iOSAppPath.has("app")
+                && platform.equalsIgnoreCase("ios")) {
             if (iOSAppPath.get("app") instanceof JSONObject) {
                 JSONObject iOSApp = iOSAppPath.getJSONObject("app");
                 if (iOSApp.has("simulator")) {

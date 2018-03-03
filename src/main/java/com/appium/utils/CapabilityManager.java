@@ -59,4 +59,16 @@ public class CapabilityManager {
             return false;
         }
     }
+
+    public JSONArray getHostMachineObject() throws Exception {
+        return getCapabitiesArrayFromKey("hostMachines");
+    }
+
+    public Boolean shouldExcludeLocalDevices() throws Exception {
+        return getCapabilityBoolean("excludeLocalDevices");
+    }
+
+    public boolean isSimulatorAppPresentInCapsJson() {
+        return getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
+    }
 }
