@@ -45,6 +45,8 @@ Add the below dependencies in your pom.xml (Master)
 
 ## [Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
 
+## [iOS Safari run config](https://github.com/hemano/AppiumTestDistribution/wiki/Configurations-for-iOS-Safari-browser-test-run)
+
 ## Video log Prerequisites
 * Install flick
     * ```$ gem install flick```
