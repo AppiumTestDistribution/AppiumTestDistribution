@@ -46,7 +46,7 @@ public class AppiumDriverManager {
             Optional<DesiredCapabilities> androidCaps) throws IOException {
         AppiumDriver<MobileElement> currentDriverSession = null;
         DesiredCapabilities desiredCapabilities = androidCaps.get();
-        String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
+        String remoteWDHubIP = getRemoteWDHubIP();
         currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
                 desiredCapabilities);
         LOGGER.info("Session Created ---- "
@@ -60,7 +60,7 @@ public class AppiumDriverManager {
             throws IOException, InterruptedException {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
-        String remoteWDHubIP = getRemoteWDHubIP(desiredCapabilities);
+        String remoteWDHubIP = getRemoteWDHubIP();
         System.out.println(remoteWDHubIP);
         currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
                 desiredCapabilities);
@@ -70,14 +70,10 @@ public class AppiumDriverManager {
         return currentDriverSession;
     }
 
-    private String getRemoteWDHubIP(DesiredCapabilities desiredCapabilities) throws IOException {
-        String udid = String.valueOf(desiredCapabilities
-                .getCapability("udid"));
-        String host = devicesByHost
-                .getHostOfDevice(udid);
-        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
-        String appiumUrl = appiumManager.getRemoteWDHubIP(host);
-        return appiumUrl;
+    private String getRemoteWDHubIP() throws IOException {
+        String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
+        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(hostName);
+        return appiumManager.getRemoteWDHubIP(hostName);
     }
 
     public void startAppiumDriverInstance(Optional<DesiredCapabilities> iosCaps,

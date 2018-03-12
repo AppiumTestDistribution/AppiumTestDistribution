@@ -21,19 +21,6 @@ public class DevicesByHost {
                 .collect(Collectors.toList());
     }
 
-    public String getHostOfDevice(String uuid) {
-        final String[] hostIPKey = new String[1];
-        devicesByHost.entrySet().forEach(hostIP -> {
-            hostIP.getValue().forEach(device -> {
-                if (device.getDevice().getUdid().equals(uuid)) {
-                    hostIPKey[0] = hostIP.getKey();
-                }
-            });
-
-        });
-        return String.valueOf(hostIPKey[0]);
-    }
-
     public List<AppiumDevice> getAllSimulators() {
         return devicesByHost.entrySet().parallelStream().flatMap(stringListEntry ->
                 stringListEntry.getValue().parallelStream().filter(device ->

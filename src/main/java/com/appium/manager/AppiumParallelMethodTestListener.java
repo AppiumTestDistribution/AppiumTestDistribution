@@ -50,11 +50,6 @@ public final class AppiumParallelMethodTestListener
                 throw new SkipException("Skipped because property was set to :::" + info);
             }
         }
-        try {
-            reportManager.setAuthorName(testResult);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 
