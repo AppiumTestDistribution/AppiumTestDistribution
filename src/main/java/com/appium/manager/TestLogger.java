@@ -62,7 +62,7 @@ class TestLogger {
 
 
     private void startVideoRecording(String methodName, String className) {
-        if (System.getenv("VIDEO_LOGS") != null) {
+        if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
             try {
                 videoRecording
                         .startVideoRecording(className, methodName, methodName);
@@ -96,7 +96,7 @@ class TestLogger {
          */
         handleTestFailure(result, className, test, deviceModel);
 
-        if (System.getenv("VIDEO_LOGS") != null) {
+        if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
             setVideoPath("screenshot/" + AppiumDeviceManager.getMobilePlatform()
                     .toString().toLowerCase()
                     + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
@@ -129,8 +129,7 @@ class TestLogger {
 
     private void stopViewRecording(ITestResult result, String className)
             throws IOException, InterruptedException {
-        if (System.getenv("VIDEO_LOGS") != null ||
-                "false".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
+        if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
             try {
                 videoRecording.stopVideoRecording(className, result.getMethod()
                         .getMethodName(), result.getMethod().getMethodName());
