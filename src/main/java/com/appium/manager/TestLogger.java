@@ -129,7 +129,8 @@ class TestLogger {
 
     private void stopViewRecording(ITestResult result, String className)
             throws IOException, InterruptedException {
-        if (System.getenv("VIDEO_LOGS") != null) {
+        if (System.getenv("VIDEO_LOGS") != null ||
+                "false".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
             try {
                 videoRecording.stopVideoRecording(className, result.getMethod()
                         .getMethodName(), result.getMethod().getMethodName());
