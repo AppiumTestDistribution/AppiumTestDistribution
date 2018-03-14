@@ -44,8 +44,6 @@ public class ParallelThread {
     private MyTestExecutor myTestExecutor;
     private HtmlReporter htmlReporter;
     ExtentManager extentManager;
-    private AppiumDriverManager appiumDriverManager;
-    private ArtifactsUploader artifactsUploader;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -55,7 +53,15 @@ public class ParallelThread {
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
         extentManager = new ExtentManager();
-        appiumDriverManager = new AppiumDriverManager();
+        createOutputDirectoryIfNotExist();
+    }
+
+    private void createOutputDirectoryIfNotExist() {
+        File file = new File(System.getProperty("user.dir"), FileLocations.OUTPUT_DIRECTORY);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        System.out.println("OUTPUT DIRECTORY :" + file.getAbsolutePath());
     }
 
     @Deprecated

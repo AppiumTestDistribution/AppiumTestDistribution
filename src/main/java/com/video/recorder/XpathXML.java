@@ -1,5 +1,6 @@
 package com.video.recorder;
 
+import com.appium.filelocations.FileLocations;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -20,7 +21,7 @@ import javax.xml.xpath.XPathFactory;
  */
 public class XpathXML {
 
-    public static final String PARALLEL_FILE_LOCATION = "/target/parallel.xml";
+    public static final String PARALLEL_FILE_LOCATION = FileLocations.PARALLEL_XML_LOCATION;
 
     public String parseXML(int threadNumber)
             throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
