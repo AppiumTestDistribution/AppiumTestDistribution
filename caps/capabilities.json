@@ -19,7 +19,8 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10,
     "isHeadless": false,
-    "fullReset": false
+    "fullReset": false,
+    "deviceName": "iPhone 6"
   },
   "hostMachines": [
     {
