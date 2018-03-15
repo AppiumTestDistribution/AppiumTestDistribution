@@ -10,9 +10,9 @@ public class Api {
 
     public Response getResponse(String url) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .writeTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS)
                 .build();
         Request request = new Request.Builder().url(url).build();
         return client.newCall(request).execute();
