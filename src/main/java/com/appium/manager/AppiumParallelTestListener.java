@@ -66,13 +66,7 @@ public final class AppiumParallelTestListener
                     method.getTestMethod()
                             .getConstructorOrMethod()
                             .getMethod().getAnnotation(SkipIf.class);
-            if (skip != null) {
-                String info = skip.platform();
-                if (AppiumDriverManager.getDriver().getPlatformName().contains(info)) {
-                    System.out.println("skipping childTest");
-                    throw new SkipException("Skipped because property was set to :::" + info);
-                }
-            }
+            AppiumParallelMethodTestListener.isSkip(skip);
         } catch (Exception e) {
             e.printStackTrace();
         }

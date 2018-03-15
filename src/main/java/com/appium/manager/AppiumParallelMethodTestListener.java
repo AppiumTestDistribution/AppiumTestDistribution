@@ -24,8 +24,8 @@ public final class AppiumParallelMethodTestListener
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
     private ConfigFileManager prop;
-    public AppiumServerManager appiumServerManager;
-    public String testDescription = "";
+    private AppiumServerManager appiumServerManager;
+    private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
 
     public AppiumParallelMethodTestListener() throws Exception {
@@ -43,6 +43,11 @@ public final class AppiumParallelMethodTestListener
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         SkipIf skip = getSkipIf(method);
+        isSkip(skip);
+
+    }
+
+    static void isSkip(SkipIf skip) {
         if (skip != null) {
             String info = skip.platform();
             if (AppiumDriverManager.getDriver().getPlatformName().contains(info)) {
@@ -50,7 +55,6 @@ public final class AppiumParallelMethodTestListener
                 throw new SkipException("Skipped because property was set to :::" + info);
             }
         }
-
     }
 
     private SkipIf getSkipIf(IInvokedMethod method) {
@@ -79,12 +83,16 @@ public final class AppiumParallelMethodTestListener
 
                 reportManager.endLogTestResults(testResult);
             }
-            appiumDriverManager.stopAppiumDriver();
-            ExtentManager.getExtent().flush();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            ExtentManager.getExtent().flush();
             deviceAllocationManager.freeDevice();
+            try {
+                appiumDriverManager.stopAppiumDriver();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -152,9 +160,7 @@ public final class AppiumParallelMethodTestListener
     public void onFinish(ISuite iSuite) {
         try {
             appiumServerManager.stopAppiumServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
