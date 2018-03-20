@@ -119,7 +119,7 @@ public class DesiredCapabilityBuilder {
                         deviceProperty.getDevice().getOsVersion());
             } else {
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
-                        new IOSDeviceConfiguration().startIOSWebKit(hostArtifact.getHost()));
+                        Integer.parseInt(new IOSDeviceConfiguration().startIOSWebKit(hostArtifact.getHost())));
             }
 
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
