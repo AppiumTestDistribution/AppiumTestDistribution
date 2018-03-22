@@ -105,5 +105,31 @@ public class RemoteAppiumManager implements IAppiumManager {
         Response response = new Api().getResponse(url);
         return Integer.parseInt(response.body().string());
     }
+
+    @Override
+    public int startIOSWebKitProxy(String host) throws Exception {
+        int port = getAvailablePort(host);
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String url = String.format("http://%s:4567/devices/ios/webkitproxy/start"
+                        + "?udid=%s&port=%s", host,
+                AppiumDeviceManager.getAppiumDevice().getDevice().getUdid(),
+                port);
+        Response response = new Api().getResponse(url);
+        AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(response.body().string());
+        return port;
+    }
+
+    @Override
+    public void destoryIOSWebKitProxy(String host) throws Exception {
+        if(AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
+            ObjectMapper mapper = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            String url = String.format("http://%s:4567/devices/ios/webkitproxy/stop"
+                    + "?processID=%s", host, AppiumDeviceManager.getAppiumDevice().getWebkitProcessID());
+            new Api().getResponse(url);
+            AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
+        }
+    }
 }
 

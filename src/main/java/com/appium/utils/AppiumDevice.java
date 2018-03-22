@@ -8,6 +8,7 @@ public class AppiumDevice {
     private static final String BUSY = "BUSY";
     private Device device;
     private int port;
+    private String webkitProcessID;
     private String deviceState;
     private String ipAddress;
 
@@ -47,5 +48,13 @@ public class AppiumDevice {
 
     public void freeDevice() {
         deviceState = AVAILABLE;
+    }
+
+    public String getWebkitProcessID() {
+        return webkitProcessID;
+    }
+
+    public void setWebkitProcessID(String webkitProcessID) {
+        this.webkitProcessID = webkitProcessID;
     }
 }
