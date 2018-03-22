@@ -161,7 +161,6 @@ public class AppiumDriverManager {
             System.out.println("Capability file not found");
             return null;
         }
-
     }
 
     public void stopAppiumDriver() throws IOException, InterruptedException {

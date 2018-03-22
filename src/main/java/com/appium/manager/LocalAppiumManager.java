@@ -1,9 +1,7 @@
 package com.appium.manager;
 
 import com.appium.filelocations.FileLocations;
-import com.appium.utils.AvailablePorts;
 import com.appium.utils.CapabilityManager;
-import com.appium.utils.HostMachineDeviceManager;
 import com.appium.utils.OSType;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
@@ -13,8 +11,6 @@ import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;

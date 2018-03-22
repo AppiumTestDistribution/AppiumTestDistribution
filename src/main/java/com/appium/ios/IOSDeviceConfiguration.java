@@ -1,19 +1,12 @@
 package com.appium.ios;
 
-import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.ConfigFileManager;
-import com.appium.manager.IAppiumManager;
 import com.appium.utils.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 public class IOSDeviceConfiguration {
     public static List<AppiumDevice> deviceUDIDiOS = new ArrayList<>();
