@@ -167,7 +167,8 @@ public class AppiumDriverManager {
     public void stopAppiumDriver() throws IOException, InterruptedException {
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-            iosDeviceConfiguration.destroyIOSWebKitProxy();
+            String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
+            AppiumManagerFactory.getAppiumManager(hostName).destroyAppiumNode(hostName);
         }
         if (AppiumDriverManager.getDriver() != null
                 && AppiumDriverManager.getDriver().getSessionId() != null) {
