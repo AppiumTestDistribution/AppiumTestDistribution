@@ -32,8 +32,6 @@ public class DeviceAllocationManager {
     private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;
     private AppiumDriverManager appiumDriverManager;
-    private static boolean simCapsPresent = false;
-    private static boolean deviceCapsPresent = false;
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -46,7 +44,6 @@ public class DeviceAllocationManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setFlagsForCapsValues();
     }
 
 
@@ -55,39 +52,6 @@ public class DeviceAllocationManager {
             instance = new DeviceAllocationManager();
         }
         return instance;
-    }
-
-    private void setFlagsForCapsValues() throws FileNotFoundException {
-        String filePath = getCapsFilePath();
-        JSONObject jsonParsedObject = new JsonParser(filePath).getObjectFromJSON();
-        JSONObject iOSCaps = jsonParsedObject.getJSONObject("iOS");
-        if (iOSCaps != null) {
-            iOSCaps.keySet().forEach(key -> {
-                boolean app = key.equals("app");
-                if (app
-                        && iOSCaps.getJSONObject(key).has("simulator")) {
-                    simCapsPresent = true;
-                }
-                if (app
-                        && iOSCaps.getJSONObject(key).has("device")) {
-                    deviceCapsPresent = true;
-                }
-            });
-        }
-    }
-
-    private String getCapsFilePath() throws FileNotFoundException {
-        String filePath = appiumDriverManager.getCapsPath();
-        if (new File(filePath).exists()) {
-            Path path = FileSystems.getDefault().getPath(filePath);
-            if (!path.getParent().isAbsolute()) {
-                filePath = path.normalize()
-                        .toAbsolutePath().toString();
-            }
-            return filePath;
-        } else {
-            throw new FileNotFoundException("Capability file not found");
-        }
     }
 
     private void isPlatformInEnv() {

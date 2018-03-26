@@ -47,7 +47,12 @@ public class CapabilityManager {
 
 
     public JSONObject getCapabilityObjectFromKey(String key) {
-        return (JSONObject) capabilities.get(key);
+        boolean hasKey = capabilities.has(key);
+        if (hasKey) {
+            return (JSONObject) capabilities.get(key);
+        } else  {
+            return null;
+        }
     }
 
     public JSONArray getCapabitiesArrayFromKey(String key) {

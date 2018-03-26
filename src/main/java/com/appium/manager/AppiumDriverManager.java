@@ -25,13 +25,11 @@ public class AppiumDriverManager {
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
-    private DevicesByHost devicesByHost;
 
     public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
-        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     public static AppiumDriver getDriver() {
@@ -76,8 +74,8 @@ public class AppiumDriverManager {
         return appiumManager.getRemoteWDHubIP(hostName);
     }
 
-    public void startAppiumDriverInstance(Optional<DesiredCapabilities> iosCaps,
-                                          Optional<DesiredCapabilities> androidCaps)
+    private void startAppiumDriverInstance(Optional<DesiredCapabilities> iosCaps,
+                                           Optional<DesiredCapabilities> androidCaps)
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
         if (System.getProperty("os.name").toLowerCase().contains("mac")
@@ -112,7 +110,7 @@ public class AppiumDriverManager {
         startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
     }
 
-    public String getCapsPath() {
+    private String getCapsPath() {
         String userSpecifiedCaps;
         if (prop.getProperty("CAPS") == null) {
             userSpecifiedCaps = System.getProperty("user.dir")
@@ -123,7 +121,7 @@ public class AppiumDriverManager {
         return userSpecifiedCaps;
     }
 
-    public DesiredCapabilities getDesiredIOSCapabilities(String userSpecifiediOSCaps)
+    private DesiredCapabilities getDesiredIOSCapabilities(String userSpecifiediOSCaps)
             throws Exception {
 
         if (new File(userSpecifiediOSCaps).exists()) {
@@ -143,7 +141,7 @@ public class AppiumDriverManager {
         }
     }
 
-    public DesiredCapabilities getDesiredAndroidCapabilities(String userSpecifiedAndroidCaps)
+    private DesiredCapabilities getDesiredAndroidCapabilities(String userSpecifiedAndroidCaps)
             throws Exception {
 
         if (new File(userSpecifiedAndroidCaps).exists()) {
@@ -155,8 +153,7 @@ public class AppiumDriverManager {
             }
             desiredCapabilityBuilder
                     .buildDesiredCapability("android", androidJsonFilePath);
-            DesiredCapabilities android = DesiredCapabilityBuilder.getDesiredCapability();
-            return android;
+            return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
             System.out.println("Capability file not found");
             return null;
