@@ -76,7 +76,8 @@ public class CapabilityManager {
     }
 
     public boolean isSimulatorAppPresentInCapsJson() {
-        return getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
+        boolean hasApp = getCapabilityObjectFromKey("iOS").has("app");
+        return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
     }
 
     public String getAppiumServerPath(String host) throws Exception {
@@ -86,7 +87,7 @@ public class CapabilityManager {
                 .toString().equalsIgnoreCase(host)
                 && ((HashMap) object).get("appiumServerPath") != null)
                 .findFirst().orElse(null);
-        if (o!=null) {
+        if (o != null) {
             return ((HashMap) o).get("appiumServerPath").toString();
         }
         return null;
