@@ -2,9 +2,7 @@ package com.appium.utils;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.ArtifactsUploader;
-import com.appium.manager.HostArtifact;
+import com.appium.manager.*;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -118,8 +116,9 @@ public class DesiredCapabilityBuilder {
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                         deviceProperty.getDevice().getOsVersion());
             } else {
+                IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(hostArtifact.getHost());
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
-                        new IOSDeviceConfiguration().startIOSWebKit(hostArtifact.getHost()));
+                        appiumManager.startIOSWebKitProxy(hostArtifact.getHost()));
             }
 
             if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {

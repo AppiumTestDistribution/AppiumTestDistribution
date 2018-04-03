@@ -20,4 +20,8 @@ public interface IAppiumManager {
     Device getSimulator(String machineIP, String deviceName, String os) throws IOException, InterruptedException;
 
     int getAvailablePort(String hostMachine) throws IOException;
+
+    int startIOSWebKitProxy(String host) throws Exception;
+
+    void destoryIOSWebKitProxy(String host) throws Exception;
 }

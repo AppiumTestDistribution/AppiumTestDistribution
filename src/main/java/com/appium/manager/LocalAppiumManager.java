@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.CapabilityManager;
-import com.appium.utils.HostMachineDeviceManager;
 import com.appium.utils.OSType;
 import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
@@ -12,8 +11,6 @@ import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -112,6 +109,27 @@ public class LocalAppiumManager implements IAppiumManager {
         int port = socket.getLocalPort();
         socket.close();
         return port;
+    }
+
+    @Override
+    public int startIOSWebKitProxy(String host) throws Exception {
+        int port = getAvailablePort(host);
+        String webkitRunner = "ios_webkit_debug_proxy -c "
+                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                + ":" + port;
+        String process = Runtime.getRuntime().exec(webkitRunner).toString();
+        AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(process);
+        return port;
+    }
+
+    @Override
+    public void destoryIOSWebKitProxy(String host) throws Exception {
+        if(AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
+            String command = "kill -9 " + AppiumDeviceManager.getAppiumDevice().getWebkitProcessID();
+            LOGGER.info("Kills webkit proxy" + "******************" + command);
+            Runtime.getRuntime().exec(command);
+            AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
+        }
     }
 
     private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {
