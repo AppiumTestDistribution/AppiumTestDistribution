@@ -23,6 +23,7 @@ public class AppiumDriverManager {
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private Logger logger;
 
     public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
@@ -158,15 +159,11 @@ public class AppiumDriverManager {
         }
     }
 
-    public void stopAppiumDriver() throws IOException, InterruptedException {
+    public void stopAppiumDriver() throws Exception {
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
-            try {
-                AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
         }
         if (AppiumDriverManager.getDriver() != null
                 && AppiumDriverManager.getDriver().getSessionId() != null) {
