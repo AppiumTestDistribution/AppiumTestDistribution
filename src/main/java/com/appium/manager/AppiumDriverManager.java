@@ -3,8 +3,6 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.DesiredCapabilityBuilder;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.HostMachineDeviceManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -25,6 +23,7 @@ public class AppiumDriverManager {
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private Logger logger;
 
     public AppiumDriverManager() throws Exception {
         iosDeviceConfiguration = new IOSDeviceConfiguration();
@@ -160,11 +159,11 @@ public class AppiumDriverManager {
         }
     }
 
-    public void stopAppiumDriver() throws IOException, InterruptedException {
+    public void stopAppiumDriver() throws Exception {
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
-            AppiumManagerFactory.getAppiumManager(hostName).destroyAppiumNode(hostName);
+            AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
         }
         if (AppiumDriverManager.getDriver() != null
                 && AppiumDriverManager.getDriver().getSessionId() != null) {
