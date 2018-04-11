@@ -109,9 +109,7 @@ public class Flick extends CommandPrompt {
                                 + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
                         runCommandThruProcess(android);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -148,20 +146,18 @@ public class Flick extends CommandPrompt {
             try {
                 runCommand(ios);
                 Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void fileDirectoryCheck(String folderPath) {
+    private void fileDirectoryCheck(String folderPath) {
         File f = new File(folderPath);
         f.mkdirs();
     }
 
-    public int getPid(Process process) {
+    private int getPid(Process process) {
         try {
             Class<?> cProcessImpl = process.getClass();
             Field fPid = cProcessImpl.getDeclaredField("pid");
@@ -174,7 +170,7 @@ public class Flick extends CommandPrompt {
         }
     }
 
-    public void stopRecording() throws IOException {
+    private void stopRecording() throws IOException {
         Integer processId = androidScreenRecordProcess.get(Thread.currentThread().getId());
         stopRunningProcess(processId);
     }

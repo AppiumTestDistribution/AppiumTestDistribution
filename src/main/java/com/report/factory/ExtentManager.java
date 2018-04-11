@@ -30,7 +30,7 @@ public class ExtentManager {
                 configFileManager = ConfigFileManager.getInstance();
                 extent = new ExtentReports();
                 extent.attachReporter(getHtmlReporter());
-                if (System.getenv("ExtentX") != null && System.getenv("ExtentX")
+                if (System.getProperty("ExtentX") != null && System.getProperty("ExtentX")
                         .equalsIgnoreCase("true")) {
                     extent.attachReporter(klovReporter());
                 }
@@ -110,8 +110,8 @@ public class ExtentManager {
         KlovReporter klov = new KlovReporter();
         if (isMongoPortHostProvided()) {
             klov.initMongoDbConnection(getMongoHost(), getMongoPort());
-            String klovProjectName = System.getenv("projectname");
-            String klovReportName = System.getenv("reportname");
+            String klovProjectName = System.getProperty("projectname");
+            String klovReportName = System.getProperty("reportname");
             String projectname = klovProjectName;
             String reportname = klovReportName;
             if (klovProjectName == null || klovReportName == null) {

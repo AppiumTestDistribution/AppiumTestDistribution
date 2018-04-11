@@ -78,8 +78,8 @@ public class AppiumDriverManager {
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
         if (System.getProperty("os.name").toLowerCase().contains("mac")
-                && System.getenv("Platform").equalsIgnoreCase("iOS")
-                || System.getenv("Platform").equalsIgnoreCase("Both")) {
+                && System.getProperty("Platform").equalsIgnoreCase("iOS")
+                || System.getProperty("Platform").equalsIgnoreCase("Both")) {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 currentDriverSession = getMobileiOSElementAppiumDriver(iosCaps);
                 AppiumDriverManager.setDriver(currentDriverSession);
@@ -163,7 +163,7 @@ public class AppiumDriverManager {
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
-            AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
+            AppiumManagerFactory.getAppiumManager(hostName).destroyIOSWebKitProxy(hostName);
         }
         if (AppiumDriverManager.getDriver() != null
                 && AppiumDriverManager.getDriver().getSessionId() != null) {

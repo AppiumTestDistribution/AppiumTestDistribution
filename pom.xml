@@ -52,7 +52,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>6.0.0-BETA3</version>
+            <version>6.0.0-BETA4</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

@@ -136,17 +136,17 @@ public class DesiredCapabilityBuilder {
     }
 
     public void appPackage(DesiredCapabilities desiredCapabilities) {
-        if (System.getenv("APP_PACKAGE") != null) {
+        if (System.getProperty("APP_PACKAGE") != null) {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-                    System.getenv("APP_PACKAGE"));
+                    System.getProperty("APP_PACKAGE"));
         }
     }
 
     private void appPackageBundle(DesiredCapabilities iOSCapabilities) {
-        if (System.getenv("APP_PACKAGE") != null) {
+        if (System.getProperty("APP_PACKAGE") != null) {
             iOSCapabilities
                     .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
-                            System.getenv("APP_PACKAGE"));
+                            System.getProperty("APP_PACKAGE"));
         }
     }
 }

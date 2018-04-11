@@ -87,7 +87,7 @@ public class ParallelThread {
 
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
-        String platform = System.getenv("Platform");
+        String platform = System.getProperty("Platform");
         HostMachineDeviceManager hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         int deviceCount = hostMachineDeviceManager.getDevicesByHost().getAllDevices().size();
 
@@ -112,7 +112,6 @@ public class ParallelThread {
 
         if (os.contains("mac") && platform.equalsIgnoreCase(IOS)
                 || platform.equalsIgnoreCase(BOTH)) {
-            //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
             createSnapshotFolderiOS("iPhone");
         }
 

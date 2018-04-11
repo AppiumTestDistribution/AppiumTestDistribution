@@ -1,7 +1,7 @@
 package com.appium.filelocations;
 
 public interface FileLocations {
-    String OUTPUT_DIRECTORY = System.getenv("OUTPUT_DIRECTORY") != null ? "/"+System.getenv("OUTPUT_DIRECTORY")+"/" : "/target/";
+    String OUTPUT_DIRECTORY = System.getProperty("OUTPUT_DIRECTORY") != null ? "/"+System.getProperty("OUTPUT_DIRECTORY")+"/" : "/target/";
 
     String PARALLEL_XML_LOCATION = OUTPUT_DIRECTORY + "parallel.xml";
 

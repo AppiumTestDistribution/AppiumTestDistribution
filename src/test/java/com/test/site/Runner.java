@@ -13,7 +13,7 @@ public class Runner {
     @Test
     public static void testApp() throws Exception {
         //udid="32085b6d8fdb71ff,FA66VBN01980" mvn clean -Dtest=Runner test
-        /*String udidParam = System.getenv("udid");
+        /*String udidParam = System.getProperty("udid");
         String[] parts = udidParam.split(",");
         List<String> deviceList = Arrays.asList(parts);
         System.out.println(deviceList);*/

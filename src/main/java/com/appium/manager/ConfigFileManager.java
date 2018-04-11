@@ -24,7 +24,7 @@ public class ConfigFileManager {
         if (instance == null) {
             String configFile = "config.properties";
             try {
-                if (System.getenv().containsKey("CONFIG_FILE")) {
+                if (System.getProperties().containsKey("CONFIG_FILE")) {
                     configFile = System.getenv().get("CONFIG_FILE");
                     System.out.println("Using config file from " + configFile);
                 }
