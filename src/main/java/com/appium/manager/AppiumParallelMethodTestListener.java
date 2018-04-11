@@ -90,7 +90,7 @@ public final class AppiumParallelMethodTestListener
             deviceAllocationManager.freeDevice();
             try {
                 appiumDriverManager.stopAppiumDriver();
-            } catch (IOException | InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
