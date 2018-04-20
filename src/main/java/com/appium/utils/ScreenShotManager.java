@@ -108,8 +108,8 @@ public class ScreenShotManager {
 
     private String currentDateAndTime() {
         LocalDateTime rightNow = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.UK);
-        return dateTimeFormatter.format(rightNow).replaceAll("[- .:]", "_");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+        return dateTimeFormatter.format(rightNow).replaceAll("[- .:,]", "_");
     }
 
     private void screenShotAndFrame(int status,
