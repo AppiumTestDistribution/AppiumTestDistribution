@@ -7,6 +7,7 @@ import com.appium.utils.AppiumDevice;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.openqa.selenium.InvalidArgumentException;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -104,8 +105,19 @@ public class MyTestExecutor {
         int a = 0;
         Collection<URL> urls = ClasspathHelper.forPackage(items.get(a));
         Iterator<URL> iter = urls.iterator();
-        URL url = iter.next();
-        urls.clear();
+
+        URL url = null;
+
+        while (iter.hasNext()) {
+            if(iter.next().toString().contains("test-classes")) {
+                 url = iter.next();
+            }
+        }
+
+        if(url == null){
+            new IllegalArgumentException("Please specify the package name containing tests");
+        }
+
         for (int i = 0; i < items.size(); i++) {
             newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
             newUrls.add(newUrl);
@@ -161,7 +173,7 @@ public class MyTestExecutor {
         return testNG.hasFailure();
     }
 
-    private XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
+    public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
                                                  Map<String, List<Method>> methods,
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
