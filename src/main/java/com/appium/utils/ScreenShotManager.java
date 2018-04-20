@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 /**
  * Created by saikrisv on 26/04/17.
@@ -105,11 +107,10 @@ public class ScreenShotManager {
 
 
     private String currentDateAndTime() {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
-        return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
+        LocalDateTime rightNow = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.UK);
+        return dateTimeFormatter.format(rightNow).replaceAll("[- .:]", "_");
     }
-
 
     private void screenShotAndFrame(int status,
                                     File scrFile, String methodName,
