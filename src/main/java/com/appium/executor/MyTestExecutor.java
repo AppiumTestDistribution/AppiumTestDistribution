@@ -108,8 +108,9 @@ public class MyTestExecutor {
         URL url = null;
 
         while (iter.hasNext()) {
-            if(iter.next().toString().contains("test-classes")) {
-                 url = iter.next();
+            url = iter.next();
+            if(url.toString().contains("test-classes")) {
+                 break;
             }
         }
 
