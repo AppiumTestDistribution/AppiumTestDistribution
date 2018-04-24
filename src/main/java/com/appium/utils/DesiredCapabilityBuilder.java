@@ -121,7 +121,7 @@ public class DesiredCapabilityBuilder {
                         appiumManager.startIOSWebKitProxy(hostArtifact.getHost()));
             }
 
-            if (Float.valueOf(version.substring(0, version.length() - 2)) >= 10.0) {
+            if (Integer.parseInt(version.split(".")[0]) >= 10) {
                 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                         AutomationName.IOS_XCUI_TEST);
                 desiredCapabilities.setCapability(IOSMobileCapabilityType
