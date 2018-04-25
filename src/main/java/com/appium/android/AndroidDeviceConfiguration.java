@@ -44,7 +44,8 @@ public class AndroidDeviceConfiguration {
         return AppiumDeviceManager.getAppiumDevice();
     }
 
-    public String screenRecord(String fileName) {
+    public String screenRecord(String fileName)
+            throws IOException, InterruptedException {
         return "adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                 + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
                 + ".mp4";
@@ -61,7 +62,8 @@ public class AndroidDeviceConfiguration {
         }
     }
 
-    public String getDeviceManufacturer() {
+    public String getDeviceManufacturer()
+            throws IOException, InterruptedException {
         return devicesByHost.getDeviceProperty(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())
                 .getDevice().getDeviceManufacturer();
     }

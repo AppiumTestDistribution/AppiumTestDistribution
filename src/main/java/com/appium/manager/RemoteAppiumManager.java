@@ -119,7 +119,7 @@ public class RemoteAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public void destroyIOSWebKitProxy(String host) throws Exception {
+    public void destoryIOSWebKitProxy(String host) throws Exception {
         if(AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
             ObjectMapper mapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

@@ -49,7 +49,7 @@ public class HostMachineDeviceManager {
     }
 
     private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(Map<String, List<AppiumDevice>> devicesByHost) {
-        String udidsString = System.getProperty(UDIDS);
+        String udidsString = System.getenv(UDIDS);
         List<String> udids = udidsString == null ? Collections.emptyList() : Arrays.asList(udidsString.split(","));
 
         if (udids.size() == 0) {
@@ -67,7 +67,7 @@ public class HostMachineDeviceManager {
     }
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(Map<String, List<AppiumDevice>> devicesByHost) {
-        String platform = System.getProperty(PLATFORM);
+        String platform = System.getenv(PLATFORM);
         if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
         } else {
@@ -87,7 +87,7 @@ public class HostMachineDeviceManager {
     }
 
     private Map<String, List<AppiumDevice>> getDevices() throws Exception {
-        String platform = System.getProperty(PLATFORM);
+        String platform = System.getenv(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
         if (capabilityManager.getCapabilities().has("hostMachines")) {
             JSONArray hostMachines = capabilityManager.getHostMachineObject();

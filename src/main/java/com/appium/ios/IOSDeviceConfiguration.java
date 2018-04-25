@@ -40,6 +40,24 @@ public class IOSDeviceConfiguration {
         return deviceUDIDiOS;
     }
 
+    public void checkExecutePermissionForIOSDebugProxyLauncher() throws IOException {
+        String serverPath = prop.getProperty("APPIUM_JS_PATH");
+        File file = new File(serverPath);
+        File currentPath = new File(file.getParent());
+        System.out.println(currentPath);
+        file = new File(currentPath + "/.." + "/..");
+        File executePermission =
+                new File(file.getCanonicalPath() + "/bin/ios-webkit-debug-proxy-launcher.js");
+        if (executePermission.exists()) {
+            if (executePermission.canExecute() == false) {
+                executePermission.setExecutable(true);
+                System.out.println("Access Granted for iOSWebKitProxyLauncher");
+            } else {
+                System.out.println("iOSWebKitProxyLauncher File already has access to execute");
+            }
+        }
+    }
+
     public void setValidDevices(List<String> deviceID) {
         deviceID.forEach(deviceList -> {
             if (deviceList.length() == IOSDeviceConfiguration.IOS_UDID_LENGTH) {

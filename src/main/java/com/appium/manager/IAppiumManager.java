@@ -23,5 +23,5 @@ public interface IAppiumManager {
 
     int startIOSWebKitProxy(String host) throws Exception;
 
-    void destroyIOSWebKitProxy(String host) throws Exception;
+    void destoryIOSWebKitProxy(String host) throws Exception;
 }

@@ -25,8 +25,8 @@ import java.util.logging.Logger;
 public class DeviceAllocationManager {
 
     private static DeviceAllocationManager instance;
-    private static final String STF_SERVICE_URL = System.getProperty("STF_URL");
-    private static final String ACCESS_TOKEN = System.getProperty("STF_ACCESS_TOKEN");
+    private static final String STF_SERVICE_URL = System.getenv("STF_URL");
+    private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
     static STFService service;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private HostMachineDeviceManager hostMachineDeviceManager;
@@ -55,7 +55,7 @@ public class DeviceAllocationManager {
     }
 
     private void isPlatformInEnv() {
-        if (System.getProperty("Platform") == null) {
+        if (System.getenv("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
                     + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
         }

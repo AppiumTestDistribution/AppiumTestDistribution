@@ -118,8 +118,8 @@ public class MyTestExecutor {
                 reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
         boolean hasFailure;
 
-        String runnerLevel = System.getProperty("RUNNER_LEVEL") != null
-                ? System.getProperty("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
+        String runnerLevel = System.getenv("RUNNER_LEVEL") != null
+                ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
@@ -295,8 +295,8 @@ public class MyTestExecutor {
     private void include(ArrayList<String> groupsInclude, String include) {
         if (prop.getProperty(include) != null) {
             Collections.addAll(groupsInclude, prop.getProperty(include).split("\\s*,\\s*"));
-        } else if (System.getProperty(include) != null) {
-            Collections.addAll(groupsInclude, System.getProperty(include).split("\\s*,\\s*"));
+        } else if (System.getenv(include) != null) {
+            Collections.addAll(groupsInclude, System.getenv(include).split("\\s*,\\s*"));
         }
     }
 

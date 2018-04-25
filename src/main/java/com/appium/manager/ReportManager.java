@@ -73,8 +73,8 @@ public class ReportManager {
         methodNamePresent = getDescriptionForChildNode.isMethodNamePresent();
         descriptionMethodName = getDescriptionForChildNode.getDescriptionMethodName();
         if (System.getProperty("os.name").toLowerCase().contains("mac")
-                && System.getProperty("Platform").equalsIgnoreCase("iOS")
-                    || System.getProperty("Platform")
+                && System.getenv("Platform").equalsIgnoreCase("iOS")
+                    || System.getenv("Platform")
                          .equalsIgnoreCase("Both")) {
             category = appiumDeviceManager.getDeviceCategory();
         } else {

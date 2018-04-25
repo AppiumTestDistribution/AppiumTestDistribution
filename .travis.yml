@@ -13,7 +13,7 @@ matrix:
         - xcrun simctl list -j devices
         - npm install -g appium@1.7.2
       script:
-      - mvn clean -Dtest=Runner test -DPlatform=ios
+      - Platform="ios" mvn clean -Dtest=Runner test
     - language: android
       os: linux
       jdk: oraclejdk8
@@ -45,4 +45,4 @@ matrix:
         - adb devices
         - appium -v
       script:
-      - mvn clean -Dtest=Runner test -DPlatform=android
+      - Platform="android" mvn clean -Dtest=Runner test

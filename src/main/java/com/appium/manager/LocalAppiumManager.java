@@ -123,7 +123,7 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public void destroyIOSWebKitProxy(String host) throws Exception {
+    public void destoryIOSWebKitProxy(String host) throws Exception {
         if(AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
             String command = "kill -9 " + AppiumDeviceManager.getAppiumDevice().getWebkitProcessID();
             LOGGER.info("Kills webkit proxy" + "******************" + command);
