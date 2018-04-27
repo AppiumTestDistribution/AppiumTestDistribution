@@ -55,10 +55,12 @@ public class DesiredCapabilityBuilder {
         platFormCapabilities.keySet().forEach(key -> {
             if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
                 try {
-                    desiredCapabilities.setCapability("chromeDriverPort",
+                    AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(
                             availablePorts.getAvailablePort(hostArtifact.getHost()));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    desiredCapabilities.setCapability("chromeDriverPort",
+                            AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
+                } catch (IOException e) {
+                    new RuntimeException("Unable to allocate chromedriver with unique port");
                 }
             }
             String appCapability = "app";
