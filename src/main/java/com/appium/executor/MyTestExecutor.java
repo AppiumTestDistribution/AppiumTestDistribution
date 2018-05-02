@@ -115,7 +115,7 @@ public class MyTestExecutor {
         }
 
         if(url == null){
-            new IllegalArgumentException("Please specify the package name containing tests");
+            new RuntimeException("Please specify the package name containing tests");
         }
 
         for (int i = 0; i < items.size(); i++) {
