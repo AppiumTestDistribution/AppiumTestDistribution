@@ -104,8 +104,20 @@ public class MyTestExecutor {
         int a = 0;
         Collection<URL> urls = ClasspathHelper.forPackage(items.get(a));
         Iterator<URL> iter = urls.iterator();
-        URL url = iter.next();
-        urls.clear();
+
+        URL url = null;
+
+        while (iter.hasNext()) {
+            url = iter.next();
+            if(url.toString().contains("test-classes")) {
+                 break;
+            }
+        }
+
+        if(url == null){
+            new RuntimeException("Please specify the package name containing tests");
+        }
+
         for (int i = 0; i < items.size(); i++) {
             newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
             newUrls.add(newUrl);
@@ -161,7 +173,7 @@ public class MyTestExecutor {
         return testNG.hasFailure();
     }
 
-    private XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
+    public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
                                                  Map<String, List<Method>> methods,
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
