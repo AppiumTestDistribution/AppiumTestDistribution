@@ -11,6 +11,8 @@ import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -55,6 +57,8 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public void startAppiumServer(String host) throws Exception {
+        CapabilityManager capabilityManager = CapabilityManager.getInstance();
+        JSONObject server = capabilityManager.getCapabilityObjectFromKey("server");
         System.out.println(
                 "**************************************************************************\n");
         System.out.println("Starting Appium Server on Localhost......");
@@ -63,7 +67,6 @@ public class LocalAppiumManager implements IAppiumManager {
         AppiumDriverLocalService appiumDriverLocalService;
         AppiumServiceBuilder builder =
                 getAppiumServerBuilder(host)
-                        .withArgument(GeneralServerFlag.LOG_LEVEL, "info")
                         .withLogFile(new File(
                                 System.getProperty("user.dir")
                                         + FileLocations.APPIUM_LOGS_DIRECTORY
