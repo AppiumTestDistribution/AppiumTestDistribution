@@ -11,8 +11,9 @@ matrix:
         - brew update
         - brew outdated xctool || brew upgrade xctool
         - xcrun simctl list -j devices
-        - npm install -g appium@1.7.2
+        - npm install -g appium@1.8.0
       script:
+      - mvn clean site install -Dmaven.test.skip=true
       - Platform="ios" mvn clean -Dtest=Runner test
     - language: android
       os: linux
@@ -45,4 +46,5 @@ matrix:
         - adb devices
         - appium -v
       script:
+      - mvn clean site install -Dmaven.test.skip=true
       - Platform="android" mvn clean -Dtest=Runner test

@@ -1,7 +1,10 @@
 package com.appium.ios;
 
 import com.appium.manager.ConfigFileManager;
-import com.appium.utils.*;
+import com.appium.utils.AppiumDevice;
+import com.appium.utils.CommandPrompt;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.HostMachineDeviceManager;
 
 import java.io.File;
 import java.io.IOException;

@@ -2,8 +2,6 @@ package com.appium.utils;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.filelocations.FileLocations;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import com.madgag.gif.fmsware.AnimatedGifEncoder;
 import org.apache.commons.io.FileUtils;
@@ -23,8 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 
-import static com.appium.utils.TestWriteUtils.GSON;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+import static com.appium.utils.TestWriteUtils.GSON;
 /**
  * Created by saikrisv on 17/03/16.
  */
@@ -45,36 +45,25 @@ public class ImageUtils {
     }
 
     public static List<TestResults> creatResultsSet() throws Exception {
-
-
         List<TestResults> testResultList = new ArrayList<TestResults>();
-
-
-        File dir = new File(System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY);
-
+        File dir = new File(System.getProperty("user.dir")
+                + FileLocations.SCREENSHOTS_DIRECTORY);
         File[] oSList = dir.listFiles();
-
         for (File oFile : oSList) {
-
             File[] dList = oFile.listFiles();
-
             for (File dFile : dList) {
                 TestResults testResult = new TestResults();
                 if (dFile.isDirectory()) {
                     testResult.setDeviceUDID(dFile.getName());
-
                     List<TestCases> testCaseList = new ArrayList<TestCases>();
                     File[] tList = dFile.listFiles();
                     for (File tFile : tList) {
-
                         TestCases testCase = new TestCases();
                         if (tFile.isDirectory()) {
                             testCase.setTestCase(tFile.getName());
-
                             File[] mList = tFile.listFiles();
                             List<Testmethods> testMethodList = new ArrayList<Testmethods>();
                             for (File mFile : mList) {
-
                                 Testmethods testMethod = new Testmethods();
                                 testMethod.setMethodName(mFile.getName());
                                 if (mFile.isDirectory()) {
@@ -124,7 +113,8 @@ public class ImageUtils {
     }
 
     public static void createJSonForHtml() throws IOException {
-        File dir = new File(System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY);
+        File dir = new File(System.getProperty("user.dir")
+                + FileLocations.SCREENSHOTS_DIRECTORY);
 
         System.out.println("Getting all files in " + dir.getCanonicalPath()
                 + " including those in subdirectories");
@@ -188,7 +178,8 @@ public class ImageUtils {
     }
 
     public static void createGif() throws IOException {
-        File[] files = new File(System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY).listFiles();
+        File[] files = new File(System.getProperty("user.dir")
+                + FileLocations.SCREENSHOTS_DIRECTORY).listFiles();
         showFiles(files);
     }
 

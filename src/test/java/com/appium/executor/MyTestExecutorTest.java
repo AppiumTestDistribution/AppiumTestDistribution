@@ -113,7 +113,8 @@ public class MyTestExecutorTest {
 
         XmlSuite xmlSuite = ex1.constructXmlSuiteForParallel("com.appium.executor",
                 tc, ex1.createTestsMap(methods),
-                devices.size(), HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices());
+                devices.size(), HostMachineDeviceManager.getInstance()
+                        .getDevicesByHost().getAllDevices());
 
         System.out.println("xml:" + xmlSuite.toXml());
         assertTrue(true);

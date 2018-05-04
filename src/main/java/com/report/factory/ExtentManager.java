@@ -19,7 +19,8 @@ public class ExtentManager {
 
     private static ConfigFileManager configFileManager;
     private static ExtentReports extent;
-    private static String filePath = System.getProperty("user.dir") + FileLocations.EXTENT_REPORTS_LOCATION;
+    private static String filePath = System.getProperty("user.dir")
+            + FileLocations.EXTENT_REPORTS_LOCATION;
     private static CommandPrompt commandPrompt = new CommandPrompt();
     private static String mongoHost;
     private static Integer mongoPort;
@@ -71,7 +72,8 @@ public class ExtentManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        htmlReporter.loadXMLConfig(System.getProperty("user.dir") + FileLocations.EXTENT_XML_LOCATION);
+        htmlReporter.loadXMLConfig(System.getProperty("user.dir")
+                + FileLocations.EXTENT_XML_LOCATION);
         // make the charts visible on report open
         htmlReporter.config().setChartVisibilityOnOpen(true);
 

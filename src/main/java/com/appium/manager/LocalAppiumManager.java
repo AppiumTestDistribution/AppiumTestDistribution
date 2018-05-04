@@ -11,6 +11,7 @@ import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -98,7 +99,8 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public Device getSimulator(String machineIP, String deviceName, String os) throws IOException, InterruptedException {
+    public Device getSimulator(String machineIP, String deviceName, String os)
+            throws IOException, InterruptedException {
         return new SimulatorManager().getDevice(deviceName, os, OSType.iOS.name());
     }
 
@@ -124,8 +126,9 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public void destoryIOSWebKitProxy(String host) throws Exception {
-        if(AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
-            String command = "kill -9 " + AppiumDeviceManager.getAppiumDevice().getWebkitProcessID();
+        if (AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
+            String command = "kill -9 " + AppiumDeviceManager
+                    .getAppiumDevice().getWebkitProcessID();
             LOGGER.info("Kills webkit proxy" + "******************" + command);
             Runtime.getRuntime().exec(command);
             AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
@@ -133,7 +136,7 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {
-        if (CapabilityManager.getInstance().getAppiumServerPath(host)==null) {
+        if (CapabilityManager.getInstance().getAppiumServerPath(host) == null) {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
             return getAppiumServiceBuilderWithDefaultPath();
         } else {
@@ -142,7 +145,8 @@ public class LocalAppiumManager implements IAppiumManager {
         }
     }
 
-    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host) throws Exception {
+    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host)
+            throws Exception {
         return new AppiumServiceBuilder().withAppiumJS(
                 new File(CapabilityManager.getInstance().getAppiumServerPath(host)));
     }

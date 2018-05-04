@@ -18,19 +18,25 @@ public class DragnDropTest extends  UserBaseTest {
     public void dragNDrop() {
         login("login").click();
         waitForElement("dragAndDrop").click();
-        MobileElement dragMe = (MobileElement) new WebDriverWait(driver, 30).until(ExpectedConditions
+        MobileElement dragMe = (MobileElement) new WebDriverWait(driver, 30)
+                .until(ExpectedConditions
                 .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
-        System.out.println("Element Source X-Co-ordinates::" + dragMe.getSize().getWidth() / 2
+        System.out.println("Element Source X-Co-ordinates::"
+                + dragMe.getSize().getWidth() / 2
                 + "Element Source Y-Co-ordinates::" + dragMe.getSize().getHeight() / 2);
         MobileElement dropzone = driver.findElementByAccessibilityId("dropzone");
 
-        System.out.println("Element Destination X-Co-ordinates::" + dropzone.getSize().getWidth() / 2
-                + "Element Destination Y-Co-ordinates::" + dropzone.getSize().getHeight() / 2);
+        System.out.println("Element Destination X-Co-ordinates::"
+                + dropzone.getSize().getWidth() / 2
+                + "Element Destination Y-Co-ordinates::"
+                + dropzone.getSize().getHeight() / 2);
 
 
-        new TouchAction(driver).press(ElementOption.element(dragMe,dragMe.getSize().getWidth() / 2,dragMe.getSize().getHeight() / 2))
-                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2))).moveTo(ElementOption.element(dropzone,dropzone.getSize().getWidth() / 2
-                        ,dragMe.getSize().getHeight() / 2)).release().perform();
+        new TouchAction(driver).press(ElementOption.element(dragMe,dragMe.getSize().getWidth() / 2,
+                dragMe.getSize().getHeight() / 2))
+                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
+                .moveTo(ElementOption.element(dropzone,dropzone.getSize().getWidth() / 2,
+                        dragMe.getSize().getHeight() / 2)).release().perform();
 
     }
 }

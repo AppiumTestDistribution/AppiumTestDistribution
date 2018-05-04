@@ -108,7 +108,8 @@ public class ScreenShotManager {
 
     private String currentDateAndTime() {
         LocalDateTime rightNow = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(
+                FormatStyle.MEDIUM).withLocale(Locale.getDefault());
         return dateTimeFormatter.format(rightNow).replaceAll("[- .:,]", "_");
     }
 
@@ -168,14 +169,16 @@ public class ScreenShotManager {
                                             + FileLocations.OUTPUT_DIRECTORY + getFailedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                             System.getProperty("user.dir")
-                                                    + FileLocations.OUTPUT_DIRECTORY + getFramedFailedScreen());
+                                                    + FileLocations.OUTPUT_DIRECTORY
+                                                    + getFramedFailedScreen());
                                     deleteFile(screenToFrame);
                                 } else {
                                     String screenToFrame = System.getProperty("user.dir")
                                             + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                             System.getProperty("user.dir")
-                                                    + FileLocations.OUTPUT_DIRECTORY + getFramedCapturedScreen());
+                                                    + FileLocations.OUTPUT_DIRECTORY
+                                                    + getFramedCapturedScreen());
                                     deleteFile(screenToFrame);
                                 }
 

@@ -53,7 +53,8 @@ public class AndroidDeviceConfiguration {
 
     public boolean checkIfRecordable() throws IOException, InterruptedException {
         String screenrecord =
-                cmd.runCommand("adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                cmd.runCommand("adb -s " + AppiumDeviceManager
+                        .getAppiumDevice().getDevice().getUdid()
                         + " shell ls /system/bin/screenrecord");
         if (screenrecord.trim().equals("/system/bin/screenrecord")) {
             return true;
@@ -64,7 +65,8 @@ public class AndroidDeviceConfiguration {
 
     public String getDeviceManufacturer()
             throws IOException, InterruptedException {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())
+        return devicesByHost.getDeviceProperty(AppiumDeviceManager
+                .getAppiumDevice().getDevice().getUdid())
                 .getDevice().getDeviceManufacturer();
     }
 
@@ -85,7 +87,9 @@ public class AndroidDeviceConfiguration {
 
     public void removeVideoFileFromDevice(String fileName)
             throws IOException, InterruptedException {
-        cmd.runCommand("adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + " shell rm -f /sdcard/"
+        cmd.runCommand("adb -s " + AppiumDeviceManager
+                .getAppiumDevice().getDevice().getUdid()
+                + " shell rm -f /sdcard/"
                 + fileName + ".mp4");
     }
 

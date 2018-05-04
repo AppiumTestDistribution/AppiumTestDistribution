@@ -40,7 +40,7 @@ public class RemoteAppiumManager implements IAppiumManager {
         System.out.println("Starting Appium Server on host " + host);
         System.out.println(
                 "**************************************************************************\n");
-        if(CapabilityManager.getInstance().getAppiumServerPath(host) == null) {
+        if (CapabilityManager.getInstance().getAppiumServerPath(host) == null) {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
             new Api().getResponse("http://" + host + ":4567"
                     + "/appium/start").body().string();
@@ -76,7 +76,7 @@ public class RemoteAppiumManager implements IAppiumManager {
                             "http://" + machineIP + ":4567/devices/ios"),
                     Device[].class));
         } else if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
-             devices = Arrays.asList(mapper.readValue(new URL(
+            devices = Arrays.asList(mapper.readValue(new URL(
                             "http://" + machineIP + ":4567/devices"),
                     Device[].class));
         }
@@ -120,11 +120,12 @@ public class RemoteAppiumManager implements IAppiumManager {
 
     @Override
     public void destoryIOSWebKitProxy(String host) throws Exception {
-        if(AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
+        if (AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
             ObjectMapper mapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             String url = String.format("http://%s:4567/devices/ios/webkitproxy/stop"
-                    + "?processID=%s", host, AppiumDeviceManager.getAppiumDevice().getWebkitProcessID());
+                    + "?processID=%s", host,
+                    AppiumDeviceManager.getAppiumDevice().getWebkitProcessID());
             new Api().getResponse(url);
             AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
         }

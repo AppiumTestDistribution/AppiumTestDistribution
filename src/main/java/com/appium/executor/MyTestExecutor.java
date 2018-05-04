@@ -2,7 +2,9 @@ package com.appium.executor;
 
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.filelocations.FileLocations;
-import com.appium.manager.*;
+import com.appium.manager.ConfigFileManager;
+import com.appium.manager.DeviceAllocationManager;
+import com.appium.manager.PackageUtil;
 import com.appium.utils.AppiumDevice;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -109,12 +111,12 @@ public class MyTestExecutor {
 
         while (iter.hasNext()) {
             url = iter.next();
-            if(url.toString().contains("test-classes")) {
-                 break;
+            if (url.toString().contains("test-classes")) {
+                break;
             }
         }
 
-        if(url == null){
+        if (url == null) {
             new RuntimeException("Please specify the package name containing tests");
         }
 

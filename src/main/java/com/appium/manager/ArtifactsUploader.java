@@ -9,7 +9,10 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 
 public class ArtifactsUploader {
 
@@ -54,7 +57,8 @@ public class ArtifactsUploader {
     }
 
     private String uploadFile(String hostMachine, String appPath) throws IOException {
-        JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(new File(appPath), hostMachine));
+        JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(
+                new File(appPath), hostMachine));
         return jsonObject.getString("filePath");
     }
 

@@ -104,7 +104,8 @@ class TestLogger {
                     .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
             logs.put("videoLogs", getVideoPath());
 
-            if (new File(System.getProperty("user.dir") + FileLocations.OUTPUT_DIRECTORY + getVideoPath()).exists()) {
+            if (new File(System.getProperty("user.dir")
+                    + FileLocations.OUTPUT_DIRECTORY + getVideoPath()).exists()) {
                 test.get().log(Status.INFO, "<a target=\"_parent\" href="
                         + getVideoPath() + ">Videologs</a>");
             }
@@ -185,19 +186,22 @@ class TestLogger {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 File framedImageAndroid = new File(
                         System.getProperty("user.dir")
-                                + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                                + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
+                                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 if (framedImageAndroid.exists()) {
-                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir")
+                            + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
                             + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/"
                             + className + "/" + result.getMethod().getMethodName()
                             + "/" + screenShotNameWithTimeStamp
                             + "_failed_" + result
                             .getMethod().getMethodName() + "_framed.jpeg");
                 } else {
-                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir")
+                            + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
                             + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/"
                             + className + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_" + result
@@ -209,21 +213,24 @@ class TestLogger {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 File framedImageIOS = new File(
                         System.getProperty("user.dir")
-                                + FileLocations.IOS_SCREENSHOTS_DIRECTORY + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                                + FileLocations.IOS_SCREENSHOTS_DIRECTORY
+                                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                                 + "/" + className + "/" + result.getMethod()
                                 .getMethodName() + "/" + screenShotNameWithTimeStamp
                                 + "_failed_" + result.getMethod().getMethodName() + "_framed.jpeg");
                 System.out.println("************************" + framedImageIOS.exists()
                         + "***********************");
                 if (framedImageIOS.exists()) {
-                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + FileLocations.IOS_SCREENSHOTS_DIRECTORY
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir")
+                            + FileLocations.IOS_SCREENSHOTS_DIRECTORY
                             + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"
                             + screenShotNameWithTimeStamp + "_failed_" + result
                             .getMethod().getMethodName() + "_framed.jpeg");
                 } else {
-                    log.addScreenCaptureFromPath(System.getProperty("user.dir") + FileLocations.IOS_SCREENSHOTS_DIRECTORY
+                    log.addScreenCaptureFromPath(System.getProperty("user.dir")
+                            + FileLocations.IOS_SCREENSHOTS_DIRECTORY
                             + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                             + "/" + className
                             + "/" + result.getMethod().getMethodName() + "/"

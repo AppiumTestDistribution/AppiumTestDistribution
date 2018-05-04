@@ -1,5 +1,7 @@
 package com.appium.manager;
 
+import static com.appium.manager.FigletHelper.figlet;
+
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
@@ -10,7 +12,12 @@ import com.report.factory.ExtentManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,8 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.appium.manager.FigletHelper.figlet;
 
 /*
  * This class picks the devices connected
@@ -86,8 +91,6 @@ public class ParallelThread {
     }
 
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
-        String os = System.getProperty("os.name").toLowerCase();
-        String platform = System.getenv("Platform");
         HostMachineDeviceManager hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         int deviceCount = hostMachineDeviceManager.getDevicesByHost().getAllDevices().size();
 
@@ -103,13 +106,14 @@ public class ParallelThread {
 
         createAppiumLogsFolder();
 
+        String platform = System.getenv("Platform");
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
             generateDirectoryForAdbLogs();
             createSnapshotFolderAndroid("android");
         }
-
+        String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("mac") && platform.equalsIgnoreCase(IOS)
                 || platform.equalsIgnoreCase(BOTH)) {
             //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
@@ -185,7 +189,8 @@ public class ParallelThread {
             if (deviceSerial != null) {
                 createPlatformDirectory(platform);
                 File file = new File(
-                        System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
+                        System.getProperty("user.dir")
+                                + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
                                 + deviceSerial);
                 if (!file.exists()) {
                     if (file.mkdir()) {
@@ -203,7 +208,8 @@ public class ParallelThread {
             String deviceSerial = iOSdevices.get(i);
             createPlatformDirectory(platform);
             File file = new File(
-                    System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
+                    System.getProperty("user.dir")
+                            + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
                             + deviceSerial);
             if (!file.exists()) {
                 if (file.mkdir()) {
