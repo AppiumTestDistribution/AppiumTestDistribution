@@ -92,12 +92,7 @@ public class DeviceAllocationManager {
         }
         if(Thread.activeCount() > allDevices.size()) {
             suspendedThreads.add(Thread.currentThread());
-            //Thread.currentThread().suspend();
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Thread.currentThread().suspend();
         }
         return null;
     }
@@ -108,8 +103,8 @@ public class DeviceAllocationManager {
                 .getUdid()
                 + " from execution list");
         if (suspendedThreads.size() > 0) {
-//            suspendedThreads.get(0).resume();
-            notify();
+            suspendedThreads.get(0).resume();
+            suspendedThreads.remove(0);
         }
     }
 
