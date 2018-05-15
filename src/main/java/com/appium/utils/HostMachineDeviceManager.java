@@ -39,8 +39,10 @@ public class HostMachineDeviceManager {
         if (devicesByHost == null) {
             try {
                 Map<String, List<AppiumDevice>> allDevices = getDevices();
-                Map<String, List<AppiumDevice>> devicesFilteredByPlatform = filterByDevicePlatform(allDevices);
-                Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
+                Map<String, List<AppiumDevice>> devicesFilteredByPlatform
+                        = filterByDevicePlatform(allDevices);
+                Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
+                        = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -48,16 +50,20 @@ public class HostMachineDeviceManager {
         }
     }
 
-    private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(Map<String, List<AppiumDevice>> devicesByHost) {
+    private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(
+            Map<String, List<AppiumDevice>> devicesByHost) {
         String udidsString = System.getenv(UDIDS);
-        List<String> udids = udidsString == null ? Collections.emptyList() : Arrays.asList(udidsString.split(","));
+        List<String> udids = udidsString == null ? Collections.emptyList()
+                : Arrays.asList(udidsString.split(","));
 
         if (udids.size() == 0) {
             return devicesByHost;
         } else {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
             devicesByHost.forEach((hostName, appiumDevices) -> {
-                List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice -> udids.contains(appiumDevice.getDevice().getUdid())).collect(Collectors.toList());
+                List<AppiumDevice> filteredDevices = appiumDevices.stream()
+                        .filter(appiumDevice -> udids.contains(appiumDevice
+                                .getDevice().getUdid())).collect(Collectors.toList());
                 if (!filteredDevices.isEmpty()) {
                     filteredDevicesHostName.put(hostName, filteredDevices);
                 }
@@ -66,7 +72,8 @@ public class HostMachineDeviceManager {
         }
     }
 
-    private Map<String, List<AppiumDevice>> filterByDevicePlatform(Map<String, List<AppiumDevice>> devicesByHost) {
+    private Map<String, List<AppiumDevice>> filterByDevicePlatform(
+            Map<String, List<AppiumDevice>> devicesByHost) {
         String platform = System.getenv(PLATFORM);
         if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
@@ -74,9 +81,11 @@ public class HostMachineDeviceManager {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
             devicesByHost.forEach((hostName, appiumDevices) -> {
                 List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice ->
-                        appiumDevice.getDevice().getOs().equalsIgnoreCase(platform)).collect(Collectors.toList());
-                if (!filteredDevices.isEmpty())
+                        appiumDevice.getDevice().getOs()
+                                .equalsIgnoreCase(platform)).collect(Collectors.toList());
+                if (!filteredDevices.isEmpty()) {
                     filteredDevicesHostName.put(hostName, filteredDevices);
+                }
             });
             return filteredDevicesHostName;
         }
@@ -133,7 +142,8 @@ public class HostMachineDeviceManager {
         };
     }
 
-    private List<Device> getSimulatorsToBoot(String machineIP, JSONArray simulators) throws IOException, InterruptedException {
+    private List<Device> getSimulatorsToBoot(String machineIP, JSONArray simulators)
+            throws IOException, InterruptedException {
         List<Device> devices = new ArrayList<>();
         for (Object simulator : simulators) {
             JSONObject simulatorJson = (JSONObject) simulator;

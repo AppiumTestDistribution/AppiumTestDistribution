@@ -12,7 +12,8 @@ import java.util.List;
 
 public class HtmlReporter {
 
-    public File reportOutputDirectory = new File(System.getProperty("user.dir") + FileLocations.OUTPUT_DIRECTORY);
+    public File reportOutputDirectory = new File(System.getProperty("user.dir")
+            + FileLocations.OUTPUT_DIRECTORY);
     public List<String> list = new ArrayList<String>();
 
     public void listFilesForFolder(final File folder) {

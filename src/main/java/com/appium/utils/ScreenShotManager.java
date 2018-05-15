@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 /**
  * Created by saikrisv on 26/04/17.
@@ -105,11 +107,11 @@ public class ScreenShotManager {
 
 
     private String currentDateAndTime() {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
-        return now.truncatedTo(ChronoUnit.SECONDS).format(dtf);
+        LocalDateTime rightNow = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(
+                FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+        return dateTimeFormatter.format(rightNow).replaceAll("[- .:,]", "_");
     }
-
 
     private void screenShotAndFrame(int status,
                                     File scrFile, String methodName,
@@ -167,14 +169,16 @@ public class ScreenShotManager {
                                             + FileLocations.OUTPUT_DIRECTORY + getFailedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                             System.getProperty("user.dir")
-                                                    + FileLocations.OUTPUT_DIRECTORY + getFramedFailedScreen());
+                                                    + FileLocations.OUTPUT_DIRECTORY
+                                                    + getFramedFailedScreen());
                                     deleteFile(screenToFrame);
                                 } else {
                                     String screenToFrame = System.getProperty("user.dir")
                                             + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen();
                                     imageUtils.wrapDeviceFrames(files1[i].toString(), screenToFrame,
                                             System.getProperty("user.dir")
-                                                    + FileLocations.OUTPUT_DIRECTORY + getFramedCapturedScreen());
+                                                    + FileLocations.OUTPUT_DIRECTORY
+                                                    + getFramedCapturedScreen());
                                     deleteFile(screenToFrame);
                                 }
 

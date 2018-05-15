@@ -23,8 +23,7 @@ public class XpathXML {
 
     public static final String PARALLEL_FILE_LOCATION = FileLocations.PARALLEL_XML_LOCATION;
 
-    public String parseXML(int threadNumber)
-            throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    public String parseXML(int threadNumber) {
         try {
             File inputFile = new File(
                     System.getProperty("user.dir") + PARALLEL_FILE_LOCATION);

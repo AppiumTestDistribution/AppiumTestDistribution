@@ -274,7 +274,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             File framePath =
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
-                    System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + device + "/"
+                    System.getProperty("user.dir")
+                            + FileLocations.SCREENSHOTS_DIRECTORY + device + "/"
                             + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                             + "/" + deviceModel
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
@@ -291,13 +292,16 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                                         files1[i].toString(),
                                         System.getProperty("user.dir")
                                                 + FileLocations.SCREENSHOTS_DIRECTORY + device
-                                                + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                                                + "/" + AppiumDeviceManager.getAppiumDevice()
+                                                .getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_") + ".jpeg",
                                         System.getProperty("user.dir")
-                                                + FileLocations.SCREENSHOTS_DIRECTORY + device
-                                                + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                                                + FileLocations.SCREENSHOTS_DIRECTORY
+                                                + device
+                                                + "/" + AppiumDeviceManager.getAppiumDevice()
+                                                .getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
                                                 + failed_StepName.replaceAll(" ", "_")
@@ -327,8 +331,11 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             platform = "iPhone";
         }
         File framedImageAndroid = new File(
-                System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
-                        + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/" + deviceModel
+                System.getProperty("user.dir")
+                        + FileLocations.SCREENSHOTS_DIRECTORY
+                        + platform + "/"
+                        + AppiumDeviceManager.getAppiumDevice()
+                        .getDevice().getUdid() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
         if (framedImageAndroid.exists()) {
             reportManager.childTest.get().log(Status.INFO,

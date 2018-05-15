@@ -122,7 +122,7 @@ A. Yes, with a Valid provisioning profile this app can be installed on your devi
 
 ThoughtWorks             |  CeX                      |  Travelstart
 :-------------------------:|:-------------------------:|:-------------------------:
-[![ThoughtWorks](https://static1.squarespace.com/static/5914a98815cf7d683358255d/t/5914b14d17bffc60d36cf2a7/1494531166569/)](https://www.thoughtworks.com)  |  [![Cex](https://uk.webuy.com/images/logo/CeX_Logo_Rich_black_RGB-01.png)](https://in.webuy.com/)  |  [![Travelstart](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRahsNjFIF2pQGOxKoinf4Au1gGjyMUQEArL8Mv_gyCl1Aaxuu-)](http://www.travelstart.com/)
+[![ThoughtWorks](https://static1.squarespace.com/static/5914a98815cf7d683358255d/t/5914b14d17bffc60d36cf2a7/1494531166569/)](https://www.thoughtworks.com)  |  [![Cex](https://in.webuy.com/images/logos/CeX_Logo_Rich_black_RGB-01.png)](https://in.webuy.com/)  |  [![Travelstart](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRahsNjFIF2pQGOxKoinf4Au1gGjyMUQEArL8Mv_gyCl1Aaxuu-)](http://www.travelstart.com/)
 
 Jio India             |  M800 | Reward Gateway
 :-:|:-:|:-:
