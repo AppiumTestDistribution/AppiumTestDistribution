@@ -80,6 +80,11 @@ public class CapabilityManager {
         return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
     }
 
+    public boolean isRealDeviceAppPresentInCapsJson() {
+        boolean hasApp = getCapabilityObjectFromKey("iOS").has("app");
+        return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("device");
+    }
+
     public String getAppiumServerPath(String host) throws Exception {
         JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
         List<Object> objects = hostMachineObject.toList();
