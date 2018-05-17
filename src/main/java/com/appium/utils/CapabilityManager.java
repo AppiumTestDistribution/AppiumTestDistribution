@@ -98,6 +98,19 @@ public class CapabilityManager {
         return null;
     }
 
+    public String getAppiumServerPort(String host) throws Exception {
+        JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
+        List<Object> objects = hostMachineObject.toList();
+        Object o = objects.stream().filter(object -> ((HashMap) object).get("machineIP")
+                .toString().equalsIgnoreCase(host)
+                && ((HashMap) object).get("port") != null)
+                .findFirst().orElse(null);
+        if (o != null) {
+            return ((HashMap) o).get("port").toString();
+        }
+        return null;
+    }
+
     public JSONObject getCapabilities() {
         return capabilities;
     }
