@@ -59,7 +59,7 @@ public class RemoteAppiumManager implements IAppiumManager {
         } else if (serverPort != null) {
             System.out.println("Picking Default Path & User Port for AppiumServiceBuilder");
             new Api().getResponse("http://" + host + ":4567"
-                    + "/appium/start?URL=" + serverPort).body().string();
+                    + "/appium/start?PORT=" + serverPort).body().string();
         }
 
         boolean status = Boolean.getBoolean(new JSONObject(new Api().getResponse("http://" + host + ":4567"

@@ -24,7 +24,7 @@
   "hostMachines": [
     {
       "machineIP": "192.192.192.1",
-      "port": 23456,
+      "appiumPort": 23456,
       "simulators": [
         {
           "deviceName": "iPhone 6",
