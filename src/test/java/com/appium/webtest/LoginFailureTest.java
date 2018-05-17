@@ -8,12 +8,12 @@ import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
 
-public class LoginFailure extends UserBaseTest {
+public class LoginFailureTest extends UserBaseTest {
 
-
-    @Test public void loginTestFailure() throws InterruptedException {
+    @Test
+    public void loginTestFailure() throws InterruptedException {
         getDriver().get("https://www.thoughtworks.com");
-        WebElement idElement = getDriver().findElement(By.id("mobile-menu-titleee"));
+        WebElement idElement = getDriver().findElement(By.id("mobile-menu-title"));
         assertNotNull(idElement);
         //elementHighlight(idElement);
         idElement.click();
@@ -28,5 +28,4 @@ public class LoginFailure extends UserBaseTest {
         contact_us.click();
 
     }
-
 }
