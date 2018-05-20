@@ -37,8 +37,8 @@ public final class AppiumParallelTestListener
 
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
-    public AppiumServerManager appiumServerManager;
-    public String testDescription = "";
+    private AppiumServerManager appiumServerManager;
+    private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
 
     List<String> syncal =
