@@ -80,6 +80,10 @@ public class CapabilityManager {
         return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
     }
 
+    public boolean isApp() {
+        return getCapabilityObjectFromKey("iOS").has("app");
+    }
+
     public boolean isRealDeviceAppPresentInCapsJson() {
         boolean hasApp = getCapabilityObjectFromKey("iOS").has("app");
         return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("device");

@@ -90,10 +90,15 @@ public class LocalAppiumManager implements IAppiumManager {
         }
         if (platform.equalsIgnoreCase(OSType.iOS.name()) ||
                 platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
+            if (CapabilityManager.getInstance().isApp()) {
+                if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
+                    devices.addAll(new SimulatorManager().getAllBootedSimulators(OSType.iOS.name()));
+                }
+                if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
+                    devices.addAll(new IOSManager().getDevices());
+                }
+            } else {
                 devices.addAll(new SimulatorManager().getAllBootedSimulators(OSType.iOS.name()));
-            }
-            if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
                 devices.addAll(new IOSManager().getDevices());
             }
         }

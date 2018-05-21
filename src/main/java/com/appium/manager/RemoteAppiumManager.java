@@ -5,7 +5,10 @@ import com.appium.utils.CapabilityManager;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
+import com.thoughtworks.device.SimulatorManager;
+import com.thoughtworks.iOS.IOSManager;
 import okhttp3.Response;
 import org.json.JSONObject;
 
@@ -74,25 +77,40 @@ public class RemoteAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public List<Device> getDevices(String machineIP, String platform) throws IOException {
+    public List<Device> getDevices(String machineIP, String platform) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<Device> devices = null;
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name())) {
-            devices = Arrays.asList(mapper.readValue(new URL(
+
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name()) ||
+                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+            devices.addAll(Arrays.asList(mapper.readValue(new URL(
                             "http://" + machineIP + ":4567/devices/android"),
-                    Device[].class));
-        } else if (platform.equalsIgnoreCase(OSType.iOS.name())) {
-            devices = Arrays.asList(mapper.readValue(new URL(
-                            "http://" + machineIP + ":4567/devices/ios"),
-                    Device[].class));
-        } else if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            devices = Arrays.asList(mapper.readValue(new URL(
-                            "http://" + machineIP + ":4567/devices"),
-                    Device[].class));
+                    Device[].class)));
+        }
+        if (platform.equalsIgnoreCase(OSType.iOS.name()) ||
+                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+
+            if (CapabilityManager.getInstance().isApp()) {
+
+                if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
+                    devices.addAll(Arrays.asList(mapper.readValue(new URL(
+                                    "http://" + machineIP + ":4567/devices/ios/bootedSims"),
+                            Device[].class)));
+                }
+                if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
+                    devices.addAll(Arrays.asList(mapper.readValue(new URL(
+                                    "http://" + machineIP + ":4567/devices/ios/realDevices"),
+                            Device[].class)));
+                }
+            } else {
+                devices.addAll(Arrays.asList(mapper.readValue(new URL(
+                                "http://" + machineIP + ":4567/devices/ios"),
+                        Device[].class)));
+            }
         }
         assert devices != null;
-        return new ArrayList<>(devices);
+        return devices;
     }
 
     @Override
@@ -135,7 +153,7 @@ public class RemoteAppiumManager implements IAppiumManager {
             ObjectMapper mapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             String url = String.format("http://%s:4567/devices/ios/webkitproxy/stop"
-                    + "?processID=%s", host,
+                            + "?processID=%s", host,
                     AppiumDeviceManager.getAppiumDevice().getWebkitProcessID());
             new Api().getResponse(url);
             AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
