@@ -86,16 +86,24 @@ public class CapabilityManager {
     }
 
     public String getAppiumServerPath(String host) throws Exception {
+       return appiumServerProp(host, "appiumServerPath");
+    }
+
+    private String appiumServerProp(String host, String arg) throws Exception {
         JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
-        List<Object> objects = hostMachineObject.toList();
-        Object o = objects.stream().filter(object -> ((HashMap) object).get("machineIP")
+        List<Object> hostIP = hostMachineObject.toList();
+        Object machineIP = hostIP.stream().filter(object -> ((HashMap) object).get("machineIP")
                 .toString().equalsIgnoreCase(host)
-                && ((HashMap) object).get("appiumServerPath") != null)
+                && ((HashMap) object).get(arg) != null)
                 .findFirst().orElse(null);
-        if (o != null) {
-            return ((HashMap) o).get("appiumServerPath").toString();
+        if (machineIP != null) {
+            return ((HashMap) machineIP).get(arg).toString();
         }
         return null;
+    }
+
+    public String getAppiumServerPort(String host) throws Exception {
+      return appiumServerProp(host,"appiumPort");
     }
 
     public JSONObject getCapabilities() {

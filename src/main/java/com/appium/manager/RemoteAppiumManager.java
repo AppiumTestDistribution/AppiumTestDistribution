@@ -40,15 +40,26 @@ public class RemoteAppiumManager implements IAppiumManager {
         System.out.println("Starting Appium Server on host " + host);
         System.out.println(
                 "**************************************************************************\n");
-        if (CapabilityManager.getInstance().getAppiumServerPath(host) == null) {
+        String serverPath = CapabilityManager.getInstance().getAppiumServerPath(host);
+        String serverPort = CapabilityManager.getInstance().getAppiumServerPort(host);
+        if (serverPath == null
+                && serverPort == null) {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
             new Api().getResponse("http://" + host + ":4567"
                     + "/appium/start").body().string();
-        } else {
-            System.out.println("Picking UserSpecified Path for AppiumServiceBuilder");
-            String appiumServerPath = CapabilityManager.getInstance().getAppiumServerPath(host);
+        } else if (serverPath != null && serverPort != null ) {
+            System.out.println("Picking UserSpecified Path & Port for AppiumServiceBuilder");
             new Api().getResponse("http://" + host + ":4567"
-                    + "/appium/start?URL=" + appiumServerPath).body().string();
+                    + "/appium/start?URL=" + serverPath
+                    + "&PORT=" + serverPort).body().string();
+        } else if (serverPath != null) {
+            System.out.println("Picking UserSpecified Path & Using default Port for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":4567"
+                    + "/appium/start?URL=" + serverPath).body().string();
+        } else if (serverPort != null) {
+            System.out.println("Picking Default Path & User Port for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":4567"
+                    + "/appium/start?PORT=" + serverPort).body().string();
         }
 
         boolean status = Boolean.getBoolean(new JSONObject(new Api().getResponse("http://" + host + ":4567"
