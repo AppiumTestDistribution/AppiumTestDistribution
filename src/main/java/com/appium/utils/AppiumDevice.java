@@ -8,6 +8,7 @@ public class AppiumDevice {
     private static final String BUSY = "BUSY";
     private Device device;
     private int port;
+    private int chromeDriverPort;
     private String webkitProcessID;
     private String deviceState;
     private String ipAddress;
@@ -16,6 +17,15 @@ public class AppiumDevice {
         this.device = device;
         this.ipAddress = ipAddress;
         deviceState = AVAILABLE;
+        chromeDriverPort = 0; //Setting as Zero initially
+    }
+
+    public int getChromeDriverPort() {
+        return chromeDriverPort;
+    }
+
+    public void setChromeDriverPort(int chromeDriverPort) {
+        this.chromeDriverPort = chromeDriverPort;
     }
 
     public int getPort() {

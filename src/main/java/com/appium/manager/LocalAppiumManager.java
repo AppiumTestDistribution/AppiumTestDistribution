@@ -10,7 +10,6 @@ import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -63,7 +62,6 @@ public class LocalAppiumManager implements IAppiumManager {
         AppiumDriverLocalService appiumDriverLocalService;
         AppiumServiceBuilder builder =
                 getAppiumServerBuilder(host)
-                        .withArgument(GeneralServerFlag.LOG_LEVEL, "info")
                         .withLogFile(new File(
                                 System.getProperty("user.dir")
                                         + FileLocations.APPIUM_LOGS_DIRECTORY

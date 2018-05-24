@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -31,11 +32,13 @@ public class DeviceAllocationManager {
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;
+    private List<Thread> suspendedThreads;
     private AppiumDriverManager appiumDriverManager;
 
     private DeviceAllocationManager() throws Exception {
         try {
             isPlatformInEnv();
+            suspendedThreads = new ArrayList<>();
             hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
             ArtifactsUploader.getInstance().initializeArtifacts();
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
@@ -87,14 +90,22 @@ public class DeviceAllocationManager {
                 return device;
             }
         }
+        if(Thread.activeCount() > allDevices.size()) {
+            suspendedThreads.add(Thread.currentThread());
+            Thread.currentThread().suspend();
+        }
         return null;
     }
 
-    public void freeDevice() {
+    public synchronized void freeDevice() {
         AppiumDeviceManager.getAppiumDevice().freeDevice();
         LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getAppiumDevice().getDevice()
                 .getUdid()
                 + " from execution list");
+        if (suspendedThreads.size() > 0) {
+            suspendedThreads.get(0).resume();
+            suspendedThreads.remove(0);
+        }
     }
 
     public void allocateDevice(AppiumDevice appiumDevice) {

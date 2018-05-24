@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.CommandPrompt;
 import com.appium.utils.DesiredCapabilityBuilder;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -160,10 +161,19 @@ public class AppiumDriverManager {
     }
 
     public void stopAppiumDriver() throws Exception {
+        String OS = System.getProperty("os.name").toLowerCase();
+        String command;
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
                 == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
             AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
+        }
+        if(AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
+            if(OS.indexOf("mac") >= 0) {
+                command = "kill -9 $(lsof -ti tcp:" + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
+                new CommandPrompt().runCommand(command);
+            }
+            AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(0);
         }
         if (AppiumDriverManager.getDriver() != null
                 && AppiumDriverManager.getDriver().getSessionId() != null) {
