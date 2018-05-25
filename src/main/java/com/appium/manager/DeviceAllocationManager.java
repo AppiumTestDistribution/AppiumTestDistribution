@@ -1,9 +1,6 @@
 package com.appium.manager;
 
-import com.appium.utils.AppiumDevice;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.HostMachineDeviceManager;
-import com.appium.utils.JsonParser;
+import com.appium.utils.*;
 import com.github.yunusmete.stf.api.STFService;
 import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
@@ -40,7 +37,9 @@ public class DeviceAllocationManager {
             isPlatformInEnv();
             suspendedThreads = new ArrayList<>();
             hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
-            ArtifactsUploader.getInstance().initializeArtifacts();
+            if(CapabilityManager.getInstance().isApp()) {
+                ArtifactsUploader.getInstance().initializeArtifacts();
+            }
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
             appiumDriverManager = new AppiumDriverManager();

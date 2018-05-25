@@ -18,6 +18,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class RemoteAppiumManager implements IAppiumManager {
 
@@ -80,36 +81,37 @@ public class RemoteAppiumManager implements IAppiumManager {
     public List<Device> getDevices(String machineIP, String platform) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        List<Device> devices = null;
+        List<Device> devices = new ArrayList<>();
 
         if (platform.equalsIgnoreCase(OSType.ANDROID.name()) ||
                 platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            devices.addAll(Arrays.asList(mapper.readValue(new URL(
+            List<Device> androidDevices = Arrays.asList(mapper.readValue(new URL(
                             "http://" + machineIP + ":4567/devices/android"),
-                    Device[].class)));
+                    Device[].class));
+            Optional.ofNullable(androidDevices).ifPresent(devices::addAll);
         }
         if (platform.equalsIgnoreCase(OSType.iOS.name()) ||
                 platform.equalsIgnoreCase(OSType.BOTH.name())) {
-
             if (CapabilityManager.getInstance().isApp()) {
-
                 if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
-                    devices.addAll(Arrays.asList(mapper.readValue(new URL(
+                    List<Device> bootedSims = Arrays.asList(mapper.readValue(new URL(
                                     "http://" + machineIP + ":4567/devices/ios/bootedSims"),
-                            Device[].class)));
+                            Device[].class));
+                    Optional.ofNullable(bootedSims).ifPresent(devices::addAll);
                 }
                 if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
-                    devices.addAll(Arrays.asList(mapper.readValue(new URL(
+                    List<Device> iOSRealDevices = Arrays.asList(mapper.readValue(new URL(
                                     "http://" + machineIP + ":4567/devices/ios/realDevices"),
-                            Device[].class)));
+                            Device[].class));
+                    Optional.ofNullable(iOSRealDevices).ifPresent(devices::addAll);
                 }
             } else {
-                devices.addAll(Arrays.asList(mapper.readValue(new URL(
+                List<Device> iOSDevices = Arrays.asList(mapper.readValue(new URL(
                                 "http://" + machineIP + ":4567/devices/ios"),
-                        Device[].class)));
+                        Device[].class));
+                Optional.ofNullable(iOSDevices).ifPresent(devices::addAll);
             }
         }
-        assert devices != null;
         return devices;
     }
 
