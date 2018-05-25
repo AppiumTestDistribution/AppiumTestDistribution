@@ -106,10 +106,12 @@ public class HostMachineDeviceManager {
                 IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
                 List<Device> devices = appiumManager.getDevices(machineIP, platform);
 
-                if (!platform.equalsIgnoreCase("android")
+                if ((!platform.equalsIgnoreCase("android")
                         && capabilityManager.isApp()
                         && capabilityManager.isSimulatorAppPresentInCapsJson()
-                        || capabilityManager.getCapabilityObjectFromKey("iOS").has("browserName")) {
+                        && hostMachineJson.has("simulators"))
+                        || (capabilityManager.getCapabilityObjectFromKey("iOS").has("browserName")
+                        && hostMachineJson.has("simulators"))) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     List<Device> simulatorsToBoot = getSimulatorsToBoot(
                             machineIP, simulators);
