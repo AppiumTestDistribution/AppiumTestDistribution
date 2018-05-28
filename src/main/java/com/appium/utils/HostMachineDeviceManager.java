@@ -7,7 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -106,9 +111,11 @@ public class HostMachineDeviceManager {
                 IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
                 List<Device> devices = appiumManager.getDevices(machineIP, platform);
 
-                if (!platform.equalsIgnoreCase("android")
+                if ((!platform.equalsIgnoreCase("android")
+                        && capabilityManager.isApp()
                         && capabilityManager.isSimulatorAppPresentInCapsJson()
-                        && hostMachineJson.has("simulators")) {
+                        && hostMachineJson.has("simulators"))
+                        && !capabilityManager.getCapabilityObjectFromKey("iOS").has("browserName")) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     List<Device> simulatorsToBoot = getSimulatorsToBoot(
                             machineIP, simulators);

@@ -1,21 +1,16 @@
 package com.appium.manager;
 
 import com.appium.utils.AppiumDevice;
+import com.appium.utils.CapabilityManager;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.HostMachineDeviceManager;
-import com.appium.utils.JsonParser;
 import com.github.yunusmete.stf.api.STFService;
 import com.github.yunusmete.stf.model.DeviceBody;
 import com.github.yunusmete.stf.rest.DeviceResponse;
-import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -40,7 +35,9 @@ public class DeviceAllocationManager {
             isPlatformInEnv();
             suspendedThreads = new ArrayList<>();
             hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
-            ArtifactsUploader.getInstance().initializeArtifacts();
+            if (CapabilityManager.getInstance().isApp()) {
+                ArtifactsUploader.getInstance().initializeArtifacts();
+            }
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
             appiumDriverManager = new AppiumDriverManager();
@@ -90,7 +87,7 @@ public class DeviceAllocationManager {
                 return device;
             }
         }
-        if(Thread.activeCount() > allDevices.size()) {
+        if (Thread.activeCount() > allDevices.size()) {
             suspendedThreads.add(Thread.currentThread());
             Thread.currentThread().suspend();
         }
