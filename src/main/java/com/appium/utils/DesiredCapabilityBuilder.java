@@ -72,7 +72,7 @@ public class DesiredCapabilityBuilder {
                                                     .getHostName())).collect(toList()).parallelStream()
                             .findFirst().get();
                 } catch (IOException e) {
-                    throw new RuntimeException("Artifact uploader path issue");
+                    new RuntimeException("Artifact uploader path issue");
                 }
                 String appPath = "";
                 if (values instanceof JSONObject) {
