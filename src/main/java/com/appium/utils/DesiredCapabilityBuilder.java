@@ -2,7 +2,11 @@ package com.appium.utils;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.manager.*;
+import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.ArtifactsUploader;
+import com.appium.manager.HostArtifact;
+import com.appium.manager.IAppiumManager;
+import com.appium.manager.AppiumManagerFactory;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;

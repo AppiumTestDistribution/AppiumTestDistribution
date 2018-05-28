@@ -5,10 +5,7 @@ import com.appium.utils.CapabilityManager;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.android.AndroidManager;
 import com.thoughtworks.device.Device;
-import com.thoughtworks.device.SimulatorManager;
-import com.thoughtworks.iOS.IOSManager;
 import okhttp3.Response;
 import org.json.JSONObject;
 
@@ -51,7 +48,7 @@ public class RemoteAppiumManager implements IAppiumManager {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
             new Api().getResponse("http://" + host + ":4567"
                     + "/appium/start").body().string();
-        } else if (serverPath != null && serverPort != null ) {
+        } else if (serverPath != null && serverPort != null) {
             System.out.println("Picking UserSpecified Path & Port for AppiumServiceBuilder");
             new Api().getResponse("http://" + host + ":4567"
                     + "/appium/start?URL=" + serverPath
