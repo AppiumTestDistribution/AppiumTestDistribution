@@ -107,7 +107,7 @@ public class RemoteAppiumManager implements IAppiumManager {
                 }
             } else {
                 List<Device> iOSDevices = Arrays.asList(mapper.readValue(new URL(
-                                "http://" + machineIP + ":4567/devices/ios"),
+                                "http://" + machineIP + ":4567/devices/ios/realDevices"),
                         Device[].class));
                 Optional.ofNullable(iOSDevices).ifPresent(devices::addAll);
             }

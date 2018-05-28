@@ -96,7 +96,6 @@ public class LocalAppiumManager implements IAppiumManager {
                     devices.addAll(new IOSManager().getDevices());
                 }
             } else {
-                devices.addAll(new SimulatorManager().getAllBootedSimulators(OSType.iOS.name()));
                 devices.addAll(new IOSManager().getDevices());
             }
         }

@@ -110,8 +110,7 @@ public class HostMachineDeviceManager {
                         && capabilityManager.isApp()
                         && capabilityManager.isSimulatorAppPresentInCapsJson()
                         && hostMachineJson.has("simulators"))
-                        || (capabilityManager.getCapabilityObjectFromKey("iOS").has("browserName")
-                        && hostMachineJson.has("simulators"))) {
+                        && !capabilityManager.getCapabilityObjectFromKey("iOS").has("browserName")) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     List<Device> simulatorsToBoot = getSimulatorsToBoot(
                             machineIP, simulators);
