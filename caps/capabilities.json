@@ -19,6 +19,7 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10,
     "isHeadless": false,
+    "deviceName": "ios device",
     "fullReset": false
   },
   "hostMachines": [
