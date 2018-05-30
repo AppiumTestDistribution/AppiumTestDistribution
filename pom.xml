@@ -22,7 +22,9 @@
         <url>https://github.com/saikrishna321/AppiumTestDistribution.git</url>
         <connection>scm:git:git@github.com:saikrishna321/AppiumTestDistribution.git</connection>
     </scm>
-
+    <properties>
+        <dependency.locations.enabled>false</dependency.locations.enabled>
+    </properties>
     <developers>
         <developer>
             <name>Sai Krishna</name>

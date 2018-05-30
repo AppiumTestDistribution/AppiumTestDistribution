@@ -143,7 +143,7 @@ public class HostMachineDeviceManager {
             AppiumDevice appiumDevice = new AppiumDevice(device, machineIP);
             try {
                 appiumDevice.setPort(new AvailablePorts().getAvailablePort(machineIP));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return appiumDevice;
@@ -151,7 +151,7 @@ public class HostMachineDeviceManager {
     }
 
     private List<Device> getSimulatorsToBoot(String machineIP, JSONArray simulators)
-            throws IOException, InterruptedException {
+            throws Exception {
         List<Device> devices = new ArrayList<>();
         for (Object simulator : simulators) {
             JSONObject simulatorJson = (JSONObject) simulator;

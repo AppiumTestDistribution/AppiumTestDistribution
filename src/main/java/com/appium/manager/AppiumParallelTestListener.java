@@ -158,7 +158,7 @@ public final class AppiumParallelTestListener
     public void onFinish(ISuite iSuite) {
         try {
             appiumServerManager.stopAppiumServer();
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

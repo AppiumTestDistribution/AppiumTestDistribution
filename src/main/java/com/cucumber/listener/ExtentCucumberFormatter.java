@@ -370,9 +370,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     public void onFinish(ISuite iSuite) {
         try {
             appiumServerManager.stopAppiumServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
