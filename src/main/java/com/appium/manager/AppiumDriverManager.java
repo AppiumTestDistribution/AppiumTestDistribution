@@ -168,9 +168,10 @@ public class AppiumDriverManager {
             String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
             AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
         }
-        if(AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
-            if(OS.indexOf("mac") >= 0) {
-                command = "kill -9 $(lsof -ti tcp:" + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
+        if (AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
+            if (OS.indexOf("mac") >= 0) {
+                command = "kill -9 $(lsof -ti tcp:"
+                        + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
                 new CommandPrompt().runCommand(command);
             }
             AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(0);

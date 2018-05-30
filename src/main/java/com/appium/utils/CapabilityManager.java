@@ -90,7 +90,7 @@ public class CapabilityManager {
     }
 
     public String getAppiumServerPath(String host) throws Exception {
-       return appiumServerProp(host, "appiumServerPath");
+        return appiumServerProp(host, "appiumServerPath");
     }
 
     private String appiumServerProp(String host, String arg) throws Exception {
@@ -107,7 +107,7 @@ public class CapabilityManager {
     }
 
     public String getAppiumServerPort(String host) throws Exception {
-      return appiumServerProp(host,"appiumPort");
+        return appiumServerProp(host,"appiumPort");
     }
 
     public JSONObject getCapabilities() {

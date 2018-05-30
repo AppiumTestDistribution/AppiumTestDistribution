@@ -54,7 +54,8 @@ public class RemoteAppiumManager implements IAppiumManager {
                     + "/appium/start?URL=" + serverPath
                     + "&PORT=" + serverPort).body().string();
         } else if (serverPath != null) {
-            System.out.println("Picking UserSpecified Path & Using default Port for AppiumServiceBuilder");
+            System.out.println("Picking UserSpecified Path "
+                    + "& Using default Port for AppiumServiceBuilder");
             new Api().getResponse("http://" + host + ":4567"
                     + "/appium/start?URL=" + serverPath).body().string();
         } else if (serverPort != null) {
@@ -80,15 +81,15 @@ public class RemoteAppiumManager implements IAppiumManager {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<Device> devices = new ArrayList<>();
 
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name()) ||
-                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name())
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             List<Device> androidDevices = Arrays.asList(mapper.readValue(new URL(
                             "http://" + machineIP + ":4567/devices/android"),
                     Device[].class));
             Optional.ofNullable(androidDevices).ifPresent(devices::addAll);
         }
-        if (platform.equalsIgnoreCase(OSType.iOS.name()) ||
-                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+        if (platform.equalsIgnoreCase(OSType.iOS.name())
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             if (CapabilityManager.getInstance().isApp()) {
                 if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
                     List<Device> bootedSims = Arrays.asList(mapper.readValue(new URL(
