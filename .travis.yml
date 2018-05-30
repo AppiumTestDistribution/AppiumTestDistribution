@@ -11,7 +11,7 @@ matrix:
         - brew update
         - brew outdated xctool || brew upgrade xctool
         - xcrun simctl list -j devices
-        - npm install -g appium@1.8.0
+        - npm install -g appium
       script:
       - mvn clean site install -Dmaven.test.skip=true
       - Platform="ios" mvn clean -Dtest=Runner test
@@ -36,7 +36,7 @@ matrix:
         - nvm install 6
         - node --version
         - npm --version
-        - npm install -g appium@1.8.0
+        - npm install -g appium
         - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
         - emulator -avd test -no-audio -no-window &
         - android-wait-for-emulator
