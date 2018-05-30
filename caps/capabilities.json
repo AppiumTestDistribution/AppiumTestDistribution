@@ -18,13 +18,12 @@
     "shouldUseSingletonTestManager": false,
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10,
-    "isHeadless": false,
+    "isHeadless": true,
     "fullReset": false
   },
   "hostMachines": [
     {
-      "machineIP": "192.192.192.1",
-      "appiumPort": 23456,
+      "machineIP": "127.0.0.1",
       "simulators": [
         {
           "deviceName": "iPhone 6",
