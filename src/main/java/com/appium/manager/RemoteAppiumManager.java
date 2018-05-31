@@ -9,7 +9,6 @@ import com.thoughtworks.device.Device;
 import okhttp3.Response;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -20,16 +19,17 @@ import java.util.Optional;
 public class RemoteAppiumManager implements IAppiumManager {
 
     @Override
-    public void destroyAppiumNode(String host) throws IOException {
-        new Api().getResponse("http://" + host + ":4567"
+    public void destroyAppiumNode(String host) throws Exception {
+        new Api().getResponse("http://" + host + ":" + getRemoteAppiumManagerPort(host)
                 + "/appium/stop").body().string();
 
     }
 
     @Override
-    public String getRemoteWDHubIP(String host) throws IOException {
+    public String getRemoteWDHubIP(String host) throws Exception {
         String hostIP = "http://" + host;
-        String appiumRunningPort = new JSONObject(new Api().getResponse(hostIP + ":4567"
+        String appiumRunningPort = new JSONObject(new Api().getResponse(hostIP
+                + ":" + getRemoteAppiumManagerPort(host)
                 + "/appium/isRunning").body().string()).get("port").toString();
         return hostIP + ":" + appiumRunningPort + "/wd/hub";
     }
@@ -46,25 +46,32 @@ public class RemoteAppiumManager implements IAppiumManager {
         if (serverPath == null
                 && serverPort == null) {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":4567"
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
                     + "/appium/start").body().string();
         } else if (serverPath != null && serverPort != null) {
             System.out.println("Picking UserSpecified Path & Port for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":4567"
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
                     + "/appium/start?URL=" + serverPath
                     + "&PORT=" + serverPort).body().string();
         } else if (serverPath != null) {
-            System.out.println("Picking UserSpecified Path & Using default Port for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":4567"
+            System.out.println("Picking UserSpecified Path "
+                    + "& Using default Port for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
                     + "/appium/start?URL=" + serverPath).body().string();
         } else if (serverPort != null) {
             System.out.println("Picking Default Path & User Port for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":4567"
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
                     + "/appium/start?PORT=" + serverPort).body().string();
         }
 
-        boolean status = Boolean.getBoolean(new JSONObject(new Api().getResponse("http://" + host + ":4567"
-                + "/appium/isRunning").body().string()).get("status").toString());
+        boolean status = Boolean.getBoolean(new JSONObject(new Api()
+                .getResponse("http://" + host + ":"
+                        + getRemoteAppiumManagerPort(host)
+                        + "/appium/isRunning").body().string()).get("status").toString());
         if (status) {
             System.out.println(
                     "***************************************************************\n");
@@ -80,31 +87,38 @@ public class RemoteAppiumManager implements IAppiumManager {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<Device> devices = new ArrayList<>();
 
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name()) ||
-                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name())
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             List<Device> androidDevices = Arrays.asList(mapper.readValue(new URL(
-                            "http://" + machineIP + ":4567/devices/android"),
+                            "http://" + machineIP + ":"
+                                    + getRemoteAppiumManagerPort(machineIP) + "/devices/android"),
                     Device[].class));
             Optional.ofNullable(androidDevices).ifPresent(devices::addAll);
         }
-        if (platform.equalsIgnoreCase(OSType.iOS.name()) ||
-                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+        if (platform.equalsIgnoreCase(OSType.iOS.name())
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             if (CapabilityManager.getInstance().isApp()) {
                 if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
                     List<Device> bootedSims = Arrays.asList(mapper.readValue(new URL(
-                                    "http://" + machineIP + ":4567/devices/ios/bootedSims"),
+                                    "http://" + machineIP + ":"
+                                            + getRemoteAppiumManagerPort(machineIP)
+                                            + "/devices/ios/bootedSims"),
                             Device[].class));
                     Optional.ofNullable(bootedSims).ifPresent(devices::addAll);
                 }
                 if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
                     List<Device> iOSRealDevices = Arrays.asList(mapper.readValue(new URL(
-                                    "http://" + machineIP + ":4567/devices/ios/realDevices"),
+                                    "http://" + machineIP + ":"
+                                            + getRemoteAppiumManagerPort(machineIP)
+                                            + "/devices/ios/realDevices"),
                             Device[].class));
                     Optional.ofNullable(iOSRealDevices).ifPresent(devices::addAll);
                 }
             } else {
                 List<Device> iOSDevices = Arrays.asList(mapper.readValue(new URL(
-                                "http://" + machineIP + ":4567/devices/ios/realDevices"),
+                                "http://" + machineIP + ":"
+                                        + getRemoteAppiumManagerPort(machineIP)
+                                        + "/devices/ios/realDevices"),
                         Device[].class));
                 Optional.ofNullable(iOSDevices).ifPresent(devices::addAll);
             }
@@ -113,10 +127,12 @@ public class RemoteAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public Device getSimulator(String machineIP, String deviceName, String os) throws IOException {
+    public Device getSimulator(String machineIP, String deviceName, String os) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String url = String.format("http://%s:4567/device/ios/simulator"
+        String url = String.format("http://%s:"
+                        + getRemoteAppiumManagerPort(machineIP)
+                        + "/device/ios/simulator"
                         + "?simulatorName=%s&simulatorOSVersion=%s",
                 machineIP, URLEncoder.encode(deviceName, "UTF-8"),
                 URLEncoder.encode(os, "UTF-8"));
@@ -126,8 +142,10 @@ public class RemoteAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public int getAvailablePort(String hostMachine) throws IOException {
-        String url = String.format("http://%s:4567/machine/availablePort", hostMachine);
+    public int getAvailablePort(String hostMachine) throws Exception {
+        String url = String.format("http://%s:"
+                + getRemoteAppiumManagerPort(hostMachine)
+                + "/machine/availablePort", hostMachine);
         Response response = new Api().getResponse(url);
         return Integer.parseInt(response.body().string());
     }
@@ -137,7 +155,8 @@ public class RemoteAppiumManager implements IAppiumManager {
         int port = getAvailablePort(host);
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String url = String.format("http://%s:4567/devices/ios/webkitproxy/start"
+        String url = String.format("http://%s:" + getRemoteAppiumManagerPort(host)
+                        + "/devices/ios/webkitproxy/start"
                         + "?udid=%s&port=%s", host,
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid(),
                 port);
@@ -151,11 +170,22 @@ public class RemoteAppiumManager implements IAppiumManager {
         if (AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
             ObjectMapper mapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            String url = String.format("http://%s:4567/devices/ios/webkitproxy/stop"
+            String url = String.format("http://%s:" + getRemoteAppiumManagerPort(host)
+                            + "/devices/ios/webkitproxy/stop"
                             + "?processID=%s", host,
                     AppiumDeviceManager.getAppiumDevice().getWebkitProcessID());
             new Api().getResponse(url);
             AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
+        }
+    }
+
+    private String getRemoteAppiumManagerPort(String host) throws Exception {
+        String serverPort = CapabilityManager.getInstance()
+                .getRemoteAppiumManangerPort(host);
+        if (serverPort == null) {
+            return "4567";
+        } else {
+            return serverPort;
         }
     }
 }

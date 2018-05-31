@@ -9,6 +9,7 @@ import com.thoughtworks.device.SimulatorManager;
 import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -81,15 +82,16 @@ public class LocalAppiumManager implements IAppiumManager {
     @Override
     public List<Device> getDevices(String machineIP, String platform) throws Exception {
         List<Device> devices = new ArrayList<>();
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name()) ||
-                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name())
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             devices.addAll(new AndroidManager().getDevices());
         }
-        if (platform.equalsIgnoreCase(OSType.iOS.name()) ||
-                platform.equalsIgnoreCase(OSType.BOTH.name())) {
+        if (platform.equalsIgnoreCase(OSType.iOS.name())
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             if (CapabilityManager.getInstance().isApp()) {
                 if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
-                    devices.addAll(new SimulatorManager().getAllBootedSimulators(OSType.iOS.name()));
+                    devices.addAll(new SimulatorManager()
+                            .getAllBootedSimulators(OSType.iOS.name()));
                 }
                 if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
                     devices.addAll(new IOSManager().getDevices());

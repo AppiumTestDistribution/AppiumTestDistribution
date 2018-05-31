@@ -41,7 +41,7 @@ public class AppiumDriverManager {
     }
 
     private AppiumDriver<MobileElement> getMobileAndroidElementAppiumDriver(
-            Optional<DesiredCapabilities> androidCaps) throws IOException {
+            Optional<DesiredCapabilities> androidCaps) throws Exception {
         AppiumDriver<MobileElement> currentDriverSession = null;
         DesiredCapabilities desiredCapabilities = androidCaps.get();
         String remoteWDHubIP = getRemoteWDHubIP();
@@ -55,7 +55,7 @@ public class AppiumDriverManager {
 
     private AppiumDriver<MobileElement> getMobileiOSElementAppiumDriver(
             Optional<DesiredCapabilities> iOSCaps)
-            throws IOException, InterruptedException {
+            throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = iOSCaps.get();
         String remoteWDHubIP = getRemoteWDHubIP();
@@ -68,7 +68,7 @@ public class AppiumDriverManager {
         return currentDriverSession;
     }
 
-    private String getRemoteWDHubIP() throws IOException {
+    private String getRemoteWDHubIP() throws Exception {
         String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
         IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(hostName);
         return appiumManager.getRemoteWDHubIP(hostName);
@@ -168,9 +168,10 @@ public class AppiumDriverManager {
             String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
             AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
         }
-        if(AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
-            if(OS.indexOf("mac") >= 0) {
-                command = "kill -9 $(lsof -ti tcp:" + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
+        if (AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
+            if (OS.indexOf("mac") >= 0) {
+                command = "kill -9 $(lsof -ti tcp:"
+                        + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
                 new CommandPrompt().runCommand(command);
             }
             AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(0);

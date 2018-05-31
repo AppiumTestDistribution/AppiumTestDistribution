@@ -54,7 +54,7 @@ public class AppiumServerManager {
         }
     }
 
-    public void stopAppiumServer() throws IOException, InterruptedException {
+    public void stopAppiumServer() throws Exception {
         for ( String host: devicesByHost.getAllHosts()) {
             IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
             appiumManager.destroyAppiumNode(host);

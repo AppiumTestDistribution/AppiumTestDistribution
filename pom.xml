@@ -22,7 +22,6 @@
         <url>https://github.com/saikrishna321/AppiumTestDistribution.git</url>
         <connection>scm:git:git@github.com:saikrishna321/AppiumTestDistribution.git</connection>
     </scm>
-
     <developers>
         <developer>
             <name>Sai Krishna</name>
@@ -52,7 +51,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>6.0.0-BETA3</version>
+            <version>6.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

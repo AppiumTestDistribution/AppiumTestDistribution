@@ -53,10 +53,11 @@ public class DesiredCapabilityBuilder {
             if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
                 try {
                     AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(
-                            availablePorts.getAvailablePort(AppiumDeviceManager.getAppiumDevice().getHostName()));
+                            availablePorts.getAvailablePort(AppiumDeviceManager
+                                    .getAppiumDevice().getHostName()));
                     desiredCapabilities.setCapability("chromeDriverPort",
                             AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
-                } catch (IOException e) {
+                } catch (Exception e) {
                     new RuntimeException("Unable to allocate chromedriver with unique port");
                 }
             }
@@ -68,8 +69,10 @@ public class DesiredCapabilityBuilder {
                     hostArtifact = ArtifactsUploader.getInstance()
                             .getHostArtifacts().stream().filter(s ->
                                     s.getHost()
-                                            .equalsIgnoreCase(AppiumDeviceManager.getAppiumDevice()
-                                                    .getHostName())).collect(toList()).parallelStream()
+                                            .equalsIgnoreCase(AppiumDeviceManager
+                                                    .getAppiumDevice()
+                                                    .getHostName()))
+                            .collect(toList()).parallelStream()
                             .findFirst().get();
                 } catch (IOException e) {
                     new RuntimeException("Artifact uploader path issue");
@@ -128,7 +131,8 @@ public class DesiredCapabilityBuilder {
                 IAppiumManager appiumManager = AppiumManagerFactory
                         .getAppiumManager(AppiumDeviceManager.getAppiumDevice().getHostName());
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
-                        appiumManager.startIOSWebKitProxy(AppiumDeviceManager.getAppiumDevice().getHostName()));
+                        appiumManager.startIOSWebKitProxy(
+                                AppiumDeviceManager.getAppiumDevice().getHostName()));
             }
 
             desiredCapabilities.setCapability(IOSMobileCapabilityType
