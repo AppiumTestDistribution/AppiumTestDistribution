@@ -110,6 +110,10 @@ public class CapabilityManager {
         return appiumServerProp(host,"appiumPort");
     }
 
+    public String getRemoteAppiumManangerPort(String host) throws Exception {
+        return appiumServerProp(host, "remoteAppiumManagerPort");
+    }
+
     public JSONObject getCapabilities() {
         return capabilities;
     }

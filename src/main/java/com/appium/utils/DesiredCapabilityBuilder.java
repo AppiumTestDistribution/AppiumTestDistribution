@@ -57,7 +57,7 @@ public class DesiredCapabilityBuilder {
                                     .getAppiumDevice().getHostName()));
                     desiredCapabilities.setCapability("chromeDriverPort",
                             AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
-                } catch (IOException e) {
+                } catch (Exception e) {
                     new RuntimeException("Unable to allocate chromedriver with unique port");
                 }
             }

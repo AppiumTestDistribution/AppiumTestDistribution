@@ -7,18 +7,18 @@ import java.util.List;
 
 public interface IAppiumManager {
 
-    void destroyAppiumNode(String host) throws IOException;
+    void destroyAppiumNode(String host) throws Exception;
 
-    String getRemoteWDHubIP(String host) throws IOException;
+    String getRemoteWDHubIP(String host) throws Exception;
 
     void startAppiumServer(String host) throws Exception;
 
     List<Device> getDevices(String machineIP,String platform) throws Exception;
 
     Device getSimulator(String machineIP, String deviceName, String os)
-            throws IOException, InterruptedException;
+            throws Exception;
 
-    int getAvailablePort(String hostMachine) throws IOException;
+    int getAvailablePort(String hostMachine) throws Exception;
 
     int startIOSWebKitProxy(String host) throws Exception;
 

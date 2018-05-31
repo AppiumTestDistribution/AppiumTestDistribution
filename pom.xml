@@ -22,7 +22,6 @@
         <url>https://github.com/saikrishna321/AppiumTestDistribution.git</url>
         <connection>scm:git:git@github.com:saikrishna321/AppiumTestDistribution.git</connection>
     </scm>
-
     <developers>
         <developer>
             <name>Sai Krishna</name>
