@@ -18,7 +18,8 @@
     "shouldUseSingletonTestManager": false,
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10,
-    "isHeadless": true,
+    "isHeadless": false,
+    "deviceName": "ios device",
     "fullReset": false
   },
   "hostMachines": [
