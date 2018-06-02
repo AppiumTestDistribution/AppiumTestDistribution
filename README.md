@@ -1,3 +1,11 @@
+<h1 align="center">
+	<br>
+	<img src="image/Logo.png" alt="ATD">
+	<br>
+	<br>
+	<br>
+</h1>
+
 # Appium Parallel Execution for Android and iOS on Real Devices
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/saikrishna321/AppiumTestDistribution)
 [![Join the chat at https://gitter.im/saikrishna321/AppiumTestDistribution](https://badges.gitter.im/saikrishna321/AppiumTestDistribution.svg)](https://gitter.im/saikrishna321/AppiumTestDistribution?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -7,7 +15,6 @@
 [ ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat )](https://github.com/saikrishna321/AppiumTestDistribution/pulls)
 [![GitHub forks](https://img.shields.io/github/forks/saikrishna321/AppiumTestDistribution.svg?style=social&label=Fork)](https://github.com/kirankalyan5/AppiumTestDistribution/network)
 
-![alt tag](https://raw.githubusercontent.com/saikrishna321/AppiumTestDistribution/master/image/Network-2.gif)
 
 Add the below dependencies in your pom.xml (Master)
 
