@@ -2,6 +2,7 @@ package com.appium.utils;
 
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
+import com.report.factory.MongoDB;
 import com.thoughtworks.device.Device;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,6 +50,8 @@ public class HostMachineDeviceManager {
                 Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                         = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
+                MongoDB mongoDB = MongoDB.getInstance().createDB("report", "devices");
+                devicesByHost.getAllDevices().forEach(mongoDB::insertDataToDB);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -146,6 +146,11 @@
 	    <version>90eec48</version>
         </dependency>
         <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.yunusmete.stf</groupId>
             <artifactId>openstf-java-client</artifactId>
             <version>1.0</version>
