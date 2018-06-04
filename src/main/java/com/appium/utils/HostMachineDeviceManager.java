@@ -2,6 +2,7 @@ package com.appium.utils;
 
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.report.factory.MongoDB;
 import com.thoughtworks.device.Device;
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ public class HostMachineDeviceManager {
         }
     }
 
-    public static HostMachineDeviceManager getInstance() throws IOException {
+    public static HostMachineDeviceManager getInstance() {
         if (instance == null) {
             instance = new HostMachineDeviceManager();
         }
@@ -50,8 +51,9 @@ public class HostMachineDeviceManager {
                 Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                         = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
-                MongoDB mongoDB = MongoDB.getInstance().createDB("report", "devices");
-                devicesByHost.getAllDevices().forEach(mongoDB::insertDataToDB);
+                new Api().post("http://127.0.0.1:3000/devices",
+                        new ObjectMapper().writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(devicesByHost));
             } catch (Exception e) {
                 e.printStackTrace();
             }
