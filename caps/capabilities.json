@@ -7,6 +7,7 @@
     "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
   },
   "iOS": {
+    "deviceName": "ios device",
     "platformName": "iOS",
     "app": {
       "simulator": "https://github.com/saikrishna321/VodQaAdvancedAppium/raw/master/vodqa.zip"
