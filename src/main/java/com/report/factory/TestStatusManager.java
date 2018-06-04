@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class TestStatusManager {
-    public JSONObject getReportEventJson(AppiumDevice appiumDevice,
+    public String getReportEventJson(AppiumDevice appiumDevice,
                                          String testStatus, String testCaseName,
                                          String testResult)
             throws JsonProcessingException {
@@ -22,6 +22,6 @@ public class TestStatusManager {
                 .writeValueAsString(appiumDevice);
         ja.put(value);
         obj.put("deviceinfo", JSON.parse(value.replace("/\r?\n|\r/g", "")));
-        return obj;
+        return obj.toString();
     }
 }

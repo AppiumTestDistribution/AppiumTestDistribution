@@ -40,15 +40,19 @@ public class Api {
         return response.body().string();
     }
 
-    public String post(String url, String json) throws IOException {
+    public String post(String url, String json) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
+        try {
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

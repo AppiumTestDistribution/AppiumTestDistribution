@@ -2,12 +2,15 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.utils.Api;
 import com.appium.utils.AppiumDevice;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.HostMachineDeviceManager;
 import com.aventstack.extentreports.Status;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.ExtentManager;
 
+import com.report.factory.TestStatusManager;
 import org.json.JSONObject;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
@@ -33,19 +36,13 @@ import java.util.Map;
 
 
 public final class AppiumParallelTestListener
-        implements IClassListener, IInvokedMethodListener, ISuiteListener,ITestListener {
+        implements IClassListener, IInvokedMethodListener, ISuiteListener, ITestListener {
 
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
-
-    List<String> syncal =
-            Collections.synchronizedList(new ArrayList<String>());
-
-    public static Map<String, String> userLogs =
-            Collections.synchronizedMap(new HashMap<String, String>());
 
     public AppiumParallelTestListener() throws Exception {
         try {
@@ -61,6 +58,16 @@ public final class AppiumParallelTestListener
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        String reportEventJson = null;
+        try {
+            reportEventJson = new TestStatusManager()
+                    .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
+                            "Completed",
+                            method.getTestMethod().getMethodName(), getExecutionStatus(testResult));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        new Api().post("http://127.0.0.1:3000/testresults", reportEventJson);
         try {
             SkipIf skip =
                     method.getTestMethod()
@@ -81,25 +88,23 @@ public final class AppiumParallelTestListener
         //json.put("resolution", AppiumDeviceManager.getMobilePlatform());
         try {
             json.put("model", new AppiumDeviceManager().getDeviceModel());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                HashMap<String, String> getLogDetails = reportManager.endLogTestResults(testResult);
-                JSONObject status = getStatus(json, getExecutionStatus(testResult),
-                        String.valueOf(testResult.getThrowable()),
-                        getLogDetails, method.getTestMethod().getMethodName(),
-                        testResult.getInstance().getClass().getSimpleName(),
-                        Duration.of(testResult.getStartMillis(), ChronoUnit.MILLIS).getSeconds(),
-                        Duration.of(testResult.getEndMillis(), ChronoUnit.MILLIS).getSeconds(),
-                        Duration.of(testResult.getEndMillis() - testResult.getStartMillis(),
-                                ChronoUnit.MILLIS).getSeconds());
-
-                sync(status.toString());
+                String methodName = method.getTestMethod().getMethodName();
+                String reportEventJson = null;
+                try {
+                    reportEventJson = new TestStatusManager()
+                            .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
+                                    "Completed",
+                                    methodName, getExecutionStatus(testResult));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+                new Api().post("http://127.0.0.1:3000/testresults", reportEventJson);
             }
             if (method.isTestMethod()) {
                 appiumDriverManager.stopAppiumDriver();
@@ -109,32 +114,6 @@ public final class AppiumParallelTestListener
         }
     }
 
-    public JSONObject getStatus(JSONObject json, String status, String error,
-                                HashMap<String, String> deviceLogsPath,
-                                String methodname, String classname,
-                                long startTime, long endTime, long totalTime) {
-        JSONObject jsonObj = new JSONObject();
-        JSONObject logs = new JSONObject();
-        jsonObj.put("results", status);
-        jsonObj.put("methodname", methodname);
-        jsonObj.put("classname", classname);
-        jsonObj.put("exceptiontrace", error);
-        jsonObj.put("starttime", startTime);
-        jsonObj.put("endtime", endTime);
-        json.put("totaltime", totalTime);
-        deviceLogsPath.forEach((key, value) -> {
-            if ("videoLogs".equals(key)
-                    || "screenShotFailure".equals(key)) {
-                if (new File(value).exists()) {
-                    logs.put(key, value);
-                }
-            }
-            logs.put(key, value);
-        });
-        jsonObj.put("logs", logs);
-        json.put("testDetails", jsonObj);
-        return json;
-    }
 
     /*
     Document to make codacy happy
@@ -148,11 +127,6 @@ public final class AppiumParallelTestListener
         }
     }
 
-    private void sync(String message) {
-        //Adding elements to synchronized ArrayList
-        syncal.add(message);
-    }
-
 
     @Override
     public void onFinish(ISuite iSuite) {
@@ -161,29 +135,6 @@ public final class AppiumParallelTestListener
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private JSONObject getSummaryDetails(Map<String, ISuiteResult> results) {
-
-        Object firstSuite = results.keySet().toArray()[0];
-        ISuiteResult result = results.get(firstSuite);
-        ITestContext testContext = result.getTestContext();
-        int passedTests = testContext.getPassedTests().getAllResults().size();
-        int failedTests = testContext.getFailedTests().getAllResults().size();
-        int skippedTests = testContext.getSkippedTests().getAllResults().size();
-        String suiteName = testContext.getName();
-        //String includedGroups = testContext.getIncludedGroups().toString();
-
-        JSONObject jsonSummary = new JSONObject();
-        jsonSummary.put("suite_name", suiteName);
-        //jsonSummary.put("Included Groups", includedGroups);
-        jsonSummary.put("passed", passedTests);
-        jsonSummary.put("failed", failedTests);
-        jsonSummary.put("skipped", skippedTests);
-        jsonSummary.put("duration", Duration.of(testContext.getEndDate().getTime()
-                - testContext.getStartDate().getTime(), ChronoUnit.SECONDS));
-
-        return jsonSummary;
     }
 
     private String getExecutionStatus(ITestResult result) {
@@ -250,6 +201,17 @@ public final class AppiumParallelTestListener
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         System.out.println("Skipped...");
+        String reportEventJson = null;
+        try {
+            reportEventJson = new TestStatusManager()
+                    .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
+                            "Completed",
+                            iTestResult.getMethod().getMethodName(),
+                            getExecutionStatus(iTestResult));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        new Api().post("http://127.0.0.1:3000/testresults", reportEventJson);
         (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
         (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
         ExtentManager.getExtent().flush();

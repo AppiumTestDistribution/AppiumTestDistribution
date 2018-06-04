@@ -3,7 +3,6 @@ package com.appium.utils;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.report.factory.MongoDB;
 import com.thoughtworks.device.Device;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +41,7 @@ public class HostMachineDeviceManager {
         return instance;
     }
 
-    private void initializeDevicesByHost() {
+    private void initializeDevicesByHost() throws IOException {
         if (devicesByHost == null) {
             try {
                 Map<String, List<AppiumDevice>> allDevices = getDevices();
@@ -51,12 +50,12 @@ public class HostMachineDeviceManager {
                 Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                         = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
-                new Api().post("http://127.0.0.1:3000/devices",
-                        new ObjectMapper().writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(devicesByHost));
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            new Api().post("http://127.0.0.1:3000/devices",
+                    new ObjectMapper().writerWithDefaultPrettyPrinter()
+                            .writeValueAsString(devicesByHost));
         }
     }
 

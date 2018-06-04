@@ -2,15 +2,14 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.appium.utils.AppiumDevice;
+import com.appium.utils.Api;
 import com.appium.utils.Retry;
 import com.aventstack.extentreports.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
-import com.report.factory.MongoDB;
 import com.report.factory.TestStatusManager;
-import org.json.JSONObject;
+
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.IRetryAnalyzer;
@@ -32,7 +31,6 @@ public final class AppiumParallelMethodTestListener
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
-    private MongoDB mongoDB;
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
@@ -41,7 +39,6 @@ public final class AppiumParallelMethodTestListener
             prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
-            mongoDB = MongoDB.getInstance().createDB("report", "teststatus");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,16 +89,16 @@ public final class AppiumParallelMethodTestListener
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            JSONObject reportEventJson;
+            String reportEventJson = null;
             try {
                 reportEventJson = new TestStatusManager()
                         .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                                 "Completed",
                                 methodName, getStatus(testResult));
-                mongoDB.insertDataToDB(reportEventJson);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
+            new Api().post("http://127.0.0.1:3000/testresults",reportEventJson);
             ExtentManager.getExtent().flush();
             deviceAllocationManager.freeDevice();
             try {
@@ -122,11 +119,11 @@ public final class AppiumParallelMethodTestListener
             String methodName = iTestResult.getMethod().getMethodName();
             reportManager.startLogResults(methodName,
                     iTestResult.getTestClass().getRealClass().getSimpleName());
-            JSONObject reportEventJson = new TestStatusManager()
+            String reportEventJson = new TestStatusManager()
                     .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                             "Started",
                             methodName, "UnKnown");
-            mongoDB.insertDataToDB(reportEventJson);
+            new Api().post("http://127.0.0.1:3000/testresults",reportEventJson);
         } catch (Exception e) {
             e.printStackTrace();
         }
