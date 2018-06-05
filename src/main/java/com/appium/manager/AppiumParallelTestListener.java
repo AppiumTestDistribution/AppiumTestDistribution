@@ -2,10 +2,7 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.appium.utils.Api;
-import com.appium.utils.AppiumDevice;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.utils.*;
 import com.aventstack.extentreports.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.ExtentManager;
@@ -43,6 +40,8 @@ public final class AppiumParallelTestListener
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
+    private String mongoDbUrl = null;
+    private String mongoDbPort = null;
 
     public AppiumParallelTestListener() throws Exception {
         try {
@@ -50,6 +49,10 @@ public final class AppiumParallelTestListener
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
+            mongoDbUrl = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("mongoHost");
+            mongoDbPort = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("mongoPort");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,7 +70,8 @@ public final class AppiumParallelTestListener
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        new Api().post("http://127.0.0.1:3000/testresults", reportEventJson);
+        new Api().post("http://" + mongoDbUrl + ":"
+                + mongoDbPort + "/testresults", reportEventJson);
         try {
             SkipIf skip =
                     method.getTestMethod()
@@ -104,7 +108,8 @@ public final class AppiumParallelTestListener
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-                new Api().post("http://127.0.0.1:3000/testresults", reportEventJson);
+                new Api().post("http://" + mongoDbUrl + ":"
+                        + mongoDbPort + "/testresults", reportEventJson);
             }
             if (method.isTestMethod()) {
                 appiumDriverManager.stopAppiumDriver();
@@ -211,7 +216,8 @@ public final class AppiumParallelTestListener
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        new Api().post("http://127.0.0.1:3000/testresults", reportEventJson);
+        new Api().post("http://" + mongoDbUrl + ":"
+                + mongoDbPort + "/testresults", reportEventJson);
         (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
         (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
         ExtentManager.getExtent().flush();

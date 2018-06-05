@@ -36,5 +36,7 @@
       ]
     }
   ],
-  "excludeLocalDevices": false
+  "excludeLocalDevices": false,
+  "mongoDBUrl":"127.0.0.1",
+  "mongoDBPort":"27017"
 }

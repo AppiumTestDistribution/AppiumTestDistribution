@@ -3,6 +3,7 @@ package com.appium.manager;
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.utils.Api;
+import com.appium.utils.CapabilityManager;
 import com.appium.utils.Retry;
 import com.aventstack.extentreports.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,6 +32,8 @@ public final class AppiumParallelMethodTestListener
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
+    private String mongoDbUrl = null;
+    private String mongoDbPort = null;
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
@@ -39,6 +42,11 @@ public final class AppiumParallelMethodTestListener
             prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
+            mongoDbUrl = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("mongoHost");
+            mongoDbPort = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("mongoPort");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,7 +106,8 @@ public final class AppiumParallelMethodTestListener
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            new Api().post("http://127.0.0.1:3000/testresults",reportEventJson);
+            new Api().post("http://" + mongoDbUrl + ":"
+                    + mongoDbPort + "/testresults", reportEventJson);
             ExtentManager.getExtent().flush();
             deviceAllocationManager.freeDevice();
             try {
@@ -123,7 +132,8 @@ public final class AppiumParallelMethodTestListener
                     .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                             "Started",
                             methodName, "UnKnown");
-            new Api().post("http://127.0.0.1:3000/testresults",reportEventJson);
+            new Api().post("http://" + mongoDbUrl + ":"
+                    + mongoDbPort + "/testresults", reportEventJson);
         } catch (Exception e) {
             e.printStackTrace();
         }
