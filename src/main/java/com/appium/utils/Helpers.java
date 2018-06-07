@@ -1,5 +1,8 @@
 package com.appium.utils;
 
+import com.appium.manager.AppiumDeviceManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
 
 public class Helpers {
@@ -23,6 +26,21 @@ public class Helpers {
                 return "Skip";
             default:
                 throw new RuntimeException("Invalid status");
+        }
+    }
+
+
+    public void sendResultsToAtdService(ITestResult testResult, String methodName,
+                                        String testStatus, String url) {
+        String reportEventJson;
+        try {
+            reportEventJson = new TestStatusManager()
+                    .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
+                            testStatus,
+                            methodName, getStatus(testResult));
+            new Api().post(url, reportEventJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 }

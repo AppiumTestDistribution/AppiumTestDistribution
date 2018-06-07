@@ -68,15 +68,13 @@ public class CapabilityManager {
     }
 
     public HashMap<String, String> getMongoDbHostAndPort() {
-        HashMap<String,String> params = new HashMap<>();
+        HashMap<String, String> params = new HashMap<>();
         if (capabilities.has("ATDServiceHost")
                 && capabilities.has("ATDServicePort")) {
             params.put("atdHost", (String) capabilities.get("ATDServiceHost"));
             params.put("atdPort", (String) capabilities.get("ATDServicePort"));
-            return params;
-        } else {
-            return null;
         }
+        return params;
     }
 
     public JSONArray getHostMachineObject() throws Exception {

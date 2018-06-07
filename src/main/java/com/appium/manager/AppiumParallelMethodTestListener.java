@@ -33,8 +33,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
-    private String mongoDbUrl = null;
-    private String mongoDbPort = null;
+    private String atdHost = null;
+    private String atdPort = null;
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
@@ -43,9 +43,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
             prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
-            mongoDbUrl = CapabilityManager.getInstance()
+            atdHost = CapabilityManager.getInstance()
                     .getMongoDbHostAndPort().get("atdHost");
-            mongoDbPort = CapabilityManager.getInstance()
+            atdPort = CapabilityManager.getInstance()
                     .getMongoDbHostAndPort().get("atdPort");
 
         } catch (IOException e) {
@@ -98,17 +98,11 @@ public final class AppiumParallelMethodTestListener extends Helpers
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            String reportEventJson = null;
-            try {
-                reportEventJson = new TestStatusManager()
-                        .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                                "Completed",
-                                methodName, getStatus(testResult));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+            if (atdHost != null && atdPort != null) {
+                String url = "http://" + atdHost + ":"
+                        + atdPort + "/testresults";
+                sendResultsToAtdService(testResult, methodName, "Completed", url);
             }
-            new Api().post("http://" + mongoDbUrl + ":"
-                    + mongoDbPort + "/testresults", reportEventJson);
             ExtentManager.getExtent().flush();
             deviceAllocationManager.freeDevice();
             try {
@@ -129,12 +123,12 @@ public final class AppiumParallelMethodTestListener extends Helpers
             String methodName = iTestResult.getMethod().getMethodName();
             reportManager.startLogResults(methodName,
                     iTestResult.getTestClass().getRealClass().getSimpleName());
-            String reportEventJson = new TestStatusManager()
-                    .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                            "Started",
-                            methodName, "UnKnown");
-            new Api().post("http://" + mongoDbUrl + ":"
-                    + mongoDbPort + "/testresults", reportEventJson);
+            if (atdHost != null && atdPort != null) {
+                String url = "http://" + atdHost + ":"
+                        + atdPort + "/testresults";
+                sendResultsToAtdService(iTestResult, methodName, "Started", url);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

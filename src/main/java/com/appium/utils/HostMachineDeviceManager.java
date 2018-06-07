@@ -24,15 +24,15 @@ public class HostMachineDeviceManager {
     private CapabilityManager capabilityManager;
     private DevicesByHost devicesByHost;
     private static HostMachineDeviceManager instance;
-    private String mongoDbUrl = null;
-    private String mongoDbPort = null;
+    private String atdHost = null;
+    private String atdPort = null;
 
     private HostMachineDeviceManager() {
         try {
             capabilityManager = CapabilityManager.getInstance();
-            mongoDbUrl = CapabilityManager.getInstance()
+            atdHost = CapabilityManager.getInstance()
                     .getMongoDbHostAndPort().get("atdHost");
-            mongoDbPort = CapabilityManager.getInstance()
+            atdPort = CapabilityManager.getInstance()
                     .getMongoDbHostAndPort().get("atdPort");
             initializeDevicesByHost();
         } catch (Exception e) {
@@ -59,9 +59,11 @@ public class HostMachineDeviceManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            new Api().post("http://" + mongoDbUrl + ":" + mongoDbPort + "/devices",
-                    new ObjectMapper().writerWithDefaultPrettyPrinter()
-                            .writeValueAsString(devicesByHost));
+            if (atdHost != null && atdPort != null) {
+                new Api().post("http://" + atdHost + ":" + atdPort + "/devices",
+                        new ObjectMapper().writerWithDefaultPrettyPrinter()
+                                .writeValueAsString(devicesByHost));
+            }
         }
     }
 

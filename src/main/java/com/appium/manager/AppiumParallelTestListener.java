@@ -17,7 +17,6 @@ import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import org.testng.SkipException;
 
 import java.io.IOException;
 
@@ -30,8 +29,8 @@ public final class AppiumParallelTestListener extends Helpers
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
-    private String mongoDbUrl = null;
-    private String mongoDbPort = null;
+    private String atdHost = null;
+    private String atdPort = null;
 
     public AppiumParallelTestListener() throws Exception {
         try {
@@ -39,9 +38,9 @@ public final class AppiumParallelTestListener extends Helpers
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
-            mongoDbUrl = CapabilityManager.getInstance()
+            atdHost = CapabilityManager.getInstance()
                     .getMongoDbHostAndPort().get("atdHost");
-            mongoDbPort = CapabilityManager.getInstance()
+            atdPort = CapabilityManager.getInstance()
                     .getMongoDbHostAndPort().get("atdPort");
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,17 +50,11 @@ public final class AppiumParallelTestListener extends Helpers
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-        String reportEventJson = null;
-        try {
-            reportEventJson = new TestStatusManager()
-                    .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                            "Completed",
-                            method.getTestMethod().getMethodName(), getStatus(testResult));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        new Api().post("http://" + mongoDbUrl + ":"
-                + mongoDbPort + "/testresults", reportEventJson);
+        String postTestResults = "http://" + atdHost + ":"
+                + atdPort + "/testresults";
+        sendResultsToAtdService(testResult,
+                method.getTestMethod().getMethodName(),
+                "Started", postTestResults);
         try {
             SkipIf skip =
                     method.getTestMethod()
@@ -89,17 +82,12 @@ public final class AppiumParallelTestListener extends Helpers
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
                 String methodName = method.getTestMethod().getMethodName();
-                String reportEventJson = null;
-                try {
-                    reportEventJson = new TestStatusManager()
-                            .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                                    "Completed",
-                                    methodName, getStatus(testResult));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
+                if (atdHost != null && atdPort != null) {
+                    String postTestResults = "http://" + atdHost + ":"
+                            + atdPort + "/testresults";
+                    sendResultsToAtdService(testResult,
+                            methodName, "Completed", postTestResults);
                 }
-                new Api().post("http://" + mongoDbUrl + ":"
-                        + mongoDbPort + "/testresults", reportEventJson);
             }
             if (method.isTestMethod()) {
                 appiumDriverManager.stopAppiumDriver();
@@ -190,11 +178,11 @@ public final class AppiumParallelTestListener extends Helpers
                             "Completed",
                             iTestResult.getMethod().getMethodName(),
                             getStatus(iTestResult));
+            new Api().post("http://" + atdHost + ":"
+                    + atdPort + "/testresults", reportEventJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        new Api().post("http://" + mongoDbUrl + ":"
-                + mongoDbPort + "/testresults", reportEventJson);
         (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
         (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
         ExtentManager.getExtent().flush();
