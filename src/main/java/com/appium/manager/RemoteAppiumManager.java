@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.utils.Api;
 import com.appium.utils.CapabilityManager;
+import com.appium.utils.Helpers;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class RemoteAppiumManager implements IAppiumManager {
+public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
     @Override
     public void destroyAppiumNode(String host) throws Exception {
@@ -93,7 +94,7 @@ public class RemoteAppiumManager implements IAppiumManager {
                             "http://" + machineIP + ":"
                                     + getRemoteAppiumManagerPort(machineIP) + "/devices/android"),
                     Device[].class));
-            Optional.ofNullable(androidDevices).ifPresent(devices::addAll);
+            Optional.of(androidDevices).ifPresent(devices::addAll);
         }
         if (platform.equalsIgnoreCase(OSType.iOS.name())
                 || platform.equalsIgnoreCase(OSType.BOTH.name())) {
@@ -104,7 +105,7 @@ public class RemoteAppiumManager implements IAppiumManager {
                                             + getRemoteAppiumManagerPort(machineIP)
                                             + "/devices/ios/bootedSims"),
                             Device[].class));
-                    Optional.ofNullable(bootedSims).ifPresent(devices::addAll);
+                    Optional.of(bootedSims).ifPresent(devices::addAll);
                 }
                 if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
                     List<Device> iOSRealDevices = Arrays.asList(mapper.readValue(new URL(
@@ -112,7 +113,7 @@ public class RemoteAppiumManager implements IAppiumManager {
                                             + getRemoteAppiumManagerPort(machineIP)
                                             + "/devices/ios/realDevices"),
                             Device[].class));
-                    Optional.ofNullable(iOSRealDevices).ifPresent(devices::addAll);
+                    Optional.of(iOSRealDevices).ifPresent(devices::addAll);
                 }
             } else {
                 List<Device> iOSDevices = Arrays.asList(mapper.readValue(new URL(
@@ -120,7 +121,7 @@ public class RemoteAppiumManager implements IAppiumManager {
                                         + getRemoteAppiumManagerPort(machineIP)
                                         + "/devices/ios/realDevices"),
                         Device[].class));
-                Optional.ofNullable(iOSDevices).ifPresent(devices::addAll);
+                Optional.of(iOSDevices).ifPresent(devices::addAll);
             }
         }
         return devices;
@@ -179,14 +180,6 @@ public class RemoteAppiumManager implements IAppiumManager {
         }
     }
 
-    private String getRemoteAppiumManagerPort(String host) throws Exception {
-        String serverPort = CapabilityManager.getInstance()
-                .getRemoteAppiumManangerPort(host);
-        if (serverPort == null) {
-            return "4567";
-        } else {
-            return serverPort;
-        }
-    }
+
 }
 

@@ -6,7 +6,6 @@ import com.appium.utils.*;
 import com.aventstack.extentreports.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.ExtentManager;
-
 import com.report.factory.TestStatusManager;
 import org.json.JSONObject;
 import org.testng.IClassListener;
@@ -14,25 +13,16 @@ import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
-import org.testng.ISuiteResult;
 import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
-import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
-public final class AppiumParallelTestListener
+public final class AppiumParallelTestListener extends Helpers
         implements IClassListener, IInvokedMethodListener, ISuiteListener, ITestListener {
 
     private ReportManager reportManager;
@@ -50,9 +40,9 @@ public final class AppiumParallelTestListener
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
             mongoDbUrl = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("mongoHost");
+                    .getMongoDbHostAndPort().get("atdHost");
             mongoDbPort = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("mongoPort");
+                    .getMongoDbHostAndPort().get("atdPort");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,7 +56,7 @@ public final class AppiumParallelTestListener
             reportEventJson = new TestStatusManager()
                     .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                             "Completed",
-                            method.getTestMethod().getMethodName(), getExecutionStatus(testResult));
+                            method.getTestMethod().getMethodName(), getStatus(testResult));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -104,7 +94,7 @@ public final class AppiumParallelTestListener
                     reportEventJson = new TestStatusManager()
                             .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                                     "Completed",
-                                    methodName, getExecutionStatus(testResult));
+                                    methodName, getStatus(testResult));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
@@ -139,19 +129,6 @@ public final class AppiumParallelTestListener
             appiumServerManager.stopAppiumServer();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private String getExecutionStatus(ITestResult result) {
-        switch (result.getStatus()) {
-            case ITestResult.SUCCESS:
-                return "Pass";
-            case ITestResult.FAILURE:
-                return "Fail";
-            case ITestResult.SKIP:
-                return "Skip";
-            default:
-                throw new RuntimeException("Invalid status");
         }
     }
 
@@ -212,7 +189,7 @@ public final class AppiumParallelTestListener
                     .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                             "Completed",
                             iTestResult.getMethod().getMethodName(),
-                            getExecutionStatus(iTestResult));
+                            getStatus(iTestResult));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

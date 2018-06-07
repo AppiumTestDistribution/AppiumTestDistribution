@@ -7,21 +7,32 @@ import com.mongodb.util.JSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
 public class TestStatusManager {
     public String getReportEventJson(AppiumDevice appiumDevice,
                                          String testStatus, String testCaseName,
                                          String testResult)
             throws JsonProcessingException {
-        JSONObject obj = new JSONObject();
-        JSONArray ja = new JSONArray();
-        obj.put("status", testStatus);
-        obj.put("testresult", testResult);
-        obj.put("testcasename", testCaseName);
-        String value = new ObjectMapper()
+        LocalTime localTime = ZonedDateTime.now().toLocalTime().truncatedTo(ChronoUnit.SECONDS);
+        JSONObject test = new JSONObject();
+        test.put("status", testStatus);
+        test.put("testresult", testResult);
+        test.put("testcasename", testCaseName);
+        if (testStatus.equalsIgnoreCase("Completed")) {
+            test.put("endTime", localTime);
+        } else {
+            test.put("startTime",localTime);
+        }
+        String deviceDetails = new ObjectMapper()
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(appiumDevice);
-        ja.put(value);
-        obj.put("deviceinfo", JSON.parse(value.replace("/\r?\n|\r/g", "")));
-        return obj.toString();
+        JSONArray device = new JSONArray();
+        device.put(deviceDetails);
+        test.put("deviceinfo", JSON.parse(deviceDetails.replace("/\r?\n|\r/g", "")));
+        return test.toString();
     }
 }

@@ -4,6 +4,7 @@ import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.utils.Api;
 import com.appium.utils.CapabilityManager;
+import com.appium.utils.Helpers;
 import com.appium.utils.Retry;
 import com.aventstack.extentreports.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +24,7 @@ import org.testng.SkipException;
 
 import java.io.IOException;
 
-public final class AppiumParallelMethodTestListener
+public final class AppiumParallelMethodTestListener extends Helpers
         implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
     private ReportManager reportManager;
@@ -43,9 +44,9 @@ public final class AppiumParallelMethodTestListener
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
             mongoDbUrl = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("mongoHost");
+                    .getMongoDbHostAndPort().get("atdHost");
             mongoDbPort = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("mongoPort");
+                    .getMongoDbHostAndPort().get("atdPort");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -192,19 +193,6 @@ public final class AppiumParallelMethodTestListener
             appiumServerManager.stopAppiumServer();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private String getStatus(ITestResult result) {
-        switch (result.getStatus()) {
-            case ITestResult.SUCCESS:
-                return "Pass";
-            case ITestResult.FAILURE:
-                return "Fail";
-            case ITestResult.SKIP:
-                return "Skip";
-            default:
-                throw new RuntimeException("Invalid status");
         }
     }
 

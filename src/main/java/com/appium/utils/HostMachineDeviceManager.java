@@ -31,9 +31,9 @@ public class HostMachineDeviceManager {
         try {
             capabilityManager = CapabilityManager.getInstance();
             mongoDbUrl = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("mongoHost");
+                    .getMongoDbHostAndPort().get("atdHost");
             mongoDbPort = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("mongoPort");
+                    .getMongoDbHostAndPort().get("atdPort");
             initializeDevicesByHost();
         } catch (Exception e) {
             e.printStackTrace();

@@ -69,10 +69,10 @@ public class CapabilityManager {
 
     public HashMap<String, String> getMongoDbHostAndPort() {
         HashMap<String,String> params = new HashMap<>();
-        if (capabilities.has("mongoDBUrl")
-                && capabilities.has("mongoDBPort")) {
-            params.put("mongoHost", (String) capabilities.get("mongoDBUrl"));
-            params.put("mongoPort", (String) capabilities.get("mongoDBPort"));
+        if (capabilities.has("ATDServiceHost")
+                && capabilities.has("ATDServicePort")) {
+            params.put("atdHost", (String) capabilities.get("ATDServiceHost"));
+            params.put("atdPort", (String) capabilities.get("ATDServicePort"));
             return params;
         } else {
             return null;

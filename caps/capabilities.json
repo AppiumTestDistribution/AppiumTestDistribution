@@ -37,6 +37,6 @@
     }
   ],
   "excludeLocalDevices": false,
-  "mongoDBUrl":"127.0.0.1",
-  "mongoDBPort":"27017"
+  "ATDServiceHost":"127.0.0.1",
+  "ATDServicePort":"3000"
 }
