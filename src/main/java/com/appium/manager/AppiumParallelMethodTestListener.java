@@ -2,15 +2,13 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.appium.utils.Api;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.Helpers;
 import com.appium.utils.Retry;
 import com.aventstack.extentreports.Status;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
-import com.report.factory.TestStatusManager;
+
 
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -29,7 +27,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
-    private ConfigFileManager prop;
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
@@ -40,7 +37,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
         try {
             reportManager = new ReportManager();
             appiumServerManager = new AppiumServerManager();
-            prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
             atdHost = CapabilityManager.getInstance()

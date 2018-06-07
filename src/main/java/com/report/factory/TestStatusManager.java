@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 public class TestStatusManager {
     public String getReportEventJson(AppiumDevice appiumDevice,
@@ -22,7 +21,7 @@ public class TestStatusManager {
         JSONObject test = new JSONObject();
         test.put("status", testStatus);
         test.put("testresult", testResult);
-        test.put("testcasename", testCaseName);
+        test.put("testMethodName", testCaseName);
         test.put("testException", testException);
         test.put("testClassName", testClassName);
         if (testStatus.equalsIgnoreCase("Completed")) {

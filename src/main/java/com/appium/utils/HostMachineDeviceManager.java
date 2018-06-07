@@ -60,6 +60,8 @@ public class HostMachineDeviceManager {
                 e.printStackTrace();
             }
             if (atdHost != null && atdPort != null) {
+                new Api().getResponse("http://" + atdHost + ":" + atdPort + "/devices/drop");
+                new Api().getResponse("http://" + atdHost + ":" + atdPort + "/testresults/drop");
                 new Api().post("http://" + atdHost + ":" + atdPort + "/devices",
                         new ObjectMapper().writerWithDefaultPrettyPrinter()
                                 .writeValueAsString(devicesByHost));

@@ -94,7 +94,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                             "http://" + machineIP + ":"
                                     + getRemoteAppiumManagerPort(machineIP) + "/devices/android"),
                     Device[].class));
-            Optional.of(androidDevices).ifPresent(devices::addAll);
+            Optional.ofNullable(androidDevices).ifPresent(devices::addAll);
         }
         if (platform.equalsIgnoreCase(OSType.iOS.name())
                 || platform.equalsIgnoreCase(OSType.BOTH.name())) {
@@ -105,7 +105,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                                             + getRemoteAppiumManagerPort(machineIP)
                                             + "/devices/ios/bootedSims"),
                             Device[].class));
-                    Optional.of(bootedSims).ifPresent(devices::addAll);
+                    Optional.ofNullable(bootedSims).ifPresent(devices::addAll);
                 }
                 if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
                     List<Device> iOSRealDevices = Arrays.asList(mapper.readValue(new URL(
@@ -113,7 +113,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                                             + getRemoteAppiumManagerPort(machineIP)
                                             + "/devices/ios/realDevices"),
                             Device[].class));
-                    Optional.of(iOSRealDevices).ifPresent(devices::addAll);
+                    Optional.ofNullable(iOSRealDevices).ifPresent(devices::addAll);
                 }
             } else {
                 List<Device> iOSDevices = Arrays.asList(mapper.readValue(new URL(
@@ -121,7 +121,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                                         + getRemoteAppiumManagerPort(machineIP)
                                         + "/devices/ios/realDevices"),
                         Device[].class));
-                Optional.of(iOSDevices).ifPresent(devices::addAll);
+                Optional.ofNullable(iOSDevices).ifPresent(devices::addAll);
             }
         }
         return devices;
