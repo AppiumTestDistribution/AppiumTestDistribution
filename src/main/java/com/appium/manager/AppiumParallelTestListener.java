@@ -21,6 +21,7 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 
 public final class AppiumParallelTestListener extends Helpers
@@ -56,7 +57,7 @@ public final class AppiumParallelTestListener extends Helpers
                 + atdPort + "/testresults";
         sendResultsToAtdService(testResult,
                 method.getTestMethod().getMethodName(),
-                "Started", postTestResults);
+                "Started", postTestResults, new HashMap<>());
         try {
             SkipIf skip =
                     method.getTestMethod()
@@ -84,11 +85,12 @@ public final class AppiumParallelTestListener extends Helpers
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
                 String methodName = method.getTestMethod().getMethodName();
+                HashMap<String, String> logs = reportManager.endLogTestResults(testResult);
                 if (atdHost != null && atdPort != null) {
                     String postTestResults = "http://" + atdHost + ":"
                             + atdPort + "/testresults";
                     sendResultsToAtdService(testResult,
-                            methodName, "Completed", postTestResults);
+                            methodName, "Completed", postTestResults, logs);
                 }
             }
             if (method.isTestMethod()) {
@@ -177,7 +179,7 @@ public final class AppiumParallelTestListener extends Helpers
             String url = "http://" + atdHost + ":"
                     + atdPort + "/testresults";
             sendResultsToAtdService(iTestResult, iTestResult.getMethod().getMethodName(),
-                    "UnKnown", url);
+                    "UnKnown", url, new HashMap<>());
         }
         (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
         (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);

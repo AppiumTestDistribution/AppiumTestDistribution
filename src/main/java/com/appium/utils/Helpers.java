@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
 
+import java.util.HashMap;
+
 public class Helpers {
     protected String getRemoteAppiumManagerPort(String host) throws Exception {
         String serverPort = CapabilityManager.getInstance()
@@ -31,7 +33,8 @@ public class Helpers {
 
 
     public void sendResultsToAtdService(ITestResult testResult, String methodName,
-                                        String testStatus, String url) {
+                                        String testStatus, String url,
+                                        HashMap<String, String> logs) {
         String reportEventJson;
         String className = testResult.getInstance().getClass().getSimpleName();
         try {
@@ -42,7 +45,8 @@ public class Helpers {
             reportEventJson = new TestStatusManager()
                     .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                             testStatus,
-                            methodName, getStatus(testResult),exception,className);
+                            methodName, getStatus(testResult),
+                            exception, className, logs);
             new Api().post(url, reportEventJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

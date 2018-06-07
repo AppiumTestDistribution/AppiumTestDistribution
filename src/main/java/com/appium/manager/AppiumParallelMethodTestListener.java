@@ -21,6 +21,7 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public final class AppiumParallelMethodTestListener extends Helpers
         implements ITestListener, IInvokedMethodListener, ISuiteListener {
@@ -74,6 +75,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        HashMap<String, String> logs = null;
         String methodName = method.getTestMethod().getMethodName();
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
@@ -89,7 +91,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     e.printStackTrace();
                 }
                 reportManager.setAuthorName(testResult);
-                reportManager.endLogTestResults(testResult);
+                logs = reportManager.endLogTestResults(testResult);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,7 +100,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 String url = "http://" + atdHost + ":"
                         + atdPort + "/testresults";
                 sendResultsToAtdService(testResult, methodName,
-                        "Completed", url);
+                        "Completed", url,logs);
             }
             ExtentManager.getExtent().flush();
             deviceAllocationManager.freeDevice();
@@ -124,7 +126,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 String url = "http://" + atdHost + ":"
                         + atdPort + "/testresults";
                 sendResultsToAtdService(iTestResult, methodName,
-                        "Started", url);
+                        "Started", url, new HashMap<>());
             }
 
         } catch (Exception e) {

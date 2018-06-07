@@ -115,14 +115,18 @@ class TestLogger {
 
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotFailure;
-            if (new File(System.getProperty("user.dir")
-                    + FileLocations.OUTPUT_DIRECTORY + failedScreen).exists()) {
-                screenShotFailure = failedScreen;
+            String screenFailure = System.getProperty("user.dir")
+                    + FileLocations.OUTPUT_DIRECTORY + failedScreen;
+            if (new File(screenFailure).exists()) {
+                screenShotFailure = screenFailure;
                 logs.put("screenShotFailure", screenShotFailure);
-            } else if (new File(System.getProperty("user.dir")
-                    + FileLocations.OUTPUT_DIRECTORY + framedFailureScreen).exists()) {
-                screenShotFailure = framedFailureScreen;
-                logs.put("screenShotFailure", screenShotFailure);
+            } else {
+                String framedScreenFailure = System.getProperty("user.dir")
+                        + FileLocations.OUTPUT_DIRECTORY + framedFailureScreen;
+                if (new File(framedScreenFailure).exists()) {
+                    screenShotFailure = framedScreenFailure;
+                    logs.put("screenShotFailure", screenShotFailure);
+                }
             }
         }
         return logs;

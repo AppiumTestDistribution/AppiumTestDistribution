@@ -156,9 +156,7 @@ public class ScreenShotManager {
             File[] files1 = framePath.listFiles();
             if (framePath.exists()) {
                 for (int i = 0; i < files1.length; i++) {
-                    if (files1[i].isFile()) { //this line weeds out other directories/folders
-                        System.out.println(files1[i]);
-
+                    if (files1[i].isFile()) {
                         Path p = Paths.get(files1[i].toString());
                         String fileName = p.getFileName().toString().toLowerCase();
                         if (model.toLowerCase()
