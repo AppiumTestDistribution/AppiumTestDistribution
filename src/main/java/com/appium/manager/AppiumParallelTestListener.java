@@ -2,11 +2,13 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
-import com.appium.utils.*;
+import com.appium.utils.AppiumDevice;
+import com.appium.utils.CapabilityManager;
+import com.appium.utils.DevicesByHost;
+import com.appium.utils.Helpers;
+import com.appium.utils.HostMachineDeviceManager;
 import com.aventstack.extentreports.Status;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.ExtentManager;
-import com.report.factory.TestStatusManager;
 import org.json.JSONObject;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
@@ -174,8 +176,8 @@ public final class AppiumParallelTestListener extends Helpers
         if (atdHost != null && atdPort != null) {
             String url = "http://" + atdHost + ":"
                     + atdPort + "/testresults";
-            sendResultsToAtdService(iTestResult, iTestResult.getMethod().getMethodName()
-                    , "UnKnown", url);
+            sendResultsToAtdService(iTestResult, iTestResult.getMethod().getMethodName(),
+                    "UnKnown", url);
         }
         (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
         (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
