@@ -25,7 +25,7 @@ public class Helpers {
             case ITestResult.SKIP:
                 return "Skip";
             default:
-                throw new RuntimeException("Invalid status");
+                return "Started";
         }
     }
 
@@ -33,11 +33,16 @@ public class Helpers {
     public void sendResultsToAtdService(ITestResult testResult, String methodName,
                                         String testStatus, String url) {
         String reportEventJson;
+        String className = testResult.getInstance().getClass().getSimpleName();
         try {
+            String exception = null;
+            if (getStatus(testResult).equalsIgnoreCase("fail")) {
+                exception = testResult.getThrowable().getMessage();
+            }
             reportEventJson = new TestStatusManager()
                     .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                             testStatus,
-                            methodName, getStatus(testResult));
+                            methodName, getStatus(testResult),exception,className);
             new Api().post(url, reportEventJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

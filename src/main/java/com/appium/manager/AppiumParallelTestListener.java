@@ -171,17 +171,11 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         System.out.println("Skipped...");
-        String reportEventJson = null;
-        try {
-            reportEventJson = new TestStatusManager()
-                    .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                            "Completed",
-                            iTestResult.getMethod().getMethodName(),
-                            getStatus(iTestResult));
-            new Api().post("http://" + atdHost + ":"
-                    + atdPort + "/testresults", reportEventJson);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        if (atdHost != null && atdPort != null) {
+            String url = "http://" + atdHost + ":"
+                    + atdPort + "/testresults";
+            sendResultsToAtdService(iTestResult, iTestResult.getMethod().getMethodName()
+                    , "UnKnown", url);
         }
         (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
         (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);

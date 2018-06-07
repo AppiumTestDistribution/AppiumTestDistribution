@@ -14,18 +14,21 @@ import java.util.Date;
 
 public class TestStatusManager {
     public String getReportEventJson(AppiumDevice appiumDevice,
-                                         String testStatus, String testCaseName,
-                                         String testResult)
+                                     String testStatus, String testCaseName,
+                                     String testResult, String testException,
+                                     String testClassName)
             throws JsonProcessingException {
         LocalTime localTime = ZonedDateTime.now().toLocalTime().truncatedTo(ChronoUnit.SECONDS);
         JSONObject test = new JSONObject();
         test.put("status", testStatus);
         test.put("testresult", testResult);
         test.put("testcasename", testCaseName);
+        test.put("testException", testException);
+        test.put("testClassName", testClassName);
         if (testStatus.equalsIgnoreCase("Completed")) {
             test.put("endTime", localTime);
         } else {
-            test.put("startTime",localTime);
+            test.put("startTime", localTime);
         }
         String deviceDetails = new ObjectMapper()
                 .writerWithDefaultPrettyPrinter()
