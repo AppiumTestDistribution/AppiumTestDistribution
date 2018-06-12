@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.HashMap;
 
 public class Helpers {
@@ -51,5 +54,12 @@ public class Helpers {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getHostMachineIpAddress() throws IOException {
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress("google.com", 80));
+        return socket.getLocalAddress().toString()
+                .replace("/", "");
     }
 }

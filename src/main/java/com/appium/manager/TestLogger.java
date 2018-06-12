@@ -2,6 +2,8 @@ package com.appium.manager;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
+import com.appium.utils.AppiumDevice;
+import com.appium.utils.Helpers;
 import com.appium.utils.ScreenShotManager;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
@@ -21,7 +23,7 @@ import java.util.logging.Level;
 /**
  * Created by saikrisv on 24/01/17.
  */
-class TestLogger {
+class TestLogger extends Helpers {
 
     private Flick videoRecording;
     public File logFile;
@@ -114,17 +116,26 @@ class TestLogger {
         String framedFailureScreen = screenShotManager.getFramedFailedScreen();
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            String screenShotFailure;
+            String screenShotFailure = null;
+            try {
+                screenShotFailure = "http://" + getHostMachineIpAddress() + ":"
+                        + getRemoteAppiumManagerPort(AppiumDeviceManager
+                        .getAppiumDevice().getHostName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             String screenFailure = System.getProperty("user.dir")
                     + FileLocations.OUTPUT_DIRECTORY + failedScreen;
             if (new File(screenFailure).exists()) {
-                screenShotFailure = screenFailure;
+                screenShotFailure = screenShotFailure
+                        + "/" + failedScreen;
                 logs.put("screenShotFailure", screenShotFailure);
             } else {
                 String framedScreenFailure = System.getProperty("user.dir")
                         + FileLocations.OUTPUT_DIRECTORY + framedFailureScreen;
                 if (new File(framedScreenFailure).exists()) {
-                    screenShotFailure = framedScreenFailure;
+                    screenShotFailure = screenShotFailure
+                            + "/" + framedScreenFailure;
                     logs.put("screenShotFailure", screenShotFailure);
                 }
             }
