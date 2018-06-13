@@ -1,6 +1,7 @@
 package com.appium.manager;
 
 import com.appium.entities.MobilePlatform;
+import com.appium.entities.ServerArgs;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.DesiredCapabilityBuilder;
@@ -8,6 +9,7 @@ import com.appium.utils.JsonParser;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import org.json.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -197,6 +199,74 @@ public class AppiumDriverManager {
         } else {
             System.out.println("Capability file not found");
             return null;
+        }
+    }
+
+    public GeneralServerFlag getServerArgument ( String capability ) {
+
+        switch (capability) {
+            case "SESSION_OVERRIDE":
+                return ServerArgs.SESSION_OVERRIDE.getArgument();
+
+            case "PRE_LAUNCH":
+                return ServerArgs.PRE_LAUNCH.getArgument();
+
+            case "LOG_LEVEL":
+                return ServerArgs.LOG_LEVEL.getArgument();
+
+            case "RELAXED_SECURITY":
+                return ServerArgs.RELAXED_SECURITY.getArgument();
+
+            case "CALLBACK_ADDRESS":
+                return ServerArgs.CALLBACK_ADDRESS.getArgument();
+
+            case "CALLBACK_PORT":
+                return ServerArgs.CALLBACK_PORT.getArgument();
+
+            case "LOG_TIMESTAMP":
+                return ServerArgs.LOG_TIMESTAMP.getArgument();
+
+            case "LOCAL_TIMEZONE":
+                return ServerArgs.LOCAL_TIMEZONE.getArgument();
+
+            case "LOG_NO_COLORS":
+                return ServerArgs.LOG_NO_COLORS.getArgument();
+
+            case "WEB_HOOK":
+                return ServerArgs.WEB_HOOK.getArgument();
+
+            case "CONFIGURATION_FILE":
+                return ServerArgs.CONFIGURATION_FILE.getArgument();
+
+            case "ROBOT_ADDRESS":
+                return ServerArgs.ROBOT_ADDRESS.getArgument();
+
+            case "ROBOT_PORT":
+                return ServerArgs.ROBOT_PORT.getArgument();
+
+            case "SHOW_CONFIG":
+                return ServerArgs.SHOW_CONFIG.getArgument();
+
+            case "NO_PERMS_CHECKS":
+                return ServerArgs.NO_PERMS_CHECKS.getArgument();
+
+            case "STRICT_CAPS":
+                return ServerArgs.STRICT_CAPS.getArgument();
+
+            case "TEMP_DIRECTORY":
+                return ServerArgs.TEMP_DIRECTORY.getArgument();
+
+            case "DEBUG_LOG_SPACING":
+                return ServerArgs.DEBUG_LOG_SPACING.getArgument();
+
+            case "ASYNC_TRACE":
+                return ServerArgs.ASYNC_TRACE.getArgument();
+
+            case "ENABLE_HEAP_DUMP":
+                return ServerArgs.ENABLE_HEAP_DUMP.getArgument();
+
+            default:
+                return null;
         }
     }
 }

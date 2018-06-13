@@ -1,6 +1,5 @@
 package com.appium.manager;
 
-import com.appium.entities.ServerArgs;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.OSType;
@@ -182,7 +181,7 @@ public class LocalAppiumManager implements IAppiumManager {
             do {
                 String key = (String) keys.next();
 
-                GeneralServerFlag serverArgument = getServerArgument(key);
+                GeneralServerFlag serverArgument = appiumDriverManager.getServerArgument(key);
 
                 if (serverArgument != null && serverCaps.get(key).toString() != "null") {
                     builder.withArgument(serverArgument, serverCaps.getString(key));
@@ -190,26 +189,6 @@ public class LocalAppiumManager implements IAppiumManager {
                     builder.withArgument(serverArgument);
                 }
             } while (keys.hasNext());
-        }
-    }
-
-    private GeneralServerFlag getServerArgument ( String capability ) {
-
-        switch (capability) {
-            case "SESSION_OVERRIDE":
-                return ServerArgs.SESSION_OVERRIDE.getArgument();
-
-            case "PRE_LAUNCH":
-                return ServerArgs.PRE_LAUNCH.getArgument();
-
-            case "LOG_LEVEL":
-                return ServerArgs.LOG_LEVEL.getArgument();
-
-            case "RELAXED_SECURITY":
-                return ServerArgs.RELAXED_SECURITY.getArgument();
-
-            default:
-                return null;
         }
     }
 }
