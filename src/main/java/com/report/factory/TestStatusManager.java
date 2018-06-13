@@ -1,20 +1,21 @@
 package com.report.factory;
 
-import com.appium.filelocations.FileLocations;
+import com.appium.manager.ConfigFileManager;
 import com.appium.utils.AppiumDevice;
-import com.appium.utils.ScreenShotManager;
+import com.appium.utils.Helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.util.JSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
-public class TestStatusManager {
+public class TestStatusManager extends Helpers {
     public String getReportEventJson(AppiumDevice appiumDevice,
                                      String testStatus, String testCaseName,
                                      String testResult, String testException,
@@ -43,5 +44,15 @@ public class TestStatusManager {
         device.put(deviceDetails);
         test.put("deviceinfo", JSON.parse(deviceDetails.replace("/\r?\n|\r/g", "")));
         return test.toString();
+    }
+
+    public String envInfo(int deviceSize) throws IOException {
+        JSONObject env = new JSONObject();
+        env.put("SeleniumVersion","3.12.0");
+        env.put("AppiumServer", getAppiumServerVersion());
+        env.put("Runner", ConfigFileManager.getInstance().getProperty("RUNNER"));
+        env.put("AppiumClient", "6.0.0");
+        env.put("Total Devices",deviceSize);
+        return env.toString();
     }
 }

@@ -3,6 +3,7 @@ package com.appium.utils;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.report.factory.TestStatusManager;
 import com.thoughtworks.device.Device;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,9 +63,13 @@ public class HostMachineDeviceManager {
             if (atdHost != null && atdPort != null) {
                 new Api().getResponse("http://" + atdHost + ":" + atdPort + "/devices/drop");
                 new Api().getResponse("http://" + atdHost + ":" + atdPort + "/testresults/drop");
+                new Api().getResponse("http://" + atdHost + ":" + atdPort + "/envInfo/drop");
                 new Api().post("http://" + atdHost + ":" + atdPort + "/devices",
                         new ObjectMapper().writerWithDefaultPrettyPrinter()
                                 .writeValueAsString(devicesByHost));
+                new Api().post("http://" + atdHost + ":" + atdPort + "/envInfo",
+                        new TestStatusManager()
+                                        .envInfo(devicesByHost.getAllDevices().size()));
             }
         }
     }

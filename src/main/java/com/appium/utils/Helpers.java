@@ -1,6 +1,7 @@
 package com.appium.utils;
 
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.ConfigFileManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
@@ -61,5 +62,16 @@ public class Helpers {
         socket.connect(new InetSocketAddress("google.com", 80));
         return socket.getLocalAddress().toString()
                 .replace("/", "");
+    }
+
+    protected static String getAppiumServerVersion() throws IOException {
+        String appiumVersion = null;
+        try {
+            appiumVersion = new CommandPrompt().runCommand("appium -v")
+                    .replaceAll("\n","");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return appiumVersion;
     }
 }
