@@ -4,13 +4,14 @@ import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.DesiredCapabilityBuilder;
+import com.appium.utils.JsonParser;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import org.json.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -185,4 +186,17 @@ public class AppiumDriverManager {
         }
     }
 
+    public JSONObject getDesiredServerCapabilities ()
+            throws Exception {
+        String userSpecifiedServerCaps = getCapsPath();
+        if (new File(userSpecifiedServerCaps).exists()) {
+            String serverJsonFilePath = userSpecifiedServerCaps;
+            Path path = FileSystems.getDefault().getPath(serverJsonFilePath.toString());
+            return new JsonParser(serverJsonFilePath).getObjectFromJSON()
+                    .getJSONObject("server");
+        } else {
+            System.out.println("Capability file not found");
+            return null;
+        }
+    }
 }

@@ -1,4 +1,10 @@
 {
+  "server":{
+    "SESSION_OVERRIDE":null,
+    "PRE_LAUNCH":null,
+    "LOG_LEVEL":"error",
+    "RELAXED_SECURITY":null
+  },
   "android": {
     "platformName": "android",
     "noSign": true,

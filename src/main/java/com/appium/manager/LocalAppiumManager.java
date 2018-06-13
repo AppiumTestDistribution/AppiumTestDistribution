@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.entities.ServerArgs;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.OSType;
@@ -9,12 +10,15 @@ import com.thoughtworks.device.SimulatorManager;
 import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,24 +26,26 @@ public class LocalAppiumManager implements IAppiumManager {
 
     private static AppiumDriverLocalService appiumDriverLocalService;
 
-    private static AppiumDriverLocalService getAppiumDriverLocalService() {
+    private static AppiumDriverLocalService getAppiumDriverLocalService () {
         return appiumDriverLocalService;
     }
 
     private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
 
-    private static void setAppiumDriverLocalService(
-            AppiumDriverLocalService appiumDriverLocalService) {
+    private static AppiumDriverManager appiumDriverManager;
+
+    private static void setAppiumDriverLocalService (
+            AppiumDriverLocalService appiumDriverLocalService ) {
         LocalAppiumManager.appiumDriverLocalService = appiumDriverLocalService;
     }
 
-    private URL getAppiumUrl() {
+    private URL getAppiumUrl () {
         return getAppiumDriverLocalService().getUrl();
     }
 
 
     @Override
-    public void destroyAppiumNode(String host) throws IOException {
+    public void destroyAppiumNode ( String host ) throws IOException {
         getAppiumDriverLocalService().stop();
         if (getAppiumDriverLocalService().isRunning()) {
             LOGGER.info("AppiumServer didn't shut... Trying to quit again....");
@@ -48,12 +54,12 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public String getRemoteWDHubIP(String host) throws IOException {
+    public String getRemoteWDHubIP ( String host ) throws IOException {
         return getAppiumUrl().toString();
     }
 
     @Override
-    public void startAppiumServer(String host) throws Exception {
+    public void startAppiumServer ( String host ) throws Exception {
         System.out.println(
                 "**************************************************************************\n");
         System.out.println("Starting Appium Server on Localhost......");
@@ -68,6 +74,9 @@ public class LocalAppiumManager implements IAppiumManager {
                                         + "appium_logs.txt"))
                         .withIPAddress(host)
                         .usingAnyFreePort();
+
+        addUserSpecifiedServerCapabilities(builder);
+
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
         System.out.println(
@@ -80,7 +89,7 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public List<Device> getDevices(String machineIP, String platform) throws Exception {
+    public List<Device> getDevices ( String machineIP, String platform ) throws Exception {
         List<Device> devices = new ArrayList<>();
         if (platform.equalsIgnoreCase(OSType.ANDROID.name())
                 || platform.equalsIgnoreCase(OSType.BOTH.name())) {
@@ -104,13 +113,13 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public Device getSimulator(String machineIP, String deviceName, String os)
+    public Device getSimulator ( String machineIP, String deviceName, String os )
             throws IOException, InterruptedException {
         return new SimulatorManager().getDevice(deviceName, os, OSType.iOS.name());
     }
 
     @Override
-    public int getAvailablePort(String hostMachine) throws IOException {
+    public int getAvailablePort ( String hostMachine ) throws IOException {
         ServerSocket socket = new ServerSocket(0);
         socket.setReuseAddress(true);
         int port = socket.getLocalPort();
@@ -119,7 +128,7 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public int startIOSWebKitProxy(String host) throws Exception {
+    public int startIOSWebKitProxy ( String host ) throws Exception {
         int port = getAvailablePort(host);
         String webkitRunner = "ios_webkit_debug_proxy -c "
                 + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
@@ -130,7 +139,7 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public void destoryIOSWebKitProxy(String host) throws Exception {
+    public void destoryIOSWebKitProxy ( String host ) throws Exception {
         if (AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
             String command = "kill -9 " + AppiumDeviceManager
                     .getAppiumDevice().getWebkitProcessID();
@@ -140,7 +149,7 @@ public class LocalAppiumManager implements IAppiumManager {
         }
     }
 
-    private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {
+    private AppiumServiceBuilder getAppiumServerBuilder ( String host ) throws Exception {
         if (CapabilityManager.getInstance().getAppiumServerPath(host) == null) {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
             return getAppiumServiceBuilderWithDefaultPath();
@@ -150,14 +159,57 @@ public class LocalAppiumManager implements IAppiumManager {
         }
     }
 
-    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host)
+    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath ( String host )
             throws Exception {
         return new AppiumServiceBuilder().withAppiumJS(
                 new File(CapabilityManager.getInstance().getAppiumServerPath(host)));
     }
 
-    private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath() {
+    private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath () {
         return new AppiumServiceBuilder();
     }
 
+    private void addUserSpecifiedServerCapabilities ( AppiumServiceBuilder builder ) throws Exception {
+
+        appiumDriverManager = new AppiumDriverManager();
+
+        JSONObject serverCaps = appiumDriverManager.getDesiredServerCapabilities();
+
+        Iterator<?> keys = serverCaps.keys();
+
+        if (serverCaps.length() != 0) {
+
+            do {
+                String key = (String) keys.next();
+
+                GeneralServerFlag serverArgument = getServerArgument(key);
+
+                if (serverArgument != null && serverCaps.get(key).toString() != "null") {
+                    builder.withArgument(serverArgument, serverCaps.getString(key));
+                } else if (serverArgument != null) {
+                    builder.withArgument(serverArgument);
+                }
+            } while (keys.hasNext());
+        }
+    }
+
+    private GeneralServerFlag getServerArgument ( String capability ) {
+
+        switch (capability) {
+            case "SESSION_OVERRIDE":
+                return ServerArgs.SESSION_OVERRIDE.getArgument();
+
+            case "PRE_LAUNCH":
+                return ServerArgs.PRE_LAUNCH.getArgument();
+
+            case "LOG_LEVEL":
+                return ServerArgs.LOG_LEVEL.getArgument();
+
+            case "RELAXED_SECURITY":
+                return ServerArgs.RELAXED_SECURITY.getArgument();
+
+            default:
+                return null;
+        }
+    }
 }
