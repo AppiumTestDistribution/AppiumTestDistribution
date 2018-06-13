@@ -31,7 +31,7 @@ public class Helpers {
             case ITestResult.SKIP:
                 return "Skip";
             default:
-                return "Started";
+                return "Unknown";
         }
     }
 

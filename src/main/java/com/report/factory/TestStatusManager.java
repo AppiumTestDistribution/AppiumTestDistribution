@@ -2,6 +2,7 @@ package com.report.factory;
 
 import com.appium.manager.ConfigFileManager;
 import com.appium.utils.AppiumDevice;
+import com.appium.utils.DevicesByHost;
 import com.appium.utils.Helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,8 +30,8 @@ public class TestStatusManager extends Helpers {
         test.put("testException", testException);
         test.put("testClassName", testClassName);
         if (logs.size() > 0) {
-            test.put("adbLogs",logs.get("adbLogs"));
-            test.put("screenShotFailure",logs.get("screenShotFailure"));
+            test.put("adbLogs", logs.get("adbLogs"));
+            test.put("screenShotFailure", logs.get("screenShotFailure"));
         }
         if (testStatus.equalsIgnoreCase("Completed")) {
             test.put("endTime", localTime);
@@ -48,11 +49,36 @@ public class TestStatusManager extends Helpers {
 
     public String envInfo(int deviceSize) throws IOException {
         JSONObject env = new JSONObject();
-        env.put("SeleniumVersion","3.12.0");
+        env.put("SeleniumVersion", "3.12.0");
         env.put("AppiumServer", getAppiumServerVersion());
         env.put("Runner", ConfigFileManager.getInstance().getProperty("RUNNER"));
         env.put("AppiumClient", "6.0.0");
-        env.put("Total Devices",deviceSize);
+        env.put("Total Devices", deviceSize);
         return env.toString();
+    }
+
+    public String appiumLogs(DevicesByHost devicesByHost) {
+        JSONObject logs = new JSONObject();
+        devicesByHost.getAllHosts().forEach(host -> {
+            if (host.equals("127.0.0.1")) {
+                try {
+                    logs.put(host, "http://" + getHostMachineIpAddress() + ":"
+                            + getRemoteAppiumManagerPort(host)
+                            + "/appiumlogs/appium_logs.txt");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    logs.put(host, "http://" + getHostMachineIpAddress() + ":"
+                            + getRemoteAppiumManagerPort(host)
+                            + "/appium/logs");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+        return logs.toString();
     }
 }

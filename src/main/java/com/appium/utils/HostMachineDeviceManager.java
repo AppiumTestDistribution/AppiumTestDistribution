@@ -70,6 +70,10 @@ public class HostMachineDeviceManager {
                 new Api().post("http://" + atdHost + ":" + atdPort + "/envInfo",
                         new TestStatusManager()
                                         .envInfo(devicesByHost.getAllDevices().size()));
+                new Api().post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
+                        new TestStatusManager()
+                                .appiumLogs(devicesByHost));
+
             }
         }
     }
