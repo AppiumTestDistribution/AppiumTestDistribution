@@ -9,34 +9,42 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.util.JSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.testng.ITestResult;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.HashMap;
 
 public class TestStatusManager extends Helpers {
     public String getReportEventJson(AppiumDevice appiumDevice,
-                                     String testStatus, String testCaseName,
-                                     String testResult, String testException,
-                                     String testClassName, HashMap<String, String> logs)
+                                     String testStatus, ITestResult iTestResult,
+                                     HashMap<String, String> logs)
             throws JsonProcessingException {
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
         LocalTime localTime = ZonedDateTime.now().toLocalTime().truncatedTo(ChronoUnit.SECONDS);
         JSONObject test = new JSONObject();
         test.put("status", testStatus);
-        test.put("testresult", testResult);
-        test.put("testMethodName", testCaseName);
-        test.put("testException", testException);
-        test.put("testClassName", testClassName);
+        test.put("testresult", getStatus(iTestResult));
+        test.put("testMethodName", iTestResult.getMethod().getMethodName());
+        if (getStatus(iTestResult).equalsIgnoreCase("fail")) {
+            test.put("testException", iTestResult.getThrowable().getMessage());
+        }
+        test.put("testClassName", iTestResult.getInstance()
+                .getClass().getSimpleName());
         if (logs.size() > 0) {
             test.put("adbLogs", logs.get("adbLogs"));
             test.put("screenShotFailure", logs.get("screenShotFailure"));
         }
         if (testStatus.equalsIgnoreCase("Completed")) {
-            test.put("endTime", localTime);
-        } else {
-            test.put("startTime", localTime);
+            String endTime = dateFormat.format(new Date(iTestResult.getEndMillis()));
+            String startTime = dateFormat.format(new Date(iTestResult.getStartMillis()));
+            test.put("endTime", endTime);
+            test.put("startTime", startTime);
         }
         String deviceDetails = new ObjectMapper()
                 .writerWithDefaultPrettyPrinter()

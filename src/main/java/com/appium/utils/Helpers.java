@@ -36,21 +36,15 @@ public class Helpers {
     }
 
 
-    public void sendResultsToAtdService(ITestResult testResult, String methodName,
+    public void sendResultsToAtdService(ITestResult testResult,
                                         String testStatus, String url,
                                         HashMap<String, String> logs) {
         String reportEventJson;
-        String className = testResult.getInstance().getClass().getSimpleName();
         try {
-            String exception = null;
-            if (getStatus(testResult).equalsIgnoreCase("fail")) {
-                exception = testResult.getThrowable().getMessage();
-            }
             reportEventJson = new TestStatusManager()
                     .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
                             testStatus,
-                            methodName, getStatus(testResult),
-                            exception, className, logs);
+                            testResult, logs);
             new Api().post(url, reportEventJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -68,7 +62,7 @@ public class Helpers {
         String appiumVersion = null;
         try {
             appiumVersion = new CommandPrompt().runCommand("appium -v")
-                    .replaceAll("\n","");
+                    .replaceAll("\n", "");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

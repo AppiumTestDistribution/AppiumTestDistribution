@@ -99,7 +99,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             if (atdHost != null && atdPort != null) {
                 String url = "http://" + atdHost + ":"
                         + atdPort + "/testresults";
-                sendResultsToAtdService(testResult, methodName,
+                sendResultsToAtdService(testResult,
                         "Completed", url,logs);
             }
             ExtentManager.getExtent().flush();
@@ -125,7 +125,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             if (atdHost != null && atdPort != null) {
                 String url = "http://" + atdHost + ":"
                         + atdPort + "/testresults";
-                sendResultsToAtdService(iTestResult, methodName,
+                sendResultsToAtdService(iTestResult,
                         "Started", url, new HashMap<>());
             }
 

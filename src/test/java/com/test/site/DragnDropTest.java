@@ -15,24 +15,10 @@ import java.time.Duration;
 
 public class DragnDropTest extends  UserBaseTest {
 
-    @Test(dataProvider = "getdata")
+    @Test
     public void dragNDrop(String param) {
         System.out.println(param);
         login("login").click();
     }
 
-    @Test
-    public void dragNDroptest() {
-        login("login").click();
-    }
-
-    @DataProvider
-    public Object[][] getdata() {
-        return new Object[][]{
-                {"virgintrains"},
-                {"virgintrains123"},
-                {"virgintrainsasdasd"},
-                {"virgintrainsakjshd"}
-        };
-    }
 }
