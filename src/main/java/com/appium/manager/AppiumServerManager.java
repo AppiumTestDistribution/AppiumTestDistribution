@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.utils.CapabilityManager;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.HostMachineDeviceManager;
 import io.appium.java_client.service.local.flags.ServerArgument;
@@ -59,5 +60,12 @@ public class AppiumServerManager {
             IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
             appiumManager.destroyAppiumNode(host);
         }
+        String atdHost = CapabilityManager.getInstance()
+                .getMongoDbHostAndPort().get("atdHost");
+        String atdPort = CapabilityManager.getInstance()
+                .getMongoDbHostAndPort().get("atdPort");
+        new Api().post("http://" + atdHost + ":" + atdPort + "/testresults/screens",
+                new FileFilterParser()
+                        .getScreenShotPaths().toString());
     }
 }

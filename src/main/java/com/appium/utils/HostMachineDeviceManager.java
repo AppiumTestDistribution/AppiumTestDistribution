@@ -61,19 +61,17 @@ public class HostMachineDeviceManager {
                 e.printStackTrace();
             }
             if (atdHost != null && atdPort != null) {
-                new Api().getResponse("http://" + atdHost + ":" + atdPort + "/devices/drop");
-                new Api().getResponse("http://" + atdHost + ":" + atdPort + "/testresults/drop");
-                new Api().getResponse("http://" + atdHost + ":" + atdPort + "/envInfo/drop");
-                new Api().post("http://" + atdHost + ":" + atdPort + "/devices",
+                Api api = new Api();
+                api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
+                api.post("http://" + atdHost + ":" + atdPort + "/devices",
                         new ObjectMapper().writerWithDefaultPrettyPrinter()
                                 .writeValueAsString(devicesByHost));
-                new Api().post("http://" + atdHost + ":" + atdPort + "/envInfo",
+                api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
                         new TestStatusManager()
                                         .envInfo(devicesByHost.getAllDevices().size()));
-                new Api().post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
+                api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
                         new TestStatusManager()
                                 .appiumLogs(devicesByHost));
-
             }
         }
     }

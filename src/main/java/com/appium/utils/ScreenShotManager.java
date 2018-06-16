@@ -70,9 +70,7 @@ public class ScreenShotManager {
     }
 
     public String captureScreenShot(int status, String className,
-                                    String methodName, String deviceModel)
-            throws IOException, InterruptedException {
-
+                                    String methodName, String deviceModel) {
         String getDeviceModel = null;
         if (AppiumDriverManager.getDriver().getSessionId() != null) {
             System.out.println("Current Running Thread Status"

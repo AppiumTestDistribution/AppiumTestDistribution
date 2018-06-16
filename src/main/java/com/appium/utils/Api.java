@@ -22,8 +22,13 @@ public class Api extends Helpers {
                 .writeTimeout(90, TimeUnit.SECONDS)
                 .readTimeout(90, TimeUnit.SECONDS)
                 .build();
-        Request request = new Request.Builder().url(url).build();
-        return client.newCall(request).execute();
+        try {
+            Request request = new Request.Builder().url(url).build();
+            return client.newCall(request).execute();
+        } catch (Exception e){
+            return null;
+        }
+
     }
 
     public String uploadMultiPartFile(File filePath, String hostMachine) throws Exception {
