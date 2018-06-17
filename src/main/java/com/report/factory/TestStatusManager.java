@@ -3,6 +3,7 @@ package com.report.factory;
 import com.appium.manager.ConfigFileManager;
 import com.appium.utils.AppiumDevice;
 import com.appium.utils.DevicesByHost;
+import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +46,8 @@ public class TestStatusManager extends Helpers {
             String startTime = dateFormat.format(new Date(iTestResult.getStartMillis()));
             test.put("endTime", endTime);
             test.put("startTime", startTime);
+            test.put("screenPath",new FileFilterParser()
+                    .getScreenShotPaths(appiumDevice.getDevice().getUdid(),iTestResult));
         }
         String deviceDetails = new ObjectMapper()
                 .writerWithDefaultPrettyPrinter()

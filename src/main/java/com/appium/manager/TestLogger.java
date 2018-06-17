@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
-import com.appium.utils.AppiumDevice;
 import com.appium.utils.Helpers;
 import com.appium.utils.ScreenShotManager;
 import com.aventstack.extentreports.ExtentTest;
@@ -189,14 +188,14 @@ class TestLogger extends Helpers {
 
     private void handleTestFailure(ITestResult result, String className,
                                    ThreadLocal<ExtentTest> test,
-                                   String deviceModel) throws IOException, InterruptedException {
+                                   String deviceModel) throws IOException {
         if (result.getStatus() == ITestResult.FAILURE) {
             ExtentTest log = test.get()
                     .log(Status.FAIL, "<pre>" + result.getThrowable() + "</pre>");
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),
                             result.getInstance().getClass().getSimpleName(),
-                            result.getMethod().getMethodName(), deviceModel);
+                            result.getMethod().getMethodName(), deviceModel,"");
 
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 File framedImageAndroid = new File(
