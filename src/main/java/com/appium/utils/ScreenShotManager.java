@@ -128,7 +128,7 @@ public class ScreenShotManager {
                 "screenshot/" + platform + "/" + udid
                         + "/" + className
                         + "/" + methodName + "/"
-                        + screenShotNameWithTimeStamp
+                        + screenShotNameWithTimeStamp + "-"
                         + screenShotName + "_results.jpeg");
 
         setFramedCapturedScreen("screenshot/" + platform + "/" + udid
@@ -181,9 +181,7 @@ public class ScreenShotManager {
                                 }
 
                                 break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (IM4JavaException e) {
+                            } catch (InterruptedException | IM4JavaException e) {
                                 e.printStackTrace();
                             }
                         }

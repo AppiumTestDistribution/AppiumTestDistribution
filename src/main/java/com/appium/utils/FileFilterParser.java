@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class FileFilterParser extends Helpers {
 
-    private Map<String, List<String>> getFilesFromDirectory(String directoryLocation,
+    private Map<String, Map<String,String>> getFilesFromDirectory(String directoryLocation,
                                                             String[] fileTypes,
                                                             String udid,
                                                             ITestResult iTestResult)
@@ -36,13 +36,13 @@ public class FileFilterParser extends Helpers {
             return false;
         };
 
-        HashMap<String, List<String>> results = new HashMap<>();
+        HashMap<String, Map<String,String>> results = new HashMap<>();
         getFilesFromDirectory(file, filter, results, udid, iTestResult);
         return results;
     }
 
     private void getFilesFromDirectory(File inputDirectory, FileFilter filter, Map<String,
-            List<String>> results, String deviceUDID, ITestResult iTestResult) {
+            Map<String,String>> results, String deviceUDID, ITestResult iTestResult) {
         File[] files = inputDirectory.listFiles(filter);
         for (File file : files) {
             if (file.isDirectory()) {
@@ -52,10 +52,12 @@ public class FileFilterParser extends Helpers {
                         && file.getAbsolutePath().contains(iTestResult
                         .getMethod().getMethodName())) {
                     if (!results.containsKey(inputDirectory.getName())) {
-                        results.put(inputDirectory.getName(), new ArrayList<>());
+                        results.put(inputDirectory.getName(), new HashMap<>());
                     }
-                    List<String> values = results.get(inputDirectory.getName());
-                    values.add(file.getAbsolutePath());
+                    Map<String,String> values = results.get(inputDirectory.getName());
+                    values.put(file.getName().split("-")[1]
+                            .replaceAll("_results.jpeg",""),
+                            file.getAbsolutePath());
                     results.put(inputDirectory.getName(), values);
                 }
             }
@@ -67,7 +69,7 @@ public class FileFilterParser extends Helpers {
         String[] fileTypes = {"png", "jpeg"};
 
         FileFilterParser fileFilterParser = new FileFilterParser();
-        Map<String, List<String>> filesFromDirectory = null;
+        Map<String, Map<String,String>> filesFromDirectory = null;
         try {
             filesFromDirectory = fileFilterParser.getFilesFromDirectory(directoryLocation,
                     fileTypes, udid, iTestResult);
@@ -77,12 +79,13 @@ public class FileFilterParser extends Helpers {
 
         JSONObject obj = new JSONObject();
         filesFromDirectory.forEach((key, values) -> {
-            JSONArray list = new JSONArray();
-            values.forEach(s -> {
+            JSONObject list = new JSONObject();
+
+            values.forEach((screenName, s)  -> {
                 if (s.contains("results")) {
                     String path = s.split("target")[1];
                     try {
-                        list.add("http://" + getHostMachineIpAddress() + ":"
+                        list.put(screenName,"http://" + getHostMachineIpAddress() + ":"
                                 + getRemoteAppiumManagerPort("127.0.0.1") + path);
                     } catch (Exception e) {
                         e.printStackTrace();
