@@ -1,6 +1,6 @@
 <h1 align="center">
 	<br>
-	<img src="image/Logo.png" alt="ATD">
+	<img src="image/ATD-Logo1.png" alt="ATD">
 	<br>
 	<br>
 	<br>
