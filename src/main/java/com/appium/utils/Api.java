@@ -11,7 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class Api {
+public class Api extends Helpers {
+
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
 
     public Response getResponse(String url) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder()
@@ -19,11 +22,16 @@ public class Api {
                 .writeTimeout(90, TimeUnit.SECONDS)
                 .readTimeout(90, TimeUnit.SECONDS)
                 .build();
-        Request request = new Request.Builder().url(url).build();
-        return client.newCall(request).execute();
+        try {
+            Request request = new Request.Builder().url(url).build();
+            return client.newCall(request).execute();
+        } catch (Exception e){
+            return null;
+        }
+
     }
 
-    public String uploadMultiPartFile(File filePath, String hostMachine) throws IOException {
+    public String uploadMultiPartFile(File filePath, String hostMachine) throws Exception {
         OkHttpClient client = new OkHttpClient();
         MediaType MEDIA_TYPE_PNG = MediaType.parse("multipart/form-data");
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -31,10 +39,25 @@ public class Api {
                         RequestBody.create(MEDIA_TYPE_PNG, filePath))
                 .build();
         Request request = new Request.Builder().url("http://" + hostMachine
-                + ":4567/artifacts/upload")
+                + ":" + getRemoteAppiumManagerPort(hostMachine) + "/artifacts/upload")
                 .post(requestBody).build();
         Response response = client.newCall(request).execute();
         return response.body().string();
+    }
+
+    public String post(String url, String json) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

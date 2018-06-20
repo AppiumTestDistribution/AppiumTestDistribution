@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.utils.Api;
 import com.appium.utils.CapabilityManager;
+import com.appium.utils.Helpers;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class RemoteAppiumManager implements IAppiumManager {
+public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
     @Override
     public void destroyAppiumNode(String host) throws Exception {
@@ -179,14 +180,6 @@ public class RemoteAppiumManager implements IAppiumManager {
         }
     }
 
-    private String getRemoteAppiumManagerPort(String host) throws Exception {
-        String serverPort = CapabilityManager.getInstance()
-                .getRemoteAppiumManangerPort(host);
-        if (serverPort == null) {
-            return "4567";
-        } else {
-            return serverPort;
-        }
-    }
+
 }
 

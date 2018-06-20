@@ -50,7 +50,7 @@ public class CapabilityManager {
         boolean hasKey = capabilities.has(key);
         if (hasKey) {
             return (JSONObject) capabilities.get(key);
-        } else  {
+        } else {
             return null;
         }
     }
@@ -65,6 +65,16 @@ public class CapabilityManager {
         } else {
             return false;
         }
+    }
+
+    public HashMap<String, String> getMongoDbHostAndPort() {
+        HashMap<String, String> params = new HashMap<>();
+        if (capabilities.has("ATDServiceHost")
+                && capabilities.has("ATDServicePort")) {
+            params.put("atdHost", (String) capabilities.get("ATDServiceHost"));
+            params.put("atdPort", (String) capabilities.get("ATDServicePort"));
+        }
+        return params;
     }
 
     public JSONArray getHostMachineObject() throws Exception {
@@ -107,7 +117,7 @@ public class CapabilityManager {
     }
 
     public String getAppiumServerPort(String host) throws Exception {
-        return appiumServerProp(host,"appiumPort");
+        return appiumServerProp(host, "appiumPort");
     }
 
     public String getRemoteAppiumManangerPort(String host) throws Exception {

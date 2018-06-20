@@ -2,6 +2,8 @@ package com.appium.utils;
 
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.report.factory.TestStatusManager;
 import com.thoughtworks.device.Device;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,24 +25,30 @@ public class HostMachineDeviceManager {
     private CapabilityManager capabilityManager;
     private DevicesByHost devicesByHost;
     private static HostMachineDeviceManager instance;
+    private String atdHost = null;
+    private String atdPort = null;
 
     private HostMachineDeviceManager() {
         try {
             capabilityManager = CapabilityManager.getInstance();
+            atdHost = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdHost");
+            atdPort = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdPort");
             initializeDevicesByHost();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static HostMachineDeviceManager getInstance() throws IOException {
+    public static HostMachineDeviceManager getInstance() {
         if (instance == null) {
             instance = new HostMachineDeviceManager();
         }
         return instance;
     }
 
-    private void initializeDevicesByHost() {
+    private void initializeDevicesByHost() throws IOException {
         if (devicesByHost == null) {
             try {
                 Map<String, List<AppiumDevice>> allDevices = getDevices();
@@ -51,6 +59,19 @@ public class HostMachineDeviceManager {
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            if (atdHost != null && atdPort != null) {
+                Api api = new Api();
+                api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
+                api.post("http://" + atdHost + ":" + atdPort + "/devices",
+                        new ObjectMapper().writerWithDefaultPrettyPrinter()
+                                .writeValueAsString(devicesByHost));
+                api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
+                        new TestStatusManager()
+                                        .envInfo(devicesByHost.getAllDevices().size()));
+                api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
+                        new TestStatusManager()
+                                .appiumLogs(devicesByHost));
             }
         }
     }

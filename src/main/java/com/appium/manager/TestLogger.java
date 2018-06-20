@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
+import com.appium.utils.Helpers;
 import com.appium.utils.ScreenShotManager;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
@@ -21,7 +22,7 @@ import java.util.logging.Level;
 /**
  * Created by saikrisv on 24/01/17.
  */
-class TestLogger {
+class TestLogger extends Helpers {
 
     private Flick videoRecording;
     public File logFile;
@@ -114,15 +115,28 @@ class TestLogger {
         String framedFailureScreen = screenShotManager.getFramedFailedScreen();
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            String screenShotFailure;
-            if (new File(System.getProperty("user.dir")
-                    + FileLocations.OUTPUT_DIRECTORY + failedScreen).exists()) {
-                screenShotFailure = failedScreen;
+            String screenShotFailure = null;
+            try {
+                screenShotFailure = "http://" + getHostMachineIpAddress() + ":"
+                        + getRemoteAppiumManagerPort(AppiumDeviceManager
+                        .getAppiumDevice().getHostName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String screenFailure = System.getProperty("user.dir")
+                    + FileLocations.OUTPUT_DIRECTORY + failedScreen;
+            if (new File(screenFailure).exists()) {
+                screenShotFailure = screenShotFailure
+                        + "/" + failedScreen;
                 logs.put("screenShotFailure", screenShotFailure);
-            } else if (new File(System.getProperty("user.dir")
-                    + FileLocations.OUTPUT_DIRECTORY + framedFailureScreen).exists()) {
-                screenShotFailure = framedFailureScreen;
-                logs.put("screenShotFailure", screenShotFailure);
+            } else {
+                String framedScreenFailure = System.getProperty("user.dir")
+                        + FileLocations.OUTPUT_DIRECTORY + framedFailureScreen;
+                if (new File(framedScreenFailure).exists()) {
+                    screenShotFailure = screenShotFailure
+                            + "/" + framedScreenFailure;
+                    logs.put("screenShotFailure", screenShotFailure);
+                }
             }
         }
         return logs;
@@ -174,14 +188,14 @@ class TestLogger {
 
     private void handleTestFailure(ITestResult result, String className,
                                    ThreadLocal<ExtentTest> test,
-                                   String deviceModel) throws IOException, InterruptedException {
+                                   String deviceModel) throws IOException {
         if (result.getStatus() == ITestResult.FAILURE) {
             ExtentTest log = test.get()
                     .log(Status.FAIL, "<pre>" + result.getThrowable() + "</pre>");
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),
                             result.getInstance().getClass().getSimpleName(),
-                            result.getMethod().getMethodName(), deviceModel);
+                            result.getMethod().getMethodName(), deviceModel,"");
 
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 File framedImageAndroid = new File(

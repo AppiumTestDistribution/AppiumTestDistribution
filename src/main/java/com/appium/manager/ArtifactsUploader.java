@@ -40,7 +40,7 @@ public class ArtifactsUploader {
         return instance;
     }
 
-    public void initializeArtifacts() throws IOException {
+    public void initializeArtifacts() throws Exception {
         for (String hostMachine : hostMachineDeviceManager.getDevicesByHost().getAllHosts()) {
             HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
             HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
@@ -56,13 +56,13 @@ public class ArtifactsUploader {
         return hostArtifacts;
     }
 
-    private String uploadFile(String hostMachine, String appPath) throws IOException {
+    private String uploadFile(String hostMachine, String appPath) throws Exception {
         JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(
                 new File(appPath), hostMachine));
         return jsonObject.getString("filePath");
     }
 
-    private HashMap<String, String> getArtifactForHost(String hostMachine) throws IOException {
+    private HashMap<String, String> getArtifactForHost(String hostMachine) throws Exception {
         String platform = System.getenv("Platform");
         String app = "app";
         HashMap<String, String> artifactPaths = new HashMap<>();
@@ -93,7 +93,7 @@ public class ArtifactsUploader {
         return artifactPaths;
     }
 
-    private String getArtifactPath(String hostMachine, String artifact) throws IOException {
+    private String getArtifactPath(String hostMachine, String artifact) throws Exception {
         String path;
         if (!isLocalhost(hostMachine) && !ResourceUtils.isUrl(artifact)) {
             path = uploadFile(hostMachine, artifact);
