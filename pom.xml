@@ -148,7 +148,7 @@
         <dependency>
 	    <groupId>com.github.SrinivasanTarget</groupId>
 	    <artifactId>DeviceManager</artifactId>
-	    <version>90eec48</version>
+	    <version>82a68a3d4e</version>
         </dependency>
         <dependency>
             <groupId>com.github.yunusmete.stf</groupId>
