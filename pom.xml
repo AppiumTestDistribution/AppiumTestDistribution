@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>8.0.0</version>
+    <version>9.0.0</version>
     <packaging>jar</packaging>
 
     <name>AppiumTestDistribution</name>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>6.0.0</version>
+            <version>6.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -169,12 +169,6 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>3.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.simpleHTTPServer</groupId>
-            <artifactId>SimpleHTTPServer</artifactId>
-            <version>1.0.0</version>
-            <type>jar</type>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
