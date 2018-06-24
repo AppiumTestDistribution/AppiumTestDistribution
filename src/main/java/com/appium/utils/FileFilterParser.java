@@ -16,33 +16,40 @@ import java.util.Map;
 
 public class FileFilterParser extends Helpers {
 
-    private Map<String, Map<String,String>> getFilesFromDirectory(String directoryLocation,
-                                                            String[] fileTypes,
-                                                            String udid,
-                                                            ITestResult iTestResult)
+    private Map<String, Map<String, String>> getFilesFromDirectory(String directoryLocation,
+                                                                   String[] fileTypes,
+                                                                   String udid,
+                                                                   ITestResult iTestResult)
             throws Exception {
         File file = new File(directoryLocation);
-        if (!file.exists())
+        if (!file.exists()) {
             throw new Exception(directoryLocation + " does not exist");
-        if (!file.isDirectory())
+        }
+
+        if (!file.isDirectory()) {
             throw new Exception(directoryLocation + " is not a directory");
+        }
+
 
         FileFilter filter = inputFile -> {
-            if (inputFile.isDirectory()) return true;
+            if (inputFile.isDirectory()) {
+                return true;
+            }
             for (String fileType : fileTypes) {
-                if (inputFile.getAbsolutePath().toLowerCase().endsWith(fileType))
+                if (inputFile.getAbsolutePath().toLowerCase().endsWith(fileType)) {
                     return true;
+                }
             }
             return false;
         };
 
-        HashMap<String, Map<String,String>> results = new HashMap<>();
+        HashMap<String, Map<String, String>> results = new HashMap<>();
         getFilesFromDirectory(file, filter, results, udid, iTestResult);
         return results;
     }
 
     private void getFilesFromDirectory(File inputDirectory, FileFilter filter, Map<String,
-            Map<String,String>> results, String deviceUDID, ITestResult iTestResult) {
+            Map<String, String>> results, String deviceUDID, ITestResult iTestResult) {
         File[] files = inputDirectory.listFiles(filter);
         for (File file : files) {
             if (file.isDirectory()) {
@@ -54,9 +61,9 @@ public class FileFilterParser extends Helpers {
                     if (!results.containsKey(inputDirectory.getName())) {
                         results.put(inputDirectory.getName(), new HashMap<>());
                     }
-                    Map<String,String> values = results.get(inputDirectory.getName());
-                    values.put(file.getName().split("-")[1]
-                            .replaceAll("_results.jpeg",""),
+                    Map<String, String> values = results.get(inputDirectory.getName());
+                    String screenName = file.getName().split("-")[1];
+                    values.put(screenName.substring(0, screenName.indexOf("_")),
                             file.getAbsolutePath());
                     results.put(inputDirectory.getName(), values);
                 }
@@ -66,10 +73,10 @@ public class FileFilterParser extends Helpers {
 
     public JSONObject getScreenShotPaths(String udid, ITestResult iTestResult) {
         String directoryLocation = System.getProperty("user.dir") + "/target/screenshot";
-        String[] fileTypes = {"png", "jpeg"};
+        String[] fileTypes = {"png", "jpeg", "mov"};
 
         FileFilterParser fileFilterParser = new FileFilterParser();
-        Map<String, Map<String,String>> filesFromDirectory = null;
+        Map<String, Map<String, String>> filesFromDirectory = null;
         try {
             filesFromDirectory = fileFilterParser.getFilesFromDirectory(directoryLocation,
                     fileTypes, udid, iTestResult);
@@ -81,11 +88,11 @@ public class FileFilterParser extends Helpers {
         filesFromDirectory.forEach((key, values) -> {
             JSONObject list = new JSONObject();
 
-            values.forEach((screenName, s)  -> {
-                if (s.contains("results")) {
+            values.forEach((screenName, s) -> {
+                if (s.contains("results") || s.contains("framed")) {
                     String path = s.split("target")[1];
                     try {
-                        list.put(screenName,"http://" + getHostMachineIpAddress() + ":"
+                        list.put(screenName, "http://" + getHostMachineIpAddress() + ":"
                                 + getRemoteAppiumManagerPort("127.0.0.1") + path);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -93,8 +100,9 @@ public class FileFilterParser extends Helpers {
                     System.out.print(s + ", ");
                 }
             });
-            if (list.size() > 0)
+            if (list.size() > 0) {
                 obj.put(key, list);
+            }
         });
         return obj;
     }

@@ -25,7 +25,7 @@ public class Api extends Helpers {
         try {
             Request request = new Request.Builder().url(url).build();
             return client.newCall(request).execute();
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 

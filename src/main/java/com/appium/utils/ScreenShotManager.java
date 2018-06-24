@@ -134,7 +134,8 @@ public class ScreenShotManager {
         setFramedCapturedScreen("screenshot/" + platform + "/" + udid
                 + "/" + className
                 + "/" + methodName + "/"
-                + screenShotName + "_results_framed.jpeg");
+                + screenShotNameWithTimeStamp + "-"
+                + screenShotName + "_framed.jpeg");
         setFramedFailedScreen(
                 "screenshot/" + platform + "/" + udid
                         + "/" + className

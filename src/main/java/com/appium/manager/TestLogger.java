@@ -77,7 +77,7 @@ class TestLogger extends Helpers {
 
     public HashMap<String, String> endLog(ITestResult result, String deviceModel,
                                           ThreadLocal<ExtentTest> test)
-            throws IOException, InterruptedException {
+            throws Exception {
         HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
         stopViewRecording(result, className);
@@ -96,17 +96,19 @@ class TestLogger extends Helpers {
          * Failure Block
          */
         handleTestFailure(result, className, test, deviceModel);
-
+        String baseHostUrl = "http://" + getHostMachineIpAddress() + ":"
+                + getRemoteAppiumManagerPort(AppiumDeviceManager
+                .getAppiumDevice().getHostName());
         if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
             setVideoPath("screenshot/" + AppiumDeviceManager.getMobilePlatform()
                     .toString().toLowerCase()
                     + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                     + "/" + className + "/" + result.getMethod()
-                    .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
-            logs.put("videoLogs", getVideoPath());
+                    .getMethodName() + "/" + result.getMethod().getMethodName() + ".mov");
 
             if (new File(System.getProperty("user.dir")
                     + FileLocations.OUTPUT_DIRECTORY + getVideoPath()).exists()) {
+                logs.put("videoLogs", baseHostUrl + "/" + getVideoPath());
                 test.get().log(Status.INFO, "<a target=\"_parent\" href="
                         + getVideoPath() + ">Videologs</a>");
             }
@@ -117,9 +119,7 @@ class TestLogger extends Helpers {
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotFailure = null;
             try {
-                screenShotFailure = "http://" + getHostMachineIpAddress() + ":"
-                        + getRemoteAppiumManagerPort(AppiumDeviceManager
-                        .getAppiumDevice().getHostName());
+                screenShotFailure = baseHostUrl;
             } catch (Exception e) {
                 e.printStackTrace();
             }
