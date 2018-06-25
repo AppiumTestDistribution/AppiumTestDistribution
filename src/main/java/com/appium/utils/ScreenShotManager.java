@@ -122,8 +122,8 @@ public class ScreenShotManager {
                 "screenshot/" + platform + "/" + udid
                         + "/" + className + "/"
                         + methodName + "/"
-                        + screenShotNameWithTimeStamp + deviceModel + "_"
-                        + methodName + "_failed" + ".jpeg");
+                        + screenShotNameWithTimeStamp  + "-"
+                        + screenShotName + "_failed" + ".jpeg");
         setCapturedScreen(
                 "screenshot/" + platform + "/" + udid
                         + "/" + className
@@ -135,12 +135,12 @@ public class ScreenShotManager {
                 + "/" + className
                 + "/" + methodName + "/"
                 + screenShotNameWithTimeStamp + "-"
-                + screenShotName + "_framed.jpeg");
+                + screenShotName + "_results.jpeg");
         setFramedFailedScreen(
                 "screenshot/" + platform + "/" + udid
-                        + "/" + className
-                        + "/" + methodName + "/" + model
-                        + "_failed_" + methodName + "_framed.jpeg");
+                        + "/" + className  + "/" + methodName + "/"
+                        + screenShotNameWithTimeStamp + "-"
+                        + screenShotName + "_failed.jpeg");
 
         try {
             File framePath =
@@ -170,7 +170,6 @@ public class ScreenShotManager {
                                             System.getProperty("user.dir")
                                                     + FileLocations.OUTPUT_DIRECTORY
                                                     + getFramedFailedScreen());
-                                    deleteFile(screenToFrame);
                                 } else {
                                     String screenToFrame = System.getProperty("user.dir")
                                             + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen();
@@ -178,7 +177,6 @@ public class ScreenShotManager {
                                             System.getProperty("user.dir")
                                                     + FileLocations.OUTPUT_DIRECTORY
                                                     + getFramedCapturedScreen());
-                                    deleteFile(screenToFrame);
                                 }
 
                                 break;
