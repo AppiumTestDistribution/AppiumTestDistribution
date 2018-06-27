@@ -42,5 +42,7 @@
       ]
     }
   ],
-  "excludeLocalDevices": false
+  "excludeLocalDevices": false,
+  "ATDServiceHost":"127.0.0.1",
+  "ATDServicePort":"3000"
 }

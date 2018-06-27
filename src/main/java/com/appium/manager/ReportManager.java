@@ -38,7 +38,7 @@ public class ReportManager {
     }
 
     public HashMap<String, String> endLogTestResults(ITestResult result)
-            throws IOException, InterruptedException {
+            throws Exception {
         return testLogger.endLog(result, appiumDeviceManager.getDeviceModel(), childTest);
     }
 

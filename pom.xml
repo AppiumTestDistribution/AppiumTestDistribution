@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>8.0.0</version>
+    <version>9.0.0</version>
     <packaging>jar</packaging>
 
     <name>AppiumTestDistribution</name>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>6.0.0</version>
+            <version>6.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -84,6 +84,11 @@
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
             <version>3.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>com.aventstack</groupId>
@@ -143,7 +148,7 @@
         <dependency>
 	    <groupId>com.github.SrinivasanTarget</groupId>
 	    <artifactId>DeviceManager</artifactId>
-	    <version>90eec48</version>
+	    <version>82a68a3d4e</version>
         </dependency>
         <dependency>
             <groupId>com.github.yunusmete.stf</groupId>
@@ -171,7 +176,6 @@
             <artifactId>json</artifactId>
             <version>20171018</version>
         </dependency>
-
     </dependencies>
 
     <distributionManagement>

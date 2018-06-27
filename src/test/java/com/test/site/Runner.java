@@ -1,6 +1,5 @@
 package com.test.site;
 
-import com.appium.manager.AppiumParallelTestListener;
 import com.appium.manager.ParallelThread;
 import com.report.factory.ExtentManager;
 import org.testng.Assert;
@@ -21,7 +20,7 @@ public class Runner {
         List<String> tests = new ArrayList<>();
         //tests.add("HomePageTest2");
         tests.add("SliderTest");
-        //tests.add("HomePageTest3");
+        tests.add("DragnDropTest");
         ParallelThread parallelThread = new ParallelThread();
         boolean hasFailures = parallelThread.runner("com.test.site",tests);
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");

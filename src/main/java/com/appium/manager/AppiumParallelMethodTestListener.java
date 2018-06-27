@@ -2,10 +2,14 @@ package com.appium.manager;
 
 import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
+import com.appium.utils.CapabilityManager;
+import com.appium.utils.Helpers;
 import com.appium.utils.Retry;
 import com.aventstack.extentreports.Status;
 import com.report.factory.ExtentManager;
 import com.report.factory.ExtentTestManager;
+
+
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.IRetryAnalyzer;
@@ -17,24 +21,30 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
-public final class AppiumParallelMethodTestListener
+public final class AppiumParallelMethodTestListener extends Helpers
         implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
     private ReportManager reportManager;
     private DeviceAllocationManager deviceAllocationManager;
-    private ConfigFileManager prop;
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
+    private String atdHost = null;
+    private String atdPort = null;
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
             reportManager = new ReportManager();
             appiumServerManager = new AppiumServerManager();
-            prop = ConfigFileManager.getInstance();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
+            atdHost = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdHost");
+            atdPort = CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdPort");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,13 +75,14 @@ public final class AppiumParallelMethodTestListener
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-
+        HashMap<String, String> logs = null;
+        String methodName = method.getTestMethod().getMethodName();
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
                 try {
                     String className = testResult.getMethod().getRealClass().getSimpleName()
-                            + "-------" + method.getTestMethod().getMethodName();
+                            + "-------" + methodName;
                     if (getClass().getAnnotation(Description.class) != null) {
                         testDescription = getClass().getAnnotation(Description.class).value();
                     }
@@ -80,12 +91,17 @@ public final class AppiumParallelMethodTestListener
                     e.printStackTrace();
                 }
                 reportManager.setAuthorName(testResult);
-
-                reportManager.endLogTestResults(testResult);
+                logs = reportManager.endLogTestResults(testResult);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            if (atdHost != null && atdPort != null) {
+                String url = "http://" + atdHost + ":"
+                        + atdPort + "/testresults";
+                sendResultsToAtdService(testResult,
+                        "Completed", url,logs);
+            }
             ExtentManager.getExtent().flush();
             deviceAllocationManager.freeDevice();
             try {
@@ -103,8 +119,16 @@ public final class AppiumParallelMethodTestListener
             deviceAllocationManager.allocateDevice(deviceAllocationManager
                     .getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
-            reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
+            String methodName = iTestResult.getMethod().getMethodName();
+            reportManager.startLogResults(methodName,
                     iTestResult.getTestClass().getRealClass().getSimpleName());
+            if (atdHost != null && atdPort != null) {
+                String url = "http://" + atdHost + ":"
+                        + atdPort + "/testresults";
+                sendResultsToAtdService(iTestResult,
+                        "Started", url, new HashMap<>());
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,4 +189,5 @@ public final class AppiumParallelMethodTestListener
             e.printStackTrace();
         }
     }
+
 }

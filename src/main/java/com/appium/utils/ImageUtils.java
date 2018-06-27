@@ -73,21 +73,11 @@ public class ImageUtils {
                                         if (sFile.isFile() && sFile.getCanonicalPath()
                                                 .contains("result")) {
                                             filePath = sFile.getCanonicalPath();
-                                            testResult.setDeviceName(sFile.getName().split("_")[1]);
-                                            testResult.setDeviceOS(new AndroidDeviceConfiguration()
-                                                    .getDeviceOS());
 
                                         }
                                     }
                                     testMethod.setScreenShots(filePath);
                                 }
-                                if (testMethod.getScreenShots() != null) {
-                                    testMethodList.add(testMethod);
-                                }
-                            }
-
-                            if (testMethodList.size() > 0) {
-                                testCase.setTestMethod(testMethodList);
                             }
                         }
                         if (testCase.testMethod != null) {

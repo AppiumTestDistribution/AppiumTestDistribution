@@ -3,6 +3,7 @@ package com.report.factory;
 import com.appium.filelocations.FileLocations;
 import com.appium.manager.ConfigFileManager;
 import com.appium.utils.CommandPrompt;
+import com.appium.utils.Helpers;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.aventstack.extentreports.reporter.ExtentXReporter;
@@ -15,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class ExtentManager {
+public class ExtentManager extends Helpers {
 
     private static ConfigFileManager configFileManager;
     private static ExtentReports extent;
