@@ -7,17 +7,17 @@ import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
-import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import okhttp3.Response;
 import org.json.JSONObject;
 
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class RemoteAppiumManager extends Helpers implements IAppiumManager {
-
-    private static AppiumDriverManager appiumDriverManager;
 
     @Override
     public void destroyAppiumNode(String host) throws Exception {
@@ -44,33 +44,30 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                 "**************************************************************************\n");
         String serverPath = CapabilityManager.getInstance().getAppiumServerPath(host);
         String serverPort = CapabilityManager.getInstance().getAppiumServerPort(host);
-
-        String serverUrl = "";
-
-        if (serverPath == null && serverPort == null) {
-
+        if (serverPath == null
+                && serverPort == null) {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
-            serverUrl = "http://" + host + ":" + getRemoteAppiumManagerPort(host) + "/appium/start";
-
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start").body().string();
         } else if (serverPath != null && serverPort != null) {
-
             System.out.println("Picking UserSpecified Path & Port for AppiumServiceBuilder");
-            serverUrl ="http://" + host + ":" + getRemoteAppiumManagerPort(host) + "/appium/start?URL=" + serverPath + "&PORT=" + serverPort;
-
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start?URL=" + serverPath
+                    + "&PORT=" + serverPort).body().string();
         } else if (serverPath != null) {
-
-            System.out.println("Picking UserSpecified Path " + "& Using default Port for AppiumServiceBuilder");
-            serverUrl = "http://" + host + ":" + getRemoteAppiumManagerPort(host) + "/appium/start?URL=" + serverPath;
-
+            System.out.println("Picking UserSpecified Path "
+                    + "& Using default Port for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start?URL=" + serverPath).body().string();
         } else if (serverPort != null) {
-
             System.out.println("Picking Default Path & User Port for AppiumServiceBuilder");
-            serverUrl = "http://" + host + ":" + getRemoteAppiumManagerPort(host) + "/appium/start?PORT=" + serverPort;
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start?PORT=" + serverPort).body().string();
         }
-
-        addUserSpecifiedServerCapabilities(serverUrl);
-
-        new Api().getResponse(serverUrl).body().string();
 
         boolean status = Boolean.getBoolean(new JSONObject(new Api()
                 .getResponse("http://" + host + ":"
@@ -182,44 +179,4 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
             AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
         }
     }
-
-    protected String getRemoteAppiumManagerPort(String host) throws Exception {
-        String serverPort = CapabilityManager.getInstance()
-                .getRemoteAppiumManangerPort(host);
-        if (serverPort == null) {
-            return "4567";
-        } else {
-            return serverPort;
-        }
-    }
-
-    private String addUserSpecifiedServerCapabilities ( String serverUrl ) throws Exception {
-
-        appiumDriverManager = new AppiumDriverManager();
-
-        JSONObject serverCaps = appiumDriverManager.getDesiredServerCapabilities();
-
-        Iterator<?> keys = serverCaps.keys();
-
-        if (serverCaps.length() != 0) {
-
-            do {
-                String key = (String) keys.next();
-
-                GeneralServerFlag serverArgument = appiumDriverManager.getServerArgument(key);
-
-                if (serverArgument != null && serverCaps.get(key).toString() != "null") {
-
-                    serverUrl = serverUrl + "&" + serverArgument.getArgument() + ":" + serverCaps.get(key);
-
-                } else if (serverArgument != null) {
-
-                    serverUrl = serverUrl + "&" + serverArgument.getArgument();
-                }
-            } while (keys.hasNext());
-        }
-
-        return serverUrl;
-    }
 }
-
