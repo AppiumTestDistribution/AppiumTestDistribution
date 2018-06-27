@@ -1,17 +1,12 @@
 package com.appium.utils;
 
 
-import com.appium.manager.AppiumDeviceManager;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.testng.ITestResult;
-import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class FileFilterParser extends Helpers {
