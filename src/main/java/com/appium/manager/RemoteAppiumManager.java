@@ -179,4 +179,6 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
             AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
         }
     }
+
+
 }
