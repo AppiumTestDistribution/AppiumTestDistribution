@@ -79,11 +79,11 @@ public class ScreenShotManager {
                     .getScreenshotAs(OutputType.FILE);
             screenShotNameWithTimeStamp = currentDateAndTime();
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
+                getDeviceModel = screenShotNameWithTimeStamp;
                 screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                         "android", deviceModel, screenShotName);
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-                getDeviceModel = screenShotNameWithTimeStamp + deviceModel;
+                getDeviceModel = screenShotNameWithTimeStamp;
                 screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                         "iOS", deviceModel, screenShotName);
             }
@@ -160,7 +160,7 @@ public class ScreenShotManager {
                     if (files1[i].isFile()) {
                         Path p = Paths.get(files1[i].toString());
                         String fileName = p.getFileName().toString().toLowerCase();
-                        if (model.toLowerCase()
+                        if (deviceModel.toLowerCase()
                                 .contains(fileName.split(".png")[0].toLowerCase())) {
                             try {
                                 if (status == ITestResult.FAILURE) {

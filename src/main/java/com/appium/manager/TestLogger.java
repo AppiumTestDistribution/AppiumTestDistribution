@@ -104,7 +104,7 @@ class TestLogger extends Helpers {
                     .toString().toLowerCase()
                     + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                     + "/" + className + "/" + result.getMethod()
-                    .getMethodName() + "/" + result.getMethod().getMethodName() + ".mov");
+                    .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
 
             if (new File(System.getProperty("user.dir")
                     + FileLocations.OUTPUT_DIRECTORY + getVideoPath()).exists()) {

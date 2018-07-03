@@ -36,7 +36,7 @@ public class ExtentManager extends Helpers {
                         .equalsIgnoreCase("true")) {
                     extent.attachReporter(klovReporter());
                 }
-                extent.setSystemInfo("Selenium Java Version", "3.3.1");
+                extent.setSystemInfo("Selenium Java Version", "3.12.0");
                 String appiumVersion = null;
                 try {
                     String command = "node "
@@ -45,11 +45,12 @@ public class ExtentManager extends Helpers {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                extent.setSystemInfo("AppiumClient", "5.0.0-BETA6");
+                extent.setSystemInfo("AppiumClient", "6.1.0");
                 extent.setSystemInfo("AppiumServer", appiumVersion.replace("\n", ""));
                 extent.setSystemInfo("Runner", configFileManager.getProperty("RUNNER"));
-                extent.setSystemInfo("AppiumServerLogs","<a target=\"_parent\" href=" + "/appiumlogs/appiumlogs/"
-                        + ".txt" + ">AppiumServerLogs</a>");
+                extent.setSystemInfo("AppiumServerLogs","<a target=\"_parent\" href=" +
+                        System.getProperty("user.dir") +"/target/appiumlogs/appium_logs.txt"
+                        + ">AppiumServerLogs</a>");
                 return extent;
             } catch (IOException e) {
                 e.printStackTrace();

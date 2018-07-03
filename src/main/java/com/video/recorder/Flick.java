@@ -76,7 +76,7 @@ public class Flick extends CommandPrompt {
             simulatorRecordSession.set(simulatorManager
                     .startScreenRecording(AppiumDeviceManager.getAppiumDevice()
                                     .getDevice().getUdid(),
-                    videoLocationIOS + "/" + videoFileName + ".mov"));
+                    videoLocationIOS + "/" + videoFileName + ".mp4"));
         } else {
             flickRecordingCommand("start", className, methodName, videoFileName);
         }
