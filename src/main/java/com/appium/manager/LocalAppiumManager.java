@@ -183,9 +183,9 @@ public class LocalAppiumManager implements IAppiumManager {
 
                 GeneralServerFlag serverArgument = appiumDriverManager.getServerArgument(key);
 
-                if (serverArgument != null && serverCaps.get(key).toString() != "null") {
+                if (serverArgument != null && !serverCaps.get(key).toString().equals("null")) {
                     builder.withArgument(serverArgument, serverCaps.getString(key));
-                } else if (serverArgument != null) {
+                } else if (serverArgument != null && serverCaps.get(key).toString().equals("null")) {
                     builder.withArgument(serverArgument);
                 }
             } while (keys.hasNext());
