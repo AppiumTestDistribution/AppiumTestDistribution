@@ -180,10 +180,11 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
     private String constructRequestBody ( String serverPath, String serverPort, String serverCaps ) {
 
-        return "{" +
-                "APPIUM_PATH:" + serverPath + "," +
-                "PORT:" + serverPort + "," +
-                "SERVER_CAPS:" + serverCaps +
-                "}";
+        JSONObject json = new JSONObject();
+        json.put("APPIUM_PATH", serverPath == null ? JSONObject.NULL : serverPath);
+        json.put("PORT", serverPort == null ? JSONObject.NULL : serverPort);
+        json.put("SERVER_CAPS", serverCaps);
+
+        return json.toString();
     }
 }
