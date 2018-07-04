@@ -20,6 +20,8 @@ import java.util.Optional;
 public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
     private static AppiumDriverManager appiumDriverManager;
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
 
     @Override
     public void destroyAppiumNode ( String host ) throws Exception {
@@ -37,8 +39,6 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
         return hostIP + ":" + appiumRunningPort + "/wd/hub";
     }
 
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
     @Override
     public void startAppiumServer ( String host ) throws Exception {
 
@@ -65,7 +65,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                 + "/appium/start")
                 .post(requestBody).build();
 
-        Response response = client.newCall(request).execute();
+        client.newCall(request).execute();
 
         boolean status = Boolean.getBoolean(new JSONObject(new Api()
                 .getResponse("http://" + host + ":"

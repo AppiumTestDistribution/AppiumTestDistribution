@@ -194,6 +194,10 @@ public class AppiumDriverManager {
         if (new File(userSpecifiedServerCaps).exists()) {
             String serverJsonFilePath = userSpecifiedServerCaps;
             Path path = FileSystems.getDefault().getPath(serverJsonFilePath.toString());
+            if (!path.getParent().isAbsolute()) {
+                serverJsonFilePath = path.normalize()
+                        .toAbsolutePath().toString();
+            }
             return new JsonParser(serverJsonFilePath).getObjectFromJSON()
                     .getJSONObject("server");
         } else {
