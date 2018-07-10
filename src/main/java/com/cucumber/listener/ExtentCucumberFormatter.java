@@ -13,10 +13,6 @@ import com.appium.manager.DeviceSingleton;
 import com.appium.manager.ReportManager;
 import com.appium.utils.ImageUtils;
 
-import com.aventstack.extentreports.Status;
-import com.report.factory.ExtentManager;
-import com.report.factory.ExtentTestManager;
-
 import com.video.recorder.XpathXML;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -100,10 +96,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
 
     public void result(Result result) {
         if ("passed".equals(result.getStatus())) {
-            reportManager.childTest.get().log(Status.PASS, testSteps.poll().getName());
+            // To Be Worked out
         } else if ("failed".equals(result.getStatus())) {
             String failed_StepName = testSteps.poll().getName();
-            reportManager.childTest.get().log(Status.FAIL, result.getErrorMessage());
             String context = AppiumDriverManager.getDriver().getContext();
             boolean contextChanged = false;
             if ("Android".equalsIgnoreCase(AppiumDriverManager.getDriver()
@@ -132,9 +127,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                 e.printStackTrace();
             }
         } else if ("skipped".equals(result.getStatus())) {
-            reportManager.childTest.get().log(Status.SKIP, testSteps.poll().getName());
+
         } else if ("undefined".equals(result.getStatus())) {
-            reportManager.childTest.get().log(Status.WARNING, testSteps.poll().getName());
+
         }
     }
 
@@ -162,7 +157,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     }
 
 
-    
+
     public void feature(Feature feature) {
         String[] tagsArray = getTagArray(feature.getTags());
         String tags = String.join(",", tagsArray);
@@ -178,16 +173,13 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                     System.out.println("No devices are free to run test "
                             + "or Failed to run childTest");
                 }
-                reportManager.createParentNodeExtent(feature.getName(),"")
-                    .assignCategory(tags);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             try {
                 deviceAllocationManager.allocateDevice(AppiumDeviceManager.getAppiumDevice());
-                reportManager.createParentNodeExtent(feature.getName(),"")
-                        .assignCategory(tags);
+
                 //appiumServerManager.startAppiumServer();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -202,7 +194,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
         }
         return tagArray;
     }
-    
+
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
 
     }
@@ -229,7 +221,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
 
     //TO DO fix this
     public void startAppiumServer(Scenario scenario, String tags) throws Exception {
-        reportManager.createChildNodeWithCategory(scenario.getName(), tags);
         appiumDriverManager.startAppiumDriverInstance();
         ///This portion should be Broken : TODO
     }
@@ -247,7 +238,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     }
 
     public void endOfScenarioLifeCycle(Scenario scenario) {
-        ExtentManager.getExtent().flush();
         AppiumDriverManager.getDriver().quit();
     }
 
@@ -260,7 +250,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     }
 
     public void eof() {
-        ExtentManager.getExtent().flush();
         try {
             deviceAllocationManager.freeDevice();
         } catch (Exception e) {
@@ -337,24 +326,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
                         + AppiumDeviceManager.getAppiumDevice()
                         .getDevice().getUdid() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
-        if (framedImageAndroid.exists()) {
-            reportManager.childTest.get().log(Status.INFO,
-                    "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
-                            System.getProperty("user.dir")
-                                    + FileLocations.SCREENSHOTS_DIRECTORY
-                                    + platform + "/"
-                                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                                    + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg"));
-        } else {
-            reportManager.childTest.get().log(Status.INFO,
-                    "Snapshot below: " + ExtentTestManager.getTest().addScreenCaptureFromPath(
-                            System.getProperty("user.dir") + FileLocations.SCREENSHOTS_DIRECTORY
-                                    + platform + "/"
-                                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                                    + "/" + deviceModel
-                                    + "/failed_" + stepName.replaceAll(" ", "_") + ".jpeg"));
-        }
+
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 /**
@@ -27,6 +28,7 @@ public class DeviceAllocationManager {
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;
+    private Semaphore sem;
     private List<Thread> suspendedThreads;
     private AppiumDriverManager appiumDriverManager;
 
@@ -40,6 +42,7 @@ public class DeviceAllocationManager {
             }
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
+            sem = new Semaphore(allDevices.size());
             appiumDriverManager = new AppiumDriverManager();
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,7 +79,7 @@ public class DeviceAllocationManager {
         return hostMachineDeviceManager.getDevicesByHost().getAllDevices();
     }
 
-    public synchronized AppiumDevice getNextAvailableDevice() {
+    public synchronized AppiumDevice getNextAvailableDevice() throws InterruptedException {
         int i = 0;
         for (AppiumDevice device : allDevices) {
             Thread t = Thread.currentThread();

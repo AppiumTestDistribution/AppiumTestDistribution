@@ -2,10 +2,13 @@ package com.appium.executor;
 
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.filelocations.FileLocations;
+import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.manager.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.PackageUtil;
 import com.appium.utils.AppiumDevice;
+import com.appium.utils.RetryListener;
+import com.epam.reportportal.testng.ReportPortalTestNGListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -13,6 +16,8 @@ import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.testng.ITestNGListener;
+import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
@@ -29,14 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -180,6 +178,7 @@ public class MyTestExecutor {
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
+        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelTestListener");
         listeners.add("com.appium.utils.RetryListener");
         include(listeners, "LISTENERS");
@@ -240,6 +239,7 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
+        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
@@ -271,6 +271,7 @@ public class MyTestExecutor {
         suite.setDataProviderThreadCount(deviceCount);
         suite.setVerbose(2);
         suite.setParallel(ParallelMode.METHODS);
+        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);

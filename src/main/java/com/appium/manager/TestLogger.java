@@ -4,8 +4,7 @@ import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.Helpers;
 import com.appium.utils.ScreenShotManager;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
+import com.epam.reportportal.service.ReportPortal;
 import com.video.recorder.Flick;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.logging.LogEntry;
@@ -15,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -75,8 +75,7 @@ class TestLogger extends Helpers {
         }
     }
 
-    public HashMap<String, String> endLog(ITestResult result, String deviceModel,
-                                          ThreadLocal<ExtentTest> test)
+    public HashMap<String, String> endLog(ITestResult result, String deviceModel)
             throws Exception {
         HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
@@ -89,13 +88,12 @@ class TestLogger extends Helpers {
         logs.put("adbLogs", adbPath);
 
         if (result.isSuccess()) {
-            test.get().log(Status.PASS, result.getMethod().getMethodName());
-            getAdbLogs(result, adbPath, test);
+            getAdbLogs(result, adbPath);
         }
         /*
          * Failure Block
          */
-        handleTestFailure(result, className, test, deviceModel);
+        handleTestFailure(result, className, deviceModel);
         String baseHostUrl = "http://" + getHostMachineIpAddress() + ":"
                 + getRemoteAppiumManagerPort(AppiumDeviceManager
                 .getAppiumDevice().getHostName());
@@ -109,8 +107,6 @@ class TestLogger extends Helpers {
             if (new File(System.getProperty("user.dir")
                     + FileLocations.OUTPUT_DIRECTORY + getVideoPath()).exists()) {
                 logs.put("videoLogs", baseHostUrl + "/" + getVideoPath());
-                test.get().log(Status.INFO, "<a target=\"_parent\" href="
-                        + getVideoPath() + ">Videologs</a>");
             }
         }
         String failedScreen = screenShotManager.getFailedScreen();
@@ -172,26 +168,22 @@ class TestLogger extends Helpers {
         }
     }
 
-    public void getAdbLogs(ITestResult result, String adbPath,
-                           ThreadLocal<ExtentTest> test) {
+    public void getAdbLogs(ITestResult result, String adbPath) {
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
                 && AppiumDriverManager.getDriver().getCapabilities()
                 .getCapability("browserName") == null) {
             log_file_writer.println(logEntries);
             log_file_writer.close();
-            test.get().log(Status.INFO,
-                    "<a target=\"_parent\" href=" + adbPath + ">AdbLogs</a>");
+            ReportPortal.emitLog(String.valueOf(result.getThrowable()),
+                    "ERROR", new Date(), new File(adbPath));
             System.out.println(AppiumDriverManager.getDriver()
                     .getSessionId() + ": Saving device log - Done.");
         }
     }
 
     private void handleTestFailure(ITestResult result, String className,
-                                   ThreadLocal<ExtentTest> test,
                                    String deviceModel) throws IOException {
         if (result.getStatus() == ITestResult.FAILURE) {
-            ExtentTest log = test.get()
-                    .log(Status.FAIL, "<pre>" + result.getThrowable() + "</pre>");
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),
                             result.getInstance().getClass().getSimpleName(),
@@ -205,12 +197,8 @@ class TestLogger extends Helpers {
                         + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp
                         + "-" + result.getMethod().getMethodName() + "_failed.jpeg";
-                File framedImageAndroid = new File(
-                        pathname);
-                if (framedImageAndroid.exists()) {
-                    log.addScreenCaptureFromPath(pathname);
-                }
-
+                ReportPortal.emitLog(String.valueOf(result.getThrowable()),
+                        "ERROR", new Date(), new File(pathname));
 
             }
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
@@ -220,21 +208,16 @@ class TestLogger extends Helpers {
                         + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp
                         + "-" + result.getMethod().getMethodName() + "_failed.jpeg";
-                File framedImageIOS = new File(
-                        imagePath);
-                System.out.println("************************" + framedImageIOS.exists()
-                        + "***********************");
-                if (framedImageIOS.exists()) {
-                    log.addScreenCaptureFromPath(imagePath);
-                }
-
+                ReportPortal.emitLog(String.valueOf(result.getThrowable()),
+                        "ERROR", new Date(), new File(imagePath));
             }
+
             String adbPath = "adblogs/"
                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                     + "__"
                     + result.getMethod().getMethodName()
                     + ".txt";
-            getAdbLogs(result, adbPath, test);
+            getAdbLogs(result, adbPath);
 
         }
     }

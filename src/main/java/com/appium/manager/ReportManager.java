@@ -2,8 +2,6 @@ package com.appium.manager;
 
 import com.annotation.values.Author;
 import com.appium.utils.GetDescriptionForChildNode;
-import com.aventstack.extentreports.ExtentTest;
-import com.report.factory.ExtentTestManager;
 import org.testng.ITestResult;
 import org.testng.annotations.Test;
 
@@ -20,10 +18,6 @@ public class ReportManager {
 
     private TestLogger testLogger;
     private AppiumDeviceManager appiumDeviceManager;
-    public ThreadLocal<ExtentTest> parentTest = new ThreadLocal<ExtentTest>();
-    public ThreadLocal<ExtentTest> childTest = new ThreadLocal<ExtentTest>();
-    public ExtentTest parent;
-    public ExtentTest child;
     private GetDescriptionForChildNode getDescriptionForChildNode;
     public String category = null;
 
@@ -39,20 +33,7 @@ public class ReportManager {
 
     public HashMap<String, String> endLogTestResults(ITestResult result)
             throws Exception {
-        return testLogger.endLog(result, appiumDeviceManager.getDeviceModel(), childTest);
-    }
-
-    public ExtentTest createParentNodeExtent(String methodName, String testDescription)
-            throws IOException, InterruptedException {
-        String deviceModel = appiumDeviceManager.getDeviceModel();
-        if (deviceModel.equalsIgnoreCase("not supported")) {
-            deviceModel = "";
-        }
-        parent = ExtentTestManager.createTest(methodName, testDescription,
-                deviceModel + "|" + AppiumDeviceManager.getAppiumDevice().getHostName()
-                        + "|" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-        parentTest.set(parent);
-        return parent;
+        return testLogger.endLog(result, appiumDeviceManager.getDeviceModel());
     }
 
     public void setAuthorName(ITestResult methodName) throws Exception {
@@ -88,22 +69,8 @@ public class ReportManager {
                     .getConstructorOrMethod().getMethod()
                     .getAnnotation(Author.class).name();
             Collections.addAll(listeners, authorName.split("\\s*,\\s*"));
-            child = parentTest.get()
-                    .createNode(testName,
-                            category + "_" + udid).assignAuthor(
-                            String.valueOf(listeners));
-            childTest.set(child);
         } else {
-            child = parentTest.get().createNode(testName,
-                    category + "_" + udid);
-            childTest.set(child);
+            // To Be Worked out
         }
-    }
-
-    public void createChildNodeWithCategory(String methodName,
-                                            String tags) {
-        child = parentTest.get().createNode(methodName, category
-                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()).assignCategory(tags);
-        childTest.set(child);
     }
 }

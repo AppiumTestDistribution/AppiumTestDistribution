@@ -7,8 +7,6 @@ import com.appium.utils.CapabilityManager;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.Helpers;
 import com.appium.utils.HostMachineDeviceManager;
-import com.aventstack.extentreports.Status;
-import com.report.factory.ExtentManager;
 import org.json.JSONObject;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
@@ -135,8 +133,6 @@ public final class AppiumParallelTestListener extends Helpers
             if (getClass().getAnnotation(Description.class) != null) {
                 testDescription = getClass().getAnnotation(Description.class).value();
             }
-            reportManager.createParentNodeExtent(className,
-                    testDescription);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -144,7 +140,6 @@ public final class AppiumParallelTestListener extends Helpers
 
     @Override
     public void onAfterClass(ITestClass iTestClass) {
-        ExtentManager.getExtent().flush();
         deviceAllocationManager.freeDevice();
     }
 
@@ -179,9 +174,6 @@ public final class AppiumParallelTestListener extends Helpers
             sendResultsToAtdService(iTestResult,
                     "UnKnown", url, new HashMap<>());
         }
-        (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
-        (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
-        ExtentManager.getExtent().flush();
     }
 
     @Override
