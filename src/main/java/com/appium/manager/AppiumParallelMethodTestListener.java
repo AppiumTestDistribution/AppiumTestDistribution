@@ -4,13 +4,10 @@ import com.annotation.values.Description;
 import com.annotation.values.SkipIf;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.Helpers;
-import com.appium.utils.Retry;
-import com.aventstack.extentreports.Status;
 
 
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
-import org.testng.IRetryAnalyzer;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
@@ -111,7 +108,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            System.out.println(Thread.currentThread().getId());
             deviceAllocationManager.allocateDevice(deviceAllocationManager
                     .getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
@@ -124,7 +120,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 sendResultsToAtdService(iTestResult,
                         "Started", url, new HashMap<>());
             }
-
+            // Sets description for each test method with platform and Device UDID allocated to it.
+            setMethodDescription(iTestResult);
         } catch (Exception e) {
             e.printStackTrace();
         }

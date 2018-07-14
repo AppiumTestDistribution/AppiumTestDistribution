@@ -150,6 +150,8 @@ public final class AppiumParallelTestListener extends Helpers
             reportManager.setAuthorName(iTestResult);
             reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass().getRealClass().getSimpleName());
+            // Sets description for each test method with platform and Device UDID allocated to it.
+            setMethodDescription(iTestResult);
         } catch (Exception e) {
             e.printStackTrace();
         }
