@@ -1,7 +1,6 @@
 package com.appium.utils;
 
 import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.ConfigFileManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class Helpers {
     protected String getRemoteAppiumManagerPort(String host) throws Exception {
@@ -68,18 +66,5 @@ public class Helpers {
             e.printStackTrace();
         }
         return appiumVersion;
-    }
-
-    // Sets description for each test method with platform and Device UDID allocated to it.
-    protected void setMethodDescription(ITestResult iTestResult) {
-        Optional<String> description = Optional.ofNullable(iTestResult.getMethod().getDescription());
-        if(description.isPresent()) {
-            iTestResult.getMethod().setDescription(description + "\nPlatform: "
-                    + AppiumDeviceManager.getMobilePlatform()
-                    + "\nDevice UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-        } else {
-            iTestResult.getMethod().setDescription("Platform: " + AppiumDeviceManager.getMobilePlatform()
-                    + "\nDevice UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-        }
     }
 }

@@ -20,6 +20,7 @@ import org.testng.ITestResult;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Optional;
 
 
 public final class AppiumParallelTestListener extends Helpers
@@ -30,8 +31,8 @@ public final class AppiumParallelTestListener extends Helpers
     private AppiumServerManager appiumServerManager;
     private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
-    private String atdHost = null;
-    private String atdPort = null;
+    private Optional<String> atdHost;
+    private Optional<String> atdPort;
 
     public AppiumParallelTestListener() throws Exception {
         try {
@@ -39,10 +40,10 @@ public final class AppiumParallelTestListener extends Helpers
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
-            atdHost = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdHost");
-            atdPort = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdPort");
+            atdHost = Optional.ofNullable(CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdHost"));
+            atdPort = Optional.ofNullable(CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdPort"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,14 +52,13 @@ public final class AppiumParallelTestListener extends Helpers
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-        String postTestResults = "http://" + atdHost + ":"
-                + atdPort + "/testresults";
-        sendResultsToAtdService(testResult,
-                "Started", postTestResults, new HashMap<>());
+        if(atdHost.isPresent() && atdPort.isPresent()) {
+            String postTestResults = "http://" + atdHost + ":" + atdPort + "/testresults";
+            sendResultsToAtdService(testResult, "Started", postTestResults, new HashMap<>());
+        }
+
         try {
-            SkipIf skip =
-                    method.getTestMethod()
-                            .getConstructorOrMethod()
+            SkipIf skip = method.getTestMethod().getConstructorOrMethod()
                             .getMethod().getAnnotation(SkipIf.class);
             AppiumParallelMethodTestListener.isSkip(skip);
         } catch (Exception e) {
@@ -72,21 +72,17 @@ public final class AppiumParallelTestListener extends Helpers
         json.put("id", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         json.put("version", new AppiumDeviceManager().getDeviceVersion());
         json.put("platform", AppiumDeviceManager.getMobilePlatform());
-        //json.put("resolution", AppiumDeviceManager.getMobilePlatform());
         try {
             json.put("model", new AppiumDeviceManager().getDeviceModel());
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
         try {
-            if (testResult.getStatus() == ITestResult.SUCCESS
-                    || testResult.getStatus() == ITestResult.FAILURE) {
+            if (testResult.getStatus() == ITestResult.SUCCESS || testResult.getStatus() == ITestResult.FAILURE) {
                 HashMap<String, String> logs = reportManager.endLogTestResults(testResult);
-                if (atdHost != null && atdPort != null) {
-                    String postTestResults = "http://" + atdHost + ":"
-                            + atdPort + "/testresults";
-                    sendResultsToAtdService(testResult,
-                            "Completed", postTestResults, logs);
+                if (atdHost.isPresent() && atdPort.isPresent()) {
+                    String postTestResults = "http://" + atdHost + ":" + atdPort + "/testresults";
+                    sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
                 }
             }
             if (method.isTestMethod()) {
@@ -151,7 +147,14 @@ public final class AppiumParallelTestListener extends Helpers
             reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass().getRealClass().getSimpleName());
             // Sets description for each test method with platform and Device UDID allocated to it.
-            setMethodDescription(iTestResult);
+            Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
+            String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
+                    + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+            if (originalDescription.isPresent()) {
+                iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
+            } else {
+                iTestResult.getMethod().setDescription(description);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -170,11 +173,9 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         System.out.println("Skipped...");
-        if (atdHost != null && atdPort != null) {
-            String url = "http://" + atdHost + ":"
-                    + atdPort + "/testresults";
-            sendResultsToAtdService(iTestResult,
-                    "UnKnown", url, new HashMap<>());
+        if (atdHost.isPresent() && atdPort.isPresent()) {
+            String url = "http://" + atdHost + ":" + atdPort + "/testresults";
+            sendResultsToAtdService(iTestResult, "UnKnown", url, new HashMap<>());
         }
     }
 
