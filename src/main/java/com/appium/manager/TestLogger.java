@@ -98,8 +98,10 @@ class TestLogger extends Helpers {
                     + "/" + className + "/" + result.getMethod()
                     .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
 
-            if (new File(System.getProperty("user.dir")
-                    + FileLocations.OUTPUT_DIRECTORY + getVideoPath()).exists()) {
+            String videoPath = System.getProperty("user.dir")
+                    + FileLocations.OUTPUT_DIRECTORY + getVideoPath();
+            if (new File(videoPath).exists()) {
+                ReportPortal.emitLog("Video Logs", "Trace", new Date(), new File(videoPath));
                 logs.put("videoLogs", baseHostUrl + "/" + getVideoPath());
             }
         }
