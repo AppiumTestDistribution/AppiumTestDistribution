@@ -1,6 +1,6 @@
 package com.appium.manager;
 
-import com.annotation.values.Description;
+import com.annotation.values.Author;
 import com.annotation.values.SkipIf;
 import com.appium.utils.AppiumDevice;
 import com.appium.utils.CapabilityManager;
@@ -26,17 +26,16 @@ import java.util.Optional;
 public final class AppiumParallelTestListener extends Helpers
         implements IClassListener, IInvokedMethodListener, ISuiteListener, ITestListener {
 
-    private ReportManager reportManager;
+    private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
-    private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
     private Optional<String> atdHost;
     private Optional<String> atdPort;
 
     public AppiumParallelTestListener() throws Exception {
         try {
-            reportManager = new ReportManager();
+            testLogger = new TestLogger();
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
@@ -56,7 +55,6 @@ public final class AppiumParallelTestListener extends Helpers
             String postTestResults = "http://" + atdHost + ":" + atdPort + "/testresults";
             sendResultsToAtdService(testResult, "Started", postTestResults, new HashMap<>());
         }
-
         try {
             SkipIf skip = method.getTestMethod().getConstructorOrMethod()
                             .getMethod().getAnnotation(SkipIf.class);
@@ -79,7 +77,8 @@ public final class AppiumParallelTestListener extends Helpers
         }
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS || testResult.getStatus() == ITestResult.FAILURE) {
-                HashMap<String, String> logs = reportManager.endLogTestResults(testResult);
+                HashMap<String, String> logs = testLogger.endLog(testResult
+                        , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     String postTestResults = "http://" + atdHost + ":" + atdPort + "/testresults";
                     sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
@@ -125,12 +124,7 @@ public final class AppiumParallelTestListener extends Helpers
             String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
             DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
             AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
-            String className = testClass.getRealClass().getSimpleName();
             deviceAllocationManager.allocateDevice(appiumDevice);
-
-            if (getClass().getAnnotation(Description.class) != null) {
-                testDescription = getClass().getAnnotation(Description.class).value();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,13 +139,17 @@ public final class AppiumParallelTestListener extends Helpers
     public void onTestStart(ITestResult iTestResult) {
         try {
             appiumDriverManager.startAppiumDriverInstance();
-            reportManager.setAuthorName(iTestResult);
-            reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
+            testLogger.startLogging(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass().getRealClass().getSimpleName());
             // Sets description for each test method with platform and Device UDID allocated to it.
             Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
             String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
                     + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+            Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(Author.class);
+            if (annotation != null) {
+                description += "\nAuthor: " + annotation.name();
+            }
             if (originalDescription.isPresent() &&
                     !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
                 iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
@@ -163,11 +161,17 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestFailure(ITestResult iTestResult) {
 
@@ -182,16 +186,25 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onStart(ITestContext iTestContext) {
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onFinish(ITestContext iTestContext) {
 

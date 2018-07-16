@@ -1,5 +1,6 @@
 package com.test.site;
 
+import com.annotation.values.Author;
 import com.annotation.values.RetryCount;
 
 import org.testng.Assert;
@@ -24,6 +25,7 @@ public class SliderTest extends  UserBaseTest {
     }
 
     @Test
+    @Author(name = "Srinivasan Sekar")
     public void failureTest() throws IOException, InterruptedException {
         Assert.assertTrue(false);
     }

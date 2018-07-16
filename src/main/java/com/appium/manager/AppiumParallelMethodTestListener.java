@@ -1,10 +1,9 @@
 package com.appium.manager;
 
-import com.annotation.values.Description;
+import com.annotation.values.Author;
 import com.annotation.values.SkipIf;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.Helpers;
-
 
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -22,17 +21,16 @@ import java.util.Optional;
 public final class AppiumParallelMethodTestListener extends Helpers
         implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
-    private ReportManager reportManager;
+    private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
-    private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
     private Optional<String> atdHost;
     private Optional<String> atdPort;
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
-            reportManager = new ReportManager();
+            testLogger = new TestLogger();
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
@@ -40,7 +38,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     .getMongoDbHostAndPort().get("atdHost"));
             atdPort = Optional.ofNullable(CapabilityManager.getInstance()
                     .getMongoDbHostAndPort().get("atdPort"));
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,27 +66,35 @@ public final class AppiumParallelMethodTestListener extends Helpers
         try {
             deviceAllocationManager.allocateDevice(deviceAllocationManager.getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
-            String methodName = iTestResult.getMethod().getMethodName();
-            reportManager.startLogResults(methodName, iTestResult.getTestClass().getRealClass().getSimpleName());
-            if (atdHost.isPresent() && atdPort.isPresent()) {
-                String url = "http://" + atdHost + ":" + atdPort + "/testresults";
-                sendResultsToAtdService(iTestResult, "Started", url, new HashMap<>());
-            }
+            testLogger.startLogging(iTestResult.getMethod().getMethodName(), iTestResult.getTestClass()
+                    .getRealClass().getSimpleName());
             // Sets description for each test method with platform and Device UDID allocated to it.
             Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
             String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
                     + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+            Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(Author.class);
+            if (annotation != null) {
+                description += "\nAuthor: " + annotation.name();
+            }
             if (originalDescription.isPresent() &&
                     !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
                 iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
             } else {
                 iTestResult.getMethod().setDescription(description);
             }
+            if (atdHost.isPresent() && atdPort.isPresent()) {
+                String url = "http://" + atdHost + ":" + atdPort + "/testresults";
+                sendResultsToAtdService(iTestResult, "Started", url, new HashMap<>());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /*
+    * Skips execution based on platform
+    */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         SkipIf skip = getSkipIf(iInvokedMethod);
@@ -97,36 +102,24 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     }
 
+    /*
+    * Stops driver after each test method execution
+    * De-allocates device after each test method execution
+    * Terminate logs getting captured after each test method execution
+    */
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        HashMap<String, String> logs = null;
-        String methodName = iInvokedMethod.getTestMethod().getMethodName();
         try {
-            if (iTestResult.getStatus() == ITestResult.SUCCESS || iTestResult.getStatus() == ITestResult.FAILURE) {
-                try {
-                    String className = iTestResult.getMethod().getRealClass().getSimpleName() + "-------" + methodName;
-                    if (getClass().getAnnotation(Description.class) != null) {
-                        testDescription = getClass().getAnnotation(Description.class).value();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                reportManager.setAuthorName(iTestResult);
-                logs = reportManager.endLogTestResults(iTestResult);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+            HashMap<String, String> logs = testLogger.endLog(iTestResult
+                    , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
             if (atdHost.isPresent() && atdPort.isPresent()) {
                 String url = "http://" + atdHost + ":" + atdPort + "/testresults";
                 sendResultsToAtdService(iTestResult, "Completed", url,logs);
             }
             deviceAllocationManager.freeDevice();
-            try {
-                appiumDriverManager.stopAppiumDriver();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            appiumDriverManager.stopAppiumDriver();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -45,18 +45,15 @@ class TestLogger extends Helpers {
     }
 
     public void startLogging(String methodName, String className) throws FileNotFoundException {
-        Capabilities capabilities = AppiumDriverManager.getDriver().getCapabilities();
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            if (capabilities.getCapability("browserName") == null) {
-                String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
-                System.out.println("Starting ADB logs" + udid);
-                logEntries = AppiumDriverManager.getDriver().manage()
-                        .logs().get("logcat").filter(Level.ALL);
-                logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
-                        + udid
-                        + "__" + methodName + ".txt");
-                log_file_writer = new PrintWriter(logFile);
-            }
+        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
+                && AppiumDriverManager.getDriver().getCapabilities().getCapability("browserName") == null) {
+            String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+            System.out.println("Starting ADB logs" + udid);
+            logEntries = AppiumDriverManager.getDriver().manage()
+                    .logs().get("logcat").filter(Level.ALL);
+            logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
+                    + udid + "__" + methodName + ".txt");
+            log_file_writer = new PrintWriter(logFile);
         }
         startVideoRecording(methodName, className);
     }
@@ -65,8 +62,7 @@ class TestLogger extends Helpers {
     private void startVideoRecording(String methodName, String className) {
         if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
             try {
-                videoRecording
-                        .startVideoRecording(className, methodName, methodName);
+                videoRecording.startVideoRecording(className, methodName, methodName);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -82,9 +78,7 @@ class TestLogger extends Helpers {
         stopViewRecording(result, className);
         String adbPath = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
                 + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                + "__"
-                + result.getMethod().getMethodName()
-                + ".txt";
+                + "__" + result.getMethod().getMethodName() + ".txt";
         logs.put("adbLogs", adbPath);
 
         if (result.isSuccess()) {

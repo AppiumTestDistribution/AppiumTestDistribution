@@ -10,7 +10,6 @@ import com.appium.manager.AppiumServerManager;
 import com.appium.manager.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.DeviceSingleton;
-import com.appium.manager.ReportManager;
 import com.appium.utils.ImageUtils;
 
 import com.video.recorder.XpathXML;
@@ -54,7 +53,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     public AppiumServerManager appiumServerManager;
     public AppiumDriverManager appiumDriverManager;
     public DeviceSingleton deviceSingleton;
-    public ReportManager reportManager;
     public LinkedList<Step> testSteps;
     public AppiumDriver<MobileElement> appium_driver;
     private AndroidDeviceConfiguration androidDevice;
@@ -77,7 +75,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     };
 
     public ExtentCucumberFormatter() throws Exception {
-        reportManager = new ReportManager();
         appiumServerManager = new AppiumServerManager();
         appiumDriverManager = new AppiumDriverManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
