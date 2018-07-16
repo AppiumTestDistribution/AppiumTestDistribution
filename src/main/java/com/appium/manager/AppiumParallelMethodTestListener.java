@@ -79,7 +79,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
             Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
             String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
                     + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
-            if (originalDescription.isPresent()) {
+            if (originalDescription.isPresent() &&
+                    !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
                 iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
             } else {
                 iTestResult.getMethod().setDescription(description);
@@ -157,31 +158,49 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 .getMethod().getAnnotation(SkipIf.class);
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
 
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onTestFailure(ITestResult iTestResult) {
 
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
 
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
 
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onStart(ITestContext iTestContext) {
 
     }
 
+    /*
+    Document to make codacy happy
+    */
     @Override
     public void onFinish(ITestContext iTestContext) {
 

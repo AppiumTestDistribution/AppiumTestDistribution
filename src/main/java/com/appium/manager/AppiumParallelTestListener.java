@@ -95,8 +95,8 @@ public final class AppiumParallelTestListener extends Helpers
 
 
     /*
-    Document to make codacy happy
-    */
+     * Starts Appium Server before each test suite
+     */
     @Override
     public void onStart(ISuite iSuite) {
         try {
@@ -106,7 +106,9 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
-
+    /*
+     * Stops Appium Server after each test suite
+     */
     @Override
     public void onFinish(ISuite iSuite) {
         try {
@@ -150,7 +152,8 @@ public final class AppiumParallelTestListener extends Helpers
             Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
             String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
                     + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
-            if (originalDescription.isPresent()) {
+            if (originalDescription.isPresent() &&
+                    !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
                 iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
             } else {
                 iTestResult.getMethod().setDescription(description);

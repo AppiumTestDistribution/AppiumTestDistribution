@@ -28,7 +28,6 @@ public class DeviceAllocationManager {
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;
-    private Semaphore sem;
     private List<Thread> suspendedThreads;
     private AppiumDriverManager appiumDriverManager;
 
@@ -42,7 +41,6 @@ public class DeviceAllocationManager {
             }
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
-            sem = new Semaphore(allDevices.size());
             appiumDriverManager = new AppiumDriverManager();
         } catch (IOException e) {
             e.printStackTrace();
