@@ -97,9 +97,12 @@ public final class AppiumParallelMethodTestListener extends Helpers
     */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        SkipIf skip = getSkipIf(iInvokedMethod);
-        isSkip(skip);
-
+        SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(SkipIf.class);
+        if(annotation != null && AppiumDriverManager.getDriver().getPlatformName()
+                .equalsIgnoreCase(annotation.platform())) {
+            throw new SkipException("Skipped because property was set to :::" + annotation.platform());
+        }
     }
 
     /*
@@ -133,22 +136,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    static void isSkip(SkipIf skip) {
-        if (skip != null) {
-            String info = skip.platform();
-            if (AppiumDriverManager.getDriver().getPlatformName().contains(info)) {
-                System.out.println("skipping childTest");
-                throw new SkipException("Skipped because property was set to :::" + info);
-            }
-        }
-    }
-
-    private SkipIf getSkipIf(IInvokedMethod method) {
-        return method.getTestMethod()
-                .getConstructorOrMethod()
-                .getMethod().getAnnotation(SkipIf.class);
     }
 
     /*

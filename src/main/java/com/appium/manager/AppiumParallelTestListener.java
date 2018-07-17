@@ -17,6 +17,7 @@ import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,17 +51,16 @@ public final class AppiumParallelTestListener extends Helpers
 
 
     @Override
-    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+    public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult testResult) {
         if(atdHost.isPresent() && atdPort.isPresent()) {
             String postTestResults = "http://" + atdHost + ":" + atdPort + "/testresults";
             sendResultsToAtdService(testResult, "Started", postTestResults, new HashMap<>());
         }
-        try {
-            SkipIf skip = method.getTestMethod().getConstructorOrMethod()
-                            .getMethod().getAnnotation(SkipIf.class);
-            AppiumParallelMethodTestListener.isSkip(skip);
-        } catch (Exception e) {
-            e.printStackTrace();
+        SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(SkipIf.class);
+        if(annotation != null && AppiumDriverManager.getDriver().getPlatformName()
+                .equalsIgnoreCase(annotation.platform())) {
+            throw new SkipException("Skipped because property was set to :::" + annotation.platform());
         }
     }
 

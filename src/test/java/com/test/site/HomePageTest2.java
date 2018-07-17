@@ -2,13 +2,11 @@ package com.test.site;
 
 
 import com.annotation.values.Author;
-import com.annotation.values.Description;
 import org.junit.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 
-@Description("This Test validates swipe scenarios")
 public class HomePageTest2 {
 
 

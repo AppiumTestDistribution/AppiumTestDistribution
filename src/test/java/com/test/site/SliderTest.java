@@ -3,6 +3,7 @@ package com.test.site;
 import com.annotation.values.Author;
 import com.annotation.values.RetryCount;
 
+import com.annotation.values.SkipIf;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -26,6 +27,7 @@ public class SliderTest extends  UserBaseTest {
 
     @Test
     @Author(name = "Srinivasan Sekar")
+    @SkipIf(platform = "ios")
     public void failureTest() throws IOException, InterruptedException {
         Assert.assertTrue(false);
     }
