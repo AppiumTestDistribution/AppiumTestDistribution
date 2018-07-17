@@ -12,6 +12,7 @@ import org.openqa.selenium.OutputType;
 import org.testng.ITestResult;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -157,7 +158,7 @@ public class ScreenShotManager {
                 if (new File(capturedScreenshotPath).exists()) {
                     ReportPortal.emitLog(screenShotName, "Trace", new Date(), new File(capturedScreenshotPath));
                 } else {
-                    System.out.println("Unable to capture the screenshot");
+                    throw new FileNotFoundException();
                 }
             }
 
