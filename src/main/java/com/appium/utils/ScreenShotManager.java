@@ -155,11 +155,7 @@ public class ScreenShotManager {
                 String capturedScreenshotPath = System.getProperty("user.dir")
                         + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen().trim();
                 FileUtils.copyFile(scrFile, new File(capturedScreenshotPath));
-                if (new File(capturedScreenshotPath).exists()) {
-                    ReportPortal.emitLog(screenShotName, "Trace", new Date(), new File(capturedScreenshotPath));
-                } else {
-                    throw new FileNotFoundException();
-                }
+                ReportPortal.emitLog(screenShotName, "Trace", new Date(), new File(capturedScreenshotPath));
             }
 
             File[] files1 = framePath.listFiles();

@@ -50,6 +50,10 @@ public final class AppiumParallelTestListener extends Helpers
     }
 
 
+    /*
+     * Handle Skipif annotation
+     * SendResults to ATD service if required
+     */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult testResult) {
         if(atdHost.isPresent() && atdPort.isPresent()) {
@@ -64,6 +68,10 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
+    /*
+     * Send results to ATD service if required
+     * Stop Appium Driver after method invocation completed
+     */
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         JSONObject json = new JSONObject();
@@ -77,7 +85,7 @@ public final class AppiumParallelTestListener extends Helpers
         }
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS || testResult.getStatus() == ITestResult.FAILURE) {
-                HashMap<String, String> logs = testLogger.endLog(testResult
+                HashMap<String, String> logs = testLogger.endLogging(testResult
                         , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     String postTestResults = "http://" + atdHost + ":" + atdPort + "/testresults";
@@ -117,6 +125,9 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
+    /*
+     * Allocates device for test execution
+     */
     @Override
     public void onBeforeClass(ITestClass testClass) {
         try {
@@ -130,11 +141,18 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
+    /*
+     * Deallocated device post test execution
+     */
     @Override
     public void onAfterClass(ITestClass iTestClass) {
         deviceAllocationManager.freeDevice();
     }
 
+    /*
+     * Sets description for each test method with platform and Device UDID allocated to it.
+     * Starts Driver instance for execution
+     */
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
@@ -177,6 +195,9 @@ public final class AppiumParallelTestListener extends Helpers
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         System.out.println("Skipped...");

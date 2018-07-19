@@ -113,7 +113,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         try {
-            HashMap<String, String> logs = testLogger.endLog(iTestResult
+            HashMap<String, String> logs = testLogger.endLogging(iTestResult
                     , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
             if (atdHost.isPresent() && atdPort.isPresent()) {
                 String url = "http://" + atdHost + ":" + atdPort + "/testresults";
@@ -139,48 +139,48 @@ public final class AppiumParallelMethodTestListener extends Helpers
     }
 
     /*
-    Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
 
     }
 
     /*
-    Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestFailure(ITestResult iTestResult) {
 
     }
 
     /*
-    Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
 
     }
 
     /*
-    Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
 
     }
 
     /*
-    Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onStart(ITestContext iTestContext) {
 
     }
 
     /*
-    Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onFinish(ITestContext iTestContext) {
 

@@ -44,45 +44,36 @@ class TestLogger extends Helpers {
         screenShotManager = new ScreenShotManager();
     }
 
-    public void startLogging(String methodName, String className) throws FileNotFoundException {
+    public void startLogging(String methodName, String className) throws IOException, InterruptedException {
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
                 && AppiumDriverManager.getDriver().getCapabilities().getCapability("browserName") == null) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
-            System.out.println("Starting ADB logs" + udid);
             logEntries = AppiumDriverManager.getDriver().manage()
                     .logs().get("logcat").filter(Level.ALL);
             logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
                     + udid + "__" + methodName + ".txt");
             log_file_writer = new PrintWriter(logFile);
         }
-        startVideoRecording(methodName, className);
-    }
-
-
-    private void startVideoRecording(String methodName, String className) {
         if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
-            try {
-                videoRecording.startVideoRecording(className, methodName, methodName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            videoRecording.startVideoRecording(className, methodName, methodName);
         }
     }
 
-    public HashMap<String, String> endLog(ITestResult result, String deviceModel)
+    public HashMap<String, String> endLogging(ITestResult result, String deviceModel)
             throws Exception {
         HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
         stopViewRecording(result, className);
-        String adbPath = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
-                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                + "__" + result.getMethod().getMethodName() + ".txt";
-        logs.put("adbLogs", adbPath);
-
-        if (result.isSuccess()) {
-            getAdbLogs(result, adbPath);
+        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
+                && AppiumDriverManager.getDriver().getCapabilities()
+                .getCapability("browserName") == null) {
+            String adbPath = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
+                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                    + "__" + result.getMethod().getMethodName() + ".txt";
+            logs.put("adbLogs", adbPath);
+            log_file_writer.println(logEntries);
+            log_file_writer.close();
+            ReportPortal.emitLog("ADB Logs", "ERROR", new Date(), new File(adbPath));
         }
         /*
          * Failure Block
@@ -164,19 +155,6 @@ class TestLogger extends Helpers {
         }
     }
 
-    public void getAdbLogs(ITestResult result, String adbPath) {
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-                && AppiumDriverManager.getDriver().getCapabilities()
-                .getCapability("browserName") == null) {
-            log_file_writer.println(logEntries);
-            log_file_writer.close();
-            ReportPortal.emitLog(String.valueOf(result.getThrowable()),
-                    "ERROR", new Date(), new File(adbPath));
-            System.out.println(AppiumDriverManager.getDriver()
-                    .getSessionId() + ": Saving device log - Done.");
-        }
-    }
-
     private void handleTestFailure(ITestResult result, String className,
                                    String deviceModel) throws IOException {
         if (result.getStatus() == ITestResult.FAILURE) {
@@ -187,15 +165,14 @@ class TestLogger extends Helpers {
                             result.getMethod().getMethodName(), deviceModel);
 
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                String pathname = System.getProperty("user.dir")
+                String imagePath = System.getProperty("user.dir")
                         + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
                         + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                         + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp
                         + "-" + result.getMethod().getMethodName() + "_failed.jpeg";
-                ReportPortal.emitLog(String.valueOf(result.getThrowable()),
-                        "ERROR", new Date(), new File(pathname));
-
+                ReportPortal.emitLog("Screenshots",
+                        "ERROR", new Date(), new File(imagePath));
             }
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 String imagePath = System.getProperty("user.dir")
@@ -204,17 +181,9 @@ class TestLogger extends Helpers {
                         + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp
                         + "-" + result.getMethod().getMethodName() + "_failed.jpeg";
-                ReportPortal.emitLog(String.valueOf(result.getThrowable()),
+                ReportPortal.emitLog("Screenshots",
                         "ERROR", new Date(), new File(imagePath));
             }
-
-            String adbPath = "adblogs/"
-                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                    + "__"
-                    + result.getMethod().getMethodName()
-                    + ".txt";
-            getAdbLogs(result, adbPath);
-
         }
     }
 
