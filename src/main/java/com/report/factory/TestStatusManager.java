@@ -27,7 +27,6 @@ public class TestStatusManager extends Helpers {
                                      HashMap<String, String> logs)
             throws JsonProcessingException {
         DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
-        LocalTime localTime = ZonedDateTime.now().toLocalTime().truncatedTo(ChronoUnit.SECONDS);
         JSONObject test = new JSONObject();
         test.put("status", testStatus);
         test.put("testresult", getStatus(iTestResult));

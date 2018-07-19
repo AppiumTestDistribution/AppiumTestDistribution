@@ -3,6 +3,7 @@ package com.appium.manager;
 import com.annotation.values.Author;
 import com.annotation.values.SkipIf;
 import com.appium.utils.CapabilityManager;
+import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 
 import org.testng.IInvokedMethod;
@@ -84,7 +85,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 iTestResult.getMethod().setDescription(description);
             }
             if (atdHost.isPresent() && atdPort.isPresent()) {
-                String url = "http://" + atdHost + ":" + atdPort + "/testresults";
+                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
                 sendResultsToAtdService(iTestResult, "Started", url, new HashMap<>());
             }
         } catch (Exception e) {
@@ -116,8 +117,12 @@ public final class AppiumParallelMethodTestListener extends Helpers
             HashMap<String, String> logs = testLogger.endLogging(iTestResult
                     , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
             if (atdHost.isPresent() && atdPort.isPresent()) {
-                String url = "http://" + atdHost + ":" + atdPort + "/testresults";
+                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
                 sendResultsToAtdService(iTestResult, "Completed", url,logs);
+            } else {
+                new FileFilterParser()
+                        .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
+                                .getDevice().getUdid(),iTestResult);
             }
             deviceAllocationManager.freeDevice();
             appiumDriverManager.stopAppiumDriver();

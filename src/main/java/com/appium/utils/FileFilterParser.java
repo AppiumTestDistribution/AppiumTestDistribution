@@ -1,13 +1,16 @@
 package com.appium.utils;
 
 
+import com.epam.reportportal.service.ReportPortal;
 import org.json.simple.JSONObject;
 import org.testng.ITestResult;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class FileFilterParser extends Helpers {
 
@@ -86,9 +89,24 @@ public class FileFilterParser extends Helpers {
             values.forEach((screenName, s) -> {
                 if (s.contains("results") || s.contains("framed")) {
                     String path = s.split("target")[1];
+                     Optional<String> atdHost;
+                     Optional<String> atdPort;
                     try {
-                        list.put(screenName, "http://" + getHostMachineIpAddress() + ":"
-                                + getRemoteAppiumManagerPort("127.0.0.1") + path);
+                        atdHost = Optional.ofNullable(CapabilityManager.getInstance()
+                                .getMongoDbHostAndPort().get("atdHost"));
+                        atdPort = Optional.ofNullable(CapabilityManager.getInstance()
+                                .getMongoDbHostAndPort().get("atdPort"));
+                        if (atdHost.isPresent() && atdPort.isPresent()) {
+                            list.put(screenName, "http://" + getHostMachineIpAddress() + ":"
+                                    + getRemoteAppiumManagerPort("127.0.0.1") + path);
+                            ReportPortal.emitLog(screenName,
+                                    "Info", new Date(), new File(System.getProperty("user.dir")
+                                            + "/target/" +path));
+                        } else {
+                            ReportPortal.emitLog(screenName,
+                                    "Info", new Date(), new File(System.getProperty("user.dir")
+                                            + "/target/" +path));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
