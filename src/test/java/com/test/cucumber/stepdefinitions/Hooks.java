@@ -19,20 +19,7 @@ public class Hooks {
 
     @After
     public void afterClass(Scenario scenario) throws InterruptedException, IOException {
-        if (scenario.isFailed()) {
-            try {
-                byte[] screenshot =
-                        ((TakesScreenshot) AppiumDriverManager.getDriver())
-                                .getScreenshotAs(OutputType.BYTES);
-                scenario.embed(screenshot, "image/png");
-            } catch (WebDriverException wde) {
-                System.err.println(wde.getMessage());
-            } catch (ClassCastException cce) {
-                cce.printStackTrace();
-            }
-            System.out.println("Inside After" + Thread.currentThread().getId());
-        }
-        AppiumDriverManager.getDriver().quit();
+
 
     }
 }

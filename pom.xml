@@ -101,6 +101,11 @@
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-cucumber</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
             <artifactId>logger-java-logback</artifactId>
             <version>LATEST</version>
         </dependency>
