@@ -1,14 +1,12 @@
 package com.appium.manager;
 
-import com.annotation.values.Description;
+import com.annotation.values.Author;
 import com.annotation.values.SkipIf;
 import com.appium.utils.AppiumDevice;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.Helpers;
 import com.appium.utils.HostMachineDeviceManager;
-import com.aventstack.extentreports.Status;
-import com.report.factory.ExtentManager;
 import org.json.JSONObject;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
@@ -19,62 +17,67 @@ import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Optional;
 
 
 public final class AppiumParallelTestListener extends Helpers
         implements IClassListener, IInvokedMethodListener, ISuiteListener, ITestListener {
 
-    private ReportManager reportManager;
+    private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
-    private String testDescription = "";
     private AppiumDriverManager appiumDriverManager;
-    private String atdHost = null;
-    private String atdPort = null;
+    private Optional<String> atdHost;
+    private Optional<String> atdPort;
 
     public AppiumParallelTestListener() throws Exception {
         try {
-            reportManager = new ReportManager();
+            testLogger = new TestLogger();
             appiumServerManager = new AppiumServerManager();
             deviceAllocationManager = DeviceAllocationManager.getInstance();
             appiumDriverManager = new AppiumDriverManager();
-            atdHost = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdHost");
-            atdPort = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdPort");
+            atdHost = Optional.ofNullable(CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdHost"));
+            atdPort = Optional.ofNullable(CapabilityManager.getInstance()
+                    .getMongoDbHostAndPort().get("atdPort"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
+    /*
+     * Handle Skipif annotation
+     * SendResults to ATD service if required
+     */
     @Override
-    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-        String postTestResults = "http://" + atdHost + ":"
-                + atdPort + "/testresults";
-        sendResultsToAtdService(testResult,
-                "Started", postTestResults, new HashMap<>());
-        try {
-            SkipIf skip =
-                    method.getTestMethod()
-                            .getConstructorOrMethod()
-                            .getMethod().getAnnotation(SkipIf.class);
-            AppiumParallelMethodTestListener.isSkip(skip);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult testResult) {
+        if(atdHost.isPresent() && atdPort.isPresent()) {
+            String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+            sendResultsToAtdService(testResult, "Started", postTestResults, new HashMap<>());
+        }
+        SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(SkipIf.class);
+        if(annotation != null && AppiumDriverManager.getDriver().getPlatformName()
+                .equalsIgnoreCase(annotation.platform())) {
+            throw new SkipException("Skipped because property was set to :::" + annotation.platform());
         }
     }
 
+    /*
+     * Send results to ATD service if required
+     * Stop Appium Driver after method invocation completed
+     */
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         JSONObject json = new JSONObject();
         json.put("id", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         json.put("version", new AppiumDeviceManager().getDeviceVersion());
         json.put("platform", AppiumDeviceManager.getMobilePlatform());
-        //json.put("resolution", AppiumDeviceManager.getMobilePlatform());
         try {
             json.put("model", new AppiumDeviceManager().getDeviceModel());
         } catch (InterruptedException | IOException e) {
@@ -83,12 +86,11 @@ public final class AppiumParallelTestListener extends Helpers
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                HashMap<String, String> logs = reportManager.endLogTestResults(testResult);
-                if (atdHost != null && atdPort != null) {
-                    String postTestResults = "http://" + atdHost + ":"
-                            + atdPort + "/testresults";
-                    sendResultsToAtdService(testResult,
-                            "Completed", postTestResults, logs);
+                HashMap<String, String> logs = testLogger.endLogging(testResult
+                        , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                if (atdHost.isPresent() && atdPort.isPresent()) {
+                    String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                    sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
                 }
             }
             if (method.isTestMethod()) {
@@ -101,8 +103,8 @@ public final class AppiumParallelTestListener extends Helpers
 
 
     /*
-    Document to make codacy happy
-    */
+     * Starts Appium Server before each test suite
+     */
     @Override
     public void onStart(ISuite iSuite) {
         try {
@@ -112,7 +114,9 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
-
+    /*
+     * Stops Appium Server after each test suite
+     */
     @Override
     public void onFinish(ISuite iSuite) {
         try {
@@ -122,6 +126,9 @@ public final class AppiumParallelTestListener extends Helpers
         }
     }
 
+    /*
+     * Allocates device for test execution
+     */
     @Override
     public void onBeforeClass(ITestClass testClass) {
         try {
@@ -129,71 +136,97 @@ public final class AppiumParallelTestListener extends Helpers
             String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
             DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
             AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
-            String className = testClass.getRealClass().getSimpleName();
             deviceAllocationManager.allocateDevice(appiumDevice);
-
-            if (getClass().getAnnotation(Description.class) != null) {
-                testDescription = getClass().getAnnotation(Description.class).value();
-            }
-            reportManager.createParentNodeExtent(className,
-                    testDescription);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /*
+     * Deallocated device post test execution
+     */
     @Override
     public void onAfterClass(ITestClass iTestClass) {
-        ExtentManager.getExtent().flush();
         deviceAllocationManager.freeDevice();
     }
 
+    /*
+     * Sets description for each test method with platform and Device UDID allocated to it.
+     * Starts Driver instance for execution
+     */
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
             appiumDriverManager.startAppiumDriverInstance();
-            reportManager.setAuthorName(iTestResult);
-            reportManager.startLogResults(iTestResult.getMethod().getMethodName(),
+            testLogger.startLogging(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass().getRealClass().getSimpleName());
+            // Sets description for each test method with platform and Device UDID allocated to it.
+            Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
+            String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
+                    + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+            Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(Author.class);
+            if (annotation != null) {
+                description += "\nAuthor: " + annotation.name();
+            }
+            if (originalDescription.isPresent() &&
+                    !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
+                iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
+            } else {
+                iTestResult.getMethod().setDescription(description);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestFailure(ITestResult iTestResult) {
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         System.out.println("Skipped...");
-        if (atdHost != null && atdPort != null) {
-            String url = "http://" + atdHost + ":"
-                    + atdPort + "/testresults";
-            sendResultsToAtdService(iTestResult,
-                    "UnKnown", url, new HashMap<>());
+        if (atdHost.isPresent() && atdPort.isPresent()) {
+            String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+            sendResultsToAtdService(iTestResult, "UnKnown", url, new HashMap<>());
         }
-        (reportManager.parentTest.get()).getModel().setStatus(Status.SKIP);
-        (reportManager.childTest.get()).getModel().setStatus(Status.SKIP);
-        ExtentManager.getExtent().flush();
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onStart(ITestContext iTestContext) {
 
     }
 
+    /*
+    * Document to make codacy happy
+    */
     @Override
     public void onFinish(ITestContext iTestContext) {
 

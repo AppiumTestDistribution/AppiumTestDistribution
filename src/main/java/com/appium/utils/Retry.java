@@ -2,24 +2,20 @@ package com.appium.utils;
 
 import com.annotation.values.RetryCount;
 import com.appium.manager.ConfigFileManager;
-import com.appium.manager.ReportManager;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Retry implements IRetryAnalyzer {
-    public int maxRetryCount;
     private ConfigFileManager prop;
-    public int retryCountForTest = 0;
-    private Map<String, Integer> retryCounts = new HashMap<String, Integer>();
+    private AtomicInteger COUNTER;
 
     public Retry() {
         try {
             prop = ConfigFileManager.getInstance();
+            COUNTER = new AtomicInteger(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -27,45 +23,18 @@ public class Retry implements IRetryAnalyzer {
 
     @Override
     public boolean retry(ITestResult iTestResult) {
-        int counter = 0;
-        String methodName = iTestResult.getMethod().getMethodName();
-        Object[] obj = iTestResult.getParameters();
-        Method[] methods = iTestResult.getInstance().getClass().getMethods();
-        for (Method m : methods) {
-            if (m.getName().equals(iTestResult.getMethod().getMethodName())) {
-                if (m.isAnnotationPresent(RetryCount.class)) {
-                    RetryCount ta = m.getAnnotation(RetryCount.class);
-                    maxRetryCount = ta.maxRetryCount();
-                } else {
-                    try {
-                        maxRetryCount = Integer.parseInt(prop.getProperty("MAX_RETRY_COUNT"));
-                    } catch (Exception e) {
-                        maxRetryCount = 0;
-                    }
-                }
+        int maxRetryCount;
+        RetryCount annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(RetryCount.class);
+        if(annotation != null) {
+            maxRetryCount = annotation.maxRetryCount();
+        } else {
+            try {
+                maxRetryCount = Integer.parseInt(prop.getProperty("MAX_RETRY_COUNT"));
+            } catch (Exception e) {
+                maxRetryCount = 0;
             }
         }
-
-        while (obj.length != counter) {
-            methodName = methodName + "_" + obj[counter];
-            counter ++;
-        }
-
-        if (retryCounts.containsKey(methodName)) {
-            retryCountForTest = retryCounts.get(methodName);
-            retryCountForTest++;
-        }
-
-        if (!iTestResult.isSuccess() && retryCountForTest < maxRetryCount) {
-            System.out.println(methodName
-                    + " execution failed in count: " + retryCountForTest + "\n");
-            retryCounts.put(methodName, retryCountForTest);
-            return true;
-        } else if (!iTestResult.isSuccess() && retryCountForTest == maxRetryCount) {
-            System.out.println(methodName
-                    + " execution failed in count: " + maxRetryCount + "\n");
-            return false;
-        }
-        return false;
+        return !iTestResult.isSuccess() && COUNTER.incrementAndGet() < maxRetryCount;
     }
 }

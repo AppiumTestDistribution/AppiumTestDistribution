@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 /**
@@ -76,7 +77,7 @@ public class DeviceAllocationManager {
         return hostMachineDeviceManager.getDevicesByHost().getAllDevices();
     }
 
-    public synchronized AppiumDevice getNextAvailableDevice() {
+    public synchronized AppiumDevice getNextAvailableDevice() throws InterruptedException {
         int i = 0;
         for (AppiumDevice device : allDevices) {
             Thread t = Thread.currentThread();

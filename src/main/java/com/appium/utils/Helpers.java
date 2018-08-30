@@ -1,7 +1,6 @@
 package com.appium.utils;
 
 import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.ConfigFileManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;

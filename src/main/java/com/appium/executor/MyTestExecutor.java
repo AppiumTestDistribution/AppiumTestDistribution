@@ -29,14 +29,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -180,6 +173,7 @@ public class MyTestExecutor {
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
+        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelTestListener");
         listeners.add("com.appium.utils.RetryListener");
         include(listeners, "LISTENERS");
@@ -240,6 +234,7 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
+        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
@@ -271,6 +266,7 @@ public class MyTestExecutor {
         suite.setDataProviderThreadCount(deviceCount);
         suite.setVerbose(2);
         suite.setParallel(ParallelMode.METHODS);
+        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);

@@ -8,7 +8,6 @@ import com.appium.executor.MyTestExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.HostMachineDeviceManager;
-import com.report.factory.ExtentManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
@@ -48,7 +47,6 @@ public class ParallelThread {
     private IOSDeviceConfiguration iosDevice;
     private MyTestExecutor myTestExecutor;
     private HtmlReporter htmlReporter;
-    ExtentManager extentManager;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -57,7 +55,6 @@ public class ParallelThread {
         androidDevice = new AndroidDeviceConfiguration();
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
-        extentManager = new ExtentManager();
         createOutputDirectoryIfNotExist();
     }
 

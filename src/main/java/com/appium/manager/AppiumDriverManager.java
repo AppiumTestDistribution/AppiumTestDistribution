@@ -95,8 +95,7 @@ public class AppiumDriverManager {
     }
 
     // Should be used by Cucumber as well
-    public void startAppiumDriverInstance()
-            throws Exception {
+    public void startAppiumDriverInstance() throws Exception {
         String userSpecifiedCaps;
         DesiredCapabilities iOS = null;
         DesiredCapabilities android = null;
