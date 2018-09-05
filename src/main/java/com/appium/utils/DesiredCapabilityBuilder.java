@@ -106,14 +106,8 @@ public class DesiredCapabilityBuilder {
         });
 
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            if (desiredCapabilities.getCapability("automationName") == null
-                    || desiredCapabilities.getCapability("automationName")
-                    .toString() != "UIAutomator2") {
-                desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                        AutomationName.ANDROID_UIAUTOMATOR2);
-                desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
-                        port);
-            }
+            desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
+                    port);
             appPackage(desiredCapabilities);
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
             String version = AppiumDeviceManager.getAppiumDevice().getDevice().getOsVersion();
