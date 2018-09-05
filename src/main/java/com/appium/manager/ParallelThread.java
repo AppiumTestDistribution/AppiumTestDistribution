@@ -7,6 +7,7 @@ import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.CapabilityManager;
 import com.appium.utils.HostMachineDeviceManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -47,6 +48,7 @@ public class ParallelThread {
     private IOSDeviceConfiguration iosDevice;
     private MyTestExecutor myTestExecutor;
     private HtmlReporter htmlReporter;
+    private CapabilityManager capabilityManager;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -55,6 +57,7 @@ public class ParallelThread {
         androidDevice = new AndroidDeviceConfiguration();
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
+        capabilityManager = CapabilityManager.getInstance();
         createOutputDirectoryIfNotExist();
     }
 
@@ -107,6 +110,11 @@ public class ParallelThread {
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
+            if(!capabilityManager.getCapabilityObjectFromKey("android")
+                    .has("automationName")) {
+                throw new IllegalArgumentException("Please set automationName " +
+                        "as UIAutomator2 or Espresso to create Android driver");
+            }
             generateDirectoryForAdbLogs();
             createSnapshotFolderAndroid("android");
         }

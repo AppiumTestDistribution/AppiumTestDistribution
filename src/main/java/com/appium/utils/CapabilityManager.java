@@ -55,7 +55,7 @@ public class CapabilityManager {
         }
     }
 
-    public JSONArray getCapabitiesArrayFromKey(String key) {
+    public JSONArray getCapabilitiesArrayFromKey(String key) {
         return capabilities.getJSONArray(key);
     }
 
@@ -78,7 +78,7 @@ public class CapabilityManager {
     }
 
     public JSONArray getHostMachineObject() throws Exception {
-        return getCapabitiesArrayFromKey("hostMachines");
+        return getCapabilitiesArrayFromKey("hostMachines");
     }
 
     public Boolean shouldExcludeLocalDevices() throws Exception {
