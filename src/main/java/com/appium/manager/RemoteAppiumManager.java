@@ -7,7 +7,7 @@ import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.device.Device;
-import okhttp3.Response;
+import okhttp3.*;
 import org.json.JSONObject;
 
 import java.net.URL;
@@ -19,15 +19,19 @@ import java.util.Optional;
 
 public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
+    private static AppiumDriverManager appiumDriverManager;
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+
     @Override
-    public void destroyAppiumNode(String host) throws Exception {
+    public void destroyAppiumNode ( String host ) throws Exception {
         new Api().getResponse("http://" + host + ":" + getRemoteAppiumManagerPort(host)
                 + "/appium/stop").body().string();
 
     }
 
     @Override
-    public String getRemoteWDHubIP(String host) throws Exception {
+    public String getRemoteWDHubIP ( String host ) throws Exception {
         String hostIP = "http://" + host;
         String appiumRunningPort = new JSONObject(new Api().getResponse(hostIP
                 + ":" + getRemoteAppiumManagerPort(host)
@@ -36,38 +40,32 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     }
 
     @Override
-    public void startAppiumServer(String host) throws Exception {
+    public void startAppiumServer ( String host ) throws Exception {
+
+        appiumDriverManager = new AppiumDriverManager();
+
         System.out.println(
                 "**************************************************************************\n");
         System.out.println("Starting Appium Server on host " + host);
         System.out.println(
                 "**************************************************************************\n");
+
         String serverPath = CapabilityManager.getInstance().getAppiumServerPath(host);
         String serverPort = CapabilityManager.getInstance().getAppiumServerPort(host);
-        if (serverPath == null
-                && serverPort == null) {
-            System.out.println("Picking Default Path for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":"
-                    + getRemoteAppiumManagerPort(host)
-                    + "/appium/start").body().string();
-        } else if (serverPath != null && serverPort != null) {
-            System.out.println("Picking UserSpecified Path & Port for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":"
-                    + getRemoteAppiumManagerPort(host)
-                    + "/appium/start?URL=" + serverPath
-                    + "&PORT=" + serverPort).body().string();
-        } else if (serverPath != null) {
-            System.out.println("Picking UserSpecified Path "
-                    + "& Using default Port for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":"
-                    + getRemoteAppiumManagerPort(host)
-                    + "/appium/start?URL=" + serverPath).body().string();
-        } else if (serverPort != null) {
-            System.out.println("Picking Default Path & User Port for AppiumServiceBuilder");
-            new Api().getResponse("http://" + host + ":"
-                    + getRemoteAppiumManagerPort(host)
-                    + "/appium/start?PORT=" + serverPort).body().string();
-        }
+        String serverCaps = appiumDriverManager.getDesiredServerCapabilities().toString();
+
+        OkHttpClient client = new OkHttpClient();
+
+
+        RequestBody requestBody = RequestBody.create(JSON, constructRequestBody(serverPath,serverPort,serverCaps));
+
+
+        Request request = new Request.Builder().url("http://" + host + ":"
+                + getRemoteAppiumManagerPort(host)
+                + "/appium/start")
+                .post(requestBody).build();
+
+        client.newCall(request).execute();
 
         boolean status = Boolean.getBoolean(new JSONObject(new Api()
                 .getResponse("http://" + host + ":"
@@ -83,7 +81,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     }
 
     @Override
-    public List<Device> getDevices(String machineIP, String platform) throws Exception {
+    public List<Device> getDevices ( String machineIP, String platform ) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<Device> devices = new ArrayList<>();
@@ -128,7 +126,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     }
 
     @Override
-    public Device getSimulator(String machineIP, String deviceName, String os) throws Exception {
+    public Device getSimulator ( String machineIP, String deviceName, String os ) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = String.format("http://%s:"
@@ -143,7 +141,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     }
 
     @Override
-    public int getAvailablePort(String hostMachine) throws Exception {
+    public int getAvailablePort ( String hostMachine ) throws Exception {
         String url = String.format("http://%s:"
                 + getRemoteAppiumManagerPort(hostMachine)
                 + "/machine/availablePort", hostMachine);
@@ -152,7 +150,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     }
 
     @Override
-    public int startIOSWebKitProxy(String host) throws Exception {
+    public int startIOSWebKitProxy ( String host ) throws Exception {
         int port = getAvailablePort(host);
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -167,7 +165,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     }
 
     @Override
-    public void destoryIOSWebKitProxy(String host) throws Exception {
+    public void destoryIOSWebKitProxy ( String host ) throws Exception {
         if (AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
             ObjectMapper mapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -180,6 +178,13 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
         }
     }
 
+    private String constructRequestBody ( String serverPath, String serverPort, String serverCaps ) {
 
+        JSONObject json = new JSONObject();
+        json.put("APPIUM_PATH", serverPath == null ? JSONObject.NULL : serverPath);
+        json.put("PORT", serverPort == null ? JSONObject.NULL : serverPort);
+        json.put("SERVER_CAPS", serverCaps);
+
+        return json.toString();
+    }
 }
-

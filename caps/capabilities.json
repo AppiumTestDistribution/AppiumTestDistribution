@@ -1,4 +1,7 @@
 {
+  "server":{
+    "LOG_LEVEL":"error"
+  },
   "android": {
     "platformName": "android",
     "noSign": true,
