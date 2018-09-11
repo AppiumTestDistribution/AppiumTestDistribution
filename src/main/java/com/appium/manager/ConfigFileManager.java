@@ -20,7 +20,7 @@ public class ConfigFileManager {
         prop.load(inputStream);
     }
 
-    public static ConfigFileManager getInstance() throws IOException {
+    public static ConfigFileManager getInstance() {
         if (instance == null) {
             String configFile = "config.properties";
             try {

@@ -13,12 +13,8 @@ public class Retry implements IRetryAnalyzer {
     private AtomicInteger COUNTER;
 
     public Retry() {
-        try {
-            prop = ConfigFileManager.getInstance();
-            COUNTER = new AtomicInteger(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        prop = ConfigFileManager.getInstance();
+        COUNTER = new AtomicInteger(0);
     }
 
     @Override

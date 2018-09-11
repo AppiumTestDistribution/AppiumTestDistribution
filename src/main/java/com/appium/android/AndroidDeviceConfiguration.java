@@ -18,7 +18,7 @@ public class AndroidDeviceConfiguration {
     public static List<String> validDeviceIds = new ArrayList<>();
     private DevicesByHost devicesByHost;
 
-    public AndroidDeviceConfiguration() throws IOException {
+    public AndroidDeviceConfiguration() {
         devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
@@ -44,8 +44,7 @@ public class AndroidDeviceConfiguration {
         return AppiumDeviceManager.getAppiumDevice();
     }
 
-    public String screenRecord(String fileName)
-            throws IOException, InterruptedException {
+    public String screenRecord(String fileName) {
         return "adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                 + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
                 + ".mp4";
@@ -63,8 +62,7 @@ public class AndroidDeviceConfiguration {
         }
     }
 
-    public String getDeviceManufacturer()
-            throws IOException, InterruptedException {
+    public String getDeviceManufacturer() {
         return devicesByHost.getDeviceProperty(AppiumDeviceManager
                 .getAppiumDevice().getDevice().getUdid())
                 .getDevice().getDeviceManufacturer();

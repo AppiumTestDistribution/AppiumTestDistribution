@@ -17,11 +17,10 @@ import java.util.logging.Logger;
  */
 public class AppiumServerManager {
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
-    RemoteAppiumManager remoteAppiumManager;
-    DevicesByHost devicesByHost;
+    private RemoteAppiumManager remoteAppiumManager;
+    private DevicesByHost devicesByHost;
 
-    public AppiumServerManager() throws IOException {
+    public AppiumServerManager() {
         remoteAppiumManager = new RemoteAppiumManager();
         devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }

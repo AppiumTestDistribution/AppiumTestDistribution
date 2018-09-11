@@ -1,39 +1,50 @@
 {
   "android": {
     "platformName": "android",
-    "noSign": true,
-    "deviceName": "android",
-    "uiautomator2ServerInstallTimeout":60000,
-    "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
+    "platformVersion": "7.0",
+    "app": "./build/wordpress.apk",
+    "appPackage": "org.wordpress.android",
+    "appActivity": "org.wordpress.android.ui.WPLaunchActivity",
+    "deviceName": "10.3.0.43:15569",
+    "noSign": true
   },
   "iOS": {
     "platformName": "iOS",
     "app": {
-      "simulator": "https://github.com/saikrishna321/VodQaAdvancedAppium/raw/master/vodqa.zip"
+      "simulator": "./build/WordPress.zip"
     },
+    "deviceName": "iPhone",
     "wdaLaunchTimeout": 80000,
     "wdaConnectionTimeout": 80000,
-    "preventWDAAttachments": false,
+    "preventWDAAttachments": true,
     "clearSystemFiles": true,
     "shouldUseSingletonTestManager": false,
     "simpleIsVisibleCheck": true,
-    "maxTypingFrequency": 10,
-    "isHeadless": true,
-    "fullReset": false
+    "maxTypingFrequency": 10
   },
   "hostMachines": [
     {
-      "machineIP": "127.0.0.1",
+      "machineIP": "10.3.2.108",
       "simulators": [
         {
-          "deviceName": "iPhone X",
-          "OS": "11.4"
+          "deviceName": "iPhone 6",
+          "OS": "11.3"
         },
         {
-          "deviceName": "iPhone 8",
-          "OS": "11.4"
+          "deviceName": "iPhone 7",
+          "OS": "11.3"
+        },
+        {
+          "deviceName": "iPhone 6",
+          "OS": "11.2"
+        },
+        {
+          "deviceName": "iPhone 7",
+          "OS": "11.2"
         }
       ]
     }
-  ]
+  ],
+  "ATDServiceHost":"127.0.0.1",
+  "ATDServicePort":"3000"
 }

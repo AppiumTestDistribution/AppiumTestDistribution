@@ -78,11 +78,7 @@ public final class AppiumParallelTestListener extends Helpers
         json.put("id", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         json.put("version", new AppiumDeviceManager().getDeviceVersion());
         json.put("platform", AppiumDeviceManager.getMobilePlatform());
-        try {
-            json.put("model", new AppiumDeviceManager().getDeviceModel());
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
+        json.put("model", new AppiumDeviceManager().getDeviceModel());
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {

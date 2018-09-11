@@ -27,7 +27,7 @@ public class Flick extends CommandPrompt {
     private SimulatorManager simulatorManager;
     private ThreadLocal<Process> simulatorRecordSession = new ThreadLocal<>();
 
-    public Flick() throws IOException {
+    public Flick() {
         simulatorManager = new SimulatorManager();
     }
 

@@ -20,14 +20,11 @@ import java.util.logging.Logger;
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver
             = new ThreadLocal<>();
-    private IOSDeviceConfiguration iosDeviceConfiguration;
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
-    private Logger logger;
 
     public AppiumDriverManager() throws Exception {
-        iosDeviceConfiguration = new IOSDeviceConfiguration();
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
     }
@@ -125,7 +122,7 @@ public class AppiumDriverManager {
 
         if (new File(userSpecifiediOSCaps).exists()) {
             String iOSJsonFilePath = userSpecifiediOSCaps;
-            Path path = FileSystems.getDefault().getPath(iOSJsonFilePath.toString());
+            Path path = FileSystems.getDefault().getPath(iOSJsonFilePath);
             if (!path.getParent().isAbsolute()) {
                 iOSJsonFilePath = path.normalize()
                         .toAbsolutePath().toString();
@@ -145,7 +142,7 @@ public class AppiumDriverManager {
 
         if (new File(userSpecifiedAndroidCaps).exists()) {
             String androidJsonFilePath = userSpecifiedAndroidCaps;
-            Path path = FileSystems.getDefault().getPath(androidJsonFilePath.toString());
+            Path path = FileSystems.getDefault().getPath(androidJsonFilePath);
             if (!path.getParent().isAbsolute()) {
                 androidJsonFilePath = path.normalize()
                         .toAbsolutePath().toString();
