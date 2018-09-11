@@ -23,7 +23,7 @@ public class ArtifactsUploader {
     private List<HostArtifact> hostArtifacts;
 
 
-    private ArtifactsUploader() throws IOException {
+    private ArtifactsUploader() {
         try {
             capabilityManager = CapabilityManager.getInstance();
         } catch (Exception e) {
@@ -33,7 +33,7 @@ public class ArtifactsUploader {
         hostArtifacts = new ArrayList<>();
     }
 
-    public static ArtifactsUploader getInstance() throws IOException {
+    public static ArtifactsUploader getInstance() {
         if (instance == null) {
             instance = new ArtifactsUploader();
         }

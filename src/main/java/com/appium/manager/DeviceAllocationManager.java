@@ -29,7 +29,6 @@ public class DeviceAllocationManager {
     private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;
     private List<Thread> suspendedThreads;
-    private AppiumDriverManager appiumDriverManager;
 
     private DeviceAllocationManager() throws Exception {
         try {
@@ -41,7 +40,6 @@ public class DeviceAllocationManager {
             }
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
-            appiumDriverManager = new AppiumDriverManager();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,22 +60,13 @@ public class DeviceAllocationManager {
         }
     }
 
-    private void connectToSTF() {
-        try {
-            if (STF_SERVICE_URL != null && ACCESS_TOKEN != null) {
-                connectToSTFServer();
-            }
-        } catch (MalformedURLException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
 
     public List<AppiumDevice> getDevices() {
         LOGGER.info("All devices connected");
         return hostMachineDeviceManager.getDevicesByHost().getAllDevices();
     }
 
-    public synchronized AppiumDevice getNextAvailableDevice() throws InterruptedException {
+    public synchronized AppiumDevice getNextAvailableDevice() {
         int i = 0;
         for (AppiumDevice device : allDevices) {
             Thread t = Thread.currentThread();
@@ -110,16 +99,5 @@ public class DeviceAllocationManager {
         LOGGER.info("Allocated Device " + appiumDevice + " for Execution");
         AppiumDeviceManager.setDevice(appiumDevice);
     }
-
-    private void connectToSTFServer() throws MalformedURLException, URISyntaxException {
-        DeviceResponse devices = service.getDevices();
-        List<com.github.yunusmete.stf.model.Device> deviceList = devices.getDevices();
-        for (com.github.yunusmete.stf.model.Device device : deviceList) {
-            if (device.isPresent()) {
-                if (device.getOwner() == null) {
-                    service.addDeviceToUser(new DeviceBody(device.getSerial(), 90000));
-                }
-            }
-        }
-    }
+    
 }

@@ -28,7 +28,7 @@ public class CapabilityManager {
         return instance;
     }
 
-    private String getCapabilityLocation() throws IOException {
+    private String getCapabilityLocation() {
         String path = System.getProperty("user.dir") + "/caps/"
                 + "capabilities.json";
         String caps = ConfigFileManager.getInstance()

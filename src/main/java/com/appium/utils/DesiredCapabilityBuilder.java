@@ -27,14 +27,12 @@ import static java.util.stream.Collectors.toList;
 public class DesiredCapabilityBuilder {
 
     private AvailablePorts availablePorts;
-    private DevicesByHost devicesByHost;
 
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
             = new ThreadLocal<>();
 
-    public DesiredCapabilityBuilder() throws IOException {
+    public DesiredCapabilityBuilder() {
         availablePorts = new AvailablePorts();
-        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 
     public static DesiredCapabilities getDesiredCapability() {
@@ -65,18 +63,14 @@ public class DesiredCapabilityBuilder {
             if (appCapability.equals(key)) {
                 Object values = platFormCapabilities.get(appCapability);
                 HostArtifact hostArtifact = null;
-                try {
-                    hostArtifact = ArtifactsUploader.getInstance()
-                            .getHostArtifacts().stream().filter(s ->
-                                    s.getHost()
-                                            .equalsIgnoreCase(AppiumDeviceManager
-                                                    .getAppiumDevice()
-                                                    .getHostName()))
-                            .collect(toList()).parallelStream()
-                            .findFirst().get();
-                } catch (IOException e) {
-                    new RuntimeException("Artifact uploader path issue");
-                }
+                hostArtifact = ArtifactsUploader.getInstance()
+                        .getHostArtifacts().stream().filter(s ->
+                                s.getHost()
+                                        .equalsIgnoreCase(AppiumDeviceManager
+                                                .getAppiumDevice()
+                                                .getHostName()))
+                        .collect(toList()).parallelStream()
+                        .findFirst().get();
                 String appPath = "";
                 if (values instanceof JSONObject) {
                     int length = AppiumDeviceManager.getAppiumDevice()
@@ -121,12 +115,15 @@ public class DesiredCapabilityBuilder {
                         deviceProperty.getDevice().getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                         deviceProperty.getDevice().getOsVersion());
+                desiredCapabilities.setCapability("webkitDebugProxyPort",
+                        new AvailablePorts().getAvailablePort(AppiumDeviceManager
+                                .getAppiumDevice().getHostName()));
             } else {
                 IAppiumManager appiumManager = AppiumManagerFactory
                         .getAppiumManager(AppiumDeviceManager.getAppiumDevice().getHostName());
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
-                        appiumManager.startIOSWebKitProxy(
-                                AppiumDeviceManager.getAppiumDevice().getHostName()));
+                        new AvailablePorts().getAvailablePort(AppiumDeviceManager
+                                .getAppiumDevice().getHostName()));
             }
 
             desiredCapabilities.setCapability(IOSMobileCapabilityType

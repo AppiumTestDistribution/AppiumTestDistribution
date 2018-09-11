@@ -6,7 +6,7 @@ public class HostArtifact {
     private final Map<String, String> artifactsByType;
     private String host;
 
-    public HostArtifact(String host, Map<String, String> artifactsByType) {
+    HostArtifact(String host, Map<String, String> artifactsByType) {
         this.host = host;
         this.artifactsByType = artifactsByType;
     }

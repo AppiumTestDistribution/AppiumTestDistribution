@@ -13,16 +13,10 @@ import java.io.IOException;
 public class AppiumDeviceManager {
 
     private static ThreadLocal<AppiumDevice> appiumDevice = new ThreadLocal<>();
-    private IOSDeviceConfiguration iosDeviceConfiguration;
     private AndroidDeviceConfiguration androidDeviceConfiguration;
 
     public AppiumDeviceManager() {
-        try {
-            iosDeviceConfiguration = new IOSDeviceConfiguration();
-            androidDeviceConfiguration = new AndroidDeviceConfiguration();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        androidDeviceConfiguration = new AndroidDeviceConfiguration();
     }
 
     public static AppiumDevice getAppiumDevice() {
@@ -43,7 +37,7 @@ public class AppiumDeviceManager {
         }
     }
 
-    public String getDeviceModel() throws InterruptedException, IOException {
+    public String getDeviceModel() {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceModel();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
@@ -52,14 +46,6 @@ public class AppiumDeviceManager {
         throw new IllegalArgumentException("DeviceModel is Empty");
     }
 
-    public String getDeviceCategory() throws Exception {
-        if (iosDeviceConfiguration.deviceUDIDiOS
-                .contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
-            return AppiumDeviceManager.getAppiumDevice().getDevice().getName().replace(" ", "_");
-        } else {
-            return androidDeviceConfiguration.getDeviceModel();
-        }
-    }
 
     public String getDeviceVersion() {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {

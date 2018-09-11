@@ -79,13 +79,9 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
         appiumDriverManager = new AppiumDriverManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         deviceSingleton = DeviceSingleton.getInstance();
-        try {
-            iosDevice = new IOSDeviceConfiguration();
-            androidDevice = new AndroidDeviceConfiguration();
-            prop = ConfigFileManager.getInstance();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        iosDevice = new IOSDeviceConfiguration();
+        androidDevice = new AndroidDeviceConfiguration();
+        prop = ConfigFileManager.getInstance();
     }
 
     public void before(Match match, Result result) {
