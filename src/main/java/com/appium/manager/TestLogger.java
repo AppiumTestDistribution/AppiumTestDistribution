@@ -25,26 +25,26 @@ import java.util.logging.Level;
 class TestLogger extends Helpers {
 
     private Flick videoRecording;
-    public File logFile;
+    private File logFile;
     private List<LogEntry> logEntries;
     private PrintWriter log_file_writer;
     private ScreenShotManager screenShotManager;
     private String videoPath;
 
-    public String getVideoPath() {
+    private String getVideoPath() {
         return videoPath;
     }
 
-    public void setVideoPath(String videoPath) {
+    private void setVideoPath(String videoPath) {
         this.videoPath = videoPath;
     }
 
-    public TestLogger() throws IOException {
+    TestLogger() {
         this.videoRecording = new Flick();
         screenShotManager = new ScreenShotManager();
     }
 
-    public void startLogging(String methodName, String className) throws IOException, InterruptedException {
+    protected void startLogging(String methodName, String className) throws IOException, InterruptedException {
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
                 && AppiumDriverManager.getDriver().getCapabilities().getCapability("browserName") == null) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
@@ -59,7 +59,7 @@ class TestLogger extends Helpers {
         }
     }
 
-    public HashMap<String, String> endLogging(ITestResult result, String deviceModel)
+    protected HashMap<String, String> endLogging(ITestResult result, String deviceModel)
             throws Exception {
         HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
@@ -156,7 +156,7 @@ class TestLogger extends Helpers {
     }
 
     private void handleTestFailure(ITestResult result, String className,
-                                   String deviceModel) throws IOException {
+                                   String deviceModel) {
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),

@@ -34,19 +34,19 @@ public class ScreenShotManager {
     private String framedFailedScreen;
     private String framedCapturedScreen;
 
-    public String getFramedCapturedScreen() {
+    private String getFramedCapturedScreen() {
         return framedCapturedScreen;
     }
 
-    public void setFramedCapturedScreen(String framedCapturedScreen) {
+    private void setFramedCapturedScreen(String framedCapturedScreen) {
         this.framedCapturedScreen = framedCapturedScreen;
     }
 
-    public String getCapturedScreen() {
+    private String getCapturedScreen() {
         return capturedScreen;
     }
 
-    public void setCapturedScreen(String capturedScreen) {
+    private void setCapturedScreen(String capturedScreen) {
         this.capturedScreen = capturedScreen;
     }
 
@@ -54,7 +54,7 @@ public class ScreenShotManager {
         return framedFailedScreen;
     }
 
-    public void setFramedFailedScreen(String framedFailedScreen) {
+    private void setFramedFailedScreen(String framedFailedScreen) {
         this.framedFailedScreen = framedFailedScreen;
     }
 
@@ -62,7 +62,7 @@ public class ScreenShotManager {
         return failedScreen;
     }
 
-    public void setFailedScreen(String failedScreen) {
+    private void setFailedScreen(String failedScreen) {
         this.failedScreen = failedScreen;
     }
 
@@ -93,8 +93,7 @@ public class ScreenShotManager {
         return getDeviceModel;
     }
 
-    public void captureScreenShot(String screenShotName)
-            throws IOException {
+    public void captureScreenShot(String screenShotName) {
         String className = new Exception().getStackTrace()[1].getClassName();
         String methodName = new Exception().getStackTrace()[1].getMethodName();
         String deviceModel = null;
@@ -197,10 +196,4 @@ public class ScreenShotManager {
         }
     }
 
-    private void deleteFile(String screenToFrame) {
-        File fileToDelete = new File(screenToFrame);
-        if (fileToDelete.exists()) {
-            fileToDelete.delete();
-        }
-    }
 }
