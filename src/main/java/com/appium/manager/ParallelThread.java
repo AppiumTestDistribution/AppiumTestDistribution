@@ -188,7 +188,7 @@ public class ParallelThread {
         List<AppiumDevice> udids = hostMachineDeviceManager.getDevicesByHost().getAllDevices();
         for (AppiumDevice udid : udids) {
             String os = udid.getDevice()
-                    .getOs().equalsIgnoreCase(IOS) ? "iPhone" : "Android";
+                    .getOs().equalsIgnoreCase(IOS) ? "iOS" : "Android";
             createPlatformDirectory(os);
             String deviceId = udid.getDevice().getUdid();
             File file = new File(
