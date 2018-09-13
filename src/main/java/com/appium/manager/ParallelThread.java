@@ -4,9 +4,11 @@ import static com.appium.manager.FigletHelper.figlet;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
+import com.appium.entities.MobilePlatform;
 import com.appium.executor.MyTestExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.utils.AppiumDevice;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.HostMachineDeviceManager;
 import org.apache.commons.io.FileUtils;
@@ -42,13 +44,12 @@ public class ParallelThread {
 
     private ConfigFileManager configFileManager;
     private DeviceAllocationManager deviceAllocationManager;
-    Map<String, String> devices = new HashMap<String, String>();
-    ArrayList<String> iOSdevices = new ArrayList<>();
     private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
     private MyTestExecutor myTestExecutor;
     private HtmlReporter htmlReporter;
     private CapabilityManager capabilityManager;
+    private HostMachineDeviceManager hostMachineDeviceManager;
 
     public ParallelThread() throws Exception {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -58,6 +59,7 @@ public class ParallelThread {
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
         capabilityManager = CapabilityManager.getInstance();
+        hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }
 
@@ -91,7 +93,6 @@ public class ParallelThread {
     }
 
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
-        HostMachineDeviceManager hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         int deviceCount = hostMachineDeviceManager.getDevicesByHost().getAllDevices().size();
 
         if (deviceCount == 0) {
@@ -105,24 +106,22 @@ public class ParallelThread {
         System.out.println("starting running tests in threads");
 
         createAppiumLogsFolder();
-
+        createSnapshotDirectoryFor();
         String platform = System.getenv("Platform");
         if (deviceAllocationManager.getDevices() != null && platform
                 .equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
-            if(!capabilityManager.getCapabilityObjectFromKey("android")
+            if (!capabilityManager.getCapabilityObjectFromKey("android")
                     .has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName " +
                         "as UIAutomator2 or Espresso to create Android driver");
             }
             generateDirectoryForAdbLogs();
-            createSnapshotFolderAndroid("android");
         }
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("mac") && platform.equalsIgnoreCase(IOS)
                 || platform.equalsIgnoreCase(BOTH)) {
             //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-            createSnapshotFolderiOS("iPhone");
         }
 
         List<Class> testcases = new ArrayList<>();
@@ -133,7 +132,6 @@ public class ParallelThread {
 
 
         if (framework.equalsIgnoreCase("testng")) {
-            // final String pack = "com.paralle.tests"; // Or any other package
             PackageUtil.getClasses(pack).stream().forEach(s -> {
                 if (s.toString().contains("Test")) {
                     testcases.add((Class) s);
@@ -147,13 +145,11 @@ public class ParallelThread {
         }
 
         if (framework.equalsIgnoreCase("cucumber")) {
-            //addPluginToCucumberRunner();
             if (runner.equalsIgnoreCase("distribute")) {
                 myTestExecutor
                         .constructXmlSuiteDistributeCucumber(deviceCount);
                 hasFailures = myTestExecutor.runMethodParallel();
             } else if (runner.equalsIgnoreCase("parallel")) {
-                //addPluginToCucumberRunner();
                 myTestExecutor
                         .constructXmlSuiteForParallelCucumber(deviceCount,
                                 hostMachineDeviceManager.getDevicesByHost().getAllDevices());
@@ -188,44 +184,27 @@ public class ParallelThread {
         }
     }
 
-    private void createSnapshotFolderAndroid(String platform) throws Exception {
-        for (int i = 1; i <= (devices.size() / 4); i++) {
-            String deviceSerial = devices.get("deviceID" + i);
-            if (deviceSerial != null) {
-                createPlatformDirectory(platform);
-                File file = new File(
-                        System.getProperty("user.dir")
-                                + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
-                                + deviceSerial);
-                if (!file.exists()) {
-                    if (file.mkdir()) {
-                        System.out.println("Android " + deviceSerial + " Directory is created!");
-                    } else {
-                        System.out.println("Failed to create directory!");
-                    }
-                }
-            }
-        }
-    }
-
-    private void createSnapshotFolderiOS(String platform) {
-        for (int i = 0; i < iOSdevices.size(); i++) {
-            String deviceSerial = iOSdevices.get(i);
-            createPlatformDirectory(platform);
+    private void createSnapshotDirectoryFor() {
+        List<AppiumDevice> udids = hostMachineDeviceManager.getDevicesByHost().getAllDevices();
+        for (AppiumDevice udid : udids) {
+            String os = udid.getDevice()
+                    .getOs().equalsIgnoreCase(IOS) ? "iPhone" : "Android";
+            createPlatformDirectory(os);
+            String deviceId = udid.getDevice().getUdid();
             File file = new File(
                     System.getProperty("user.dir")
-                            + FileLocations.SCREENSHOTS_DIRECTORY + platform + "/"
-                            + deviceSerial);
+                            + FileLocations.SCREENSHOTS_DIRECTORY + os + "/"
+                            + deviceId);
             if (!file.exists()) {
                 if (file.mkdir()) {
-                    System.out.println("IOS " + deviceSerial + " Directory is created!");
+                    System.out.println("Directory is created for device" + deviceId);
                 } else {
                     System.out.println("Failed to create directory!");
                 }
             }
+
         }
     }
-
 
     private void createPlatformDirectory(String platform) {
         File platformDirectory = new File(System.getProperty("user.dir")
@@ -234,42 +213,6 @@ public class ParallelThread {
             platformDirectory.mkdirs();
         }
     }
-
-    public void addPluginToCucumberRunner() throws IOException {
-        File dir = new File(System.getProperty("user.dir") + "/src/test/java/output/");
-        System.out.println("Getting all files in " + dir.getCanonicalPath()
-                + " including those in subdirectories");
-        List<File> files =
-                (List<File>) FileUtils.listFiles(dir,
-                        TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-        for (File file : files) {
-            BufferedReader read = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-            ArrayList list = new ArrayList();
-
-            String dataRow = read.readLine();
-            while (dataRow != null) {
-                list.add(dataRow);
-                dataRow = read.readLine();
-            }
-
-            FileWriter writer = new FileWriter(
-                    file.getAbsoluteFile());
-            writer.append("package output;");
-
-            for (int i = 0; i < list.size(); i++) {
-                writer.append(System.getProperty("line.separator"));
-                writer.append((CharSequence) list.get(i));
-            }
-            writer.flush();
-            writer.close();
-
-            Path path = Paths.get(file.getAbsoluteFile().toString());
-            List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
-            lines.add(12, "plugin = {\"com.cucumber.listener.ExtentCucumberFormatter:\"},");
-            Files.write(path, lines, StandardCharsets.UTF_8);
-        }
-    }
-
 
 }
 
