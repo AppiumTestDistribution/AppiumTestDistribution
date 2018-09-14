@@ -2,16 +2,15 @@
   "android": {
     "platformName": "android",
     "platformVersion": "7.0",
-    "app": "./build/wordpress.apk",
-    "appPackage": "org.wordpress.android",
-    "appActivity": "org.wordpress.android.ui.WPLaunchActivity",
-    "deviceName": "10.3.0.43:15569",
+    "automationName": "UIAutomator2",
+    "app": "./build/VodQA.apk",
+    "deviceName": "android",
     "noSign": true
   },
   "iOS": {
     "platformName": "iOS",
     "app": {
-      "simulator": "./build/WordPress.zip"
+      "simulator": "./build/VodQAReactNative.zip"
     },
     "deviceName": "iPhone",
     "wdaLaunchTimeout": 80000,
@@ -24,23 +23,11 @@
   },
   "hostMachines": [
     {
-      "machineIP": "10.3.2.108",
+      "machineIP": "127.0.0.1",
       "simulators": [
         {
           "deviceName": "iPhone 6",
-          "OS": "11.3"
-        },
-        {
-          "deviceName": "iPhone 7",
-          "OS": "11.3"
-        },
-        {
-          "deviceName": "iPhone 6",
-          "OS": "11.2"
-        },
-        {
-          "deviceName": "iPhone 7",
-          "OS": "11.2"
+          "OS": "11.4"
         }
       ]
     }

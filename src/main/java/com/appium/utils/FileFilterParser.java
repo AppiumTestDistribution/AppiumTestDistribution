@@ -89,8 +89,8 @@ public class FileFilterParser extends Helpers {
             values.forEach((screenName, s) -> {
                 if (s.contains("results") || s.contains("framed")) {
                     String path = s.split("target")[1];
-                     Optional<String> atdHost;
-                     Optional<String> atdPort;
+                    Optional<String> atdHost;
+                    Optional<String> atdPort;
                     try {
                         atdHost = Optional.ofNullable(CapabilityManager.getInstance()
                                 .getMongoDbHostAndPort().get("atdHost"));
@@ -101,11 +101,11 @@ public class FileFilterParser extends Helpers {
                                     + getRemoteAppiumManagerPort("127.0.0.1") + path);
                             ReportPortal.emitLog(screenName,
                                     "Info", new Date(), new File(System.getProperty("user.dir")
-                                            + "/target/" +path));
+                                            + "/target/" + path));
                         } else {
                             ReportPortal.emitLog(screenName,
                                     "Info", new Date(), new File(System.getProperty("user.dir")
-                                            + "/target/" +path));
+                                            + "/target/" + path));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

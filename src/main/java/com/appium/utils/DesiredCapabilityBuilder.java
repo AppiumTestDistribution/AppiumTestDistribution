@@ -1,12 +1,14 @@
 package com.appium.utils;
 
+import static java.util.stream.Collectors.toList;
+
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.ArtifactsUploader;
 import com.appium.manager.HostArtifact;
 import com.appium.manager.IAppiumManager;
-import com.appium.manager.AppiumManagerFactory;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -15,11 +17,9 @@ import org.json.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.util.ResourceUtils;
 
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by saikrisv on 20/05/17.

@@ -9,8 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +68,7 @@ public class HostMachineDeviceManager {
                                 .writeValueAsString(devicesByHost));
                 api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
                         new TestStatusManager()
-                                        .envInfo(devicesByHost.getAllDevices().size()));
+                                .envInfo(devicesByHost.getAllDevices().size()));
                 api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
                         new TestStatusManager()
                                 .appiumLogs(devicesByHost));

@@ -65,22 +65,28 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            deviceAllocationManager.allocateDevice(deviceAllocationManager.getNextAvailableDevice());
+            deviceAllocationManager.allocateDevice(
+                    deviceAllocationManager.getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
-            testLogger.startLogging(iTestResult.getMethod().getMethodName(), iTestResult.getTestClass()
+            testLogger.startLogging(iTestResult.getMethod().getMethodName(),
+                    iTestResult.getTestClass()
                     .getRealClass().getSimpleName());
             // Sets description for each test method with platform and Device UDID allocated to it.
-            Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
+            Optional<String> originalDescription = Optional.ofNullable(iTestResult
+                    .getMethod().getDescription());
             String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-                    + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+                    + " Device UDID: " + AppiumDeviceManager.getAppiumDevice()
+                    .getDevice().getUdid();
             Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(Author.class);
             if (annotation != null) {
                 description += "\nAuthor: " + annotation.name();
             }
-            if (originalDescription.isPresent() &&
-                    !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
-                iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
+            if (originalDescription.isPresent()
+                    && !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice()
+                            .getDevice().getUdid())) {
+                iTestResult.getMethod().setDescription(originalDescription.get()
+                        + "\n" + description);
             } else {
                 iTestResult.getMethod().setDescription(description);
             }
@@ -94,35 +100,36 @@ public final class AppiumParallelMethodTestListener extends Helpers
     }
 
     /*
-    * Skips execution based on platform
-    */
+     * Skips execution based on platform
+     */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
-        if(annotation != null && AppiumDriverManager.getDriver().getPlatformName()
+        if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
                 .equalsIgnoreCase(annotation.platform())) {
-            throw new SkipException("Skipped because property was set to :::" + annotation.platform());
+            throw new SkipException("Skipped because property was set to :::"
+                    + annotation.platform());
         }
     }
 
     /*
-    * Stops driver after each test method execution
-    * De-allocates device after each test method execution
-    * Terminate logs getting captured after each test method execution
-    */
+     * Stops driver after each test method execution
+     * De-allocates device after each test method execution
+     * Terminate logs getting captured after each test method execution
+     */
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         try {
-            HashMap<String, String> logs = testLogger.endLogging(iTestResult
-                    , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+            HashMap<String, String> logs = testLogger.endLogging(iTestResult,
+                    AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
             if (atdHost.isPresent() && atdPort.isPresent()) {
                 String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                sendResultsToAtdService(iTestResult, "Completed", url,logs);
+                sendResultsToAtdService(iTestResult, "Completed", url, logs);
             } else {
                 new FileFilterParser()
                         .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-                                .getDevice().getUdid(),iTestResult);
+                                .getDevice().getUdid(), iTestResult);
             }
             deviceAllocationManager.freeDevice();
             appiumDriverManager.stopAppiumDriver();

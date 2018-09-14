@@ -17,7 +17,7 @@ public class Runner {
         System.out.println(deviceList);*/
         List<String> tests = new ArrayList<>();
         //tests.add("HomePageTest2");
-        tests.add("SliderTest");
+        //tests.add("SliderTest");
         tests.add("DragnDropTest");
         ParallelThread parallelThread = new ParallelThread();
         boolean hasFailures = parallelThread.runner("com.test.site",tests);

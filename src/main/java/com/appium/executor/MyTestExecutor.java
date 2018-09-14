@@ -1,5 +1,7 @@
 package com.appium.executor;
 
+import static com.appium.manager.FigletHelper.figlet;
+
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.filelocations.FileLocations;
 import com.appium.manager.ConfigFileManager;
@@ -29,22 +31,27 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static com.appium.manager.FigletHelper.figlet;
 
 
 public class MyTestExecutor {
 
     private final ConfigFileManager prop;
     private final DeviceAllocationManager deviceAllocationManager;
-    public List<Class> testcases = new ArrayList<>();
-    public HtmlReporter reporter = new HtmlReporter();
-    public ArrayList<String> items = new ArrayList<String>();
+    private List<Class> testcases = new ArrayList<>();
+    private HtmlReporter reporter = new HtmlReporter();
+    private ArrayList<String> items = new ArrayList<String>();
     private ArrayList<String> listeners = new ArrayList<>();
     private ArrayList<String> groupsInclude = new ArrayList<>();
     private ArrayList<String> groupsExclude = new ArrayList<>();
@@ -151,7 +158,7 @@ public class MyTestExecutor {
         return hasFailure;
     }
 
-    public boolean testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
+    private boolean testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
         TestNG test = new TestNG();
         test.setTestClasses(new Class[]{arg});
         test.run();

@@ -119,10 +119,6 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if ("skipped".equals(result.getStatus())) {
-
-        } else if ("undefined".equals(result.getStatus())) {
-
         }
     }
 

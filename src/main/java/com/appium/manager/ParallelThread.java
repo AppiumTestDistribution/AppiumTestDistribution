@@ -113,8 +113,8 @@ public class ParallelThread {
                 || platform.equalsIgnoreCase(BOTH)) {
             if (!capabilityManager.getCapabilityObjectFromKey("android")
                     .has("automationName")) {
-                throw new IllegalArgumentException("Please set automationName " +
-                        "as UIAutomator2 or Espresso to create Android driver");
+                throw new IllegalArgumentException("Please set automationName "
+                        + "as UIAutomator2 or Espresso to create Android driver");
             }
             generateDirectoryForAdbLogs();
         }

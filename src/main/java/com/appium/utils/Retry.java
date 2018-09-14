@@ -22,7 +22,7 @@ public class Retry implements IRetryAnalyzer {
         int maxRetryCount;
         RetryCount annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(RetryCount.class);
-        if(annotation != null) {
+        if (annotation != null) {
             maxRetryCount = annotation.maxRetryCount();
         } else {
             try {

@@ -44,9 +44,11 @@ class TestLogger extends Helpers {
         screenShotManager = new ScreenShotManager();
     }
 
-    protected void startLogging(String methodName, String className) throws IOException, InterruptedException {
+    protected void startLogging(String methodName, String className)
+            throws IOException, InterruptedException {
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-                && AppiumDriverManager.getDriver().getCapabilities().getCapability("browserName") == null) {
+                && AppiumDriverManager.getDriver().getCapabilities()
+                .getCapability("browserName") == null) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
             logEntries = AppiumDriverManager.getDriver().manage()
                     .logs().get("logcat").filter(Level.ALL);

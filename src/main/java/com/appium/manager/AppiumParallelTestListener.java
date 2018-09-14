@@ -56,15 +56,16 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult testResult) {
-        if(atdHost.isPresent() && atdPort.isPresent()) {
+        if (atdHost.isPresent() && atdPort.isPresent()) {
             String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
             sendResultsToAtdService(testResult, "Started", postTestResults, new HashMap<>());
         }
         SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
-        if(annotation != null && AppiumDriverManager.getDriver().getPlatformName()
+        if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
                 .equalsIgnoreCase(annotation.platform())) {
-            throw new SkipException("Skipped because property was set to :::" + annotation.platform());
+            throw new SkipException("Skipped because property was set to :::"
+                    + annotation.platform());
         }
     }
 
@@ -82,8 +83,8 @@ public final class AppiumParallelTestListener extends Helpers
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                HashMap<String, String> logs = testLogger.endLogging(testResult
-                        , AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                HashMap<String, String> logs = testLogger.endLogging(testResult,
+                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
                     sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
@@ -157,17 +158,22 @@ public final class AppiumParallelTestListener extends Helpers
             testLogger.startLogging(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass().getRealClass().getSimpleName());
             // Sets description for each test method with platform and Device UDID allocated to it.
-            Optional<String> originalDescription = Optional.ofNullable(iTestResult.getMethod().getDescription());
+            Optional<String> originalDescription = Optional.ofNullable(iTestResult
+                    .getMethod().getDescription());
             String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-                    + " Device UDID: " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+                    + " Device UDID: " + AppiumDeviceManager.getAppiumDevice()
+                    .getDevice().getUdid();
             Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(Author.class);
             if (annotation != null) {
                 description += "\nAuthor: " + annotation.name();
             }
-            if (originalDescription.isPresent() &&
-                    !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice().getDevice().getUdid())) {
-                iTestResult.getMethod().setDescription(originalDescription.get() + "\n" + description);
+            if (originalDescription.isPresent()
+                    && !originalDescription.get()
+                    .contains(AppiumDeviceManager.getAppiumDevice()
+                            .getDevice().getUdid())) {
+                iTestResult.getMethod().setDescription(originalDescription.get()
+                        + "\n" + description);
             } else {
                 iTestResult.getMethod().setDescription(description);
             }
@@ -177,24 +183,24 @@ public final class AppiumParallelTestListener extends Helpers
     }
 
     /*
-    * Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
 
     }
 
     /*
-    * Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestFailure(ITestResult iTestResult) {
 
     }
 
     /*
-    * Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         System.out.println("Skipped...");
@@ -205,24 +211,24 @@ public final class AppiumParallelTestListener extends Helpers
     }
 
     /*
-    * Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
 
     }
 
     /*
-    * Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onStart(ITestContext iTestContext) {
 
     }
 
     /*
-    * Document to make codacy happy
-    */
+     * Document to make codacy happy
+     */
     @Override
     public void onFinish(ITestContext iTestContext) {
 
