@@ -35,9 +35,7 @@ public class DeviceAllocationManager {
             isPlatformInEnv();
             suspendedThreads = new ArrayList<>();
             hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
-            if (CapabilityManager.getInstance().isApp()) {
-                ArtifactsUploader.getInstance().initializeArtifacts();
-            }
+            ArtifactsUploader.getInstance().initializeArtifacts();
             DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
             allDevices = appiumDeviceByHost.getAllDevices();
         } catch (IOException e) {

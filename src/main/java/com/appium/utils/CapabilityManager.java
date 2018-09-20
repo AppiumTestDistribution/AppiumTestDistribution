@@ -15,7 +15,7 @@ public class CapabilityManager {
     private static CapabilityManager instance;
     private JSONObject capabilities;
 
-    private CapabilityManager() throws IOException {
+    private CapabilityManager() {
         String capabilitiesFilePath = getCapabilityLocation();
         JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
         capabilities = jsonParser.getObjectFromJSON();

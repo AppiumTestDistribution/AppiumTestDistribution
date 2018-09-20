@@ -19,6 +19,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.List;
 
 
 /**
@@ -62,37 +63,18 @@ public class DesiredCapabilityBuilder {
             String appCapability = "app";
             if (appCapability.equals(key)) {
                 Object values = platFormCapabilities.get(appCapability);
-                HostArtifact hostArtifact = null;
-                hostArtifact = ArtifactsUploader.getInstance()
-                        .getHostArtifacts().stream().filter(s ->
-                                s.getHost()
-                                        .equalsIgnoreCase(AppiumDeviceManager
-                                                .getAppiumDevice()
-                                                .getHostName()))
-                        .collect(toList()).parallelStream()
-                        .findFirst().get();
-                String appPath = "";
-                if (values instanceof JSONObject) {
-                    int length = AppiumDeviceManager.getAppiumDevice()
-                            .getDevice().getUdid().length();
-                    if (length
-                            == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                        appPath = hostArtifact.getArtifactPath("APP");
-                    } else if (length
-                            == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-                        appPath = hostArtifact.getArtifactPath("IPA");
+                List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
+                        .getHostArtifacts();
+                    String hostAppPath = hostAppPath(values, hostArtifacts);
+                    Path path = FileSystems.getDefault().getPath(hostAppPath);
+                    if (ResourceUtils.isUrl(hostAppPath)) {
+                        desiredCapabilities.setCapability(appCapability, hostAppPath);
+                    } else if (!path.getParent().isAbsolute()) {
+                        desiredCapabilities.setCapability(appCapability, path.normalize()
+                                .toAbsolutePath().toString());
                     }
-                } else {
-                    appPath = hostArtifact.getArtifactPath("APK");
-                }
-                Path path = FileSystems.getDefault().getPath(appPath);
-                if (ResourceUtils.isUrl(appPath)) {
-                    desiredCapabilities.setCapability(appCapability, appPath);
-                } else if (!path.getParent().isAbsolute()) {
-                    desiredCapabilities.setCapability(appCapability, path.normalize()
-                            .toAbsolutePath().toString());
-                } else {
-                    desiredCapabilities.setCapability(appCapability, path.toString());
+                 else {
+                    desiredCapabilities.setCapability(appCapability, values);
                 }
             } else {
                 desiredCapabilities.setCapability(key, platFormCapabilities.get(key));
@@ -104,7 +86,6 @@ public class DesiredCapabilityBuilder {
                     port);
             appPackage(desiredCapabilities);
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            String version = AppiumDeviceManager.getAppiumDevice().getDevice().getOsVersion();
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
             if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
@@ -138,7 +119,33 @@ public class DesiredCapabilityBuilder {
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 
-    public void appPackage(DesiredCapabilities desiredCapabilities) {
+    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts) {
+        String appPath = null;
+        HostArtifact hostArtifact;
+        hostArtifact = hostArtifacts.stream().filter(s ->
+                s.getHost()
+                        .equalsIgnoreCase(AppiumDeviceManager
+                                .getAppiumDevice()
+                                .getHostName()))
+                .collect(toList()).parallelStream()
+                .findFirst().get();
+        if (values instanceof JSONObject) {
+            int length = AppiumDeviceManager.getAppiumDevice()
+                    .getDevice().getUdid().length();
+            if (length
+                    == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                appPath = hostArtifact.getArtifactPath("APP");
+            } else if (length
+                    == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                appPath = hostArtifact.getArtifactPath("IPA");
+            }
+        } else {
+            appPath = hostArtifact.getArtifactPath("APK");
+        }
+        return appPath;
+    }
+
+    private void appPackage(DesiredCapabilities desiredCapabilities) {
         if (System.getenv("APP_PACKAGE") != null) {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
                     System.getenv("APP_PACKAGE"));

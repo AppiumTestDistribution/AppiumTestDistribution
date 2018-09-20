@@ -11,7 +11,6 @@ import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -25,7 +24,7 @@ public class AppiumDriverManager {
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
-    public AppiumDriverManager() throws Exception {
+    public AppiumDriverManager() {
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
         prop = ConfigFileManager.getInstance();
     }
