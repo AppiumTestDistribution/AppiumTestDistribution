@@ -18,4 +18,5 @@ public class HostArtifact {
     public String getHost() {
         return host;
     }
+
 }
