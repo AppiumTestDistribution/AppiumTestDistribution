@@ -2,10 +2,7 @@ package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.AppiumDevice;
-
-import java.io.IOException;
 
 /**
  * Device Manager - Handles all device related information's e.g UDID, Model, etc
@@ -37,7 +34,7 @@ public class AppiumDeviceManager {
         }
     }
 
-    public String getDeviceModel() {
+    String getDeviceModel() {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceModel();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {

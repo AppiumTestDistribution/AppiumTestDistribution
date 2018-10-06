@@ -1,14 +1,8 @@
 package com.appium.utils;
 
-import static java.util.stream.Collectors.toList;
-
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumManagerFactory;
-import com.appium.manager.ArtifactsUploader;
-import com.appium.manager.HostArtifact;
-import com.appium.manager.IAppiumManager;
+import com.appium.manager.*;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -20,6 +14,8 @@ import org.springframework.util.ResourceUtils;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -65,15 +61,14 @@ public class DesiredCapabilityBuilder {
                 Object values = platFormCapabilities.get(appCapability);
                 List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
                         .getHostArtifacts();
-                    String hostAppPath = hostAppPath(values, hostArtifacts);
-                    Path path = FileSystems.getDefault().getPath(hostAppPath);
-                    if (ResourceUtils.isUrl(hostAppPath)) {
-                        desiredCapabilities.setCapability(appCapability, hostAppPath);
-                    } else if (!path.getParent().isAbsolute()) {
-                        desiredCapabilities.setCapability(appCapability, path.normalize()
-                                .toAbsolutePath().toString());
-                    }
-                 else {
+                String hostAppPath = hostAppPath(values, hostArtifacts);
+                Path path = FileSystems.getDefault().getPath(hostAppPath);
+                if (ResourceUtils.isUrl(hostAppPath)) {
+                    desiredCapabilities.setCapability(appCapability, hostAppPath);
+                } else if (!path.getParent().isAbsolute()) {
+                    desiredCapabilities.setCapability(appCapability, path.normalize()
+                            .toAbsolutePath().toString());
+                } else {
                     desiredCapabilities.setCapability(appCapability, values);
                 }
             } else {
