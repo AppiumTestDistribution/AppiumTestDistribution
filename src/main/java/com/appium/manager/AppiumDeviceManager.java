@@ -34,7 +34,7 @@ public class AppiumDeviceManager {
         }
     }
 
-    String getDeviceModel() {
+    public String getDeviceModel() {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceModel();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
