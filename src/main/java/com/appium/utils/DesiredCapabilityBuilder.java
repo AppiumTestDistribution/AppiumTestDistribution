@@ -65,15 +65,14 @@ public class DesiredCapabilityBuilder {
                 Object values = platFormCapabilities.get(appCapability);
                 List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
                         .getHostArtifacts();
-                    String hostAppPath = hostAppPath(values, hostArtifacts);
-                    Path path = FileSystems.getDefault().getPath(hostAppPath);
-                    if (ResourceUtils.isUrl(hostAppPath)) {
-                        desiredCapabilities.setCapability(appCapability, hostAppPath);
-                    } else if (!path.getParent().isAbsolute()) {
-                        desiredCapabilities.setCapability(appCapability, path.normalize()
-                                .toAbsolutePath().toString());
-                    }
-                 else {
+                String hostAppPath = hostAppPath(values, hostArtifacts);
+                Path path = FileSystems.getDefault().getPath(hostAppPath);
+                if (ResourceUtils.isUrl(hostAppPath)) {
+                    desiredCapabilities.setCapability(appCapability, hostAppPath);
+                } else if (!path.getParent().isAbsolute()) {
+                    desiredCapabilities.setCapability(appCapability, path.normalize()
+                            .toAbsolutePath().toString());
+                } else {
                     desiredCapabilities.setCapability(appCapability, values);
                 }
             } else {
