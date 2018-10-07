@@ -13,6 +13,7 @@ steps:
     npm install -g appium@beta
     appium -v
     mvn clean site install -Dmaven.test.skip=true
+    adb --version
     Platform='ios' mvn clean -Dtest=Runner test
 
   displayName: 'Build with Maven'
