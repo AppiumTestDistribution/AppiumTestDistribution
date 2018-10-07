@@ -10,13 +10,7 @@ steps:
 - script: |
     brew outdated xctool || brew upgrade xctool
     adb --version
-    android create avd --force -n test -t android-24 --abi armeabi-v7a
-    emulator -avd test -no-skin -no-window &
-    adb devices
-    npm install -g appium@beta
-    appium -v
-    mvn clean site install -Dmaven.test.skip=true
-
-    Platform='ios' mvn clean -Dtest=Runner test
-
+    sdkmanager --list
+    avdmanager create avd --force -n test -k 'system-images;android-27;google_apis;x86' -d 'AppiumDevice'
+    avdmanager -list-avds
   displayName: 'Build with Maven'
