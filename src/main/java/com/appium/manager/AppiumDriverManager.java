@@ -37,9 +37,9 @@ public class AppiumDriverManager {
         appiumDriver.set(driver);
     }
 
-    private AppiumDriver<MobileElement> getMobileAndroidElementAppiumDriver(
+    private AppiumDriver<MobileElement> initialiseAndroidDriver(
             Optional<DesiredCapabilities> androidCaps) throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession = null;
+        AppiumDriver<MobileElement> currentDriverSession;
         DesiredCapabilities desiredCapabilities = androidCaps.get();
         String remoteWDHubIP = getRemoteWDHubIP();
         currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
@@ -50,7 +50,7 @@ public class AppiumDriverManager {
         return currentDriverSession;
     }
 
-    private AppiumDriver<MobileElement> getMobileiOSElementAppiumDriver(
+    private AppiumDriver<MobileElement> initialiseiOSDriver(
             Optional<DesiredCapabilities> iOSCaps)
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
@@ -71,39 +71,40 @@ public class AppiumDriverManager {
         return appiumManager.getRemoteWDHubIP(hostName);
     }
 
-    private void startAppiumDriverInstance(Optional<DesiredCapabilities> iosCaps,
-                                           Optional<DesiredCapabilities> androidCaps)
+    private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
-        if (System.getProperty("os.name").toLowerCase().contains("mac")
-                && System.getenv("Platform").equalsIgnoreCase("iOS")
-                || System.getenv("Platform").equalsIgnoreCase("Both")) {
+        if (triggerOnBothPlatform()) {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-                currentDriverSession = getMobileiOSElementAppiumDriver(iosCaps);
+                currentDriverSession = initialiseiOSDriver(desiredCapabilities);
                 AppiumDriverManager.setDriver(currentDriverSession);
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
-                AppiumDriverManager.setDriver(currentDriverSession);
+                createAndroidDriver(desiredCapabilities);
             }
         } else {
-            currentDriverSession = getMobileAndroidElementAppiumDriver(androidCaps);
-            AppiumDriverManager.setDriver(currentDriverSession);
+            createAndroidDriver(desiredCapabilities);
         }
+    }
+
+    private void createAndroidDriver(Optional<DesiredCapabilities> androidCaps) throws Exception {
+        AppiumDriver<MobileElement> currentDriverSession;
+        currentDriverSession = initialiseAndroidDriver(androidCaps);
+        AppiumDriverManager.setDriver(currentDriverSession);
+    }
+
+    private boolean triggerOnBothPlatform() {
+        return System.getProperty("os.name").toLowerCase().contains("mac")
+                && System.getenv("Platform").equalsIgnoreCase("iOS")
+                || System.getenv("Platform").equalsIgnoreCase("Both");
     }
 
     // Should be used by Cucumber as well
     public void startAppiumDriverInstance() throws Exception {
         String userSpecifiedCaps;
-        DesiredCapabilities iOS = null;
-        DesiredCapabilities android = null;
+        DesiredCapabilities desiredCapabilities;
         userSpecifiedCaps = getCapsPath();
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            android = getDesiredAndroidCapabilities(userSpecifiedCaps);
-        } else {
-            iOS = getDesiredIOSCapabilities(userSpecifiedCaps);
-        }
-        LOGGER.info("Caps generated---" + android + iOS);
-        startAppiumDriverInstance(Optional.ofNullable(iOS), Optional.ofNullable(android));
+        desiredCapabilities = buildDesiredCapabilites(userSpecifiedCaps);
+        startAppiumDriverInstance(Optional.ofNullable(desiredCapabilities));
     }
 
     private String getCapsPath() {
@@ -117,38 +118,22 @@ public class AppiumDriverManager {
         return userSpecifiedCaps;
     }
 
-    private DesiredCapabilities getDesiredIOSCapabilities(String userSpecifiediOSCaps)
+    private DesiredCapabilities buildDesiredCapabilites(String capabilityPath)
             throws Exception {
-
-        if (new File(userSpecifiediOSCaps).exists()) {
-            String iOSJsonFilePath = userSpecifiediOSCaps;
-            Path path = FileSystems.getDefault().getPath(iOSJsonFilePath);
+        String capabilities = capabilityPath;
+        if (new File(capabilityPath).exists()) {
+            Path path = FileSystems.getDefault().getPath(capabilityPath);
             if (!path.getParent().isAbsolute()) {
-                iOSJsonFilePath = path.normalize()
+                capabilities = path.normalize()
                         .toAbsolutePath().toString();
             }
-            desiredCapabilityBuilder
-                    .buildDesiredCapability("iOS", iOSJsonFilePath);
-            DesiredCapabilities iOS = DesiredCapabilityBuilder.getDesiredCapability();
-            return iOS;
-        } else {
-            System.out.println("Capability file not found");
-            return null;
-        }
-    }
-
-    private DesiredCapabilities getDesiredAndroidCapabilities(String userSpecifiedAndroidCaps)
-            throws Exception {
-
-        if (new File(userSpecifiedAndroidCaps).exists()) {
-            String androidJsonFilePath = userSpecifiedAndroidCaps;
-            Path path = FileSystems.getDefault().getPath(androidJsonFilePath);
-            if (!path.getParent().isAbsolute()) {
-                androidJsonFilePath = path.normalize()
-                        .toAbsolutePath().toString();
+            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+                desiredCapabilityBuilder
+                        .buildDesiredCapability("android", capabilities);
+            } else {
+                desiredCapabilityBuilder
+                        .buildDesiredCapability("iOS", capabilities);
             }
-            desiredCapabilityBuilder
-                    .buildDesiredCapability("android", androidJsonFilePath);
             return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
             System.out.println("Capability file not found");
@@ -156,7 +141,7 @@ public class AppiumDriverManager {
         }
     }
 
-    public void stopAppiumDriver() throws Exception {
+    protected void stopAppiumDriver() throws Exception {
         String OS = System.getProperty("os.name").toLowerCase();
         String command;
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
@@ -165,7 +150,7 @@ public class AppiumDriverManager {
             AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
         }
         if (AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
-            if (OS.indexOf("mac") >= 0) {
+            if (OS.contains("mac")) {
                 command = "kill -9 $(lsof -ti tcp:"
                         + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
                 new CommandPrompt().runCommand(command);
