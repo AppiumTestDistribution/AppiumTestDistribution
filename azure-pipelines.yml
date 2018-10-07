@@ -11,6 +11,7 @@ steps:
     brew outdated xctool || brew upgrade xctool
     adb --version
     /Users/vsts/Library/Android/sdk/tools/bin/sdkmanager --list
+    /Users/vsts/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-27;google_apis;x86"
     /Users/vsts/Library/Android/sdk/tools/bin/avdmanager create avd --force -n test -k 'system-images;android-27;google_apis;x86' -d 'AppiumDevice'
     /Users/vsts/Library/Android/sdk/tools/bin/avdmanager list avd
   displayName: 'Build with Maven'
