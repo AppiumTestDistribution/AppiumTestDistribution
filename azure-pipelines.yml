@@ -14,4 +14,7 @@ steps:
     /Users/vsts/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-27;google_apis;x86"
     echo no | /Users/vsts/Library/Android/sdk/tools/bin/avdmanager  create avd -c 100M -n test -k 'system-images;android-27;google_apis;x86'
     /Users/vsts/Library/Android/sdk/tools/bin/avdmanager list avd
+    emulator -avd test -no-skin -no-window &
+    adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
+    adb devices
   displayName: 'Build with Maven'
