@@ -9,11 +9,14 @@ pool:
 steps:
 - script: |
     brew outdated xctool || brew upgrade xctool
-    xcrun simctl list -j
+    adb --version
+    android create avd --force -n test -t android-24 --abi armeabi-v7a
+    emulator -avd test -no-skin -no-window &
+    adb devices
     npm install -g appium@beta
     appium -v
     mvn clean site install -Dmaven.test.skip=true
-    adb --version
+
     Platform='ios' mvn clean -Dtest=Runner test
 
   displayName: 'Build with Maven'
