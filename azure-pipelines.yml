@@ -11,8 +11,8 @@ steps:
     brew outdated xctool || brew upgrade xctool
     adb --version
     /Users/vsts/Library/Android/sdk/tools/bin/sdkmanager --list
-    /Users/vsts/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-27;default;x86_64"
-    echo no | /Users/vsts/Library/Android/sdk/tools/bin/avdmanager  create avd -c 100M -n test -k 'system-images;android-27;default;x86_64'
+    /Users/vsts/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-24;default;armeabi-v7a"
+    echo no | /Users/vsts/Library/Android/sdk/tools/bin/avdmanager  create avd -c 100M -n test -k 'system-images;android-24;default;armeabi-v7a'
     /Users/vsts/Library/Android/sdk/tools/bin/avdmanager list avd
     emulator -avd test -no-skin -no-window &
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
