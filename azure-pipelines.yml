@@ -17,4 +17,8 @@ steps:
     /Users/vsts/Library/Android/sdk/tools/emulator -avd test -no-skin -no-window &
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
     adb devices
+    npm install -g appium@beta
+    appium -v
+    mvn clean site install -Dmaven.test.skip=true
+    Platform='both' mvn clean -Dtest=Runner test
   displayName: 'Build with Maven'
