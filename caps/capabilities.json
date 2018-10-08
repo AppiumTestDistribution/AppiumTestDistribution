@@ -3,7 +3,7 @@
     "platformName": "android",
     "platformVersion": "7.0",
     "automationName": "UIAutomator2",
-    "app": "./build/VodQA.apk",
+    "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
     "deviceName": "android",
     "noSign": true
   },
