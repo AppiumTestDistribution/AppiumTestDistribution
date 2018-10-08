@@ -37,31 +37,26 @@ public class AppiumDriverManager {
         appiumDriver.set(driver);
     }
 
-    private AppiumDriver<MobileElement> initialiseAndroidDriver(
-            Optional<DesiredCapabilities> androidCaps) throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession;
-        DesiredCapabilities desiredCapabilities = androidCaps.get();
-        String remoteWDHubIP = getRemoteWDHubIP();
-        currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
-        LOGGER.info("Session Created ---- "
-                + currentDriverSession.getSessionId()
-                + "---" + currentDriverSession.getSessionDetail("udid"));
-        return currentDriverSession;
-    }
-
-    private AppiumDriver<MobileElement> initialiseiOSDriver(
-            Optional<DesiredCapabilities> iOSCaps)
+    private AppiumDriver<MobileElement> initialiseDriver(
+            Optional<DesiredCapabilities> capabilities)
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
-        DesiredCapabilities desiredCapabilities = iOSCaps.get();
+        DesiredCapabilities desiredCapabilities = capabilities.get();
         String remoteWDHubIP = getRemoteWDHubIP();
-        System.out.println(remoteWDHubIP);
-        currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
-        LOGGER.info("Session Created ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+        if (AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
+            currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
+                    desiredCapabilities);
+            LOGGER.info("Session Created for iOS ---- "
+                    + currentDriverSession.getSessionId() + "---"
+                    + currentDriverSession.getSessionDetail("udid"));
+        } else {
+            currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
+                    desiredCapabilities);
+            LOGGER.info("Session Created for Android ---- "
+                    + currentDriverSession.getSessionId() + "---"
+                    + currentDriverSession.getSessionDetail("udid"));
+        }
+
         return currentDriverSession;
     }
 
@@ -74,28 +69,8 @@ public class AppiumDriverManager {
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
             throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
-        if (triggerOnBothPlatform()) {
-            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-                currentDriverSession = initialiseiOSDriver(desiredCapabilities);
-                AppiumDriverManager.setDriver(currentDriverSession);
-            } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                createAndroidDriver(desiredCapabilities);
-            }
-        } else {
-            createAndroidDriver(desiredCapabilities);
-        }
-    }
-
-    private void createAndroidDriver(Optional<DesiredCapabilities> androidCaps) throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession;
-        currentDriverSession = initialiseAndroidDriver(androidCaps);
+        currentDriverSession = initialiseDriver(desiredCapabilities);
         AppiumDriverManager.setDriver(currentDriverSession);
-    }
-
-    private boolean triggerOnBothPlatform() {
-        return System.getProperty("os.name").toLowerCase().contains("mac")
-                && System.getenv("Platform").equalsIgnoreCase("iOS")
-                || System.getenv("Platform").equalsIgnoreCase("Both");
     }
 
     // Should be used by Cucumber as well
