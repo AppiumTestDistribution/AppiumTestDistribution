@@ -14,7 +14,7 @@ steps:
     /Users/vsts/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-24;default;armeabi-v7a"
     echo no | /Users/vsts/Library/Android/sdk/tools/bin/avdmanager  create avd -c 100M -n test -k 'system-images;android-24;default;armeabi-v7a'
     /Users/vsts/Library/Android/sdk/tools/bin/avdmanager list avd
-    emulator -avd test -no-skin -no-window &
+    /Users/vsts/Library/Android/sdk/tools/emulator -avd test -no-skin -no-window &
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
     adb devices
   displayName: 'Build with Maven'
