@@ -45,6 +45,7 @@ public class CapabilitySchemaValidator {
                 break;
             default :
                 System.out.println("Just for codacy!!");
+                break;
 
         }
         return schema;
