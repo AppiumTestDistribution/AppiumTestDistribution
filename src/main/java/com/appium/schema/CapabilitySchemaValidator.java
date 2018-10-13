@@ -1,14 +1,11 @@
 package com.appium.schema;
 
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.InputStream;
 
 
@@ -42,6 +39,7 @@ public class CapabilitySchemaValidator {
                 break;
             case "android" :
                 schema = "/androidSchema.json";
+                break;
         }
         return schema;
     }
