@@ -1,33 +1,20 @@
 package com.appium.manager;
 
-import static com.appium.manager.FigletHelper.figlet;
-
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
-import com.appium.entities.MobilePlatform;
 import com.appium.executor.MyTestExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.schema.CapabilitySchemaValidator;
 import com.appium.utils.AppiumDevice;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.HostMachineDeviceManager;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static com.appium.manager.FigletHelper.figlet;
 
 /*
  * This class picks the devices connected
@@ -52,13 +39,15 @@ public class ParallelThread {
     private HostMachineDeviceManager hostMachineDeviceManager;
 
     public ParallelThread() throws Exception {
+        capabilityManager = CapabilityManager.getInstance();
+        new CapabilitySchemaValidator()
+                .validateCapabilitySchema(capabilityManager.getCapabilities());
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         configFileManager = ConfigFileManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
-        capabilityManager = CapabilityManager.getInstance();
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }

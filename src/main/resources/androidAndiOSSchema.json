@@ -1,0 +1,74 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "android",
+    "iOS",
+    "hostMachines"
+  ],
+  "properties": {
+    "android": {
+      "$id": "#/properties/android",
+      "type": "object",
+      "title": "The Android Schema"
+    },
+    "iOS": {
+      "$id": "#/properties/iOS",
+      "type": "object",
+      "title": "The Ios Schema",
+      "required": [
+        "app"
+      ],
+      "properties": {
+        "app": {
+          "$id": "#/properties/iOS/properties/app",
+          "type": "object",
+          "title": "The App Schema",
+          "required": [
+            "simulator"
+          ],
+          "properties": {
+            "simulator": {
+              "$id": "#/properties/iOS/properties/app/properties/simulator",
+              "type": "string",
+              "title": "The Simulator Schema",
+              "default": "",
+              "examples": [
+                "String"
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        }
+      }
+    },
+    "hostMachines": {
+      "$id": "#/properties/hostMachines",
+      "type": "array",
+      "title": "The Hostmachines Schema",
+      "items": {
+        "$id": "#/properties/hostMachines/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "machineIP"
+        ],
+        "properties": {
+          "machineIP": {
+            "$id": "#/properties/hostMachines/items/properties/machineIP",
+            "type": "string",
+            "title": "The Machineip Schema",
+            "default": "",
+            "examples": [
+              "127.0.0.1"
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    }
+  }
+}
