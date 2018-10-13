@@ -40,6 +40,12 @@ public class CapabilitySchemaValidator {
             case "android" :
                 schema = "/androidSchema.json";
                 break;
+            case "ios" :
+                schema = "/iOSSchema.json";
+                break;
+            default :
+                System.out.println("Just for codacy!!");
+
         }
         return schema;
     }
