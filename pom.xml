@@ -210,6 +210,11 @@
             <artifactId>json</artifactId>
             <version>20171018</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.everit-org.json-schema</groupId>
+            <artifactId>org.everit.json.schema</artifactId>
+            <version>1.9.2</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +39,7 @@ public class ArtifactsUploader {
         return instance;
     }
 
-    public void initializeArtifacts() throws Exception {
+    protected void initializeArtifacts() throws Exception {
         for (String hostMachine : hostMachineDeviceManager.getDevicesByHost().getAllHosts()) {
             HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
             HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);

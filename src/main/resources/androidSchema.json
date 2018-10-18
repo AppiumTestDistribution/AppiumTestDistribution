@@ -1,0 +1,88 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "android",
+    "hostMachines"
+  ],
+  "properties": {
+    "android": {
+      "$id": "#/properties/android",
+      "type": "object",
+      "title": "The Android Schema",
+      "required": [
+        "automationName"
+      ],
+      "properties": {
+        "automationName": {
+          "$id": "#/properties/android/properties/automationName",
+          "type": "string",
+          "title": "The Automationname Schema",
+          "default": "",
+          "examples": [
+            "UIAutomator2 or Espresso"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    },
+    "hostMachines": {
+      "$id": "#/properties/hostMachines",
+      "type": "array",
+      "title": "The Hostmachines Schema",
+      "items": {
+        "$id": "#/properties/hostMachines/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "machineIP"
+        ],
+        "properties": {
+          "machineIP": {
+            "$id": "#/properties/hostMachines/items/properties/machineIP",
+            "type": "string",
+            "title": "The Machineip Schema",
+            "default": "",
+            "examples": [
+              "127.0.0.1"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "appiumServerPath": {
+            "$id": "#/properties/hostMachines/items/properties/appiumServerPath",
+            "type": "string",
+            "title": "The Appiumserverpath Schema",
+            "default": "",
+            "examples": [
+              "/usr/local/lib/node_modules/appium/build/lib/main.js"
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    },
+    "ATDServiceHost": {
+      "$id": "#/properties/ATDServiceHost",
+      "type": "string",
+      "title": "The Atdservicehost Schema",
+      "default": "",
+      "examples": [
+        "127.0.0.1"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "ATDServicePort": {
+      "$id": "#/properties/ATDServicePort",
+      "type": "string",
+      "title": "The Atdserviceport Schema",
+      "default": "",
+      "examples": [
+        "3000"
+      ],
+      "pattern": "^(.*)$"
+    }
+  }
+}

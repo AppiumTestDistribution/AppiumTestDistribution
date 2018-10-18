@@ -1,19 +1,13 @@
 package com.appium.manager;
 
 import com.appium.utils.AppiumDevice;
-import com.appium.utils.CapabilityManager;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.HostMachineDeviceManager;
 import com.github.yunusmete.stf.api.STFService;
-import com.github.yunusmete.stf.model.DeviceBody;
-import com.github.yunusmete.stf.rest.DeviceResponse;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 /**
@@ -22,9 +16,6 @@ import java.util.logging.Logger;
 public class DeviceAllocationManager {
 
     private static DeviceAllocationManager instance;
-    private static final String STF_SERVICE_URL = System.getenv("STF_URL");
-    private static final String ACCESS_TOKEN = System.getenv("STF_ACCESS_TOKEN");
-    static STFService service;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;

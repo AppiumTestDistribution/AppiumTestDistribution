@@ -83,14 +83,12 @@ public class AppiumDriverManager {
     }
 
     private String getCapsPath() {
-        String userSpecifiedCaps;
         if (prop.getProperty("CAPS") == null) {
-            userSpecifiedCaps = System.getProperty("user.dir")
+            return System.getProperty("user.dir")
                     + "/caps/capabilities.json";
         } else {
-            userSpecifiedCaps = prop.getProperty("CAPS");
+            return prop.getProperty("CAPS");
         }
-        return userSpecifiedCaps;
     }
 
     private DesiredCapabilities buildDesiredCapabilites(String capabilityPath)

@@ -21,7 +21,7 @@ public class CapabilityManager {
         capabilities = jsonParser.getObjectFromJSON();
     }
 
-    public static CapabilityManager getInstance() throws Exception {
+    public static CapabilityManager getInstance() {
         if (instance == null) {
             instance = new CapabilityManager();
         }
