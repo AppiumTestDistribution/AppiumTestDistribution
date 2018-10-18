@@ -17,7 +17,7 @@ public class CapabilitySchemaValidator {
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
             schema.validate(new JSONObject(capability.toString()));
-        } catch (ValidationException e ) {
+        } catch (ValidationException e) {
             if (e.getCausingExceptions().size() > 1) {
                 e.getCausingExceptions().stream()
                         .map(ValidationException::getMessage)
@@ -33,17 +33,17 @@ public class CapabilitySchemaValidator {
     private String getPlatform() {
         String platform = System.getenv("Platform");
         String schema = null;
-        switch(platform.toLowerCase()) {
-            case "both" :
-                schema =  "/androidAndiOSSchema.json";
+        switch (platform.toLowerCase()) {
+            case "both":
+                schema = "/androidAndiOSSchema.json";
                 break;
-            case "android" :
+            case "android":
                 schema = "/androidSchema.json";
                 break;
-            case "ios" :
+            case "ios":
                 schema = "/iOSSchema.json";
                 break;
-            default :
+            default:
                 System.out.println("Just for codacy!!");
                 break;
 

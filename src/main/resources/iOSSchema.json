@@ -6,9 +6,7 @@
   "title": "The Root Schema",
   "required": [
     "iOS",
-    "hostMachines",
-    "ATDServiceHost",
-    "ATDServicePort"
+    "hostMachines"
   ],
   "properties": {
     "iOS": {
