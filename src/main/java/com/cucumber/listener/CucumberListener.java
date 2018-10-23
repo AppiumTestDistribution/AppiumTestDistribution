@@ -47,7 +47,7 @@ import java.util.Map;
 /**
  * Cucumber custom format listener which generates ExtentsReport html file
  */
-public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListener {
+public class CucumberListener implements Reporter, Formatter,ISuiteListener {
 
     private final DeviceAllocationManager deviceAllocationManager;
     public AppiumServerManager appiumServerManager;
@@ -74,7 +74,7 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
         }
     };
 
-    public ExtentCucumberFormatter() throws Exception {
+    public CucumberListener() throws Exception {
         appiumServerManager = new AppiumServerManager();
         appiumDriverManager = new AppiumDriverManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -150,30 +150,8 @@ public class ExtentCucumberFormatter implements Reporter, Formatter,ISuiteListen
     public void feature(Feature feature) {
         String[] tagsArray = getTagArray(feature.getTags());
         String tags = String.join(",", tagsArray);
-        if (prop.getProperty("RUNNER").equalsIgnoreCase("parallel")) {
-            String[] deviceThreadNumber = Thread.currentThread().getName().toString().split("_");
-            System.out.println(deviceThreadNumber);
-            System.out.println("Feature Tag Name::" + feature.getTags());
-            try {
-                //Broken needs a fix
-                deviceAllocationManager.allocateDevice(
-                        deviceAllocationManager.getNextAvailableDevice());
-                if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() == null) {
-                    System.out.println("No devices are free to run test "
-                            + "or Failed to run childTest");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                deviceAllocationManager.allocateDevice(AppiumDeviceManager.getAppiumDevice());
-
-                //appiumServerManager.startAppiumServer();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        deviceAllocationManager.allocateDevice(
+                deviceAllocationManager.getNextAvailableDevice());
     }
 
     private String[] getTagArray(List<Tag> tags) {

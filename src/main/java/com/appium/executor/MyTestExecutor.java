@@ -370,7 +370,7 @@ public class MyTestExecutor {
     public XmlSuite constructXmlSuiteForParallelCucumber(
             int deviceCount, List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
-        listeners.add("com.cucumber.listener.ExtentCucumberFormatter");
+        listeners.add("com.cucumber.listener.CucumberListener");
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
@@ -408,7 +408,7 @@ public class MyTestExecutor {
     public XmlSuite constructXmlSuiteDistributeCucumber(
             int deviceCount) {
         ArrayList<String> listeners = new ArrayList<>();
-        listeners.add("com.cucumber.listener.ExtentCucumberFormatter");
+        listeners.add("com.cucumber.listener.CucumberListener");
         XmlSuite suite = new XmlSuite();
         suite.setName("TestNG Forum");
         suite.setThreadCount(deviceCount);
