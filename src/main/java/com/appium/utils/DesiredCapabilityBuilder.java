@@ -69,7 +69,7 @@ public class DesiredCapabilityBuilder {
                 Path path = FileSystems.getDefault().getPath(hostAppPath);
                 if (ResourceUtils.isUrl(hostAppPath)) {
                     desiredCapabilities.setCapability(appCapability, hostAppPath);
-                } else if (!path.getParent().isAbsolute()) {
+                } else if (path.getParent().isAbsolute()) {
                     desiredCapabilities.setCapability(appCapability, path.normalize()
                             .toAbsolutePath().toString());
                 } else {
