@@ -2,7 +2,8 @@ package com.test.site;
 
 
 import com.annotation.values.Author;
-import org.junit.Assert;
+
+import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 

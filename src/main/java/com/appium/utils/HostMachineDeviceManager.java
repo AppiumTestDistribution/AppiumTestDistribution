@@ -128,24 +128,25 @@ public class HostMachineDeviceManager {
             JSONArray hostMachines = capabilityManager.getHostMachineObject();
             for (Object hostMachine : hostMachines) {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
-                String machineIP = hostMachineJson.getString("machineIP");
-                IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
-                List<Device> devices = appiumManager.getDevices(machineIP, platform);
+                JSONArray machineIPs = hostMachineJson.getJSONArray("machineIP");
+                for (Object machineIP : machineIPs) {
+                	String ip= machineIP.toString();
+                	IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
+                	List<Device> devices = appiumManager.getDevices(ip, platform);
 
-                if ((!platform.equalsIgnoreCase("android")
+                	if ((!platform.equalsIgnoreCase("android")
                         && capabilityManager.isSimulatorAppPresentInCapsJson()
                         && hostMachineJson.has("simulators"))
                         && !capabilityManager.getCapabilityObjectFromKey("iOS")
                         .has("browserName")) {
                     JSONArray simulators = hostMachineJson.getJSONArray("simulators");
                     List<Device> simulatorsToBoot = getSimulatorsToBoot(
-                            machineIP, simulators);
+                            ip, simulators);
                     devices.addAll(simulatorsToBoot);
                 }
-
-                List<AppiumDevice> appiumDevices = getAppiumDevices(machineIP, devices);
-
-                devicesByHost.put(machineIP, appiumDevices);
+                List<AppiumDevice> appiumDevices = getAppiumDevices(ip, devices);
+                devicesByHost.put(ip, appiumDevices);
+            }
             }
         } else {
             throw new RuntimeException("Provide hostMachine in Caps.json for execution");
