@@ -3,7 +3,7 @@
     "platformName": "android",
     "platformVersion": "7.0",
     "automationName": "UIAutomator2",
-    "app": "./build/VodQA.apk",
+    "app": "https://github.com/shridharkalagi/AppiumSample/blob/master/VodQA.apk?raw=true",
     "deviceName": "android",
     "noSign": true
   },
@@ -23,12 +23,20 @@
   },
   "hostMachines": [
     {
-      "machineIP": "127.0.0.1",
+      "machineIP": ["127.0.0.1"],
       "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
       "simulators": [
         {
           "deviceName": "iPhone 6",
-          "OS": "11.4"
+          "OS": "12.0"
+        },
+        {
+          "deviceName": "iPhone XS Max",
+          "OS": "12.0"
+        },
+        {
+          "deviceName": "iPhone 6",
+          "OS": "12.0"
         }
       ]
     }
