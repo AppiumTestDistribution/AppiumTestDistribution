@@ -28,15 +28,7 @@
       "simulators": [
         {
           "deviceName": "iPhone 6",
-          "OS": "12.0"
-        },
-        {
-          "deviceName": "iPhone XS Max",
-          "OS": "12.0"
-        },
-        {
-          "deviceName": "iPhone 6",
-          "OS": "12.0"
+          "OS": "11.4"
         }
       ]
     }
