@@ -57,7 +57,7 @@ public class ArtifactsUploader {
 
     private String uploadFile(String hostMachine, String appPath) throws Exception {
         JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(
-                new File(appPath), hostMachine));
+                new File(appPath).getCanonicalFile(), hostMachine));
         return jsonObject.getString("filePath");
     }
 
