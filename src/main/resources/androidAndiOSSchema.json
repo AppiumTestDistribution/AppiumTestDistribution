@@ -59,7 +59,7 @@
         "properties": {
           "machineIP": {
             "$id": "#/properties/hostMachines/items/properties/machineIP",
-            "type": "array",
+            "type": ["array", "string"],
             "title": "The Machineip Schema",
             "default": "",
             "examples": [
