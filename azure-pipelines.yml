@@ -8,6 +8,8 @@ pool:
 
 steps:
 - script: |
+	export APPIUM_BINARY_PATH="/usr/local/lib/node_modules/appium/build/lib/main.js"
+	export NODE_BINARY_PATH="/usr/local/opt/node@8/bin/node"
     brew outdated xctool || brew upgrade xctool
     xcrun simctl list -j
     npm install -g appium@beta
