@@ -3,7 +3,7 @@
     "platformName": "android",
     "platformVersion": "7.0",
     "automationName": "UIAutomator2",
-    "app": "https://github.com/shridharkalagi/AppiumSample/blob/master/VodQA.apk?raw=true",
+    "app": "./build/VodQA.apk",
     "deviceName": "android",
     "noSign": true
   },
@@ -23,7 +23,7 @@
   },
   "hostMachines": [
     {
-      "machineIP": ["127.0.0.1"],
+      "machineIP": "127.0.0.1",
       "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
       "simulators": [
         {
