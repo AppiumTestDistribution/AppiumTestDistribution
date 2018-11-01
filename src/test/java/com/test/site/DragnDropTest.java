@@ -1,22 +1,15 @@
 package com.test.site;
 
-import com.appium.utils.ScreenShotManager;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.ElementOption;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.Duration;
-import java.util.Base64;
 
 public class DragnDropTest extends  UserBaseTest {
 

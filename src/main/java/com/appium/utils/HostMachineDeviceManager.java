@@ -120,6 +120,28 @@ public class HostMachineDeviceManager {
     public DevicesByHost getDevicesByHost() {
         return devicesByHost;
     }
+    
+    private Map<String, List<AppiumDevice>> getDevicesByIP(String ip, String platform, JSONObject hostMachineJson) throws Exception{
+        Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
+    	IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
+     	List<Device> devices = appiumManager.getDevices(ip, platform);
+     	if ((!platform.equalsIgnoreCase("android")
+     			&& capabilityManager.isSimulatorAppPresentInCapsJson()
+     			&& hostMachineJson.has("simulators"))
+     			&& !capabilityManager.getCapabilityObjectFromKey("iOS")
+     				.has("browserName")) {
+     		JSONArray simulators = hostMachineJson.getJSONArray("simulators");
+     		List<Device> simulatorsToBoot = getSimulatorsToBoot(
+            ip, simulators);
+     		devices.addAll(simulatorsToBoot);
+     	}
+     	List<AppiumDevice> appiumDevices = getAppiumDevices(ip, devices);
+     	devicesByHost.put(ip, appiumDevices);
+     	
+     	return devicesByHost;
+    }
+    
+    
 
     private Map<String, List<AppiumDevice>> getDevices() throws Exception {
         String platform = System.getenv(PLATFORM);
@@ -128,31 +150,22 @@ public class HostMachineDeviceManager {
             JSONArray hostMachines = capabilityManager.getHostMachineObject();
             for (Object hostMachine : hostMachines) {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
-                String machineIP = hostMachineJson.getString("machineIP");
-                IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
-                List<Device> devices = appiumManager.getDevices(machineIP, platform);
-
-                if ((!platform.equalsIgnoreCase("android")
-                        && capabilityManager.isSimulatorAppPresentInCapsJson()
-                        && hostMachineJson.has("simulators"))
-                        && !capabilityManager.getCapabilityObjectFromKey("iOS")
-                        .has("browserName")) {
-                    JSONArray simulators = hostMachineJson.getJSONArray("simulators");
-                    List<Device> simulatorsToBoot = getSimulatorsToBoot(
-                            machineIP, simulators);
-                    devices.addAll(simulatorsToBoot);
-                }
-
-                List<AppiumDevice> appiumDevices = getAppiumDevices(machineIP, devices);
-
-                devicesByHost.put(machineIP, appiumDevices);
+                Object machineIPs = hostMachineJson.get("machineIP");
+                if(machineIPs instanceof JSONArray){
+                	 for (Object machineIP : (JSONArray)machineIPs) {
+                     	String ip= machineIP.toString();
+                     	devicesByHost=this.getDevicesByIP(ip, platform, hostMachineJson);
+            }
+            }else if(machineIPs instanceof String){
+            	String ip = hostMachineJson.getString("machineIP");
+             	devicesByHost=this.getDevicesByIP(ip, platform, hostMachineJson);
+            }
             }
         } else {
             throw new RuntimeException("Provide hostMachine in Caps.json for execution");
         }
         return devicesByHost;
     }
-
 
     private List<AppiumDevice> getAppiumDevices(String machineIP, List<Device> devices) {
         return devices.stream().map(getAppiumDevice(machineIP)).collect(Collectors.toList());

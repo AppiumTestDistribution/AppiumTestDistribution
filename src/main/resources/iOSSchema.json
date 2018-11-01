@@ -38,7 +38,7 @@
         "properties": {
           "machineIP": {
             "$id": "#/properties/hostMachines/items/properties/machineIP",
-            "type": "string",
+            "type": ["array", "string"],
             "title": "The Machineip Schema",
             "default": "",
             "examples": [

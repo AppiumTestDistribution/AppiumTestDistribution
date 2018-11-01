@@ -3,7 +3,6 @@ package com.test.site;
 import com.annotation.values.Author;
 import com.annotation.values.RetryCount;
 import com.appium.manager.AppiumDriverManager;
-import com.appium.manager.AppiumParallelTestListener;
 import com.appium.utils.ScreenShotManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;

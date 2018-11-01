@@ -1,10 +1,11 @@
 package com.appium.executor;
 
 
-import static junit.framework.TestCase.assertTrue;
 
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.HostMachineDeviceManager;
+
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
 
@@ -53,7 +54,7 @@ public class MyTestExecutorTest {
                         tc, ex1.createTestsMap(methods),
                         devices.size());
         System.out.println("xml:" + xmlSuite.toXml());
-        assertTrue(true);
+        Assert.assertTrue(true);
     }
 
 
@@ -85,7 +86,7 @@ public class MyTestExecutorTest {
                         tc, ex1.createTestsMap(methods),
                         devices.size());
         System.out.println("xml:" + xmlSuite.toXml());
-        assertTrue(true);
+        Assert.assertTrue(true);
     }
 
     @Test public void testXmlSuiteCreationForMethodParallel() throws IOException {
@@ -117,7 +118,7 @@ public class MyTestExecutorTest {
                         .getDevicesByHost().getAllDevices());
 
         System.out.println("xml:" + xmlSuite.toXml());
-        assertTrue(true);
+        Assert.assertTrue(true);
     }
 
     public void testXmlSuiteCreationCucumber() throws IOException {
@@ -163,6 +164,6 @@ public class MyTestExecutorTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assertTrue(true);
+        Assert.assertTrue(true);
     }
 }
