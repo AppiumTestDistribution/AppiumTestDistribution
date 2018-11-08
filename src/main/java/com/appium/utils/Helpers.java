@@ -51,10 +51,12 @@ public class Helpers {
     }
 
     public String getHostMachineIpAddress() throws IOException {
-        Socket socket = new Socket();
-        socket.connect(new InetSocketAddress("google.com", 80));
-        return socket.getLocalAddress().toString()
-                .replace("/", "");
+        String localHost = InetAddress.getLocalHost().toString();
+        if(localHost.contains("/")) {
+            return localHost.split("/")[1].trim();
+        } else {
+            return localHost.trim();
+        }
     }
 
     protected static String getAppiumServerVersion() throws IOException {
