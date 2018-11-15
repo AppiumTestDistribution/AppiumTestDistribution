@@ -78,7 +78,7 @@ public class AppiumDriverManager {
         String userSpecifiedCaps;
         DesiredCapabilities desiredCapabilities;
         userSpecifiedCaps = getCapsPath();
-        desiredCapabilities = buildDesiredCapabilites(userSpecifiedCaps);
+        desiredCapabilities = buildDesiredCapabilities(userSpecifiedCaps);
         startAppiumDriverInstance(Optional.ofNullable(desiredCapabilities));
     }
 
@@ -91,7 +91,7 @@ public class AppiumDriverManager {
         }
     }
 
-    private DesiredCapabilities buildDesiredCapabilites(String capabilityPath)
+    private DesiredCapabilities buildDesiredCapabilities(String capabilityPath)
             throws Exception {
         String capabilities = capabilityPath;
         if (new File(capabilityPath).exists()) {

@@ -26,22 +26,7 @@
         "app": {
           "$id": "#/properties/iOS/properties/app",
           "type": "object",
-          "title": "The App Schema",
-          "required": [
-            "simulator"
-          ],
-          "properties": {
-            "simulator": {
-              "$id": "#/properties/iOS/properties/app/properties/simulator",
-              "type": "string",
-              "title": "The Simulator Schema",
-              "default": "",
-              "examples": [
-                "String"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          "title": "The App Schema"
         }
       }
     },
