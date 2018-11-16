@@ -6,8 +6,7 @@ import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.InetAddress;
 import java.util.HashMap;
 
 public class Helpers {
