@@ -9,6 +9,7 @@ import com.thoughtworks.device.SimulatorManager;
 import com.thoughtworks.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +68,7 @@ public class LocalAppiumManager implements IAppiumManager {
                                         + FileLocations.APPIUM_LOGS_DIRECTORY
                                         + "appium_logs.txt"))
                         .withIPAddress(host)
+                        .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .usingAnyFreePort();
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
