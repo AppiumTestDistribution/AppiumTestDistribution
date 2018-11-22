@@ -121,7 +121,7 @@ public class HostMachineDeviceManager {
         return devicesByHost;
     }
     
-    private Map<String, List<AppiumDevice>> getDevicesByIP(String ip, String platform, JSONObject hostMachineJson) throws Exception{
+    private List<AppiumDevice> getDevicesByIP(String ip, String platform, JSONObject hostMachineJson) throws Exception{
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
     	IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
      	List<Device> devices = appiumManager.getDevices(ip, platform);
@@ -136,9 +136,8 @@ public class HostMachineDeviceManager {
      		devices.addAll(simulatorsToBoot);
      	}
      	List<AppiumDevice> appiumDevices = getAppiumDevices(ip, devices);
-     	devicesByHost.put(ip, appiumDevices);
      	
-     	return devicesByHost;
+     	return appiumDevices;
     }
     
     
@@ -151,15 +150,15 @@ public class HostMachineDeviceManager {
             for (Object hostMachine : hostMachines) {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
                 Object machineIPs = hostMachineJson.get("machineIP");
-                if(machineIPs instanceof JSONArray){
+                if(machineIPs instanceof JSONArray) {
                 	 for (Object machineIP : (JSONArray)machineIPs) {
                      	String ip= machineIP.toString();
-                     	devicesByHost=this.getDevicesByIP(ip, platform, hostMachineJson);
-            }
-            }else if(machineIPs instanceof String){
-            	String ip = hostMachineJson.getString("machineIP");
-             	devicesByHost=this.getDevicesByIP(ip, platform, hostMachineJson);
-            }
+                     	devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
+                     }
+                } else if(machineIPs instanceof String) {
+                    String ip = hostMachineJson.getString("machineIP");
+                    devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
+                }
             }
         } else {
             throw new RuntimeException("Provide hostMachine in Caps.json for execution");

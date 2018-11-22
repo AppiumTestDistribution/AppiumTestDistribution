@@ -65,8 +65,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            deviceAllocationManager.allocateDevice(
-                    deviceAllocationManager.getNextAvailableDevice());
+            deviceAllocationManager.allocateDevice(deviceAllocationManager.getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
             testLogger.startLogging(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass()
