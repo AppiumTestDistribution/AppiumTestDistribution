@@ -6,8 +6,7 @@ import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.InetAddress;
 import java.util.HashMap;
 
 public class Helpers {
@@ -51,10 +50,12 @@ public class Helpers {
     }
 
     public String getHostMachineIpAddress() throws IOException {
-        Socket socket = new Socket();
-        socket.connect(new InetSocketAddress("google.com", 80));
-        return socket.getLocalAddress().toString()
-                .replace("/", "");
+        String localHost = InetAddress.getLocalHost().toString();
+        if(localHost.contains("/")) {
+            return localHost.split("/")[1].trim();
+        } else {
+            return localHost.trim();
+        }
     }
 
     protected static String getAppiumServerVersion() throws IOException {

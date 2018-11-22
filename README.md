@@ -9,7 +9,7 @@
 # Appium Parallel Execution for Android and iOS on Real Devices
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/saikrishna321/AppiumTestDistribution)
 [![Join the chat at https://gitter.im/saikrishna321/AppiumTestDistribution](https://badges.gitter.im/saikrishna321/AppiumTestDistribution.svg)](https://gitter.im/saikrishna321/AppiumTestDistribution?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://dev.azure.com/saikrishna321/ATD/_apis/build/status/saikrishna321.AppiumTestDistribution)](https://dev.azure.com/saikrishna321/ATD/_build/latest?definitionId=1)
+[![Build Status](https://dev.azure.com/saikrishna321/ATD/_apis/build/status/AppiumTestDistribution.AppiumTestDistribution)](https://dev.azure.com/saikrishna321/ATD/_build/latest?definitionId=2)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/96c555bd567240999e89dba531fe9802)](https://www.codacy.com/app/saikrishna321/AppiumTestDistribution?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saikrishna321/AppiumTestDistribution&amp;utm_campaign=Badge_Grade)
 [![GitHub stars](https://img.shields.io/github/stars/saikrishna321/AppiumTestDistribution.svg?style=flat)](https://github.com/saikrishna321/AppiumTestDistribution/stargazers)
 [ ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat )](https://github.com/saikrishna321/AppiumTestDistribution/pulls)
