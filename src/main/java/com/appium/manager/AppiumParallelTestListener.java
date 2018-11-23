@@ -161,8 +161,11 @@ public final class AppiumParallelTestListener extends Helpers
             Optional<String> originalDescription = Optional.ofNullable(iTestResult
                     .getMethod().getDescription());
             String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-                    + " Device UDID: " + AppiumDeviceManager.getAppiumDevice()
-                    .getDevice().getUdid();
+                    + " UDID: " + AppiumDeviceManager.getAppiumDevice()
+                    .getDevice().getUdid()
+                    + " Name: " + AppiumDeviceManager.getAppiumDevice()
+                    .getDevice().getName()
+                    + " Host: "+ AppiumDeviceManager.getAppiumDevice().getHostName();
             Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(Author.class);
             if (annotation != null) {
