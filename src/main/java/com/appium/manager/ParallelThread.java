@@ -1,5 +1,7 @@
 package com.appium.manager;
 
+import static com.appium.manager.FigletHelper.figlet;
+
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
 import com.appium.executor.MyTestExecutor;
@@ -13,8 +15,6 @@ import com.appium.utils.HostMachineDeviceManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.appium.manager.FigletHelper.figlet;
 
 /*
  * This class picks the devices connected

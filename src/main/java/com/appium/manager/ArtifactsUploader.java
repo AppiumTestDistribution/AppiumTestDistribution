@@ -2,6 +2,7 @@ package com.appium.manager;
 
 
 import com.appium.utils.Api;
+
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.HostMachineDeviceManager;
 import org.json.JSONObject;

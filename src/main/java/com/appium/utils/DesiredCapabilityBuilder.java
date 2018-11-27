@@ -70,7 +70,8 @@ public class DesiredCapabilityBuilder {
                 if (ResourceUtils.isUrl(hostAppPath)) {
                     desiredCapabilities.setCapability(appCapability, hostAppPath);
                 } else {
-                    desiredCapabilities.setCapability(appCapability, path.normalize().toAbsolutePath().toString());
+                    desiredCapabilities.setCapability(appCapability,
+                            path.normalize().toAbsolutePath().toString());
                 }
             } else {
                 desiredCapabilities.setCapability(key, platFormCapabilities.get(key));

@@ -165,7 +165,7 @@ public final class AppiumParallelTestListener extends Helpers
                     .getDevice().getUdid()
                     + " Name: " + AppiumDeviceManager.getAppiumDevice()
                     .getDevice().getName()
-                    + " Host: "+ AppiumDeviceManager.getAppiumDevice().getHostName();
+                    + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
             Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(Author.class);
             if (annotation != null) {

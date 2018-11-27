@@ -120,27 +120,27 @@ public class HostMachineDeviceManager {
     public DevicesByHost getDevicesByHost() {
         return devicesByHost;
     }
-    
-    private List<AppiumDevice> getDevicesByIP(String ip, String platform, JSONObject hostMachineJson) throws Exception{
-        Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
-    	IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
-     	List<Device> devices = appiumManager.getDevices(ip, platform);
-     	if ((!platform.equalsIgnoreCase("android")
-     			&& capabilityManager.isSimulatorAppPresentInCapsJson()
-     			&& hostMachineJson.has("simulators"))
-     			&& !capabilityManager.getCapabilityObjectFromKey("iOS")
-     				.has("browserName")) {
-     		JSONArray simulators = hostMachineJson.getJSONArray("simulators");
-     		List<Device> simulatorsToBoot = getSimulatorsToBoot(
-            ip, simulators);
-     		devices.addAll(simulatorsToBoot);
-     	}
-     	List<AppiumDevice> appiumDevices = getAppiumDevices(ip, devices);
-     	
-     	return appiumDevices;
+
+    private List<AppiumDevice> getDevicesByIP(String ip, String platform,
+                                              JSONObject hostMachineJson)
+            throws Exception {
+        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
+        List<Device> devices = appiumManager.getDevices(ip, platform);
+        if ((!platform.equalsIgnoreCase("android")
+                && capabilityManager.isSimulatorAppPresentInCapsJson()
+                && hostMachineJson.has("simulators"))
+                && !capabilityManager.getCapabilityObjectFromKey("iOS")
+                .has("browserName")) {
+            JSONArray simulators = hostMachineJson.getJSONArray("simulators");
+            List<Device> simulatorsToBoot = getSimulatorsToBoot(
+                    ip, simulators);
+            devices.addAll(simulatorsToBoot);
+        }
+        List<AppiumDevice> appiumDevices = getAppiumDevices(ip, devices);
+
+        return appiumDevices;
     }
-    
-    
+
 
     private Map<String, List<AppiumDevice>> getDevices() throws Exception {
         String platform = System.getenv(PLATFORM);
@@ -150,12 +150,12 @@ public class HostMachineDeviceManager {
             for (Object hostMachine : hostMachines) {
                 JSONObject hostMachineJson = (JSONObject) hostMachine;
                 Object machineIPs = hostMachineJson.get("machineIP");
-                if(machineIPs instanceof JSONArray) {
-                	 for (Object machineIP : (JSONArray)machineIPs) {
-                     	String ip= machineIP.toString();
-                     	devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
-                     }
-                } else if(machineIPs instanceof String) {
+                if (machineIPs instanceof JSONArray) {
+                    for (Object machineIP : (JSONArray) machineIPs) {
+                        String ip = machineIP.toString();
+                        devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
+                    }
+                } else if (machineIPs instanceof String) {
                     String ip = hostMachineJson.getString("machineIP");
                     devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
                 }

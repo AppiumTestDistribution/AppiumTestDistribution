@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Created by saikrisv on 17/03/16.
  */
+
 public class ImageUtils {
 
     public void wrapDeviceFrames(String deviceFrame, String deviceScreenToBeFramed,

@@ -51,7 +51,7 @@ public class Helpers {
 
     public String getHostMachineIpAddress() throws IOException {
         String localHost = InetAddress.getLocalHost().toString();
-        if(localHost.contains("/")) {
+        if (localHost.contains("/")) {
             return localHost.split("/")[1].trim();
         } else {
             return localHost.trim();

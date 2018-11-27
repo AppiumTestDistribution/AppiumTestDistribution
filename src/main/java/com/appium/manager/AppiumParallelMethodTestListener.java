@@ -65,11 +65,12 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            deviceAllocationManager.allocateDevice(deviceAllocationManager.getNextAvailableDevice());
+            deviceAllocationManager.allocateDevice(deviceAllocationManager
+                    .getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
             testLogger.startLogging(iTestResult.getMethod().getMethodName(),
                     iTestResult.getTestClass()
-                    .getRealClass().getSimpleName());
+                            .getRealClass().getSimpleName());
             // Sets description for each test method with platform and Device UDID allocated to it.
             Optional<String> originalDescription = Optional.ofNullable(iTestResult
                     .getMethod().getDescription());
@@ -78,7 +79,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     .getDevice().getUdid()
                     + " Name: " + AppiumDeviceManager.getAppiumDevice()
                     .getDevice().getName()
-                    + " Host: "+ AppiumDeviceManager.getAppiumDevice().getHostName();
+                    + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
             Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(Author.class);
             if (annotation != null) {
@@ -86,7 +87,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             }
             if (originalDescription.isPresent()
                     && !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice()
-                            .getDevice().getUdid())) {
+                    .getDevice().getUdid())) {
                 iTestResult.getMethod().setDescription(originalDescription.get()
                         + "\n" + description);
             } else {
