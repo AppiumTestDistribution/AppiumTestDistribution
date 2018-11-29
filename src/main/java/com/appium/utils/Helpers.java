@@ -68,4 +68,8 @@ public class Helpers {
         }
         return appiumVersion;
     }
+
+    public boolean isRetry(ITestResult iTestResult) {
+        return iTestResult.getMethod().getRetryAnalyzer().retry(iTestResult);
+    }
 }

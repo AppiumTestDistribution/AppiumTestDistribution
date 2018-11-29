@@ -59,10 +59,10 @@ public class TestStatusManager extends Helpers {
 
     public String envInfo(int deviceSize) throws IOException {
         JSONObject env = new JSONObject();
-        env.put("SeleniumVersion", "3.12.0");
+        env.put("SeleniumVersion", "3.14.X");
         env.put("AppiumServer", getAppiumServerVersion());
         env.put("Runner", ConfigFileManager.getInstance().getProperty("RUNNER"));
-        env.put("AppiumClient", "6.0.0");
+        env.put("AppiumClient", "6.1.0");
         env.put("Total Devices", deviceSize);
         return env.toString();
     }

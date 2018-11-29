@@ -1,6 +1,7 @@
 package com.appium.manager;
 
 import com.annotation.values.Author;
+import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.appium.utils.CapabilityManager;
 import com.appium.utils.FileFilterParser;
@@ -93,10 +94,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
             } else {
                 iTestResult.getMethod().setDescription(description);
             }
-            if (atdHost.isPresent() && atdPort.isPresent()) {
-                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                sendResultsToAtdService(iTestResult, "Started", url, new HashMap<>());
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,6 +108,11 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 .getAnnotation(SkipIf.class);
         if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
                 .equalsIgnoreCase(annotation.platform())) {
+            if (atdHost.isPresent() && atdPort.isPresent()) {
+                HashMap<String, String> logs = new HashMap<>();
+                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                sendResultsToAtdService(iTestResult, "Completed", url, logs);
+            }
             throw new SkipException("Skipped because property was set to :::"
                     + annotation.platform());
         }
@@ -124,20 +126,29 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         try {
-            HashMap<String, String> logs = testLogger.endLogging(iTestResult,
-                    AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
-            if (atdHost.isPresent() && atdPort.isPresent()) {
-                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                sendResultsToAtdService(iTestResult, "Completed", url, logs);
-            } else {
-                new FileFilterParser()
-                        .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-                                .getDevice().getUdid(), iTestResult);
+            if (!isRetry(iTestResult)) {
+                HashMap<String, String> logs = testLogger.endLogging(iTestResult,
+                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                if (atdHost.isPresent() && atdPort.isPresent()) {
+                    String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                } else {
+                    new FileFilterParser()
+                            .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
+                                    .getDevice().getUdid(), iTestResult);
+                }
             }
-            deviceAllocationManager.freeDevice();
-            appiumDriverManager.stopAppiumDriver();
+
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            deviceAllocationManager.freeDevice();
+            try {
+                appiumDriverManager.stopAppiumDriver();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -174,6 +185,14 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
+        System.out.println("In Skipped...");
+        RetryCount retryCount = iTestResult.getMethod().getConstructorOrMethod()
+                .getMethod().getAnnotation(RetryCount.class);
+        if (retryCount == null && (atdHost.isPresent() && atdPort.isPresent())) {
+            HashMap<String, String> logs = new HashMap<>();
+            String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+            sendResultsToAtdService(iTestResult, "Completed", url, logs);
+        }
 
     }
 

@@ -56,10 +56,6 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult testResult) {
-        if (atdHost.isPresent() && atdPort.isPresent()) {
-            String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-            sendResultsToAtdService(testResult, "Started", postTestResults, new HashMap<>());
-        }
         SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
         if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
@@ -209,7 +205,7 @@ public final class AppiumParallelTestListener extends Helpers
         System.out.println("Skipped...");
         if (atdHost.isPresent() && atdPort.isPresent()) {
             String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-            sendResultsToAtdService(iTestResult, "UnKnown", url, new HashMap<>());
+            sendResultsToAtdService(iTestResult, "Skipped", url, new HashMap<>());
         }
     }
 
