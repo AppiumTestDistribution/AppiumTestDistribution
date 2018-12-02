@@ -23,7 +23,6 @@ public class DeviceAllocationManager {
 
     private DeviceAllocationManager() throws Exception {
         try {
-            isPlatformInEnv();
             suspendedThreads = new ArrayList<>();
             hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
             ArtifactsUploader.getInstance().initializeArtifacts();
@@ -40,13 +39,6 @@ public class DeviceAllocationManager {
             instance = new DeviceAllocationManager();
         }
         return instance;
-    }
-
-    private void isPlatformInEnv() {
-        if (System.getenv("Platform") == null) {
-            throw new IllegalArgumentException("Please execute with Platform environment"
-                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
-        }
     }
 
 

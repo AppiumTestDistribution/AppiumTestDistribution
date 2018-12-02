@@ -13,6 +13,7 @@ public class CapabilitySchemaValidator {
 
     public void validateCapabilitySchema(JSONObject capability) {
         try {
+            isPlatformInEnv();
             InputStream inputStream = getClass().getResourceAsStream(getPlatform());
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
@@ -49,6 +50,13 @@ public class CapabilitySchemaValidator {
 
         }
         return schema;
+    }
+
+    private void isPlatformInEnv() {
+        if (System.getenv("Platform") == null) {
+            throw new IllegalArgumentException("Please execute with Platform environment"
+                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
+        }
     }
 
 }
