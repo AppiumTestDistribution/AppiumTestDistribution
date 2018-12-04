@@ -6,7 +6,7 @@ import com.appium.utils.Helpers;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.device.Device;
+import com.github.device.Device;
 import okhttp3.Response;
 import org.json.JSONObject;
 

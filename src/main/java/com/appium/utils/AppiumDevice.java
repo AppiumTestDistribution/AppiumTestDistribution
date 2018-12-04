@@ -1,6 +1,6 @@
 package com.appium.utils;
 
-import com.thoughtworks.device.Device;
+import com.github.device.Device;
 
 public class AppiumDevice {
 

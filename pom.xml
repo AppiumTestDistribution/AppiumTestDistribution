@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>9.0.0</version>
+    <version>9.1.0</version>
     <packaging>jar</packaging>
     <name>AppiumTestDistribution</name>
     <description>A tool run Android and iOS test in parallel across devices</description>
@@ -165,11 +165,6 @@
             <version>1.2.4</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.11</version>
-        </dependency>
-        <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-testng</artifactId>
             <version>1.2.4</version>
@@ -190,24 +185,9 @@
             <version>1.69</version>
         </dependency>
         <dependency>
-            <groupId>com.github.SrinivasanTarget</groupId>
-            <artifactId>DeviceManager</artifactId>
-            <version>ab4cb8a66a</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.yunusmete.stf</groupId>
-            <artifactId>openstf-java-client</artifactId>
-            <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.appium</groupId>
-                    <artifactId>java-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.squareup.okhttp</groupId>
-                    <artifactId>okhttp</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.github.appiumtestdistribution</groupId>
+            <artifactId>devicemanager</artifactId>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

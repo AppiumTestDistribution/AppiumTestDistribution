@@ -1,8 +1,8 @@
 package com.appium.manager;
 
-import com.thoughtworks.device.Device;
 
-import java.io.IOException;
+import com.github.device.Device;
+
 import java.util.List;
 
 public interface IAppiumManager {
@@ -13,7 +13,7 @@ public interface IAppiumManager {
 
     void startAppiumServer(String host) throws Exception;
 
-    List<Device> getDevices(String machineIP,String platform) throws Exception;
+    List<Device> getDevices(String machineIP, String platform) throws Exception;
 
     Device getSimulator(String machineIP, String deviceName, String os)
             throws Exception;

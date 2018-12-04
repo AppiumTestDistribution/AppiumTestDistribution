@@ -3,8 +3,8 @@ package com.appium.utils;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.device.Device;
 import com.report.factory.TestStatusManager;
-import com.thoughtworks.device.Device;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -5,7 +5,7 @@ import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.utils.CommandPrompt;
-import com.thoughtworks.device.SimulatorManager;
+import com.github.device.SimulatorManager;
 
 import java.io.BufferedReader;
 import java.io.File;

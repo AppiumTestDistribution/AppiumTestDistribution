@@ -3,7 +3,6 @@ package com.appium.manager;
 import com.appium.utils.AppiumDevice;
 import com.appium.utils.DevicesByHost;
 import com.appium.utils.HostMachineDeviceManager;
-import com.github.yunusmete.stf.api.STFService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,5 +79,5 @@ public class DeviceAllocationManager {
         LOGGER.info("Allocated Device " + appiumDevice + " for Execution");
         AppiumDeviceManager.setDevice(appiumDevice);
     }
-    
+
 }
