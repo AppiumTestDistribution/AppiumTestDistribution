@@ -28,9 +28,16 @@ public class TestStatusManager extends Helpers {
             throws JsonProcessingException {
         DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
         JSONObject test = new JSONObject();
+        JSONArray dataProvider = new JSONArray();
         test.put("status", testStatus);
         test.put("testresult", getStatus(iTestResult));
         test.put("testMethodName", iTestResult.getMethod().getMethodName());
+        for (Object parameter : iTestResult.getParameters()) {
+            dataProvider.put(parameter);
+        }
+
+
+        test.put("dataProviderValue", dataProvider);
         if (getStatus(iTestResult).equalsIgnoreCase("fail")) {
             test.put("testException", iTestResult.getThrowable().getMessage());
         }
@@ -45,8 +52,8 @@ public class TestStatusManager extends Helpers {
             String startTime = dateFormat.format(new Date(iTestResult.getStartMillis()));
             test.put("endTime", endTime);
             test.put("startTime", startTime);
-            test.put("screenPath",new FileFilterParser()
-                    .getScreenShotPaths(appiumDevice.getDevice().getUdid(),iTestResult));
+            test.put("screenPath", new FileFilterParser()
+                    .getScreenShotPaths(appiumDevice.getDevice().getUdid(), iTestResult));
         }
         String deviceDetails = new ObjectMapper()
                 .writerWithDefaultPrettyPrinter()
