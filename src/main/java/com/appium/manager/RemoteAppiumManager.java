@@ -132,7 +132,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
             figlet("Unable to connect to Remote Host " + machineIP);
             e.printStackTrace();
         } catch (NullPointerException e){
-            figlet("Unable to connect remote the devices" + machineIP);
+            figlet("Unable to connect remote devices" + machineIP);
             e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
@@ -158,7 +158,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
             figlet("Unable to connect to Remote Host " + machineIP);
             e.printStackTrace();
         } catch (NullPointerException e){
-            figlet("Unable to connect remote the devices" + machineIP);
+            figlet("Unable to connect remote devices" + machineIP);
             e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
