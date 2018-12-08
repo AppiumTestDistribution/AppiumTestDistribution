@@ -10,12 +10,15 @@ import com.github.device.Device;
 import okhttp3.Response;
 import org.json.JSONObject;
 
+import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static com.appium.manager.FigletHelper.figlet;
 
 public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
@@ -88,57 +91,78 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<Device> devices = new ArrayList<>();
 
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            List<Device> androidDevices = Arrays.asList(mapper.readValue(new URL(
-                            "http://" + machineIP + ":"
-                                    + getRemoteAppiumManagerPort(machineIP) + "/devices/android"),
-                    Device[].class));
-            Optional.ofNullable(androidDevices).ifPresent(devices::addAll);
-        }
-        if (platform.equalsIgnoreCase(OSType.iOS.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            if (CapabilityManager.getInstance().isApp()) {
-                if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
-                    List<Device> bootedSims = Arrays.asList(mapper.readValue(new URL(
-                                    "http://" + machineIP + ":"
-                                            + getRemoteAppiumManagerPort(machineIP)
-                                            + "/devices/ios/bootedSims"),
-                            Device[].class));
-                    Optional.ofNullable(bootedSims).ifPresent(devices::addAll);
-                }
-                if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
-                    List<Device> iOSRealDevices = Arrays.asList(mapper.readValue(new URL(
+        try {
+            if (platform.equalsIgnoreCase(OSType.ANDROID.name())
+                    || platform.equalsIgnoreCase(OSType.BOTH.name())) {
+                List<Device> androidDevices = Arrays.asList(mapper.readValue(new URL(
+                                "http://" + machineIP + ":"
+                                        + getRemoteAppiumManagerPort(machineIP) + "/devices/android"),
+                        Device[].class));
+                Optional.ofNullable(androidDevices).ifPresent(devices::addAll);
+            }
+            if (platform.equalsIgnoreCase(OSType.iOS.name())
+                    || platform.equalsIgnoreCase(OSType.BOTH.name())) {
+                if (CapabilityManager.getInstance().isApp()) {
+                    if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
+                        List<Device> bootedSims = Arrays.asList(mapper.readValue(new URL(
+                                        "http://" + machineIP + ":"
+                                                + getRemoteAppiumManagerPort(machineIP)
+                                                + "/devices/ios/bootedSims"),
+                                Device[].class));
+                        Optional.ofNullable(bootedSims).ifPresent(devices::addAll);
+                    }
+                    if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
+                        List<Device> iOSRealDevices = Arrays.asList(mapper.readValue(new URL(
+                                        "http://" + machineIP + ":"
+                                                + getRemoteAppiumManagerPort(machineIP)
+                                                + "/devices/ios/realDevices"),
+                                Device[].class));
+                        Optional.ofNullable(iOSRealDevices).ifPresent(devices::addAll);
+                    }
+                } else {
+                    List<Device> iOSDevices = Arrays.asList(mapper.readValue(new URL(
                                     "http://" + machineIP + ":"
                                             + getRemoteAppiumManagerPort(machineIP)
                                             + "/devices/ios/realDevices"),
                             Device[].class));
-                    Optional.ofNullable(iOSRealDevices).ifPresent(devices::addAll);
+                    Optional.ofNullable(iOSDevices).ifPresent(devices::addAll);
                 }
-            } else {
-                List<Device> iOSDevices = Arrays.asList(mapper.readValue(new URL(
-                                "http://" + machineIP + ":"
-                                        + getRemoteAppiumManagerPort(machineIP)
-                                        + "/devices/ios/realDevices"),
-                        Device[].class));
-                Optional.ofNullable(iOSDevices).ifPresent(devices::addAll);
             }
+        } catch (ConnectException e) {
+            figlet("Unable to connect to Remote Host " + machineIP);
+            e.printStackTrace();
+        } catch (NullPointerException e){
+            figlet("Unable to connect remote the devices" + machineIP);
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
         }
         return devices;
     }
 
     @Override
     public Device getSimulator(String machineIP, String deviceName, String os) throws Exception {
-        ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String url = String.format("http://%s:"
-                        + getRemoteAppiumManagerPort(machineIP)
-                        + "/device/ios/simulator"
-                        + "?simulatorName=%s&simulatorOSVersion=%s",
-                machineIP, URLEncoder.encode(deviceName, "UTF-8"),
-                URLEncoder.encode(os, "UTF-8"));
-        Device device = mapper.readValue(new URL(url),
-                Device.class);
+        Device device = null;
+        try{
+            ObjectMapper mapper = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            String url = String.format("http://%s:"
+                            + getRemoteAppiumManagerPort(machineIP)
+                            + "/device/ios/simulator"
+                            + "?simulatorName=%s&simulatorOSVersion=%s",
+                    machineIP, URLEncoder.encode(deviceName, "UTF-8"),
+                    URLEncoder.encode(os, "UTF-8"));
+            device = mapper.readValue(new URL(url),
+                    Device.class);
+        } catch (ConnectException e) {
+            figlet("Unable to connect to Remote Host " + machineIP);
+            e.printStackTrace();
+        } catch (NullPointerException e){
+            figlet("Unable to connect remote the devices" + machineIP);
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return device;
     }
 
