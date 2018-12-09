@@ -37,7 +37,8 @@ Add the below dependencies in your pom.xml (Master)
 
 ## [Prerequisites](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Prerequisites)
 
-
+## ReportPortal 
+    Add LISTENERS=com.epam.reportportal.testng.ReportPortalTestNGListener to config.properties to send data to report portal.
 ### Sample Tests
  Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
  If your application is cross-platform and you end up  building a PageObjectPattern Framework. Then you can also run those tests across Android and iOS devices connected to the same Mac OSX Host.

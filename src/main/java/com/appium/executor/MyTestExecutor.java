@@ -180,7 +180,6 @@ public class MyTestExecutor {
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
-        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelTestListener");
         listeners.add("com.appium.utils.RetryListener");
         include(listeners, "LISTENERS");
@@ -244,7 +243,6 @@ public class MyTestExecutor {
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
-        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
@@ -276,7 +274,6 @@ public class MyTestExecutor {
         suite.setDataProviderThreadCount(deviceCount);
         suite.setVerbose(2);
         suite.setParallel(ParallelMode.METHODS);
-        listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener");
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
         suite.setListeners(listeners);
