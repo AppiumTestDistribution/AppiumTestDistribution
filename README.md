@@ -22,7 +22,7 @@ Add the below dependencies in your pom.xml (Master)
 <dependency>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>09c4398</version>
+    <version>latest_commit</version>
 </dependency>
 ```
 
@@ -34,6 +34,16 @@ Add the below dependencies in your pom.xml (Master)
         </repository>
 </repositories>
 ```
+
+## [Maven Release Version](https://search.maven.org/artifact/com.github.saikrishna321/AppiumTestDistribution)
+
+   ```
+    <dependency>
+      <groupId>com.github.saikrishna321</groupId>
+      <artifactId>AppiumTestDistribution</artifactId>
+      <version>9.1.0</version>
+    </dependency>
+   ```
 
 ## [Prerequisites](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Prerequisites)
 
