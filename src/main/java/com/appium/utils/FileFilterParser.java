@@ -54,8 +54,7 @@ public class FileFilterParser extends Helpers {
                 getFilesFromDirectory(file, filter, results, deviceUDID, iTestResult);
             } else {
                 if (file.getAbsolutePath().contains(deviceUDID)
-                        && file.getAbsolutePath().contains(iTestResult
-                        .getMethod().getMethodName())) {
+                        && file.getAbsolutePath().contains(getCurrentTestMethodName())) {
                     if (!results.containsKey(inputDirectory.getName())) {
                         results.put(inputDirectory.getName(), new HashMap<>());
                     }
@@ -81,10 +80,8 @@ public class FileFilterParser extends Helpers {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        JSONObject obj = new JSONObject();
+        JSONObject list = new JSONObject();
         filesFromDirectory.forEach((key, values) -> {
-            JSONObject list = new JSONObject();
 
             values.forEach((screenName, s) -> {
                 if (s.contains("results") || s.contains("framed")) {
@@ -113,10 +110,7 @@ public class FileFilterParser extends Helpers {
                     System.out.print(s + ", ");
                 }
             });
-            if (list.size() > 0) {
-                obj.put(key, list);
-            }
         });
-        return obj;
+        return list;
     }
 }

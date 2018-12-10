@@ -5,6 +5,7 @@ import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
+import com.appium.manager.AppiumParallelMethodTestListener;
 import com.epam.reportportal.service.ReportPortal;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
@@ -25,7 +26,7 @@ import java.util.Locale;
 /**
  * Created by saikrisv on 26/04/17.
  */
-public class ScreenShotManager {
+public class ScreenShotManager extends Helpers {
 
     private String screenShotNameWithTimeStamp;
     private ImageUtils imageUtils;
@@ -94,8 +95,8 @@ public class ScreenShotManager {
     }
 
     public void captureScreenShot(String screenShotName) {
-        String className = new Exception().getStackTrace()[1].getClassName();
-        String methodName = new Exception().getStackTrace()[1].getMethodName();
+        String className = getCurrentTestClassName();
+        String methodName = getCurrentTestMethodName();
         String deviceModel = null;
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             deviceModel = new AndroidDeviceConfiguration().getDeviceModel();

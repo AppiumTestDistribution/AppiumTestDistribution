@@ -1,6 +1,9 @@
 package com.appium.utils;
 
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.AppiumParallelMethodTestListener;
+import com.appium.manager.AppiumParallelTestListener;
+import com.appium.manager.ConfigFileManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
@@ -71,5 +74,23 @@ public class Helpers {
 
     public boolean isRetry(ITestResult iTestResult) {
         return iTestResult.getMethod().getRetryAnalyzer().retry(iTestResult);
+    }
+
+    public String getCurrentTestClassName() {
+        String runner = ConfigFileManager.getInstance().getProperty("RUNNER");
+        if (runner.equalsIgnoreCase("distribute")) {
+            return AppiumParallelMethodTestListener.getTestMethod().getRealClass().getSimpleName();
+        } else {
+            return AppiumParallelTestListener.getTestMethod().getRealClass().getSimpleName();
+        }
+    }
+
+    public String getCurrentTestMethodName() {
+        String runner = ConfigFileManager.getInstance().getProperty("RUNNER");
+        if (runner.equalsIgnoreCase("distribute")) {
+            return AppiumParallelMethodTestListener.getTestMethod().getMethodName();
+        } else {
+            return AppiumParallelTestListener.getTestMethod().getMethodName();
+        }
     }
 }
