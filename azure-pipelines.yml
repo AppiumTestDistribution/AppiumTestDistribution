@@ -5,12 +5,12 @@
 
 pool:
   vmImage: 'macOS 10.13'
-  strategy:
-    matrix:
-      node_8_14_0:
-        node_version: 8.14.0
+
 
 steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '8.0.0'
 - script: |
      node -v
 #    brew outdated xctool || brew upgrade xctool
