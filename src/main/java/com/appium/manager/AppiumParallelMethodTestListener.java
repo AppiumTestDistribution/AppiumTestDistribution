@@ -13,12 +13,15 @@ import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class AppiumParallelMethodTestListener extends Helpers
         implements ITestListener, IInvokedMethodListener, ISuiteListener {
@@ -29,6 +32,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private AppiumDriverManager appiumDriverManager;
     private Optional<String> atdHost;
     private Optional<String> atdPort;
+    private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
 
     public AppiumParallelMethodTestListener() throws Exception {
         try {
@@ -104,6 +108,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
+        currentMethods.set(iInvokedMethod.getTestMethod());
         SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
         if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
@@ -218,5 +223,11 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onFinish(ITestContext iTestContext) {
 
+    }
+
+    public static ITestNGMethod getTestMethod() {
+        return checkNotNull(currentMethods.get(),
+                "Did you forget to register the %s listener?",
+                AppiumParallelMethodTestListener.class.getName());
     }
 }
