@@ -7,8 +7,8 @@ pool:
   vmImage: 'macOS 10.13'
   strategy:
     matrix:
-      node_8_14:
-        node_version: 8.14
+      node_8_14_0:
+        node_version: 8.14.0
 
 steps:
 - script: |
