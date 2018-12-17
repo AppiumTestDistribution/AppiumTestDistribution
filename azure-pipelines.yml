@@ -13,11 +13,11 @@ steps:
     versionSpec: '8.0.0'
 - script: |
      node -v
-#    brew outdated xctool || brew upgrade xctool
-#    xcrun simctl list -j
-#    npm install -g appium@beta
-#    appium -v
-#    mvn clean site install -Dmaven.test.skip=true
-#    Platform='ios' mvn clean -Dtest=Runner test
+    brew outdated xctool || brew upgrade xctool
+    xcrun simctl list -j
+    npm install -g appium@beta
+    appium -v
+    mvn clean site install -Dmaven.test.skip=true
+    Platform='ios' mvn clean -Dtest=Runner test
 
   displayName: 'Build with Maven'
