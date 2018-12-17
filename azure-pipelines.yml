@@ -5,6 +5,10 @@
 
 pool:
   vmImage: 'macOS 10.13'
+  strategy:
+    matrix:
+      node_8_14:
+        node_version: 8.14
 
 steps:
 - script: |
