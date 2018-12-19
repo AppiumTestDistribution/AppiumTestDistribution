@@ -32,7 +32,8 @@ public class ConfigFileManager {
                 Enumeration keys = prop.propertyNames();
                 while (keys.hasMoreElements()) {
                     String key = (String) keys.nextElement();
-                    configFileMap.put(key, prop.getProperty(key));
+                    String value = (null == System.getenv(key)) ? prop.getProperty(key) : System.getenv(key);
+                    configFileMap.put(key, value);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
