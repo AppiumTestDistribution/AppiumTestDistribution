@@ -92,7 +92,6 @@ public class ParallelThread {
         System.out.println("***************************************************\n");
         System.out.println("Total Number of devices detected::" + deviceCount + "\n");
         System.out.println("***************************************************\n");
-        System.out.println("starting running tests in threads");
 
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();
@@ -152,7 +151,6 @@ public class ParallelThread {
     private void generateDirectoryForAdbLogs() {
         File adb_logs = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY);
         if (!adb_logs.exists()) {
-            System.out.println("creating directory: " + "ADBLogs");
             try {
                 adb_logs.mkdir();
             } catch (SecurityException se) {
@@ -164,7 +162,6 @@ public class ParallelThread {
     private void createAppiumLogsFolder() {
         File f = new File(System.getProperty("user.dir") + FileLocations.APPIUM_LOGS_DIRECTORY);
         if (!f.exists()) {
-            System.out.println("creating directory: " + "Logs");
             try {
                 f.mkdir();
             } catch (SecurityException se) {
@@ -185,11 +182,7 @@ public class ParallelThread {
                             + FileLocations.SCREENSHOTS_DIRECTORY + os + "/"
                             + deviceId);
             if (!file.exists()) {
-                if (file.mkdir()) {
-                    System.out.println("Directory is created for device" + deviceId);
-                } else {
-                    System.out.println("Failed to create directory!");
-                }
+                file.mkdir();
             }
 
         }
