@@ -1,12 +1,16 @@
 package com.appium.schema;
 
+import com.appium.utils.*;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.InputStream;
+import java.net.InetAddress;
+import static com.appium.manager.FigletHelper.figlet;
 
 
 public class CapabilitySchemaValidator {
@@ -18,6 +22,7 @@ public class CapabilitySchemaValidator {
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
             schema.validate(new JSONObject(capability.toString()));
+            validateRemoteHosts(schema);
         } catch (ValidationException e) {
             if (e.getCausingExceptions().size() > 1) {
                 e.getCausingExceptions().stream()
@@ -59,4 +64,24 @@ public class CapabilitySchemaValidator {
         }
     }
 
+    private void validateRemoteHosts(Schema schema){
+        CapabilityManager capabilityManager;
+        try {
+            capabilityManager = CapabilityManager.getInstance();
+            if (capabilityManager.getCapabilities().has("hostMachines")) {
+                JSONArray hostMachines = capabilityManager.getHostMachineObject();
+                for (Object hostMachine : hostMachines) {
+                    JSONObject hostMachineJson = ((JSONObject) hostMachine);
+                    String machineIP = (String) hostMachineJson.get("machineIP");
+                    if (InetAddress.getByName(machineIP).isReachable(5000)){
+                        System.out.println("ATD is Running on " + machineIP);
+                    } else {
+                        figlet("Unable to connect to Remote Host " + machineIP);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
