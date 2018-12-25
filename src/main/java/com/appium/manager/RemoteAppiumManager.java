@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.appium.manager.FigletHelper.figlet;
-
 public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
     @Override
@@ -31,15 +29,9 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     @Override
     public String getRemoteWDHubIP(String host) throws Exception {
         String hostIP = "http://" + host;
-        String appiumRunningPort = null;
-        try {
-            appiumRunningPort = new JSONObject(new Api().getResponse(hostIP
-                    + ":" + getRemoteAppiumManagerPort(host)
-                    + "/appium/isRunning").body().string()).get("port").toString();
-        } catch (Exception e){
-            figlet("Unable to connect to Remote Host " + host);
-            e.printStackTrace();
-        }
+        String appiumRunningPort = new JSONObject(new Api().getResponse(hostIP
+                + ":" + getRemoteAppiumManagerPort(host)
+                + "/appium/isRunning").body().string()).get("port").toString();
         return hostIP + ":" + appiumRunningPort + "/wd/hub";
     }
 
@@ -52,47 +44,41 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
                 "**************************************************************************\n");
         String serverPath = CapabilityManager.getInstance().getAppiumServerPath(host);
         String serverPort = CapabilityManager.getInstance().getAppiumServerPort(host);
+        if (serverPath == null
+                && serverPort == null) {
+            System.out.println("Picking Default Path for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start").body().string();
+        } else if (serverPath != null && serverPort != null) {
+            System.out.println("Picking UserSpecified Path & Port for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start?URL=" + serverPath
+                    + "&PORT=" + serverPort).body().string();
+        } else if (serverPath != null) {
+            System.out.println("Picking UserSpecified Path "
+                    + "& Using default Port for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start?URL=" + serverPath).body().string();
+        } else if (serverPort != null) {
+            System.out.println("Picking Default Path & User Port for AppiumServiceBuilder");
+            new Api().getResponse("http://" + host + ":"
+                    + getRemoteAppiumManagerPort(host)
+                    + "/appium/start?PORT=" + serverPort).body().string();
+        }
 
-        try {
-            if (serverPath == null
-                    && serverPort == null) {
-                System.out.println("Picking Default Path for AppiumServiceBuilder");
-                new Api().getResponse("http://" + host + ":"
+        boolean status = Boolean.getBoolean(new JSONObject(new Api()
+                .getResponse("http://" + host + ":"
                         + getRemoteAppiumManagerPort(host)
-                        + "/appium/start").body().string();
-            } else if (serverPath != null && serverPort != null) {
-                System.out.println("Picking UserSpecified Path & Port for AppiumServiceBuilder");
-                new Api().getResponse("http://" + host + ":"
-                        + getRemoteAppiumManagerPort(host)
-                        + "/appium/start?URL=" + serverPath
-                        + "&PORT=" + serverPort).body().string();
-            } else if (serverPath != null) {
-                System.out.println("Picking UserSpecified Path "
-                        + "& Using default Port for AppiumServiceBuilder");
-                new Api().getResponse("http://" + host + ":"
-                        + getRemoteAppiumManagerPort(host)
-                        + "/appium/start?URL=" + serverPath).body().string();
-            } else if (serverPort != null) {
-                System.out.println("Picking Default Path & User Port for AppiumServiceBuilder");
-                new Api().getResponse("http://" + host + ":"
-                        + getRemoteAppiumManagerPort(host)
-                        + "/appium/start?PORT=" + serverPort).body().string();
-            }
-
-            boolean status = Boolean.getBoolean(new JSONObject(new Api()
-                    .getResponse("http://" + host + ":"
-                            + getRemoteAppiumManagerPort(host)
-                            + "/appium/isRunning").body().string()).get("status").toString());
-            if (status) {
-                System.out.println(
-                        "***************************************************************\n");
-                System.out.println("Appium Server started successfully on  " + host);
-                System.out.println(
-                        "****************************************************************\n");
-            }
-        } catch (Exception e){
-            figlet("Unable to Start Appium Server on Remote " + host);
-            e.printStackTrace();
+                        + "/appium/isRunning").body().string()).get("status").toString());
+        if (status) {
+            System.out.println(
+                    "***************************************************************\n");
+            System.out.println("Appium Server started successfully on  " + host);
+            System.out.println(
+                    "****************************************************************\n");
         }
     }
 
@@ -196,3 +182,4 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
 
 }
+
