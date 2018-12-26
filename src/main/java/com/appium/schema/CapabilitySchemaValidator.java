@@ -1,6 +1,8 @@
 package com.appium.schema;
 
-import com.appium.utils.*;
+import com.appium.manager.FigletHelper;
+
+import com.appium.utils.CapabilityManager;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -11,7 +13,6 @@ import org.json.JSONTokener;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.InetAddress;
-import static com.appium.manager.FigletHelper.figlet;
 
 
 public class CapabilitySchemaValidator {
@@ -65,7 +66,7 @@ public class CapabilitySchemaValidator {
         }
     }
 
-    private void validateRemoteHosts(){
+    private void validateRemoteHosts() {
         CapabilityManager capabilityManager;
         try {
             capabilityManager = CapabilityManager.getInstance();
@@ -74,10 +75,10 @@ public class CapabilitySchemaValidator {
                 for (Object hostMachine : hostMachines) {
                     JSONObject hostMachineJson = ((JSONObject) hostMachine);
                     String machineIP = (String) hostMachineJson.get("machineIP");
-                    if (InetAddress.getByName(machineIP).isReachable(5000)){
+                    if (InetAddress.getByName(machineIP).isReachable(5000)) {
                         System.out.println("ATD is Running on " + machineIP);
                     } else {
-                        figlet("Unable to connect to Remote Host " + machineIP);
+                        FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
                         throw new ConnectException();
                     }
                 }
