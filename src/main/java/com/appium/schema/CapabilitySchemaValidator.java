@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import static com.appium.manager.FigletHelper.figlet;
 
@@ -22,7 +23,7 @@ public class CapabilitySchemaValidator {
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
             schema.validate(new JSONObject(capability.toString()));
-            validateRemoteHosts(schema);
+            validateRemoteHosts();
         } catch (ValidationException e) {
             if (e.getCausingExceptions().size() > 1) {
                 e.getCausingExceptions().stream()
@@ -64,7 +65,7 @@ public class CapabilitySchemaValidator {
         }
     }
 
-    private void validateRemoteHosts(Schema schema){
+    private void validateRemoteHosts(){
         CapabilityManager capabilityManager;
         try {
             capabilityManager = CapabilityManager.getInstance();
@@ -77,6 +78,7 @@ public class CapabilitySchemaValidator {
                         System.out.println("ATD is Running on " + machineIP);
                     } else {
                         figlet("Unable to connect to Remote Host " + machineIP);
+                        throw new ConnectException();
                     }
                 }
             }
