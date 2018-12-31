@@ -11,10 +11,10 @@ public class RunnerWeb {
 
     @Test public void runWebTests() throws Exception {
         List<String> tests = new ArrayList<>();
-        ATDRunner parallelThread = new ATDRunner();
+        ATDRunner atdRunner = new ATDRunner();
 
         tests.add("LoginFailureTest");
-        boolean hasFailures = parallelThread.runner("com.appium.webtest",tests);
+        boolean hasFailures = atdRunner.runner("com.appium.webtest",tests);
 
     }
 }

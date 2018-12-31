@@ -12,8 +12,8 @@ public class RunnerCukes {
 
     @Test
     public void testCukesRunner() throws Exception {
-        ATDRunner cucumberParallelThread = new ATDRunner();
-        boolean hasFailures = cucumberParallelThread.runner("output");
+        ATDRunner atdRunner = new ATDRunner();
+        boolean hasFailures = atdRunner.runner("output");
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
     }
 }
