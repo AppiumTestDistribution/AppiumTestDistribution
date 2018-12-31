@@ -1,6 +1,6 @@
 package com.appium.manager;
 
-import static com.appium.manager.FigletHelper.figlet;
+import static com.appium.utils.FigletHelper.figlet;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
@@ -8,9 +8,9 @@ import com.appium.executor.MyTestExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.schema.CapabilitySchemaValidator;
-import com.appium.utils.AppiumDevice;
 import com.appium.utils.CapabilityManager;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.utils.ConfigFileManager;
+import com.appium.device.HostMachineDeviceManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 
 
-public class ParallelThread {
+public class ATDRunner {
     private static final String ANDROID = "android";
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
@@ -38,7 +38,7 @@ public class ParallelThread {
     private CapabilityManager capabilityManager;
     private HostMachineDeviceManager hostMachineDeviceManager;
 
-    public ParallelThread() throws Exception {
+    public ATDRunner() throws Exception {
         capabilityManager = CapabilityManager.getInstance();
         new CapabilitySchemaValidator()
                 .validateCapabilitySchema(capabilityManager.getCapabilities());
@@ -62,7 +62,7 @@ public class ParallelThread {
 
     @Deprecated
     //Use system property udids to send list of valid device ids
-    public ParallelThread(List<String> validDeviceIds) throws Exception {
+    public ATDRunner(List<String> validDeviceIds) throws Exception {
         this();
         androidDevice.setValidDevices(validDeviceIds);
         iosDevice.setValidDevices(validDeviceIds);
@@ -112,19 +112,12 @@ public class ParallelThread {
             //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
         }
 
-        List<Class> testcases = new ArrayList<>();
-
         boolean hasFailures = false;
         String runner = configFileManager.getProperty("RUNNER");
         String framework = configFileManager.getProperty("FRAMEWORK");
 
 
         if (framework.equalsIgnoreCase("testng")) {
-            PackageUtil.getClasses(pack).stream().forEach(s -> {
-                if (s.toString().contains("Test")) {
-                    testcases.add((Class) s);
-                }
-            });
             String executionType = runner.equalsIgnoreCase("distribute")
                     ? "distribute" : "parallel";
             hasFailures = myTestExecutor

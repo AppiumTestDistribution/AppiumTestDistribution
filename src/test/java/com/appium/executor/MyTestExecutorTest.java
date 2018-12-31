@@ -3,7 +3,7 @@ package com.appium.executor;
 
 
 import com.appium.filelocations.FileLocations;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.HostMachineDeviceManager;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

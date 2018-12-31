@@ -3,7 +3,6 @@ package com.appium.utils;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.manager.AppiumParallelTestListener;
-import com.appium.manager.ConfigFileManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
 import org.testng.ITestResult;
@@ -13,6 +12,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 
 public class Helpers {
+
     protected String getRemoteAppiumManagerPort(String host) throws Exception {
         String serverPort = CapabilityManager.getInstance()
                 .getRemoteAppiumManangerPort(host);
@@ -93,4 +93,5 @@ public class Helpers {
             return AppiumParallelTestListener.getTestMethod().getMethodName();
         }
     }
+
 }

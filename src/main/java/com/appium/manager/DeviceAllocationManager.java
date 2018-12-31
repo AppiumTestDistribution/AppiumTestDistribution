@@ -1,8 +1,7 @@
 package com.appium.manager;
 
-import com.appium.utils.AppiumDevice;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.DevicesByHost;
+import com.appium.device.HostMachineDeviceManager;
 
 import java.io.IOException;
 import java.util.ArrayList;

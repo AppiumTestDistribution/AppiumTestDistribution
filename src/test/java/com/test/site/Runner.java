@@ -1,6 +1,6 @@
 package com.test.site;
 
-import com.appium.manager.ParallelThread;
+import com.appium.manager.ATDRunner;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -19,7 +19,7 @@ public class Runner {
         //tests.add("HomePageTest2");
         //tests.add("SliderTest");
         tests.add("DragnDropTest");
-        ParallelThread parallelThread = new ParallelThread();
+        ATDRunner parallelThread = new ATDRunner();
         boolean hasFailures = parallelThread.runner("com.test.site",tests);
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
     }

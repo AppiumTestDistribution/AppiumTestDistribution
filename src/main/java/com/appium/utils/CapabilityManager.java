@@ -1,10 +1,8 @@
 package com.appium.utils;
 
-import com.appium.manager.ConfigFileManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;

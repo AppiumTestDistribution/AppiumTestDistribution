@@ -1,4 +1,4 @@
-package com.appium.manager;
+package com.appium.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;

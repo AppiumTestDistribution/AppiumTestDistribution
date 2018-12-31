@@ -1,6 +1,6 @@
 package com.test.cucumber.cukesrunner;
 
-import com.appium.manager.ParallelThread;
+import com.appium.manager.ATDRunner;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -12,7 +12,7 @@ public class RunnerCukes {
 
     @Test
     public void testCukesRunner() throws Exception {
-        ParallelThread cucumberParallelThread = new ParallelThread();
+        ATDRunner cucumberParallelThread = new ATDRunner();
         boolean hasFailures = cucumberParallelThread.runner("output");
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
     }

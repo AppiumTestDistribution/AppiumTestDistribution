@@ -4,7 +4,7 @@ package com.appium.manager;
 import com.appium.utils.Api;
 
 import com.appium.utils.CapabilityManager;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.HostMachineDeviceManager;
 import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
 
@@ -40,7 +40,7 @@ public class ArtifactsUploader {
         return instance;
     }
 
-    protected void initializeArtifacts() throws Exception {
+    public void initializeArtifacts() throws Exception {
         for (String hostMachine : hostMachineDeviceManager.getDevicesByHost().getAllHosts()) {
             HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
             HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);

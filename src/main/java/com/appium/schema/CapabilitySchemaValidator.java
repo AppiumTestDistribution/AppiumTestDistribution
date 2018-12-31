@@ -1,6 +1,6 @@
 package com.appium.schema;
 
-import com.appium.manager.FigletHelper;
+import com.appium.utils.FigletHelper;
 
 import com.appium.utils.CapabilityManager;
 import org.everit.json.schema.Schema;

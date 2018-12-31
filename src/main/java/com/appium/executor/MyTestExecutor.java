@@ -1,11 +1,11 @@
 package com.appium.executor;
 
-import static com.appium.manager.FigletHelper.figlet;
+import static com.appium.utils.FigletHelper.figlet;
 
 import com.appium.filelocations.FileLocations;
-import com.appium.manager.ConfigFileManager;
+import com.appium.utils.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
-import com.appium.utils.AppiumDevice;
+import com.appium.manager.AppiumDevice;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.jakewharton.fliptables.FlipTableConverters;

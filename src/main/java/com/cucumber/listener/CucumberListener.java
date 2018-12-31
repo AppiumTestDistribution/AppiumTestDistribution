@@ -7,7 +7,7 @@ import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
-import com.appium.manager.ConfigFileManager;
+import com.appium.utils.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.DeviceSingleton;
 import com.appium.utils.ImageUtils;

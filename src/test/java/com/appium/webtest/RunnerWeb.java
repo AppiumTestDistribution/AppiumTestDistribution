@@ -1,6 +1,6 @@
 package com.appium.webtest;
 
-import com.appium.manager.ParallelThread;
+import com.appium.manager.ATDRunner;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ public class RunnerWeb {
 
     @Test public void runWebTests() throws Exception {
         List<String> tests = new ArrayList<>();
-        ParallelThread parallelThread = new ParallelThread();
+        ATDRunner parallelThread = new ATDRunner();
 
         tests.add("LoginFailureTest");
         boolean hasFailures = parallelThread.runner("com.appium.webtest",tests);

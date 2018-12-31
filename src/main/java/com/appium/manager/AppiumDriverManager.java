@@ -3,6 +3,7 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
+import com.appium.utils.ConfigFileManager;
 import com.appium.utils.DesiredCapabilityBuilder;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;

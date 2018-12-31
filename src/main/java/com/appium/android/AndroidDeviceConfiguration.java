@@ -3,10 +3,10 @@ package com.appium.android;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDeviceManager;
 
-import com.appium.utils.AppiumDevice;
+import com.appium.manager.AppiumDevice;
 import com.appium.utils.CommandPrompt;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.DevicesByHost;
+import com.appium.device.HostMachineDeviceManager;
 
 import java.io.IOException;
 import java.util.ArrayList;

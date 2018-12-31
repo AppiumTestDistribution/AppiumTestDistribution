@@ -2,11 +2,10 @@ package com.appium.manager;
 
 import com.annotation.values.Author;
 import com.annotation.values.SkipIf;
-import com.appium.utils.AppiumDevice;
 import com.appium.utils.CapabilityManager;
-import com.appium.utils.DevicesByHost;
+import com.appium.device.DevicesByHost;
 import com.appium.utils.Helpers;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.HostMachineDeviceManager;
 import org.json.JSONObject;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;

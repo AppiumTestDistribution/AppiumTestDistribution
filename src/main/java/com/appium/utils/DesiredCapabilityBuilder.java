@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.ArtifactsUploader;
