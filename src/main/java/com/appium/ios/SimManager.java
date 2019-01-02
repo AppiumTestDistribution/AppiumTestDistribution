@@ -1,6 +1,6 @@
 package com.appium.ios;
 
-import com.appium.utils.CapabilityManager;
+import com.appium.capabilities.CapabilityManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

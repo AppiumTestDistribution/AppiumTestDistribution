@@ -8,7 +8,7 @@ import com.appium.executor.MyTestExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.schema.CapabilitySchemaValidator;
-import com.appium.utils.CapabilityManager;
+import com.appium.capabilities.CapabilityManager;
 import com.appium.utils.ConfigFileManager;
 import com.appium.device.HostMachineDeviceManager;
 
@@ -38,7 +38,7 @@ public class ATDRunner {
     private CapabilityManager capabilityManager;
     private HostMachineDeviceManager hostMachineDeviceManager;
 
-    public ATDRunner() throws Exception {
+    public ATDRunner() {
         capabilityManager = CapabilityManager.getInstance();
         new CapabilitySchemaValidator()
                 .validateCapabilitySchema(capabilityManager.getCapabilities());

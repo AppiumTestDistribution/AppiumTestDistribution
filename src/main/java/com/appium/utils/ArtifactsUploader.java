@@ -1,9 +1,7 @@
-package com.appium.manager;
+package com.appium.utils;
 
 
-import com.appium.utils.Api;
-
-import com.appium.utils.CapabilityManager;
+import com.appium.capabilities.CapabilityManager;
 import com.appium.device.HostMachineDeviceManager;
 import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
@@ -23,7 +21,7 @@ public class ArtifactsUploader {
     private List<HostArtifact> hostArtifacts;
 
 
-    private ArtifactsUploader() {
+    protected ArtifactsUploader() {
         try {
             capabilityManager = CapabilityManager.getInstance();
         } catch (Exception e) {
@@ -33,7 +31,7 @@ public class ArtifactsUploader {
         hostArtifacts = new ArrayList<>();
     }
 
-    public static ArtifactsUploader getInstance() {
+    protected static ArtifactsUploader getInstance() {
         if (instance == null) {
             instance = new ArtifactsUploader();
         }

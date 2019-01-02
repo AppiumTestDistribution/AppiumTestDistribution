@@ -2,10 +2,11 @@ package com.appium.device;
 
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumManagerFactory;
+import com.appium.utils.ArtifactsUploader;
 import com.appium.manager.IAppiumManager;
 import com.appium.utils.Api;
 import com.appium.utils.AvailablePorts;
-import com.appium.utils.CapabilityManager;
+import com.appium.capabilities.CapabilityManager;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class HostMachineDeviceManager {
+public class HostMachineDeviceManager extends ArtifactsUploader {
 
     private static final String PLATFORM = "Platform";
     private static final String UDIDS = "udids";
@@ -62,6 +63,7 @@ public class HostMachineDeviceManager {
                 Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                         = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
+                ArtifactsUploader.getInstance().initializeArtifacts();
             } catch (Exception e) {
                 e.printStackTrace();
             }

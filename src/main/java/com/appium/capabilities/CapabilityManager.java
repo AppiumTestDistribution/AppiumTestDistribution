@@ -1,5 +1,7 @@
-package com.appium.utils;
+package com.appium.capabilities;
 
+import com.appium.utils.ConfigFileManager;
+import com.appium.utils.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

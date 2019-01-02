@@ -1,5 +1,6 @@
 package com.appium.utils;
 
+import com.appium.capabilities.CapabilityManager;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.manager.AppiumParallelTestListener;

@@ -4,7 +4,7 @@ import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.ConfigFileManager;
-import com.appium.utils.DesiredCapabilityBuilder;
+import com.appium.capabilities.DesiredCapabilityBuilder;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;

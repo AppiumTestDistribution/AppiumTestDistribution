@@ -19,20 +19,17 @@ public class DeviceAllocationManager {
     private List<AppiumDevice> allDevices;
     private List<Thread> suspendedThreads;
 
-    private DeviceAllocationManager() throws Exception {
-        try {
-            suspendedThreads = new ArrayList<>();
-            hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
-            ArtifactsUploader.getInstance().initializeArtifacts();
-            DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
-            allDevices = appiumDeviceByHost.getAllDevices();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private DeviceAllocationManager() {
+        super();
+        suspendedThreads = new ArrayList<>();
+        hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+        DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
+        allDevices = appiumDeviceByHost.getAllDevices();
+
     }
 
 
-    public static DeviceAllocationManager getInstance() throws Exception {
+    public static DeviceAllocationManager getInstance() {
         if (instance == null) {
             instance = new DeviceAllocationManager();
         }

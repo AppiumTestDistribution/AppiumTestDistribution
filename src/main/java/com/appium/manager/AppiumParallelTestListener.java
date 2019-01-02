@@ -2,7 +2,7 @@ package com.appium.manager;
 
 import com.annotation.values.Author;
 import com.annotation.values.SkipIf;
-import com.appium.utils.CapabilityManager;
+import com.appium.capabilities.CapabilityManager;
 import com.appium.device.DevicesByHost;
 import com.appium.utils.Helpers;
 import com.appium.device.HostMachineDeviceManager;
@@ -19,7 +19,6 @@ import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -38,18 +37,14 @@ public final class AppiumParallelTestListener extends Helpers
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
 
     public AppiumParallelTestListener() throws Exception {
-        try {
-            testLogger = new TestLogger();
-            appiumServerManager = new AppiumServerManager();
-            deviceAllocationManager = DeviceAllocationManager.getInstance();
-            appiumDriverManager = new AppiumDriverManager();
-            atdHost = Optional.ofNullable(CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdHost"));
-            atdPort = Optional.ofNullable(CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdPort"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        testLogger = new TestLogger();
+        appiumServerManager = new AppiumServerManager();
+        deviceAllocationManager = DeviceAllocationManager.getInstance();
+        appiumDriverManager = new AppiumDriverManager();
+        atdHost = Optional.ofNullable(CapabilityManager.getInstance()
+                .getMongoDbHostAndPort().get("atdHost"));
+        atdPort = Optional.ofNullable(CapabilityManager.getInstance()
+                .getMongoDbHostAndPort().get("atdPort"));
     }
 
 
