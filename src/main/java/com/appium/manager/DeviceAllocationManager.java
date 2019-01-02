@@ -20,7 +20,6 @@ public class DeviceAllocationManager {
     private List<Thread> suspendedThreads;
 
     private DeviceAllocationManager() {
-        super();
         suspendedThreads = new ArrayList<>();
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
