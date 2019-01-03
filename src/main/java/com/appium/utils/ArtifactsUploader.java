@@ -16,7 +16,6 @@ public class ArtifactsUploader {
 
     private static ArtifactsUploader instance;
     private CapabilityManager capabilityManager;
-    private final HostMachineDeviceManager hostMachineDeviceManager;
     private Api api = new Api();
     private List<HostArtifact> hostArtifacts;
 
@@ -27,7 +26,6 @@ public class ArtifactsUploader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         hostArtifacts = new ArrayList<>();
     }
 
@@ -39,7 +37,8 @@ public class ArtifactsUploader {
     }
 
     public void initializeArtifacts() throws Exception {
-        for (String hostMachine : hostMachineDeviceManager.getDevicesByHost().getAllHosts()) {
+        for (String hostMachine : HostMachineDeviceManager.getInstance()
+                .getDevicesByHost().getAllHosts()) {
             HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
             HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
             hostArtifacts.add(hostArtifact);
