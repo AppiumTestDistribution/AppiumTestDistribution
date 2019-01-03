@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class HostMachineDeviceManager extends ArtifactsUploader {
+public class HostMachineDeviceManager {
 
     private static final String PLATFORM = "Platform";
     private static final String UDIDS = "udids";
@@ -63,7 +63,6 @@ public class HostMachineDeviceManager extends ArtifactsUploader {
                 Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                         = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
-                ArtifactsUploader.getInstance().initializeArtifacts();
             } catch (Exception e) {
                 e.printStackTrace();
             }

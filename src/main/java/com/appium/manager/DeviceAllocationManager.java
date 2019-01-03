@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.appium.device.DevicesByHost;
 import com.appium.device.HostMachineDeviceManager;
+import com.appium.utils.ArtifactsUploader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.logging.Logger;
 /**
  * DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
  */
-public class DeviceAllocationManager {
+public class DeviceAllocationManager extends ArtifactsUploader {
 
     private static DeviceAllocationManager instance;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
@@ -19,18 +20,23 @@ public class DeviceAllocationManager {
     private List<AppiumDevice> allDevices;
     private List<Thread> suspendedThreads;
 
-    private DeviceAllocationManager() {
+    private DeviceAllocationManager() throws Exception {
         suspendedThreads = new ArrayList<>();
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+        ArtifactsUploader.getInstance().initializeArtifacts();
         DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
         allDevices = appiumDeviceByHost.getAllDevices();
 
     }
 
 
-    public static DeviceAllocationManager getInstance() {
+    public static DeviceAllocationManager getInstance()  {
         if (instance == null) {
-            instance = new DeviceAllocationManager();
+            try {
+                instance = new DeviceAllocationManager();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return instance;
     }
