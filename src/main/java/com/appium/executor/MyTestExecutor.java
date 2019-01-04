@@ -1,11 +1,11 @@
 package com.appium.executor;
 
-import static com.appium.manager.FigletHelper.figlet;
+import static com.appium.utils.FigletHelper.figlet;
 
 import com.appium.filelocations.FileLocations;
-import com.appium.manager.ConfigFileManager;
+import com.appium.utils.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
-import com.appium.utils.AppiumDevice;
+import com.appium.manager.AppiumDevice;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.jakewharton.fliptables.FlipTableConverters;
@@ -52,7 +52,7 @@ public class MyTestExecutor {
     private ArrayList<String> groupsInclude = new ArrayList<>();
     private ArrayList<String> groupsExclude = new ArrayList<>();
 
-    public MyTestExecutor() throws Exception {
+    public MyTestExecutor() {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         prop = ConfigFileManager.getInstance();
     }
@@ -192,7 +192,7 @@ public class MyTestExecutor {
                 } else {
                     for (String s : testcases) {
                         for (int j = 0; j < items.size(); j++) {
-                            String testName = items.get(j).concat("." + s).toString();
+                            String testName = items.get(j).concat("." + s);
                             if (testName.equals(className)) {
                                 xmlClasses.add(createClass(className));
                             }

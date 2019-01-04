@@ -1,10 +1,10 @@
-package com.appium.utils;
+package com.appium.capabilities;
 
-import com.appium.manager.ConfigFileManager;
+import com.appium.utils.ConfigFileManager;
+import com.appium.utils.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;

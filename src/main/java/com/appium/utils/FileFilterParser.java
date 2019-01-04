@@ -1,6 +1,7 @@
 package com.appium.utils;
 
 
+import com.appium.capabilities.CapabilityManager;
 import com.epam.reportportal.service.ReportPortal;
 import org.json.simple.JSONObject;
 import org.testng.ITestResult;

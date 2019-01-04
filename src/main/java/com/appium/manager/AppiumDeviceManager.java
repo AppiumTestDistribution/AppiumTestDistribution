@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
-import com.appium.utils.AppiumDevice;
 
 /**
  * Device Manager - Handles all device related information's e.g UDID, Model, etc

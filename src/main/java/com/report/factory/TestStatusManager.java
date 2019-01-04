@@ -1,8 +1,8 @@
 package com.report.factory;
 
-import com.appium.manager.ConfigFileManager;
-import com.appium.utils.AppiumDevice;
-import com.appium.utils.DevicesByHost;
+import com.appium.utils.ConfigFileManager;
+import com.appium.manager.AppiumDevice;
+import com.appium.device.DevicesByHost;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,9 +15,6 @@ import org.testng.ITestResult;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 

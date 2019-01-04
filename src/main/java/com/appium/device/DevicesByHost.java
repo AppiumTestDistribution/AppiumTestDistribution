@@ -1,6 +1,7 @@
-package com.appium.utils;
+package com.appium.device;
 
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.manager.AppiumDevice;
 
 import java.util.List;
 import java.util.Map;

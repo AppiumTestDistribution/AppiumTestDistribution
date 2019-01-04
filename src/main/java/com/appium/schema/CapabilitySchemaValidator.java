@@ -1,8 +1,8 @@
 package com.appium.schema;
 
-import com.appium.manager.FigletHelper;
+import com.appium.utils.FigletHelper;
 
-import com.appium.utils.CapabilityManager;
+import com.appium.capabilities.CapabilityManager;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
