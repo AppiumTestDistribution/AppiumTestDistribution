@@ -34,29 +34,6 @@ public class CommandPrompt {
 
     }
 
-    public String runCommandThruProcessBuilder(String command)
-        throws InterruptedException, IOException {
-        BufferedReader br = getBufferedReader(command);
-        String line;
-        String allLine = "";
-        while ((line = br.readLine()) != null) {
-            allLine = allLine + "" + line + "\n";
-            System.out.println(allLine);
-        }
-        return allLine.split(":")[1].replace("\n", "").trim();
-    }
-
-    public String runProcessCommandToGetDeviceID(String command)
-        throws InterruptedException, IOException {
-        BufferedReader br = getBufferedReader(command);
-        String line;
-        String allLine = "";
-        while ((line = br.readLine()) != null) {
-            allLine = allLine.trim() + "" + line.trim() + "\n";
-        }
-        return allLine.trim();
-    }
-
     public BufferedReader getBufferedReader(String command) throws IOException {
         List<String> commands = new ArrayList<>();
         commands.add("/bin/sh");

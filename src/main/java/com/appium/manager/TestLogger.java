@@ -5,13 +5,12 @@ import com.appium.filelocations.FileLocations;
 import com.appium.utils.Helpers;
 import com.appium.utils.ScreenShotManager;
 import com.epam.reportportal.service.ReportPortal;
-import com.video.recorder.Flick;
-import org.openqa.selenium.Capabilities;
+import com.video.recorder.AppiumScreenRecordFactory;
+import com.video.recorder.IScreenRecord;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -24,7 +23,6 @@ import java.util.logging.Level;
  */
 class TestLogger extends Helpers {
 
-    private Flick videoRecording;
     private File logFile;
     private List<LogEntry> logEntries;
     private PrintWriter log_file_writer;
@@ -40,7 +38,6 @@ class TestLogger extends Helpers {
     }
 
     TestLogger() {
-        this.videoRecording = new Flick();
         screenShotManager = new ScreenShotManager();
     }
 
@@ -57,6 +54,7 @@ class TestLogger extends Helpers {
             log_file_writer = new PrintWriter(logFile);
         }
         if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
+            IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
             videoRecording.startVideoRecording(className, methodName, methodName);
         }
     }
@@ -130,15 +128,9 @@ class TestLogger extends Helpers {
     private void stopViewRecording(ITestResult result, String className)
             throws IOException, InterruptedException {
         if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
-            try {
-                videoRecording.stopVideoRecording(className, result.getMethod()
-                        .getMethodName(), result.getMethod().getMethodName());
-            } catch (IOException e) {
-                videoRecording.stopVideoRecording(className, result.getMethod()
-                        .getMethodName(), result.getMethod().getMethodName());
-            } catch (InterruptedException e) {
-                System.out.println("");
-            }
+            IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
+            videoRecording.stopVideoRecording(className, result.getMethod()
+                    .getMethodName(), result.getMethod().getMethodName());
         }
         deleteSuccessVideos(result, className);
     }
