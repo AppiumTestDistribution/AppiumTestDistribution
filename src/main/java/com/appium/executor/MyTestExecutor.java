@@ -62,22 +62,44 @@ public class MyTestExecutor {
         Set<Method> resources = getMethods(pack);
         boolean hasFailure;
         dryRunTestInfo(resources);
-        String runnerLevel = System.getenv("RUNNER_LEVEL") != null
-                ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
+
+        String runnerLevel;
+        if (System.getenv("RUNNER_LEVEL") != null) {
+            runnerLevel = System.getenv("RUNNER_LEVEL");
+        } else {
+            runnerLevel = prop.getProperty("RUNNER_LEVEL") != null ? prop.getProperty("RUNNER_LEVEL") : "methods";
+        }
+
+        String productName;
+        if (System.getenv("PRODUCT_NAME") != null) {
+            productName = System.getenv("PRODUCT_NAME");
+        } else {
+            productName = prop.getProperty("PRODUCT_NAME") != null ? prop.getProperty("PRODUCT_NAME") : "TestNG Forum";
+        }
+
+        String suiteName;
+        if (System.getenv("SUITE_NAME") != null) {
+            suiteName = System.getenv("SUITE_NAME");
+        } else {
+            suiteName = prop.getProperty("SUITE_NAME") != null ? prop.getProperty("SUITE_NAME") : "TestNG Test";
+        }
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
                     && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForDistribution(test, createTestsMap(resources),
+                        productName, suiteName,
                         devicecount);
             } else {
                 constructXmlSuiteForDistributionMethods(test, createTestsMap(resources),
+                        productName, suiteName,
                         devicecount);
             }
 
             hasFailure = runMethodParallel();
         } else {
-            constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
+            constructXmlSuiteForParallel(pack, test, createTestsMap(resources),
+                    productName, suiteName, devicecount,
                     deviceAllocationManager.getDevices());
             hasFailure = runMethodParallel();
         }
@@ -149,6 +171,7 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
                                                  Map<String, List<Method>> methods,
+                                                 String productName, String suiteName,
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
@@ -158,7 +181,7 @@ public class MyTestExecutor {
         include(groupsInclude, "INCLUDE_GROUPS");
         include(groupsExclude, "EXCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
-        suite.setName("TestNG Forum");
+        suite.setName(productName);
         suite.setThreadCount(deviceCount);
         suite.setDataProviderThreadCount(deviceCount);
         suite.setParallel(ParallelMode.TESTS);
@@ -169,7 +192,7 @@ public class MyTestExecutor {
         }
         for (int i = 0; i < deviceCount; i++) {
             XmlTest test = new XmlTest(suite);
-            test.setName("TestNG Test" + i);
+            test.setName(suiteName + "-" + i);
             test.setPreserveOrder("false");
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
             test.addParameter("hostName", deviceSerail.get(i).getHostName());
@@ -207,11 +230,13 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForDistribution(List<String> tests,
                                                      Map<String, List<Method>> methods,
+                                                     String productName,
+                                                     String suiteName,
                                                      int deviceCount) {
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
-        suite.setName("TestNG Forum");
+        suite.setName(productName);
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
@@ -222,7 +247,7 @@ public class MyTestExecutor {
             suite.setListeners(listeners);
         }
         XmlTest test = new XmlTest(suite);
-        test.setName("TestNG Test");
+        test.setName(suiteName);
         test.addParameter("device", "");
         include(groupsExclude, "EXCLUDE_GROUPS");
         test.setIncludedGroups(groupsInclude);
@@ -237,11 +262,13 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForDistributionMethods(List<String> tests,
                                                             Map<String, List<Method>> methods,
+                                                            String productName,
+                                                            String suiteName,
                                                             int deviceCount) {
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
-        suite.setName("TestNG Forum");
+        suite.setName(productName);
         suite.setThreadCount(deviceCount);
         suite.setDataProviderThreadCount(deviceCount);
         suite.setVerbose(2);
@@ -255,7 +282,7 @@ public class MyTestExecutor {
         List<XmlClass> xmlClasses = new ArrayList<>();
         xmlClasses = writeXmlClass(tests, methods, xmlClasses);
         XmlTest test = new XmlTest(suite);
-        test.setName("TestNG Test");
+        test.setName(suiteName);
         test.addParameter("device", "");
         include(groupsExclude, "EXCLUDE_GROUPS");
         test.setIncludedGroups(groupsInclude);
