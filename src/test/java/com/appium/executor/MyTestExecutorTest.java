@@ -3,7 +3,7 @@ package com.appium.executor;
 
 
 import com.appium.filelocations.FileLocations;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.HostMachineDeviceManager;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ public class MyTestExecutorTest {
         List<String> tc = new ArrayList<>();
 
         XmlSuite xmlSuite =
-                ex1.constructXmlSuiteForDistribution("com.appium.executor",
+                ex1.constructXmlSuiteForDistribution(
                         tc, ex1.createTestsMap(methods),
                         devices.size());
         System.out.println("xml:" + xmlSuite.toXml());
@@ -82,7 +82,7 @@ public class MyTestExecutorTest {
         List<String> tc = new ArrayList<>();
 
         XmlSuite xmlSuite =
-                ex1.constructXmlSuiteForDistributionMethods("com.appium.executor",
+                ex1.constructXmlSuiteForDistributionMethods(
                         tc, ex1.createTestsMap(methods),
                         devices.size());
         System.out.println("xml:" + xmlSuite.toXml());

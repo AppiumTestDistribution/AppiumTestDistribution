@@ -1,6 +1,6 @@
 package com.appium.manager;
 
-import static com.appium.manager.FigletHelper.figlet;
+import static com.appium.utils.FigletHelper.figlet;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.cucumber.report.HtmlReporter;
@@ -8,9 +8,9 @@ import com.appium.executor.MyTestExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.schema.CapabilitySchemaValidator;
-import com.appium.utils.AppiumDevice;
-import com.appium.utils.CapabilityManager;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.capabilities.CapabilityManager;
+import com.appium.utils.ConfigFileManager;
+import com.appium.device.HostMachineDeviceManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 
 
-public class ParallelThread {
+public class ATDRunner {
     private static final String ANDROID = "android";
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
@@ -38,7 +38,7 @@ public class ParallelThread {
     private CapabilityManager capabilityManager;
     private HostMachineDeviceManager hostMachineDeviceManager;
 
-    public ParallelThread() throws Exception {
+    public ATDRunner() {
         capabilityManager = CapabilityManager.getInstance();
         new CapabilitySchemaValidator()
                 .validateCapabilitySchema(capabilityManager.getCapabilities());
@@ -62,7 +62,7 @@ public class ParallelThread {
 
     @Deprecated
     //Use system property udids to send list of valid device ids
-    public ParallelThread(List<String> validDeviceIds) throws Exception {
+    public ATDRunner(List<String> validDeviceIds) throws Exception {
         this();
         androidDevice.setValidDevices(validDeviceIds);
         iosDevice.setValidDevices(validDeviceIds);
@@ -92,7 +92,6 @@ public class ParallelThread {
         System.out.println("***************************************************\n");
         System.out.println("Total Number of devices detected::" + deviceCount + "\n");
         System.out.println("***************************************************\n");
-        System.out.println("starting running tests in threads");
 
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();
@@ -113,19 +112,12 @@ public class ParallelThread {
             //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
         }
 
-        List<Class> testcases = new ArrayList<>();
-
         boolean hasFailures = false;
         String runner = configFileManager.getProperty("RUNNER");
         String framework = configFileManager.getProperty("FRAMEWORK");
 
 
         if (framework.equalsIgnoreCase("testng")) {
-            PackageUtil.getClasses(pack).stream().forEach(s -> {
-                if (s.toString().contains("Test")) {
-                    testcases.add((Class) s);
-                }
-            });
             String executionType = runner.equalsIgnoreCase("distribute")
                     ? "distribute" : "parallel";
             hasFailures = myTestExecutor
@@ -152,7 +144,6 @@ public class ParallelThread {
     private void generateDirectoryForAdbLogs() {
         File adb_logs = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY);
         if (!adb_logs.exists()) {
-            System.out.println("creating directory: " + "ADBLogs");
             try {
                 adb_logs.mkdir();
             } catch (SecurityException se) {
@@ -164,7 +155,6 @@ public class ParallelThread {
     private void createAppiumLogsFolder() {
         File f = new File(System.getProperty("user.dir") + FileLocations.APPIUM_LOGS_DIRECTORY);
         if (!f.exists()) {
-            System.out.println("creating directory: " + "Logs");
             try {
                 f.mkdir();
             } catch (SecurityException se) {
@@ -185,11 +175,7 @@ public class ParallelThread {
                             + FileLocations.SCREENSHOTS_DIRECTORY + os + "/"
                             + deviceId);
             if (!file.exists()) {
-                if (file.mkdir()) {
-                    System.out.println("Directory is created for device" + deviceId);
-                } else {
-                    System.out.println("Failed to create directory!");
-                }
+                file.mkdir();
             }
 
         }

@@ -1,8 +1,8 @@
 package com.appium.manager;
 
-import com.appium.utils.AppiumDevice;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.DevicesByHost;
+import com.appium.device.HostMachineDeviceManager;
+import com.appium.utils.ArtifactsUploader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 /**
  * DeviceAllocationManager - Handles device initialisation, allocation and de-allocattion
  */
-public class DeviceAllocationManager {
+public class DeviceAllocationManager extends ArtifactsUploader {
 
     private static DeviceAllocationManager instance;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
@@ -21,21 +21,22 @@ public class DeviceAllocationManager {
     private List<Thread> suspendedThreads;
 
     private DeviceAllocationManager() throws Exception {
-        try {
-            suspendedThreads = new ArrayList<>();
-            hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
-            ArtifactsUploader.getInstance().initializeArtifacts();
-            DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
-            allDevices = appiumDeviceByHost.getAllDevices();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        suspendedThreads = new ArrayList<>();
+        hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
+        ArtifactsUploader.getInstance().initializeArtifacts();
+        DevicesByHost appiumDeviceByHost = hostMachineDeviceManager.getDevicesByHost();
+        allDevices = appiumDeviceByHost.getAllDevices();
+
     }
 
 
-    public static DeviceAllocationManager getInstance() throws Exception {
+    public static DeviceAllocationManager getInstance()  {
         if (instance == null) {
-            instance = new DeviceAllocationManager();
+            try {
+                instance = new DeviceAllocationManager();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return instance;
     }

@@ -1,7 +1,7 @@
 package com.appium.manager;
 
 import com.appium.filelocations.FileLocations;
-import com.appium.utils.CapabilityManager;
+import com.appium.capabilities.CapabilityManager;
 import com.appium.utils.OSType;
 import com.github.android.AndroidManager;
 import com.github.device.Device;

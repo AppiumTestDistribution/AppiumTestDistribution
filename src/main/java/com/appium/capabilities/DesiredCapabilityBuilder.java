@@ -1,14 +1,17 @@
-package com.appium.utils;
+package com.appium.capabilities;
 
 import static java.util.stream.Collectors.toList;
 
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
+import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumManagerFactory;
-import com.appium.manager.ArtifactsUploader;
-import com.appium.manager.HostArtifact;
 import com.appium.manager.IAppiumManager;
+import com.appium.utils.ArtifactsUploader;
+import com.appium.utils.AvailablePorts;
+import com.appium.utils.HostArtifact;
+import com.appium.utils.JsonParser;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -25,7 +28,7 @@ import java.util.List;
 /**
  * Created by saikrisv on 20/05/17.
  */
-public class DesiredCapabilityBuilder {
+public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
     private AvailablePorts availablePorts;
 
@@ -33,6 +36,7 @@ public class DesiredCapabilityBuilder {
             = new ThreadLocal<>();
 
     public DesiredCapabilityBuilder() {
+        super();
         availablePorts = new AvailablePorts();
     }
 

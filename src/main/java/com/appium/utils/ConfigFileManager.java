@@ -1,4 +1,4 @@
-package com.appium.manager;
+package com.appium.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +32,8 @@ public class ConfigFileManager {
                 Enumeration keys = prop.propertyNames();
                 while (keys.hasMoreElements()) {
                     String key = (String) keys.nextElement();
-                    String value = (null == System.getenv(key)) ? prop.getProperty(key) : System.getenv(key);
+                    String value = (null == System.getenv(key))
+                            ? prop.getProperty(key) : System.getenv(key);
                     configFileMap.put(key, value);
                 }
             } catch (Exception e) {

@@ -1,11 +1,9 @@
 package com.appium.utils;
 
 import com.annotation.values.RetryCount;
-import com.appium.manager.ConfigFileManager;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Retry implements IRetryAnalyzer {

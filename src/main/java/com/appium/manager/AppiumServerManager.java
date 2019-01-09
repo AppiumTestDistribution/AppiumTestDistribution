@@ -1,14 +1,8 @@
 package com.appium.manager;
 
-import com.appium.utils.Api;
-import com.appium.utils.CapabilityManager;
-import com.appium.utils.DevicesByHost;
-import com.appium.utils.FileFilterParser;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.device.DevicesByHost;
+import com.appium.device.HostMachineDeviceManager;
 import io.appium.java_client.service.local.flags.ServerArgument;
-
-import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Appium Manager - this class contains method to start and stops appium server

@@ -1,4 +1,4 @@
-package com.appium.manager;
+package com.appium.utils;
 
 import com.github.lalyos.jfiglet.FigletFont;
 

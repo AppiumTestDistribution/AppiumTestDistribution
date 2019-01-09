@@ -1,7 +1,13 @@
-package com.appium.utils;
+package com.appium.device;
 
+import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumManagerFactory;
+import com.appium.utils.ArtifactsUploader;
 import com.appium.manager.IAppiumManager;
+import com.appium.utils.Api;
+import com.appium.utils.AvailablePorts;
+import com.appium.capabilities.CapabilityManager;
+import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
 import com.report.factory.TestStatusManager;

@@ -1,10 +1,8 @@
-package com.appium.manager;
+package com.appium.utils;
 
 
-import com.appium.utils.Api;
-
-import com.appium.utils.CapabilityManager;
-import com.appium.utils.HostMachineDeviceManager;
+import com.appium.capabilities.CapabilityManager;
+import com.appium.device.HostMachineDeviceManager;
 import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
 
@@ -18,30 +16,29 @@ public class ArtifactsUploader {
 
     private static ArtifactsUploader instance;
     private CapabilityManager capabilityManager;
-    private final HostMachineDeviceManager hostMachineDeviceManager;
     private Api api = new Api();
     private List<HostArtifact> hostArtifacts;
 
 
-    private ArtifactsUploader() {
+    protected ArtifactsUploader() {
         try {
             capabilityManager = CapabilityManager.getInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         hostArtifacts = new ArrayList<>();
     }
 
-    public static ArtifactsUploader getInstance() {
+    protected static ArtifactsUploader getInstance() {
         if (instance == null) {
             instance = new ArtifactsUploader();
         }
         return instance;
     }
 
-    protected void initializeArtifacts() throws Exception {
-        for (String hostMachine : hostMachineDeviceManager.getDevicesByHost().getAllHosts()) {
+    public void initializeArtifacts() throws Exception {
+        for (String hostMachine : HostMachineDeviceManager.getInstance()
+                .getDevicesByHost().getAllHosts()) {
             HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
             HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
             hostArtifacts.add(hostArtifact);

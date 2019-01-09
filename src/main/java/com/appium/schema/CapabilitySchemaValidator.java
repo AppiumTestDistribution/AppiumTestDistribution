@@ -1,12 +1,18 @@
 package com.appium.schema;
 
+import com.appium.utils.FigletHelper;
+
+import com.appium.capabilities.CapabilityManager;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.InetAddress;
 
 
 public class CapabilitySchemaValidator {
@@ -18,6 +24,7 @@ public class CapabilitySchemaValidator {
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
             schema.validate(new JSONObject(capability.toString()));
+            validateRemoteHosts();
         } catch (ValidationException e) {
             if (e.getCausingExceptions().size() > 1) {
                 e.getCausingExceptions().stream()
@@ -59,4 +66,25 @@ public class CapabilitySchemaValidator {
         }
     }
 
+    private void validateRemoteHosts() {
+        CapabilityManager capabilityManager;
+        try {
+            capabilityManager = CapabilityManager.getInstance();
+            if (capabilityManager.getCapabilities().has("hostMachines")) {
+                JSONArray hostMachines = capabilityManager.getHostMachineObject();
+                for (Object hostMachine : hostMachines) {
+                    JSONObject hostMachineJson = ((JSONObject) hostMachine);
+                    String machineIP = (String) hostMachineJson.get("machineIP");
+                    if (InetAddress.getByName(machineIP).isReachable(5000)) {
+                        System.out.println("ATD is Running on " + machineIP);
+                    } else {
+                        FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
+                        throw new ConnectException();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

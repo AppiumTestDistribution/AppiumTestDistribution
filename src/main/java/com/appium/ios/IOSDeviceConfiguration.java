@@ -1,6 +1,6 @@
 package com.appium.ios;
 
-import com.appium.utils.AppiumDevice;
+import com.appium.manager.AppiumDevice;
 
 import java.util.ArrayList;
 import java.util.List;

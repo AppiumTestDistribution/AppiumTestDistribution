@@ -1,4 +1,4 @@
-package com.appium.utils;
+package com.appium.manager;
 
 import com.github.device.Device;
 

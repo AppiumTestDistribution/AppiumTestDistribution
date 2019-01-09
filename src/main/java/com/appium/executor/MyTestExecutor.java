@@ -1,21 +1,20 @@
 package com.appium.executor;
 
-import static com.appium.manager.FigletHelper.figlet;
+import static com.appium.utils.FigletHelper.figlet;
 
-import com.appium.cucumber.report.HtmlReporter;
 import com.appium.filelocations.FileLocations;
-import com.appium.manager.ConfigFileManager;
+import com.appium.utils.ConfigFileManager;
 import com.appium.manager.DeviceAllocationManager;
-import com.appium.manager.PackageUtil;
-import com.appium.utils.AppiumDevice;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
+import com.appium.manager.AppiumDevice;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.jakewharton.fliptables.FlipTableConverters;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.testng.TestNG;
+import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
@@ -29,8 +28,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,66 +41,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 
 public class MyTestExecutor {
 
     private final ConfigFileManager prop;
     private final DeviceAllocationManager deviceAllocationManager;
-    private List<Class> testcases = new ArrayList<>();
-    private HtmlReporter reporter = new HtmlReporter();
     private ArrayList<String> items = new ArrayList<String>();
     private ArrayList<String> listeners = new ArrayList<>();
     private ArrayList<String> groupsInclude = new ArrayList<>();
     private ArrayList<String> groupsExclude = new ArrayList<>();
 
-    public MyTestExecutor() throws Exception {
+    public MyTestExecutor() {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         prop = ConfigFileManager.getInstance();
     }
 
-    @SuppressWarnings("rawtypes")
-    public boolean[] distributeTests(int deviceCount) {
-        final boolean[] hasFailures = {false};
-        try {
-            PackageUtil.getClasses("output").stream().forEach(s -> {
-                if (s.toString().contains("IT")) {
-                    System.out.println("forEach: " + testcases.add((Class) s));
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        final ExecutorService[] executorService = {Executors.newFixedThreadPool(deviceCount)};
-        for (final Class testFile : testcases) {
-            executorService[0].submit(new Runnable() {
-                public void run() {
-                    System.out.println("Running childTest file: " + testFile.getName());
-                    hasFailures[0] = testRunnerTestNg(testFile);
-                }
-            });
-        }
-        executorService[0].shutdown();
-        try {
-            executorService[0].awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        deleteOutputDirectory();
-        try {
-            reporter.generateReports();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("ending");
-        return hasFailures;
-    }
-
     public boolean runMethodParallelAppium(List<String> test, String pack, int devicecount,
                                            String executionType) throws Exception {
+        Set<Method> resources = getMethods(pack);
+        boolean hasFailure;
+        dryRunTestInfo(resources);
+        String runnerLevel = System.getenv("RUNNER_LEVEL") != null
+                ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
+
+        if (executionType.equalsIgnoreCase("distribute")) {
+            if (runnerLevel != null
+                    && runnerLevel.equalsIgnoreCase("class")) {
+                constructXmlSuiteForDistribution(test, createTestsMap(resources),
+                        devicecount);
+            } else {
+                constructXmlSuiteForDistributionMethods(test, createTestsMap(resources),
+                        devicecount);
+            }
+
+            hasFailure = runMethodParallel();
+        } else {
+            constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
+                    deviceAllocationManager.getDevices());
+            hasFailure = runMethodParallel();
+        }
+        System.out.println("Finally complete");
+        figlet("Test Completed");
+        return hasFailure;
+    }
+
+    private Set<Method> getMethods(String pack) throws MalformedURLException {
         URL newUrl;
         List<URL> newUrls = new ArrayList<>();
         Collections.addAll(items, pack.split("\\s*,\\s*"));
@@ -115,56 +102,41 @@ public class MyTestExecutor {
                 break;
             }
         }
-
-        if (url == null) {
-            new RuntimeException("Please specify the package name containing tests");
-        }
-
-        for (int i = 0; i < items.size(); i++) {
-            newUrl = new URL(url.toString() + items.get(i).replaceAll("\\.", "/"));
+        for (String item : items) {
+            newUrl = new URL(url.toString() + item.replaceAll("\\.", "/"));
             newUrls.add(newUrl);
             a++;
 
         }
         Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(newUrls)
                 .setScanners(new MethodAnnotationsScanner()));
-        Set<Method> resources =
-                reflections.getMethodsAnnotatedWith(org.testng.annotations.Test.class);
-        boolean hasFailure;
+        return reflections.getMethodsAnnotatedWith(Test.class);
+    }
 
-        String runnerLevel = System.getenv("RUNNER_LEVEL") != null
-                ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
+    private void dryRunTestInfo(Set<Method> resources) {
+        if (System.getProperty("dry-run") != null) {
+            Multimap<String, HashMap> dryRunResults = ArrayListMultimap.create();
+            resources.forEach(method -> {
+                HashMap<String, String> methodAndGroups = new HashMap<>();
+                String className = method.getDeclaringClass().getSimpleName();
+                String methodName = method.getName();
+                String[] groups = method.getAnnotation(Test.class).groups();
+                methodAndGroups.put(methodName, Arrays.toString(groups));
+                dryRunResults.put(className, methodAndGroups);
+            });
 
-        if (executionType.equalsIgnoreCase("distribute")) {
-            if (runnerLevel != null
-                    && runnerLevel.equalsIgnoreCase("class")) {
-                constructXmlSuiteForDistribution(pack, test, createTestsMap(resources),
-                        devicecount);
-            } else {
-                constructXmlSuiteForDistributionMethods(pack, test, createTestsMap(resources),
-                        devicecount);
+            List<TestNGTestInfo> testInfo = new ArrayList<>();
+            for (Map.Entry<String, HashMap> stringObjectEntry : dryRunResults.entries()) {
+                stringObjectEntry.getValue().forEach((key, value) ->
+                        testInfo.add(new TestNGTestInfo(stringObjectEntry.getKey(),
+                                key.toString(), value.toString())));
             }
-
-            hasFailure = runMethodParallel();
-        } else {
-            constructXmlSuiteForParallel(pack, test, createTestsMap(resources), devicecount,
-                    deviceAllocationManager.getDevices());
-            hasFailure = runMethodParallel();
+            System.out.println(FlipTableConverters.fromIterable(testInfo, TestNGTestInfo.class));
+            System.exit(1);
         }
-        System.out.println("Finally complete");
-        figlet("Test Completed");
-        //ImageUtils.creatResultsSet();
-        //ImageUtils.createJSonForHtml();
-        return hasFailure;
-    }
-
-    private boolean testRunnerTestNg(@SuppressWarnings("rawtypes") Class arg) {
-        TestNG test = new TestNG();
-        test.setTestClasses(new Class[]{arg});
-        test.run();
-        return test.hasFailure();
 
     }
+
 
     public boolean runMethodParallel() {
         TestNG testNG = new TestNG();
@@ -220,7 +192,7 @@ public class MyTestExecutor {
                 } else {
                     for (String s : testcases) {
                         for (int j = 0; j < items.size(); j++) {
-                            String testName = items.get(j).concat("." + s).toString();
+                            String testName = items.get(j).concat("." + s);
                             if (testName.equals(className)) {
                                 xmlClasses.add(createClass(className));
                             }
@@ -233,7 +205,7 @@ public class MyTestExecutor {
         return xmlClasses;
     }
 
-    public XmlSuite constructXmlSuiteForDistribution(String pack, List<String> tests,
+    public XmlSuite constructXmlSuiteForDistribution(List<String> tests,
                                                      Map<String, List<Method>> methods,
                                                      int deviceCount) {
         include(listeners, "LISTENERS");
@@ -263,7 +235,7 @@ public class MyTestExecutor {
     }
 
 
-    public XmlSuite constructXmlSuiteForDistributionMethods(String pack, List<String> tests,
+    public XmlSuite constructXmlSuiteForDistributionMethods(List<String> tests,
                                                             Map<String, List<Method>> methods,
                                                             int deviceCount) {
         include(listeners, "LISTENERS");
@@ -337,25 +309,13 @@ public class MyTestExecutor {
     public Map<String, List<Method>> createTestsMap(Set<Method> methods) {
         Map<String, List<Method>> testsMap = new HashMap<>();
         methods.stream().forEach(method -> {
-            List<Method> methodsList = testsMap.get(
+            List<Method> methodsList = testsMap.computeIfAbsent(
                     method.getDeclaringClass().getPackage().getName()
                             + "." + method.getDeclaringClass()
-                            .getSimpleName());
-            if (methodsList == null) {
-                methodsList = new ArrayList<>();
-                testsMap.put(method.getDeclaringClass().getPackage().getName() + "." + method
-                        .getDeclaringClass().getSimpleName(), methodsList);
-            }
+                            .getSimpleName(), k -> new ArrayList<>());
             methodsList.add(method);
         });
         return testsMap;
-    }
-
-    public void runTestCase(Class testCase) {
-        Result result = JUnitCore.runClasses(testCase);
-        for (Failure failure : result.getFailures()) {
-            System.out.println(failure.toString());
-        }
     }
 
     private void deleteOutputDirectory() {
