@@ -63,26 +63,9 @@ public class MyTestExecutor {
         boolean hasFailure;
         dryRunTestInfo(resources);
 
-        String runnerLevel;
-        if (System.getenv("RUNNER_LEVEL") != null) {
-            runnerLevel = System.getenv("RUNNER_LEVEL");
-        } else {
-            runnerLevel = prop.getProperty("RUNNER_LEVEL") != null ? prop.getProperty("RUNNER_LEVEL") : "methods";
-        }
-
-        String productName;
-        if (System.getenv("PRODUCT_NAME") != null) {
-            productName = System.getenv("PRODUCT_NAME");
-        } else {
-            productName = prop.getProperty("PRODUCT_NAME") != null ? prop.getProperty("PRODUCT_NAME") : "TestNG Forum";
-        }
-
-        String suiteName;
-        if (System.getenv("SUITE_NAME") != null) {
-            suiteName = System.getenv("SUITE_NAME");
-        } else {
-            suiteName = prop.getProperty("SUITE_NAME") != null ? prop.getProperty("SUITE_NAME") : "TestNG Test";
-        }
+        String runnerLevel = System.getenv("RUNNER_LEVEL") != null ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
+        String productName = System.getenv("PRODUCT_NAME") != null ? System.getenv("PRODUCT_NAME") : prop.getProperty("PRODUCT_NAME");
+        String suiteName = System.getenv("SUITE_NAME") != null ? System.getenv("SUITE_NAME") : prop.getProperty("SUITE_NAME");
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
