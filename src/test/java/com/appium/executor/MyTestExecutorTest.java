@@ -49,9 +49,13 @@ public class MyTestExecutorTest {
         }
         List<String> tc = new ArrayList<>();
 
+        String suiteName = "TestNG Forum";
+        String category = "TestNG Test";
+
         XmlSuite xmlSuite =
                 ex1.constructXmlSuiteForDistribution(
                         tc, ex1.createTestsMap(methods),
+                        suiteName, category,
                         devices.size());
         System.out.println("xml:" + xmlSuite.toXml());
         Assert.assertTrue(true);
@@ -81,9 +85,13 @@ public class MyTestExecutorTest {
         }
         List<String> tc = new ArrayList<>();
 
+        String suiteName = "TestNG Forum";
+        String category = "TestNG Test";
+
         XmlSuite xmlSuite =
                 ex1.constructXmlSuiteForDistributionMethods(
                         tc, ex1.createTestsMap(methods),
+                        suiteName, category,
                         devices.size());
         System.out.println("xml:" + xmlSuite.toXml());
         Assert.assertTrue(true);
@@ -112,8 +120,12 @@ public class MyTestExecutorTest {
         }
         List<String> tc = new ArrayList<>();
 
+        String suiteName = "TestNG Forum";
+        String category = "TestNG Test";
+
         XmlSuite xmlSuite = ex1.constructXmlSuiteForParallel("com.appium.executor",
                 tc, ex1.createTestsMap(methods),
+                suiteName, category,
                 devices.size(), HostMachineDeviceManager.getInstance()
                         .getDevicesByHost().getAllDevices());
 
