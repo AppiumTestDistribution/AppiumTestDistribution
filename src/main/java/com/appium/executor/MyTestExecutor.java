@@ -64,25 +64,25 @@ public class MyTestExecutor {
         dryRunTestInfo(resources);
 
         String runnerLevel = System.getenv("RUNNER_LEVEL") != null ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
-        String productName = System.getenv("PRODUCT_NAME") != null ? System.getenv("PRODUCT_NAME") : prop.getProperty("PRODUCT_NAME");
         String suiteName = System.getenv("SUITE_NAME") != null ? System.getenv("SUITE_NAME") : prop.getProperty("SUITE_NAME");
+        String category = System.getenv("CATEGORY") != null ? System.getenv("CATEGORY") : prop.getProperty("CATEGORY");
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
                     && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForDistribution(test, createTestsMap(resources),
-                        productName, suiteName,
+                        suiteName, category,
                         devicecount);
             } else {
                 constructXmlSuiteForDistributionMethods(test, createTestsMap(resources),
-                        productName, suiteName,
+                        suiteName, category,
                         devicecount);
             }
 
             hasFailure = runMethodParallel();
         } else {
             constructXmlSuiteForParallel(pack, test, createTestsMap(resources),
-                    productName, suiteName, devicecount,
+                    suiteName, category, devicecount,
                     deviceAllocationManager.getDevices());
             hasFailure = runMethodParallel();
         }
@@ -154,7 +154,7 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForParallel(String pack, List<String> testcases,
                                                  Map<String, List<Method>> methods,
-                                                 String productName, String suiteName,
+                                                 String suiteName, String category,
                                                  int deviceCount,
                                                  List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
@@ -164,7 +164,7 @@ public class MyTestExecutor {
         include(groupsInclude, "INCLUDE_GROUPS");
         include(groupsExclude, "EXCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
-        suite.setName(productName);
+        suite.setName(suiteName);
         suite.setThreadCount(deviceCount);
         suite.setDataProviderThreadCount(deviceCount);
         suite.setParallel(ParallelMode.TESTS);
@@ -175,7 +175,7 @@ public class MyTestExecutor {
         }
         for (int i = 0; i < deviceCount; i++) {
             XmlTest test = new XmlTest(suite);
-            test.setName(suiteName + "-" + i);
+            test.setName(category + "-" + i);
             test.setPreserveOrder("false");
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
             test.addParameter("hostName", deviceSerail.get(i).getHostName());
@@ -213,13 +213,13 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForDistribution(List<String> tests,
                                                      Map<String, List<Method>> methods,
-                                                     String productName,
                                                      String suiteName,
+                                                     String category,
                                                      int deviceCount) {
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
-        suite.setName(productName);
+        suite.setName(suiteName);
         suite.setThreadCount(deviceCount);
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
@@ -230,7 +230,7 @@ public class MyTestExecutor {
             suite.setListeners(listeners);
         }
         XmlTest test = new XmlTest(suite);
-        test.setName(suiteName);
+        test.setName(category);
         test.addParameter("device", "");
         include(groupsExclude, "EXCLUDE_GROUPS");
         test.setIncludedGroups(groupsInclude);
@@ -245,13 +245,13 @@ public class MyTestExecutor {
 
     public XmlSuite constructXmlSuiteForDistributionMethods(List<String> tests,
                                                             Map<String, List<Method>> methods,
-                                                            String productName,
                                                             String suiteName,
+                                                            String category,
                                                             int deviceCount) {
         include(listeners, "LISTENERS");
         include(groupsInclude, "INCLUDE_GROUPS");
         XmlSuite suite = new XmlSuite();
-        suite.setName(productName);
+        suite.setName(suiteName);
         suite.setThreadCount(deviceCount);
         suite.setDataProviderThreadCount(deviceCount);
         suite.setVerbose(2);
@@ -265,7 +265,7 @@ public class MyTestExecutor {
         List<XmlClass> xmlClasses = new ArrayList<>();
         xmlClasses = writeXmlClass(tests, methods, xmlClasses);
         XmlTest test = new XmlTest(suite);
-        test.setName(suiteName);
+        test.setName(category);
         test.addParameter("device", "");
         include(groupsExclude, "EXCLUDE_GROUPS");
         test.setIncludedGroups(groupsInclude);
