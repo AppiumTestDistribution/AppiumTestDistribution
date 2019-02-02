@@ -63,9 +63,12 @@ public class MyTestExecutor {
         boolean hasFailure;
         dryRunTestInfo(resources);
 
-        String runnerLevel = System.getenv("RUNNER_LEVEL") != null ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
-        String suiteName = System.getenv("SUITE_NAME") != null ? System.getenv("SUITE_NAME") : prop.getProperty("SUITE_NAME");
-        String category = System.getenv("CATEGORY") != null ? System.getenv("CATEGORY") : prop.getProperty("CATEGORY");
+        String runnerLevel = System.getenv("RUNNER_LEVEL") != null ? System.getenv("RUNNER_LEVEL")
+                : prop.getProperty("RUNNER_LEVEL");
+        String suiteName = System.getenv("SUITE_NAME") != null ? System.getenv("SUITE_NAME")
+                : prop.getProperty("SUITE_NAME");
+        String category = System.getenv("CATEGORY") != null ? System.getenv("CATEGORY")
+                : prop.getProperty("CATEGORY");
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
