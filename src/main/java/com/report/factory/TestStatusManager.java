@@ -66,8 +66,8 @@ public class TestStatusManager extends Helpers {
         env.put("SeleniumVersion", "3.14.X");
         env.put("AppiumServer", getAppiumServerVersion());
         env.put("Runner", ConfigFileManager.getInstance().getProperty("RUNNER"));
-        env.put("AppiumClient", "6.1.0");
-        env.put("Total Devices", deviceSize);
+        env.put("AppiumClient", "7.0.0");
+        env.put("TotalDevices", deviceSize);
         return env.toString();
     }
 
