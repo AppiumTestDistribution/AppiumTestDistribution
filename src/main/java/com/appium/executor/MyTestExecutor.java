@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Optional;
 
 public class MyTestExecutor {
 
@@ -61,8 +62,8 @@ public class MyTestExecutor {
         boolean hasFailure;
         dryRunTestInfo(resources);
 
-        String runnerLevel = System.getenv("RUNNER_LEVEL") != null ? System.getenv("RUNNER_LEVEL")
-                : prop.getProperty("RUNNER_LEVEL");
+        Optional<String> runner = Optional.ofNullable(System.getenv("RUNNER_LEVEL"));
+        String runnerLevel = runner.orElse(prop.getProperty("RUNNER_LEVEL"));
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
