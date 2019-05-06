@@ -40,8 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-
+import java.util.Optional;
 
 public class MyTestExecutor {
 
@@ -63,27 +62,26 @@ public class MyTestExecutor {
         boolean hasFailure;
         dryRunTestInfo(resources);
 
-        String runnerLevel = System.getenv("RUNNER_LEVEL") != null ? System.getenv("RUNNER_LEVEL") : prop.getProperty("RUNNER_LEVEL");
-        String suiteName = System.getenv("SUITE_NAME") != null ? System.getenv("SUITE_NAME") : prop.getProperty("SUITE_NAME");
-        String category = System.getenv("CATEGORY") != null ? System.getenv("CATEGORY") : prop.getProperty("CATEGORY");
+        Optional<String> runner = Optional.ofNullable(System.getenv("RUNNER_LEVEL"));
+        String runnerLevel = runner.orElse(prop.getProperty("RUNNER_LEVEL"));
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null
                     && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForDistribution(test, createTestsMap(resources),
-                        suiteName, category,
+                        getSuiteName(), getCategoryName(),
                         devicecount);
             } else {
                 constructXmlSuiteForDistributionMethods(test, createTestsMap(resources),
-                        suiteName, category,
+                        getSuiteName(), getCategoryName(),
                         devicecount);
             }
 
             hasFailure = runMethodParallel();
         } else {
             constructXmlSuiteForParallel(pack, test, createTestsMap(resources),
-                    suiteName, category, devicecount,
-                    deviceAllocationManager.getDevices());
+                     getSuiteName(), getCategoryName(), devicecount,
+                     deviceAllocationManager.getDevices());
             hasFailure = runMethodParallel();
         }
         System.out.println("Finally complete");
@@ -140,7 +138,6 @@ public class MyTestExecutor {
         }
 
     }
-
 
     public boolean runMethodParallel() {
         TestNG testNG = new TestNG();
@@ -417,4 +414,23 @@ public class MyTestExecutor {
         return allPackages;
     }
 
+    private String getSuiteName() {
+        if (System.getenv("SUITE_NAME") != null) {
+            return System.getenv("SUITE_NAME");
+        } else if (prop.getProperty("SUITE_NAME") != null) {
+            return prop.getProperty("SUITE_NAME");
+        } else {
+            return "ATDSuiteName";
+        }
+    }
+
+    private String getCategoryName() {
+        if (System.getenv("CATEGORY") != null) {
+            return System.getenv("CATEGORY");
+        } else if (prop.getProperty("CATEGORY") != null) {
+            return prop.getProperty("CATEGORY");
+        } else {
+            return "ATDTest";
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.appium.utils;
 
-
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.HostMachineDeviceManager;
 import org.json.JSONObject;
