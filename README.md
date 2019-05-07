@@ -15,7 +15,14 @@
 [ ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat )](https://github.com/saikrishna321/AppiumTestDistribution/pulls)
 [![GitHub forks](https://img.shields.io/github/forks/saikrishna321/AppiumTestDistribution.svg?style=social&label=Fork)](https://github.com/kirankalyan5/AppiumTestDistribution/network)
 
-
+## Thanks for support 
+<h1 align="left">
+	<br>
+	<img src="image/Powered by Sauce Labs badges red.svg" alt="ATD" width="500" height="300">
+	<br>
+	<br>
+	<br>
+</h1>
 Add the below dependencies in your pom.xml (Master)
 
 ```
