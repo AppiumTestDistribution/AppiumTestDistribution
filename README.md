@@ -17,7 +17,7 @@
 
 ## Thanks for support 
 <h3 align="left">
-	<img src="image/Powered by Sauce Labs badges red.svg" alt="ATD" width="500" height="300">
+	<a href= "https://saucelabs.com"><img src="image/Powered by Sauce Labs badges red.svg" alt="ATD" width="500" height="300"></a>
 </h3>
 Add the below dependencies in your pom.xml (Master)
 
