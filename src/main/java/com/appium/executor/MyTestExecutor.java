@@ -40,7 +40,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import java.util.Optional;
+
 
 public class MyTestExecutor {
 
@@ -80,7 +82,7 @@ public class MyTestExecutor {
             hasFailure = runMethodParallel();
         } else {
             constructXmlSuiteForParallel(pack, test, createTestsMap(resources),
-                     getSuiteName(), getCategoryName(), devicecount,
+                    getSuiteName(), getCategoryName(), devicecount,
                     deviceAllocationManager.getDevices());
             hasFailure = runMethodParallel();
         }
@@ -101,15 +103,14 @@ public class MyTestExecutor {
 
         while (iter.hasNext()) {
             url = iter.next();
-            if (url.toString().contains("test-classes")) {
-                break;
-            }
-        }
-        for (String item : items) {
-            newUrl = new URL(url.toString() + item.replaceAll("\\.", "/"));
-            newUrls.add(newUrl);
-            a++;
+            if (!url.toString().contains("test-classes")) {
+                for (String item : items) {
+                    newUrl = new URL(url.toString() + item.replaceAll("\\.", "/"));
+                    newUrls.add(newUrl);
+                    a++;
 
+                }
+            }
         }
         Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(newUrls)
                 .setScanners(new MethodAnnotationsScanner()));
@@ -139,6 +140,7 @@ public class MyTestExecutor {
         }
 
     }
+
 
     public boolean runMethodParallel() {
         TestNG testNG = new TestNG();
