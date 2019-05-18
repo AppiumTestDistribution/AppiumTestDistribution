@@ -10,7 +10,7 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '8.0.0'
+    versionSpec: '8.12.0'
 - script: |
     brew outdated xctool || brew upgrade xctool
     xcrun simctl list
