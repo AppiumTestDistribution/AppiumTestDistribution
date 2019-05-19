@@ -10,14 +10,39 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '8.0.0'
+    versionSpec: '8.12.0'
+- script: |
+    brew outdated xctool || brew upgrade xctool
+    xcrun simctl list
+  displayName: 'iOS Sim Versions'
+
 - script: |
      node -v
-     brew outdated xctool || brew upgrade xctool
-     xcrun simctl list -j
-     npm install -g appium@beta
+     npm install -g appium@1.13.1-rc.1
      appium -v
+  displayName: 'Install Appium'
+
+- bash: |
+    echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
+  displayName: 'install Android image'
+- script: |
+        $ANDROID_HOME/emulator/emulator -list-avds
+        echo '---'
+        echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
+        echo '---'
+        $ANDROID_HOME/emulator/emulator -list-avds
+  displayName: 'create AVD'
+
+- script: |
+        $ANDROID_HOME/platform-tools/adb devices
+        echo '---'
+        nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+        echo '---'
+        $ANDROID_HOME/platform-tools/adb devices
+  displayName: 'start Android emulator'
+
+- script: |
      mvn clean install -Dmaven.test.skip=true
-     Platform='ios' mvn clean -Dtest=Runner test
+     Platform='both' mvn clean -Dtest=Runner test
 
   displayName: 'Build with Maven'
