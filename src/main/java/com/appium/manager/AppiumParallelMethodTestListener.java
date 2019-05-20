@@ -32,6 +32,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private Optional<String> atdHost;
     private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
+    static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
 
     public AppiumParallelMethodTestListener() {
         testLogger = new TestLogger();
@@ -136,6 +137,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     new FileFilterParser()
                             .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
                                     .getDevice().getUdid(), iTestResult);
+                    testResults.set(logs);
                 }
             }
 

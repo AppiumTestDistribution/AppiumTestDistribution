@@ -21,14 +21,40 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
+  "cloud":
+    {
+      "android": [{
+          "deviceName": "Galaxy",
+          "osVersion": "8.1"
+        },
+        {
+          "deviceName": "Galaxy",
+          "osVersion": "8.1"
+        }],
+      "iOS": [
+        {
+          "deviceName": "iPhone X",
+          "osVersion": "8.1"
+        },
+        {
+          "deviceName": "iPhone 8",
+          "osVersion": "8.1"
+        },
+      ]
+    }
+  ,
   "hostMachines": [
+    {
+      "isCloud": "true",
+      "machineIP": "app.eu-central-1.saucelabs.com"
+    },
     {
       "machineIP": "127.0.0.1",
       "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
       "simulators": [
         {
           "deviceName": "iPhone 6",
-          "OS": "12.1"
+          "OS": "11.4"
         }
       ]
     }

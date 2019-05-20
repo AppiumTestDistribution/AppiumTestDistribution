@@ -38,9 +38,9 @@ public class HostMachineDeviceManager {
         try {
             capabilityManager = CapabilityManager.getInstance();
             atdHost = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdHost");
+                .getMongoDbHostAndPort().get("atdHost");
             atdPort = CapabilityManager.getInstance()
-                    .getMongoDbHostAndPort().get("atdPort");
+                .getMongoDbHostAndPort().get("atdPort");
             initializeDevicesByHost();
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,9 +59,9 @@ public class HostMachineDeviceManager {
             try {
                 Map<String, List<AppiumDevice>> allDevices = getDevices();
                 Map<String, List<AppiumDevice>> devicesFilteredByPlatform
-                        = filterByDevicePlatform(allDevices);
+                    = filterByDevicePlatform(allDevices);
                 Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
-                        = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
+                    = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
                 devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -70,23 +70,23 @@ public class HostMachineDeviceManager {
                 Api api = new Api();
                 api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
                 api.post("http://" + atdHost + ":" + atdPort + "/devices",
-                        new ObjectMapper().writerWithDefaultPrettyPrinter()
-                                .writeValueAsString(devicesByHost));
+                    new ObjectMapper().writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(devicesByHost));
                 api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
-                        new TestStatusManager()
-                                .envInfo(devicesByHost.getAllDevices().size()));
+                    new TestStatusManager()
+                        .envInfo(devicesByHost.getAllDevices().size()));
                 api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
-                        new TestStatusManager()
-                                .appiumLogs(devicesByHost));
+                    new TestStatusManager()
+                        .appiumLogs(devicesByHost));
             }
         }
     }
 
     private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(
-            Map<String, List<AppiumDevice>> devicesByHost) {
+        Map<String, List<AppiumDevice>> devicesByHost) {
         String udidsString = System.getenv(UDIDS);
         List<String> udids = udidsString == null ? Collections.emptyList()
-                : Arrays.asList(udidsString.split(","));
+            : Arrays.asList(udidsString.split(","));
 
         if (udids.size() == 0) {
             return devicesByHost;
@@ -94,8 +94,8 @@ public class HostMachineDeviceManager {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
             devicesByHost.forEach((hostName, appiumDevices) -> {
                 List<AppiumDevice> filteredDevices = appiumDevices.stream()
-                        .filter(appiumDevice -> udids.contains(appiumDevice
-                                .getDevice().getUdid())).collect(Collectors.toList());
+                    .filter(appiumDevice -> udids.contains(appiumDevice
+                        .getDevice().getUdid())).collect(Collectors.toList());
                 if (!filteredDevices.isEmpty()) {
                     filteredDevicesHostName.put(hostName, filteredDevices);
                 }
@@ -105,7 +105,7 @@ public class HostMachineDeviceManager {
     }
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(
-            Map<String, List<AppiumDevice>> devicesByHost) {
+        Map<String, List<AppiumDevice>> devicesByHost) {
         String platform = System.getenv(PLATFORM);
         if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
@@ -113,8 +113,8 @@ public class HostMachineDeviceManager {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
             devicesByHost.forEach((hostName, appiumDevices) -> {
                 List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice ->
-                        appiumDevice.getDevice().getOs()
-                                .equalsIgnoreCase(platform)).collect(Collectors.toList());
+                    appiumDevice.getDevice().getOs()
+                        .equalsIgnoreCase(platform)).collect(Collectors.toList());
                 if (!filteredDevices.isEmpty()) {
                     filteredDevicesHostName.put(hostName, filteredDevices);
                 }
@@ -129,17 +129,17 @@ public class HostMachineDeviceManager {
 
     private List<AppiumDevice> getDevicesByIP(String ip, String platform,
                                               JSONObject hostMachineJson)
-            throws Exception {
+        throws Exception {
         IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
         List<Device> devices = appiumManager.getDevices(ip, platform);
         if ((!platform.equalsIgnoreCase("android")
-                && capabilityManager.isSimulatorAppPresentInCapsJson()
-                && hostMachineJson.has("simulators"))
-                && !capabilityManager.getCapabilityObjectFromKey("iOS")
-                .has("browserName")) {
+            && capabilityManager.isSimulatorAppPresentInCapsJson()
+            && hostMachineJson.has("simulators"))
+            && !capabilityManager.getCapabilityObjectFromKey("iOS")
+            .has("browserName")) {
             JSONArray simulators = hostMachineJson.getJSONArray("simulators");
             List<Device> simulatorsToBoot = getSimulatorsToBoot(
-                    ip, simulators);
+                ip, simulators);
             devices.addAll(simulatorsToBoot);
         }
         List<AppiumDevice> appiumDevices = getAppiumDevices(ip, devices);
@@ -151,6 +151,7 @@ public class HostMachineDeviceManager {
     private Map<String, List<AppiumDevice>> getDevices() throws Exception {
         String platform = System.getenv(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
+
         if (capabilityManager.getCapabilities().has("hostMachines")) {
             JSONArray hostMachines = capabilityManager.getHostMachineObject();
             for (Object hostMachine : hostMachines) {
@@ -163,7 +164,16 @@ public class HostMachineDeviceManager {
                     }
                 } else if (machineIPs instanceof String) {
                     String ip = hostMachineJson.getString("machineIP");
-                    devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
+                    if (ip.contains("sauce")) {
+                        List<Device> device = Collections.singletonList(new Device());
+                        device.forEach(devices -> {
+                            devices.setOs("android");
+                        });
+                        devicesByHost.put(ip, getAppiumDevices("sauce", device));
+                    } else {
+                        devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
+                    }
+
                 }
             }
         } else {
@@ -189,7 +199,7 @@ public class HostMachineDeviceManager {
     }
 
     private List<Device> getSimulatorsToBoot(String machineIP, JSONArray simulators)
-            throws Exception {
+        throws Exception {
         List<Device> devices = new ArrayList<>();
         for (Object simulator : simulators) {
             JSONObject simulatorJson = (JSONObject) simulator;
@@ -203,5 +213,24 @@ public class HostMachineDeviceManager {
         }
         return devices;
     }
+
 }
+
+
+class DeviceSauce implements Cloneable {
+
+    private String os;
+
+    public void setOS(String os) {
+        this.os = os;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // TODO Auto-generated method stub
+        return new Device();
+    }
+}
+
+
 
