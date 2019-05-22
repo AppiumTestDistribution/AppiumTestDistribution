@@ -165,9 +165,17 @@ public class HostMachineDeviceManager {
                 } else if (machineIPs instanceof String) {
                     String ip = hostMachineJson.getString("machineIP");
                     if (ip.contains("sauce")) {
-                        List<Device> device = Collections.singletonList(new Device());
-                        device.forEach(devices -> {
-                            devices.setOs("android");
+                        List<Device> device = new ArrayList<>();
+                        JSONObject cloud = capabilityManager.getCapabilityObjectFromKey("cloud");
+                        cloud.toMap().forEach((devicePlatform, devices) -> {
+                            ((ArrayList) devices).forEach(o -> {
+                                Device d = new Device();
+                                d.setOs(devicePlatform);
+                                d.setOsVersion(((HashMap) o).get("osVersion").toString());
+                                d.setName(((HashMap) o).get("deviceName").toString());
+                                d.setCloud(true);
+                                device.add(d);
+                            });
                         });
                         devicesByHost.put(ip, getAppiumDevices("sauce", device));
                     } else {
@@ -190,7 +198,12 @@ public class HostMachineDeviceManager {
         return device -> {
             AppiumDevice appiumDevice = new AppiumDevice(device, machineIP);
             try {
-                appiumDevice.setPort(new AvailablePorts().getAvailablePort(machineIP));
+                if (appiumDevice.getDevice().isCloud()) {
+                    appiumDevice.setPort(8543); //need to make sure for specific cloud
+                } else {
+                    appiumDevice.setPort(new AvailablePorts().getAvailablePort(machineIP));
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

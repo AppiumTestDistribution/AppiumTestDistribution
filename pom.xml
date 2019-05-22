@@ -187,7 +187,7 @@
         <dependency>
             <groupId>com.github.AppiumTestDistribution</groupId>
             <artifactId>DeviceManager</artifactId>
-            <version>d08cae269a</version>
+            <version>2e2e95f77c</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
