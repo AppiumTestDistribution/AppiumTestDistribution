@@ -259,15 +259,10 @@ public class MyTestExecutor {
         if (prop.getProperty("LISTENERS") != null) {
             suite.setListeners(listeners);
         }
-        List<XmlClass> xmlClasses = new ArrayList<>();
-        xmlClasses = writeXmlClass(tests, methods, xmlClasses);
-        XmlTest test = new XmlTest(suite);
-        test.setName(category);
-        test.addParameter("device", "");
-        include(groupsExclude, "EXCLUDE_GROUPS");
-        test.setIncludedGroups(groupsInclude);
-        test.setExcludedGroups(groupsExclude);
-        List<XmlClass> writeXml = new ArrayList<>();
+        CreateGroups createGroups = new CreateGroups(tests, methods, category, suite).invoke();
+        List<XmlClass> xmlClasses = createGroups.getXmlClasses();
+        XmlTest test = createGroups.getTest();
+        List<XmlClass> writeXml = createGroups.getWriteXml();
         for (int i = 0; i < xmlClasses.size(); i++) {
             writeXml.add(new XmlClass(xmlClasses.get(i).getName()));
             test.setClasses(writeXml);
@@ -351,25 +346,7 @@ public class MyTestExecutor {
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
             test.setPackages(getPackages());
         }
-        File file = new File(System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION);
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(file.getAbsoluteFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.write(suite.toXml());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return suite;
+        return getXmlSuite(suite);
     }
 
     public XmlSuite constructXmlSuiteDistributeCucumber(
@@ -386,6 +363,10 @@ public class MyTestExecutor {
         test.setName("TestNG Test");
         test.addParameter("device", "");
         test.setPackages(getPackages());
+        return getXmlSuite(suite);
+    }
+
+    private XmlSuite getXmlSuite(XmlSuite suite) {
         File file = new File(System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION);
         FileWriter fw = null;
         try {
@@ -432,6 +413,48 @@ public class MyTestExecutor {
             return prop.getProperty("CATEGORY");
         } else {
             return "ATDTest";
+        }
+    }
+
+    private class CreateGroups {
+        private List<String> tests;
+        private Map<String, List<Method>> methods;
+        private String category;
+        private XmlSuite suite;
+        private List<XmlClass> xmlClasses;
+        private XmlTest test;
+        private List<XmlClass> writeXml;
+
+        public CreateGroups(List<String> tests, Map<String, List<Method>> methods, String category, XmlSuite suite) {
+            this.tests = tests;
+            this.methods = methods;
+            this.category = category;
+            this.suite = suite;
+        }
+
+        public List<XmlClass> getXmlClasses() {
+            return xmlClasses;
+        }
+
+        public XmlTest getTest() {
+            return test;
+        }
+
+        public List<XmlClass> getWriteXml() {
+            return writeXml;
+        }
+
+        public CreateGroups invoke() {
+            xmlClasses = new ArrayList<>();
+            xmlClasses = writeXmlClass(tests, methods, xmlClasses);
+            test = new XmlTest(suite);
+            test.setName(category);
+            test.addParameter("device", "");
+            include(groupsExclude, "EXCLUDE_GROUPS");
+            test.setIncludedGroups(groupsInclude);
+            test.setExcludedGroups(groupsExclude);
+            writeXml = new ArrayList<>();
+            return this;
         }
     }
 }

@@ -17,6 +17,7 @@ import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -51,6 +52,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onStart(ISuite iSuite) {
         try {
+            // TODO Should start server only when machine IP are other than cloud service
             appiumServerManager.startAppiumServer();
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,33 +71,37 @@ public final class AppiumParallelMethodTestListener extends Helpers
             deviceAllocationManager.allocateDevice(deviceAllocationManager
                     .getNextAvailableDevice());
             appiumDriverManager.startAppiumDriverInstance();
-            testLogger.startLogging(iTestResult.getMethod().getMethodName(),
-                    iTestResult.getTestClass()
-                            .getRealClass().getSimpleName());
-            // Sets description for each test method with platform and Device UDID allocated to it.
-            Optional<String> originalDescription = Optional.ofNullable(iTestResult
-                    .getMethod().getDescription());
-            String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-                    + " UDID: " + AppiumDeviceManager.getAppiumDevice()
-                    .getDevice().getUdid()
-                    + " Name: " + AppiumDeviceManager.getAppiumDevice()
-                    .getDevice().getName()
-                    + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
-            Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
-                    .getAnnotation(Author.class);
-            if (annotation != null) {
-                description += "\nAuthor: " + annotation.name();
-            }
-            if (originalDescription.isPresent()
-                    && !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice()
-                    .getDevice().getUdid())) {
-                iTestResult.getMethod().setDescription(originalDescription.get()
-                        + "\n" + description);
-            } else {
-                iTestResult.getMethod().setDescription(description);
-            }
+            startReportLogging(iTestResult);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void startReportLogging(ITestResult iTestResult) throws IOException, InterruptedException {
+        testLogger.startLogging(iTestResult.getMethod().getMethodName(),
+                iTestResult.getTestClass()
+                        .getRealClass().getSimpleName());
+        // Sets description for each test method with platform and Device UDID allocated to it.
+        Optional<String> originalDescription = Optional.ofNullable(iTestResult
+                .getMethod().getDescription());
+        String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
+                + " UDID: " + AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getUdid()
+                + " Name: " + AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getName()
+                + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
+        Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(Author.class);
+        if (annotation != null) {
+            description += "\nAuthor: " + annotation.name();
+        }
+        if (originalDescription.isPresent()
+                && !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getUdid())) {
+            iTestResult.getMethod().setDescription(originalDescription.get()
+                    + "\n" + description);
+        } else {
+            iTestResult.getMethod().setDescription(description);
         }
     }
 

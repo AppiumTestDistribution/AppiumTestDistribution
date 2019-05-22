@@ -24,23 +24,13 @@
   "cloud":
     {
       "android": [{
-          "deviceName": "Galaxy",
+          "deviceName": "GalaxyS7FHDGoogleAPI",
           "osVersion": "8.1"
         },
         {
-          "deviceName": "Galaxy",
+          "deviceName": "GalaxyS7FHDGoogleAPI",
           "osVersion": "8.1"
-        }],
-      "iOS": [
-        {
-          "deviceName": "iPhone X",
-          "osVersion": "8.1"
-        },
-        {
-          "deviceName": "iPhone 8",
-          "osVersion": "8.1"
-        },
-      ]
+        }]
     }
   ,
   "hostMachines": [
