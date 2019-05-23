@@ -24,7 +24,7 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class AppiumParallelMethodTestListener extends Helpers
-        implements ITestListener, IInvokedMethodListener, ISuiteListener {
+    implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
     private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
@@ -41,9 +41,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
         atdHost = Optional.ofNullable(CapabilityManager.getInstance()
-                .getMongoDbHostAndPort().get("atdHost"));
+            .getMongoDbHostAndPort().get("atdHost"));
         atdPort = Optional.ofNullable(CapabilityManager.getInstance()
-                .getMongoDbHostAndPort().get("atdPort"));
+            .getMongoDbHostAndPort().get("atdPort"));
     }
 
     /*
@@ -52,7 +52,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onStart(ISuite iSuite) {
         try {
-            // TODO Should start server only when machine IP are other than cloud service
             appiumServerManager.startAppiumServer();
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,37 +68,44 @@ public final class AppiumParallelMethodTestListener extends Helpers
     public void onTestStart(ITestResult iTestResult) {
         try {
             deviceAllocationManager.allocateDevice(deviceAllocationManager
-                    .getNextAvailableDevice());
+                .getNextAvailableDevice());
+            // TODO seperate capability builder for cloud and local/remote
             appiumDriverManager.startAppiumDriverInstance();
-            startReportLogging(iTestResult);
+            if (!isCloudExecution()) {
+                startReportLogging(iTestResult);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private boolean isCloudExecution() {
+        return AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
+    }
+
     private void startReportLogging(ITestResult iTestResult) throws IOException, InterruptedException {
         testLogger.startLogging(iTestResult.getMethod().getMethodName(),
-                iTestResult.getTestClass()
-                        .getRealClass().getSimpleName());
+            iTestResult.getTestClass()
+                .getRealClass().getSimpleName());
         // Sets description for each test method with platform and Device UDID allocated to it.
         Optional<String> originalDescription = Optional.ofNullable(iTestResult
-                .getMethod().getDescription());
+            .getMethod().getDescription());
         String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-                + " UDID: " + AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getUdid()
-                + " Name: " + AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getName()
-                + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
+            + " UDID: " + AppiumDeviceManager.getAppiumDevice()
+            .getDevice().getUdid()
+            + " Name: " + AppiumDeviceManager.getAppiumDevice()
+            .getDevice().getName()
+            + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
         Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
-                .getAnnotation(Author.class);
+            .getAnnotation(Author.class);
         if (annotation != null) {
             description += "\nAuthor: " + annotation.name();
         }
         if (originalDescription.isPresent()
-                && !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getUdid())) {
+            && !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice()
+            .getDevice().getUdid())) {
             iTestResult.getMethod().setDescription(originalDescription.get()
-                    + "\n" + description);
+                + "\n" + description);
         } else {
             iTestResult.getMethod().setDescription(description);
         }
@@ -110,18 +116,20 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        currentMethods.set(iInvokedMethod.getTestMethod());
-        SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
+        if (!isCloudExecution()) {
+            currentMethods.set(iInvokedMethod.getTestMethod());
+            SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
-        if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
+            if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
                 .equalsIgnoreCase(annotation.platform())) {
-            if (atdHost.isPresent() && atdPort.isPresent()) {
-                HashMap<String, String> logs = new HashMap<>();
-                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                sendResultsToAtdService(iTestResult, "Completed", url, logs);
-            }
-            throw new SkipException("Skipped because property was set to :::"
+                if (atdHost.isPresent() && atdPort.isPresent()) {
+                    HashMap<String, String> logs = new HashMap<>();
+                    String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                }
+                throw new SkipException("Skipped because property was set to :::"
                     + annotation.platform());
+            }
         }
     }
 
@@ -133,21 +141,21 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         try {
-            if (!isRetry(iTestResult)) {
-                HashMap<String, String> logs = testLogger.endLogging(iTestResult,
+            if (!isCloudExecution()) {
+                if (!isRetry(iTestResult)) {
+                    HashMap<String, String> logs = testLogger.endLogging(iTestResult,
                         AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
-                if (atdHost.isPresent() && atdPort.isPresent()) {
-                    String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
-                } else {
-                    new FileFilterParser()
+                    if (atdHost.isPresent() && atdPort.isPresent()) {
+                        String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                        sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                    } else {
+                        new FileFilterParser()
                             .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-                                    .getDevice().getUdid(), iTestResult);
-                    testResults.set(logs);
+                                .getDevice().getUdid(), iTestResult);
+                        testResults.set(logs);
+                    }
                 }
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -165,11 +173,14 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ISuite iSuite) {
-        try {
-            appiumServerManager.stopAppiumServer();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!isCloudExecution()) {
+            try {
+                appiumServerManager.stopAppiumServer();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     /*
@@ -193,13 +204,15 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
-        System.out.println("In Skipped...");
-        RetryCount retryCount = iTestResult.getMethod().getConstructorOrMethod()
+        if (!isCloudExecution()) {
+            System.out.println("In Skipped...");
+            RetryCount retryCount = iTestResult.getMethod().getConstructorOrMethod()
                 .getMethod().getAnnotation(RetryCount.class);
-        if (retryCount == null && (atdHost.isPresent() && atdPort.isPresent())) {
-            HashMap<String, String> logs = new HashMap<>();
-            String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-            sendResultsToAtdService(iTestResult, "Completed", url, logs);
+            if (retryCount == null && (atdHost.isPresent() && atdPort.isPresent())) {
+                HashMap<String, String> logs = new HashMap<>();
+                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                sendResultsToAtdService(iTestResult, "Completed", url, logs);
+            }
         }
 
     }
@@ -230,7 +243,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     public static ITestNGMethod getTestMethod() {
         return checkNotNull(currentMethods.get(),
-                "Did you forget to register the %s listener?",
-                AppiumParallelMethodTestListener.class.getName());
+            "Did you forget to register the %s listener?",
+            AppiumParallelMethodTestListener.class.getName());
     }
 }
