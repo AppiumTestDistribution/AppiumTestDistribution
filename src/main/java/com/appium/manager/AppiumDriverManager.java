@@ -7,8 +7,6 @@ import com.appium.utils.ConfigFileManager;
 import com.appium.capabilities.DesiredCapabilityBuilder;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
@@ -41,23 +39,12 @@ public class AppiumDriverManager {
     private AppiumDriver<MobileElement> initialiseDriver(
             Optional<DesiredCapabilities> capabilities)
             throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession;
+        AppiumDriver currentDriverSession;
         DesiredCapabilities desiredCapabilities = capabilities.get();
         String remoteWDHubIP = getRemoteWDHubIP();
-        if (AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
-            currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                    desiredCapabilities);
-            LOGGER.info("Session Created for iOS ---- "
-                    + currentDriverSession.getSessionId() + "---"
-                    + currentDriverSession.getSessionDetail("udid"));
-        } else {
-            currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                    desiredCapabilities);
-            LOGGER.info("Session Created for Android ---- "
-                    + currentDriverSession.getSessionId() + "---"
-                    + currentDriverSession.getSessionDetail("udid"));
-        }
-
+        currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
+            desiredCapabilities);
+        LOGGER.info("Session Created ---- " + currentDriverSession.getSessionId());
         return currentDriverSession;
     }
 

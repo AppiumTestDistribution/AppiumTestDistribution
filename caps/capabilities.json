@@ -36,19 +36,7 @@
   "hostMachines": [
     {
       "isCloud": "true",
-      "machineIP": "app.eu-central-1.saucelabs.com"
-    },
-    {
-      "machineIP": "127.0.0.1",
-      "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
-      "simulators": [
-        {
-          "deviceName": "iPhone 6",
-          "OS": "11.4"
-        }
-      ]
+      "machineIP": "sauce"
     }
-  ],
-  "ATDServiceHost":"127.0.0.1",
-  "ATDServicePort":"3000"
+  ]
 }

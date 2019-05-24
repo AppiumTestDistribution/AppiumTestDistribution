@@ -2,6 +2,7 @@ package com.appium.manager;
 
 
 import com.github.device.Device;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.List;
 
@@ -23,4 +24,5 @@ public interface IAppiumManager {
     int startIOSWebKitProxy(String host) throws Exception;
 
     void destoryIOSWebKitProxy(String host) throws Exception;
+
 }

@@ -2,6 +2,7 @@ package com.appium.manager;
 
 import com.github.device.Device;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 public class CloudAppiumManager implements IAppiumManager {
@@ -12,6 +13,10 @@ public class CloudAppiumManager implements IAppiumManager {
 
     @Override
     public String getRemoteWDHubIP(String host) {
+        if (host.contains("sauce")) {
+            return MessageFormat.format("https://{0}:{1}@ondemand.eu-central-1.saucelabs.com/wd/hub",
+                System.getenv("sauceUserName"), System.getenv("sauceAccessKey"));
+        }
         return "";
     }
 
@@ -31,17 +36,17 @@ public class CloudAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public int getAvailablePort(String hostMachine) throws Exception {
+    public int getAvailablePort(String hostMachine) {
         return 0;
     }
 
     @Override
-    public int startIOSWebKitProxy(String host) throws Exception {
+    public int startIOSWebKitProxy(String host) {
         return 0;
     }
 
     @Override
-    public void destoryIOSWebKitProxy(String host) throws Exception {
+    public void destoryIOSWebKitProxy(String host) {
 
     }
 }

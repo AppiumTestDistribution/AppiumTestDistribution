@@ -7,6 +7,6 @@ public enum CloudHost {
     BROWSERSTACK;
 
     public static boolean isCloud(String host) {
-        return EnumUtils.isValidEnum(CloudHost.class, host);
+        return EnumUtils.isValidEnumIgnoreCase(CloudHost.class, host);
     }
 }
