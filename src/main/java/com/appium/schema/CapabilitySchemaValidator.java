@@ -75,7 +75,7 @@ public class CapabilitySchemaValidator {
                 for (Object hostMachine : hostMachines) {
                     JSONObject hostMachineJson = ((JSONObject) hostMachine);
                     String machineIP = (String) hostMachineJson.get("machineIP");
-                    if (InetAddress.getByName(machineIP).isReachable(5000)) {
+                    if (hostMachineJson.getBoolean ("isCloud") || InetAddress.getByName(machineIP).isReachable(5000)) {
                         System.out.println("ATD is Running on " + machineIP);
                     } else {
                         FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);

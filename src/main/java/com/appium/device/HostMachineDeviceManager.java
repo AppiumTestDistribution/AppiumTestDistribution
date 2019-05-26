@@ -176,7 +176,7 @@ public class HostMachineDeviceManager {
                                 device.add(d);
                             });
                         });
-                        devicesByHost.put(ip, getAppiumDevices("sauce", device));
+                        devicesByHost.put(ip, getAppiumDevices(ip, device));
                     } else {
                         devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
                     }

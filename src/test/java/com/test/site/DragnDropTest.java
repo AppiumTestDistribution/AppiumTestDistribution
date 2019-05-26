@@ -31,4 +31,23 @@ public class DragnDropTest extends  UserBaseTest {
                         dragMe.getSize().getHeight() / 2)).release().perform();
 
     }
+
+    @Test
+    public void dragNDropNew() {
+        login("login").click();
+        waitForElement("dragAndDrop").click();
+        MobileElement dragMe = (MobileElement) new WebDriverWait(driver, 30)
+                .until(ExpectedConditions
+                        .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
+        System.out.println("Element Source X-Co-ordinates::" + dragMe.getSize().getWidth() / 2
+                           + "Element Source Y-Co-ordinates::" + dragMe.getSize().getHeight() / 2);
+        MobileElement dropzone = driver.findElementByAccessibilityId("dropzone");
+        new TouchAction(driver).press(ElementOption.element(dragMe,dragMe.getSize()
+                                                                           .getWidth() / 2,dragMe.getSize().getHeight() / 2))
+                .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
+                .moveTo(ElementOption.element(dropzone,dropzone.getSize()
+                                                               .getWidth() / 2,
+                        dragMe.getSize().getHeight() / 2)).release().perform();
+
+    }
 }

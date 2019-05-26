@@ -159,8 +159,10 @@ public final class AppiumParallelMethodTestListener extends Helpers
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            AppiumDriverManager.getDriver().quit();
             deviceAllocationManager.freeDevice();
             try {
+                if(!isCloudExecution())
                 appiumDriverManager.stopAppiumDriver();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -173,13 +175,13 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ISuite iSuite) {
-        if (!isCloudExecution()) {
-            try {
-                appiumServerManager.stopAppiumServer();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        if (!isCloudExecution()) {
+//            try {
+//                appiumServerManager.stopAppiumServer();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
 
     }
 

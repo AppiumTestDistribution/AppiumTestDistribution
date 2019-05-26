@@ -81,7 +81,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                 .getHostArtifacts();
             String hostAppPath = hostAppPath(values, hostArtifacts);
             Path path = FileSystems.getDefault().getPath(hostAppPath);
-            if (ResourceUtils.isUrl(hostAppPath)) {
+            if (ResourceUtils.isUrl(hostAppPath) ||
+                    AppiumDeviceManager.getAppiumDevice().getDevice ().isCloud ()) {
                 desiredCapabilities.setCapability(appCapability, hostAppPath);
             } else {
                 desiredCapabilities.setCapability(appCapability,

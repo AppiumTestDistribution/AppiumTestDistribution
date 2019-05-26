@@ -1,10 +1,7 @@
 {
   "android": {
-    "platformName": "android",
-    "platformVersion": "7.0",
     "automationName": "UIAutomator2",
     "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
-    "deviceName": "android",
     "noSign": true
   },
   "iOS": {
@@ -24,12 +21,12 @@
   "cloud": {
     "android": [
       {
-        "deviceName": "Samsung Galaxy Note 9",
+        "deviceName": "GalaxyS7FHDGoogleAPI",
         "osVersion": "8.1"
       },
       {
-        "deviceName": "Google Pixel 3 XL",
-        "osVersion": "9.0"
+        "deviceName": "GalaxyS7FHDGoogleAPI",
+        "osVersion": "8.1"
       }
     ]
   },
