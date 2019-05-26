@@ -5,6 +5,9 @@ import com.github.device.Device;
 import java.text.MessageFormat;
 import java.util.List;
 
+import static java.lang.System.getenv;
+import static java.text.MessageFormat.format;
+
 public class CloudAppiumManager implements IAppiumManager {
     @Override
     public void destroyAppiumNode(String host) {
@@ -13,11 +16,11 @@ public class CloudAppiumManager implements IAppiumManager {
 
     @Override
     public String getRemoteWDHubIP(String host) {
+        String url = "https://{0}:{1}@hub-cloud.browserstack.com/wd/hub";
         if (host.contains("sauce")) {
-            return MessageFormat.format("https://{0}:{1}@ondemand.eu-central-1.saucelabs.com/wd/hub",
-                System.getenv("sauceUserName"), System.getenv("sauceAccessKey"));
+            url = "https://{0}:{1}@ondemand.eu-central-1.saucelabs.com/wd/hub";
         }
-        return "";
+        return format (url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"));
     }
 
     @Override

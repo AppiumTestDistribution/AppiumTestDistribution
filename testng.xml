@@ -5,15 +5,9 @@
         <listener class-name="com.appium.manager.AppiumParallelTestListener"/>
         <listener class-name="com.appium.utils.RetryListener"/>
     </listeners>
-    <test name="TestNG Test">
-        <parameter name="device" value="192.168.56.101:5555"/>
-        <groups>
-        <run>
-            <include name="smoke"/>
-        </run>
-        </groups>
+    <test name="TestNG Cloud Test">
         <classes>
-            <class name="com.test.site.HomePageTest2"/>
+            <class name="com.test.site.Runner"/>
         </classes>
-    </test> <!-- TestNG Test -->
+    </test>
 </suite> <!-- TestNG Forum -->

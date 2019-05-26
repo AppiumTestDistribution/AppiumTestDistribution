@@ -21,18 +21,18 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
-  "cloud":
-    {
-      "android": [{
-          "deviceName": "GalaxyS7FHDGoogleAPI",
-          "osVersion": "8.1"
-        },
-        {
-          "deviceName": "GalaxyS7FHDGoogleAPI",
-          "osVersion": "8.1"
-        }]
-    }
-  ,
+  "cloud": {
+    "android": [
+      {
+        "deviceName": "Samsung Galaxy Note 9",
+        "osVersion": "8.1"
+      },
+      {
+        "deviceName": "Google Pixel 3 XL",
+        "osVersion": "9.0"
+      }
+    ]
+  },
   "hostMachines": [
     {
       "isCloud": "true",
