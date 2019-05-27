@@ -4,7 +4,6 @@
     "platformVersion": "7.0",
     "automationName": "UIAutomator2",
     "androidInstallTimeout": 50000,
-    "adbExecTimeout": 50000,
     "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
     "deviceName": "android",
     "noSign": true
