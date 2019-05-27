@@ -28,8 +28,8 @@ public class CapabilitySchemaValidator {
         } catch (ValidationException e) {
             if (e.getCausingExceptions().size() > 1) {
                 e.getCausingExceptions().stream()
-                        .map(ValidationException::getMessage)
-                        .forEach(System.out::println);
+                    .map(ValidationException::getMessage)
+                    .forEach(System.out::println);
             } else {
                 System.out.println(e.getErrorMessage());
             }
@@ -62,7 +62,7 @@ public class CapabilitySchemaValidator {
     private void isPlatformInEnv() {
         if (System.getenv("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
-                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
+                + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
         }
     }
 
@@ -75,7 +75,8 @@ public class CapabilitySchemaValidator {
                 for (Object hostMachine : hostMachines) {
                     JSONObject hostMachineJson = ((JSONObject) hostMachine);
                     String machineIP = (String) hostMachineJson.get("machineIP");
-                    if (InetAddress.getByName(machineIP).isReachable(5000)) {
+                    if (hostMachineJson.getBoolean("isCloud")
+                        || InetAddress.getByName(machineIP).isReachable(5000)) {
                         System.out.println("ATD is Running on " + machineIP);
                     } else {
                         FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);

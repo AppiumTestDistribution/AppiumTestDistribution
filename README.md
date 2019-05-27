@@ -16,9 +16,11 @@
 [![GitHub forks](https://img.shields.io/github/forks/saikrishna321/AppiumTestDistribution.svg?style=social&label=Fork)](https://github.com/kirankalyan5/AppiumTestDistribution/network)
 
 ## Thanks for support 
-<h3 align="left">
-	<a href= "https://saucelabs.com"><img src="image/Powered by Sauce Labs badges red.svg" alt="ATD" width="500" height="300"></a>
+<h3>
+	<a href= "https://saucelabs.com"><img src="image/Powered by Sauce Labs badges red.svg" alt="ATD" width="45%" align="top"></a>
+	<a href= "https://www.browserstack.com"><img src="https://p14.zdusercontent.com/attachment/1015988/j4BFTOujCnXKj0HBcxYt78Bc7?token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..LGh31Nv7MQwbhepdV4ZYCA.6tyNmOnWvHjz6iZFtQg3kTj6-CLsKxtdWtOOYxHzOcEuxM-DBMOi4XWJKiSo6M70a9M3eOSK4zkbUAx9Zk7n0W-D6SWMbdCdwBn2bzu6J9JzdQ_LReqAVdpU_5jSNQti4zOPST__hShBNvipQPYVbNl5OMukCQJvB9pnLEm_KXZDmUxWdsvaNJWVpUzV_k1QZn6Bgle-xKkhQoIQMLVEwmed_j0uhoGAKVS4iv3NBEeBmcJfyW8f3XmIk-BRFJBKWWhV6AenD3svBL0LmhMFojX0JvA7CbNx0h9s99qY8J4.jss6MlHMDhpeBbQYvDzjqw" alt="ATD" width="45%" align="top"></a>
 </h3>
+
 Add the below dependencies in your pom.xml (Master)
 
 ```

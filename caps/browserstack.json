@@ -1,11 +1,7 @@
 {
   "android": {
-    "platformName": "android",
-    "platformVersion": "7.0",
-    "automationName": "Espresso",
-    "androidInstallTimeout": 50000,
-    "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
-    "deviceName": "android",
+    "automationName": "UIAutomator2",
+    "app": "bs://83d1f27d72389ca34d3a50c82cecc93c24eced3b",
     "noSign": true
   },
   "iOS": {
@@ -22,17 +18,18 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
+  "cloud": {
+    "android": [
+      {
+        "deviceName": "Google Pixel",
+        "osVersion": "7.0"
+      }
+    ]
+  },
   "hostMachines": [
     {
-      "isCloud": false,
-      "machineIP": "127.0.0.1",
-      "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
-      "simulators": [
-        {
-          "deviceName": "iPhone 6",
-          "OS": "12.1"
-        }
-      ]
+      "isCloud": "true",
+      "machineIP": "browserstack"
     }
   ]
 }

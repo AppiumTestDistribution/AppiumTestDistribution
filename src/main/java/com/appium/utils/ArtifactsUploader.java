@@ -2,6 +2,7 @@ package com.appium.utils;
 
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.HostMachineDeviceManager;
+import com.appium.entities.CloudHost;
 import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
 
@@ -48,6 +49,10 @@ public class ArtifactsUploader {
         return hostMachine.equals("127.0.0.1");
     }
 
+    private boolean isCloud(String hostMachine) {
+        return CloudHost.isCloud(hostMachine);
+    }
+
     public List<HostArtifact> getHostArtifacts() {
         return hostArtifacts;
     }
@@ -91,7 +96,7 @@ public class ArtifactsUploader {
 
     private String getArtifactPath(String hostMachine, String artifact) throws Exception {
         String path;
-        if (!isLocalhost(hostMachine) && !ResourceUtils.isUrl(artifact)) {
+        if (!isCloud(hostMachine) && !isLocalhost(hostMachine) && !ResourceUtils.isUrl(artifact)) {
             path = uploadFile(hostMachine, artifact);
         } else {
             path = artifact;

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver
-            = new ThreadLocal<>();
+        = new ThreadLocal<>();
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
@@ -39,23 +39,33 @@ public class AppiumDriverManager {
     }
 
     private AppiumDriver<MobileElement> initialiseDriver(
-            Optional<DesiredCapabilities> capabilities)
-            throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession;
+        Optional<DesiredCapabilities> capabilities)
+        throws Exception {
+        AppiumDriver currentDriverSession;
         DesiredCapabilities desiredCapabilities = capabilities.get();
         String remoteWDHubIP = getRemoteWDHubIP();
-        if (AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
+        if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
+            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
             currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                    desiredCapabilities);
+                desiredCapabilities);
             LOGGER.info("Session Created for iOS ---- "
-                    + currentDriverSession.getSessionId() + "---"
-                    + currentDriverSession.getSessionDetail("udid"));
-        } else {
+                + currentDriverSession.getSessionId() + "---"
+                + currentDriverSession.getSessionDetail("udid"));
+        } else if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
+            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("android")) {
             currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                    desiredCapabilities);
+                desiredCapabilities);
             LOGGER.info("Session Created for Android ---- "
-                    + currentDriverSession.getSessionId() + "---"
-                    + currentDriverSession.getSessionDetail("udid"));
+                + currentDriverSession.getSessionId() + "---"
+                + currentDriverSession.getSessionDetail("udid"));
+        } else {
+            currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
+                desiredCapabilities);
+            LOGGER.info("Session Created ---- "
+                + currentDriverSession.getSessionId() + "---"
+                + currentDriverSession.getRemoteAddress().getHost() + "---"
+                + currentDriverSession.getSessionDetail("udid"));
+
         }
 
         return currentDriverSession;
@@ -68,7 +78,7 @@ public class AppiumDriverManager {
     }
 
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
-            throws Exception {
+        throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
         currentDriverSession = initialiseDriver(desiredCapabilities);
         AppiumDriverManager.setDriver(currentDriverSession);
@@ -86,32 +96,26 @@ public class AppiumDriverManager {
     private String getCapsPath() {
         if (prop.getProperty("CAPS") == null) {
             return System.getProperty("user.dir")
-                    + "/caps/capabilities.json";
+                + "/caps/capabilities.json";
         } else {
             return prop.getProperty("CAPS");
         }
     }
 
     private DesiredCapabilities buildDesiredCapabilities(String capabilityPath)
-            throws Exception {
+        throws Exception {
         String capabilities = capabilityPath;
         if (new File(capabilityPath).exists()) {
             Path path = FileSystems.getDefault().getPath(capabilityPath);
             if (!path.getParent().isAbsolute()) {
                 capabilities = path.normalize()
-                        .toAbsolutePath().toString();
+                    .toAbsolutePath().toString();
             }
-            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                desiredCapabilityBuilder
-                        .buildDesiredCapability("android", capabilities);
-            } else {
-                desiredCapabilityBuilder
-                        .buildDesiredCapability("iOS", capabilities);
-            }
+            desiredCapabilityBuilder
+                .buildDesiredCapability(capabilities);
             return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
-            System.out.println("Capability file not found");
-            return null;
+            throw new RuntimeException("Capability file not found");
         }
     }
 
@@ -119,23 +123,23 @@ public class AppiumDriverManager {
         String OS = System.getProperty("os.name").toLowerCase();
         String command;
         if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
-                == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+            == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
             String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
             AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
         }
         if (AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
             if (OS.contains("mac")) {
                 command = "kill -9 $(lsof -ti tcp:"
-                        + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
+                    + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
                 new CommandPrompt().runCommand(command);
             }
             AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(0);
         }
         if (AppiumDriverManager.getDriver() != null
-                && AppiumDriverManager.getDriver().getSessionId() != null) {
+            && AppiumDriverManager.getDriver().getSessionId() != null) {
             LOGGER.info("Session Deleting ---- "
-                    + AppiumDriverManager.getDriver().getSessionId() + "---"
-                    + AppiumDriverManager.getDriver().getSessionDetail("udid"));
+                + AppiumDriverManager.getDriver().getSessionId() + "---"
+                + AppiumDriverManager.getDriver().getSessionDetail("udid"));
             AppiumDriverManager.getDriver().quit();
         }
     }

@@ -50,9 +50,8 @@ public class CapabilityManager {
         boolean hasKey = capabilities.has(key);
         if (hasKey) {
             return (JSONObject) capabilities.get(key);
-        } else {
-            return null;
         }
+        return null;
     }
 
     public JSONArray getCapabilitiesArrayFromKey(String key) {
@@ -62,9 +61,8 @@ public class CapabilityManager {
     public Boolean getCapabilityBoolean(String key) {
         if (capabilities.has(key)) {
             return (Boolean) capabilities.get(key);
-        } else {
-            return false;
         }
+        return false;
     }
 
     public HashMap<String, String> getMongoDbHostAndPort() {
