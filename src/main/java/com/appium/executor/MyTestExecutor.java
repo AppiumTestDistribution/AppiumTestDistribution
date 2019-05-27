@@ -425,7 +425,8 @@ public class MyTestExecutor {
         private XmlTest test;
         private List<XmlClass> writeXml;
 
-        public CreateGroups(List<String> tests, Map<String, List<Method>> methods, String category, XmlSuite suite) {
+        public CreateGroups(List<String> tests, Map<String, List<Method>> methods,
+                            String category, XmlSuite suite) {
             this.tests = tests;
             this.methods = methods;
             this.category = category;

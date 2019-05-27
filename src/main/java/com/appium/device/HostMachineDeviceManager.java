@@ -163,7 +163,8 @@ public class HostMachineDeviceManager {
                     }
                 } else if (machineIPs instanceof String) {
                     String ip = hostMachineJson.getString("machineIP");
-                    if (!ip.contains("https")) {
+                    if (ip.equalsIgnoreCase("sauce")
+                        || ip.equalsIgnoreCase("browserstack")) {
                         List<Device> device = new ArrayList<>();
                         JSONObject cloud = capabilityManager.getCapabilityObjectFromKey("cloud");
                         cloud.toMap().forEach((devicePlatform, devices) -> {
@@ -226,22 +227,6 @@ public class HostMachineDeviceManager {
         return devices;
     }
 
-}
-
-
-class DeviceSauce implements Cloneable {
-
-    private String os;
-
-    public void setOS(String os) {
-        this.os = os;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        // TODO Auto-generated method stub
-        return new Device();
-    }
 }
 
 

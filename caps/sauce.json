@@ -1,10 +1,7 @@
 {
   "android": {
-    "platformName": "android",
-    "platformVersion": "7.0",
     "automationName": "UIAutomator2",
     "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
-    "deviceName": "android",
     "noSign": true
   },
   "iOS": {
@@ -21,17 +18,22 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
+  "cloud": {
+    "android": [
+      {
+        "deviceName": "GalaxyS7FHDGoogleAPI",
+        "osVersion": "8.1"
+      },
+      {
+        "deviceName": "GalaxyS7FHDGoogleAPI",
+        "osVersion": "8.1"
+      }
+    ]
+  },
   "hostMachines": [
     {
-      "isCloud": false,
-      "machineIP": "127.0.0.1",
-      "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
-      "simulators": [
-        {
-          "deviceName": "iPhone 6",
-          "OS": "12.1"
-        }
-      ]
+      "isCloud": "true",
+      "machineIP": "sauce"
     }
   ]
 }

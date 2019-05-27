@@ -2,7 +2,6 @@ package com.appium.manager;
 
 
 import com.github.device.Device;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.List;
 

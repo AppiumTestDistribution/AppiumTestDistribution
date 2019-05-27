@@ -33,7 +33,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private Optional<String> atdHost;
     private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
-    static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
+    private static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
 
     public AppiumParallelMethodTestListener() {
         testLogger = new TestLogger();
@@ -69,7 +69,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
         try {
             deviceAllocationManager.allocateDevice(deviceAllocationManager
                 .getNextAvailableDevice());
-            // TODO seperate capability builder for cloud and local/remote
             appiumDriverManager.startAppiumDriverInstance();
             if (!isCloudExecution()) {
                 startReportLogging(iTestResult);
@@ -83,7 +82,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
         return AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
     }
 
-    private void startReportLogging(ITestResult iTestResult) throws IOException, InterruptedException {
+    private void startReportLogging(ITestResult iTestResult) throws IOException,
+        InterruptedException {
         testLogger.startLogging(iTestResult.getMethod().getMethodName(),
             iTestResult.getTestClass()
                 .getRealClass().getSimpleName());
@@ -141,19 +141,17 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         try {
-            if (!isCloudExecution()) {
-                if (!isRetry(iTestResult)) {
-                    HashMap<String, String> logs = testLogger.endLogging(iTestResult,
-                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
-                    if (atdHost.isPresent() && atdPort.isPresent()) {
-                        String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                        sendResultsToAtdService(iTestResult, "Completed", url, logs);
-                    } else {
-                        new FileFilterParser()
-                            .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-                                .getDevice().getUdid(), iTestResult);
-                        testResults.set(logs);
-                    }
+            if (!isCloudExecution() && !isRetry(iTestResult)) {
+                HashMap<String, String> logs = testLogger.endLogging(iTestResult,
+                    AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                if (atdHost.isPresent() && atdPort.isPresent()) {
+                    String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                } else {
+                    new FileFilterParser()
+                        .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
+                            .getDevice().getUdid(), iTestResult);
+                    testResults.set(logs);
                 }
             }
         } catch (Exception e) {
@@ -162,8 +160,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
             AppiumDriverManager.getDriver().quit();
             deviceAllocationManager.freeDevice();
             try {
-                if(!isCloudExecution())
-                appiumDriverManager.stopAppiumDriver();
+                if (!isCloudExecution()) {
+                    appiumDriverManager.stopAppiumDriver();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -175,13 +174,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ISuite iSuite) {
-//        if (!isCloudExecution()) {
-//            try {
-//                appiumServerManager.stopAppiumServer();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
 
     }
 

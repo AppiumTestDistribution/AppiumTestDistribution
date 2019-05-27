@@ -43,9 +43,9 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         return desiredCapabilitiesThreadLocal.get();
     }
 
-    public void buildDesiredCapability(String platform,
-                                       String jsonPath) throws Exception {
+    public void buildDesiredCapability(String jsonPath) throws Exception {
         int port = AppiumDeviceManager.getAppiumDevice().getPort();
+        String platform = AppiumDeviceManager.getAppiumDevice().getDevice().getOs();
         boolean isCloud = AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (isCloud) {
@@ -73,7 +73,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
     }
 
-    private void capabilityObject(DesiredCapabilities desiredCapabilities, JSONObject platFormCapabilities, String key) {
+    private void capabilityObject(DesiredCapabilities desiredCapabilities,
+                                  JSONObject platFormCapabilities, String key) {
         String appCapability = "app";
         if (appCapability.equals(key)) {
             Object values = platFormCapabilities.get(appCapability);
@@ -81,8 +82,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                 .getHostArtifacts();
             String hostAppPath = hostAppPath(values, hostArtifacts);
             Path path = FileSystems.getDefault().getPath(hostAppPath);
-            if (ResourceUtils.isUrl(hostAppPath) ||
-                    AppiumDeviceManager.getAppiumDevice().getDevice ().isCloud ()) {
+            if (ResourceUtils.isUrl(hostAppPath)
+                || AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()) {
                 desiredCapabilities.setCapability(appCapability, hostAppPath);
             } else {
                 desiredCapabilities.setCapability(appCapability,

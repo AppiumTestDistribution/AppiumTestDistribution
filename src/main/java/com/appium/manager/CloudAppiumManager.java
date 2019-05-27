@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.github.device.Device;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 import static java.lang.System.getenv;
@@ -20,7 +19,7 @@ public class CloudAppiumManager implements IAppiumManager {
         if (host.contains("sauce")) {
             url = "https://{0}:{1}@ondemand.eu-central-1.saucelabs.com/wd/hub";
         }
-        return format (url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"));
+        return format(url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"));
     }
 
     @Override
