@@ -145,7 +145,7 @@ Jio India             |  M800 | Reward Gateway
 
 dahmakan|
 :-------------------------:|
-[![dahmakan](https://s2-cdn.greenhouse.io/external_greenhouse_job_boards/logos/400/066/300/original/dahmakan-og-logo.jpg?1519124252 =100X100)](https://www.dahmakan.com/)
+[![dahmakan](https://s2-cdn.greenhouse.io/external_greenhouse_job_boards/logos/400/066/300/original/dahmakan-og-logo.jpg?1519124252 =200X100)](https://www.dahmakan.com/)
 
 ## License
 
