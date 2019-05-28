@@ -143,6 +143,10 @@ Jio India             |  M800 | Reward Gateway
 :-:|:-:|:-:
 [![Jio](http://images.indianexpress.com/2016/07/reliancejio_newlogo_1.jpg)](https://www.jio.com/)  |  [![M800](https://i.stack.imgur.com/nY9CC.jpg)](http://www.m800.com/) | [![Reward](http://www.greathillpartners.com/wp-content/uploads/2016/01/reward-gateway-logo-horizontal-tagline-on-white-1.png)](https://www.rewardgateway.com/)
 
+dahmakan|
+:-------------------------:|
+[![dahmakan](https://www.dropbox.com/s/7tlqic68n4w5x1b/logo_white.png?dl=0)](https://www.dahmakan.com/)
+
 ## License
 
 ![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)
