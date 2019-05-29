@@ -12,17 +12,7 @@
     "iOS": {
       "$id": "#/properties/iOS",
       "type": "object",
-      "title": "The Ios Schema",
-      "required": [
-        "app"
-      ],
-      "properties": {
-        "app": {
-          "$id": "#/properties/iOS/properties/app",
-          "type": "object",
-          "title": "The App Schema"
-        }
-      }
+      "title": "The Ios Schema"
     },
     "hostMachines": {
       "$id": "#/properties/hostMachines",
