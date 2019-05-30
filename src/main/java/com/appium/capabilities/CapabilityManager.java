@@ -101,7 +101,17 @@ public class CapabilityManager {
         return appiumServerProp(host, "appiumServerPath");
     }
 
-    private String appiumServerProp(String host, String arg) throws Exception {
+    public boolean isCloud(String host) {
+        try {
+            return appiumServerProp (host, "isCloud");
+        }
+        catch (Exception e) {
+            e.printStackTrace ();
+        }
+        return false;
+    }
+
+    private <T> T appiumServerProp(String host, String arg) throws Exception {
         JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
         Object machineIP = hostIP.stream().filter(object -> ((HashMap) object).get("machineIP")
@@ -109,7 +119,7 @@ public class CapabilityManager {
                 && ((HashMap) object).get(arg) != null)
                 .findFirst().orElse(null);
         if (machineIP != null) {
-            return ((HashMap) machineIP).get(arg).toString();
+            return (T) ((HashMap) machineIP).get (arg);
         }
         return null;
     }

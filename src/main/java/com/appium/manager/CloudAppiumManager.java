@@ -15,11 +15,8 @@ public class CloudAppiumManager implements IAppiumManager {
 
     @Override
     public String getRemoteWDHubIP(String host) {
-        String url = "https://{0}:{1}@hub-cloud.browserstack.com/wd/hub";
-        if (host.contains("sauce")) {
-            url = "https://{0}:{1}@ondemand.eu-central-1.saucelabs.com/wd/hub";
-        }
-        return format(url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"));
+        String url = "https://{0}:{1}@{2}/wd/hub";
+        return format(url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"), host);
     }
 
     @Override

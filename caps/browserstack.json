@@ -21,15 +21,15 @@
   "cloud": {
     "android": [
       {
-        "deviceName": "Google Pixel",
-        "osVersion": "7.0"
+        "deviceName": "Google Pixel 3 XL",
+        "osVersion": "9.0"
       }
     ]
   },
   "hostMachines": [
     {
-      "isCloud": "true",
-      "machineIP": "browserstack"
+      "isCloud": true,
+      "machineIP": "hub-cloud.browserstack.com"
     }
   ]
 }

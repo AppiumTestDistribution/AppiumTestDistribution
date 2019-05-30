@@ -2,7 +2,6 @@ package com.appium.utils;
 
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.HostMachineDeviceManager;
-import com.appium.entities.CloudHost;
 import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
 
@@ -50,7 +49,7 @@ public class ArtifactsUploader {
     }
 
     private boolean isCloud(String hostMachine) {
-        return CloudHost.isCloud(hostMachine);
+        return CapabilityManager.getInstance ().isCloud(hostMachine);
     }
 
     public List<HostArtifact> getHostArtifacts() {

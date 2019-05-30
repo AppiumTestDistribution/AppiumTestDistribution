@@ -22,6 +22,14 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
+  "cloud": {
+    "android": [
+      {
+        "deviceName": "GalaxyS7FHDGoogleAPI",
+        "osVersion": "8.1"
+      }
+    ]
+  },
   "hostMachines": [
     {
       "isCloud": false,
@@ -33,6 +41,10 @@
           "OS": "12.1"
         }
       ]
+    },
+    {
+      "isCloud": true,
+      "machineIP": "ondemand.eu-central-1.saucelabs.com"
     }
   ]
 }
