@@ -77,7 +77,7 @@ public class CapabilitySchemaValidator {
                     String machineIP = (String) hostMachineJson.get("machineIP");
                     boolean isCloud = hostMachineJson.has("isCloud");
                     if (isCloud) {
-                        hostMachineJson.getBoolean("isCloud");
+                        isCloud = hostMachineJson.getBoolean("isCloud");
                     }
                     if (isCloud
                         || InetAddress.getByName(machineIP).isReachable(5000)) {
