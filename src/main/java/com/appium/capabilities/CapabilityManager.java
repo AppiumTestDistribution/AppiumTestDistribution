@@ -123,8 +123,12 @@ public class CapabilityManager {
         return appiumServerProp(host, "appiumPort");
     }
 
-    public String getRemoteAppiumManangerPort(String host) throws Exception {
-        return appiumServerProp(host, "remoteAppiumManagerPort");
+    public String getRemoteAppiumManangerPort(String host) {
+        try {
+            return appiumServerProp(host, "remoteAppiumManagerPort");
+        } catch (Exception e) {
+            return "4567";
+        }
     }
 
     public JSONObject getCapabilities() {
