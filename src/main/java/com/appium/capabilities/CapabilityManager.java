@@ -30,14 +30,14 @@ public class CapabilityManager {
 
     private String getCapabilityLocation() {
         String path = System.getProperty("user.dir") + "/caps/"
-                + "capabilities.json";
+            + "capabilities.json";
         String caps = ConfigFileManager.getInstance()
-                .getProperty("CAPS");
+            .getProperty("CAPS");
         if (caps != null) {
             Path userDefinedCapsPath = FileSystems.getDefault().getPath(caps);
             if (!userDefinedCapsPath.getParent().isAbsolute()) {
                 path = userDefinedCapsPath.normalize()
-                        .toAbsolutePath().toString();
+                    .toAbsolutePath().toString();
             } else {
                 path = userDefinedCapsPath.toString();
             }
@@ -68,7 +68,7 @@ public class CapabilityManager {
     public HashMap<String, String> getMongoDbHostAndPort() {
         HashMap<String, String> params = new HashMap<>();
         if (capabilities.has("ATDServiceHost")
-                && capabilities.has("ATDServicePort")) {
+            && capabilities.has("ATDServicePort")) {
             params.put("atdHost", (String) capabilities.get("ATDServiceHost"));
             params.put("atdPort", (String) capabilities.get("ATDServicePort"));
         }
@@ -103,10 +103,9 @@ public class CapabilityManager {
 
     public boolean isCloud(String host) {
         try {
-            return appiumServerProp (host, "isCloud");
-        }
-        catch (Exception e) {
-            e.printStackTrace ();
+            return appiumServerProp(host, "isCloud");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -115,13 +114,10 @@ public class CapabilityManager {
         JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
         Object machineIP = hostIP.stream().filter(object -> ((HashMap) object).get("machineIP")
-                .toString().equalsIgnoreCase(host)
-                && ((HashMap) object).get(arg) != null)
-                .findFirst().orElse(null);
-        if (machineIP != null) {
-            return (T) ((HashMap) machineIP).get (arg);
-        }
-        return null;
+            .toString().equalsIgnoreCase(host)
+            && ((HashMap) object).get(arg) != null)
+            .findFirst().orElse(null);
+        return (T) ((HashMap) machineIP).get(arg);
     }
 
     public String getAppiumServerPort(String host) throws Exception {
