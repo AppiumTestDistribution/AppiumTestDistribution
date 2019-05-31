@@ -105,9 +105,8 @@ public class CapabilityManager {
         try {
             return appiumServerProp(host, "isCloud");
         } catch (Exception e) {
-            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     private <T> T appiumServerProp(String host, String arg) throws Exception {
