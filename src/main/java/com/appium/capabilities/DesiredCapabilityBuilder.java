@@ -118,6 +118,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         });
 
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,"android");
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                 port);
             appPackage(desiredCapabilities);

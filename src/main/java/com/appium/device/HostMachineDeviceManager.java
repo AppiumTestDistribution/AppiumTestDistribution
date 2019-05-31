@@ -163,8 +163,7 @@ public class HostMachineDeviceManager {
                     }
                 } else if (machineIPs instanceof String) {
                     String ip = hostMachineJson.getString("machineIP");
-                    if (ip.equalsIgnoreCase("sauce")
-                        || ip.equalsIgnoreCase("browserstack")) {
+                    if (CapabilityManager.getInstance().isCloud(ip)) {
                         List<Device> device = new ArrayList<>();
                         JSONObject cloud = capabilityManager.getCapabilityObjectFromKey("cloud");
                         cloud.toMap().forEach((devicePlatform, devices) -> {

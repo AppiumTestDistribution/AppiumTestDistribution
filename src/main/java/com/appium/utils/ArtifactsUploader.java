@@ -2,7 +2,6 @@ package com.appium.utils;
 
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.HostMachineDeviceManager;
-import com.appium.entities.CloudHost;
 import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
 
@@ -38,7 +37,7 @@ public class ArtifactsUploader {
 
     public void initializeArtifacts() throws Exception {
         for (String hostMachine : HostMachineDeviceManager.getInstance()
-                .getDevicesByHost().getAllHosts()) {
+            .getDevicesByHost().getAllHosts()) {
             HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
             HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
             hostArtifacts.add(hostArtifact);
@@ -50,7 +49,7 @@ public class ArtifactsUploader {
     }
 
     private boolean isCloud(String hostMachine) {
-        return CloudHost.isCloud(hostMachine);
+        return CapabilityManager.getInstance().isCloud(hostMachine);
     }
 
     public List<HostArtifact> getHostArtifacts() {
@@ -59,7 +58,7 @@ public class ArtifactsUploader {
 
     private String uploadFile(String hostMachine, String appPath) throws Exception {
         JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(
-                new File(appPath).getCanonicalFile(), hostMachine));
+            new File(appPath).getCanonicalFile(), hostMachine));
         return jsonObject.getString("filePath");
     }
 
@@ -68,17 +67,17 @@ public class ArtifactsUploader {
         String app = "app";
         HashMap<String, String> artifactPaths = new HashMap<>();
         JSONObject android = capabilityManager
-                .getCapabilityObjectFromKey("android");
+            .getCapabilityObjectFromKey("android");
         JSONObject iOSAppPath = capabilityManager
-                .getCapabilityObjectFromKey("iOS");
+            .getCapabilityObjectFromKey("iOS");
         if (android != null && android.has(app)
-                && platform.equalsIgnoreCase("android")
-                || platform.equalsIgnoreCase("both")) {
+            && platform.equalsIgnoreCase("android")
+            || platform.equalsIgnoreCase("both")) {
             artifactPaths.put("APK", getArtifactPath(hostMachine, android.getString("app")));
         }
         if (iOSAppPath != null && iOSAppPath.has("app")
-                && platform.equalsIgnoreCase("ios")
-                || platform.equalsIgnoreCase("both")) {
+            && platform.equalsIgnoreCase("ios")
+            || platform.equalsIgnoreCase("both")) {
             if (iOSAppPath.get("app") instanceof JSONObject) {
                 JSONObject iOSApp = iOSAppPath.getJSONObject("app");
                 if (iOSApp.has("simulator")) {
