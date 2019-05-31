@@ -22,17 +22,8 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
-  "cloud": {
-    "android": [
-      {
-        "deviceName": "GalaxyS7FHDGoogleAPI",
-        "osVersion": "8.1"
-      }
-    ]
-  },
   "hostMachines": [
     {
-      "isCloud": false,
       "machineIP": "127.0.0.1",
       "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
       "simulators": [
@@ -41,10 +32,6 @@
           "OS": "12.1"
         }
       ]
-    },
-    {
-      "isCloud": true,
-      "machineIP": "ondemand.eu-central-1.saucelabs.com"
     }
   ]
 }
