@@ -74,11 +74,11 @@ public class CapabilitySchemaValidator {
                 JSONArray hostMachines = capabilityManager.getHostMachineObject();
                 for (Object hostMachine : hostMachines) {
                     JSONObject hostMachineJson = ((JSONObject) hostMachine);
-                    String machineIP = (String) hostMachineJson.get("machineIP");
                     boolean isCloud = hostMachineJson.has("isCloud");
                     if (isCloud) {
                         isCloud = hostMachineJson.getBoolean("isCloud");
                     }
+                    String machineIP = (String) hostMachineJson.get("machineIP");
                     if (isCloud
                         || InetAddress.getByName(machineIP).isReachable(5000)) {
                         System.out.println("ATD is Running on " + machineIP);

@@ -13,22 +13,27 @@
     "android": {
       "$id": "#/properties/android",
       "type": "object",
-      "title": "The Android Schema"
+      "title": "The Android Schema",
+      "required": [
+        "automationName"
+      ],
+      "properties": {
+        "automationName": {
+          "$id": "#/properties/android/properties/automationName",
+          "type": "string",
+          "title": "The Automationname Schema",
+          "default": "",
+          "examples": [
+            "UIAutomator2 or Espresso"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
     },
     "iOS": {
       "$id": "#/properties/iOS",
       "type": "object",
-      "title": "The Ios Schema",
-      "required": [
-        "app"
-      ],
-      "properties": {
-        "app": {
-          "$id": "#/properties/iOS/properties/app",
-          "type": "object",
-          "title": "The App Schema"
-        }
-      }
+      "title": "The Ios Schema"
     },
     "hostMachines": {
       "$id": "#/properties/hostMachines",
