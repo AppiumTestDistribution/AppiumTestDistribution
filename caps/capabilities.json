@@ -24,7 +24,6 @@
   },
   "hostMachines": [
     {
-      "isCloud": false,
       "machineIP": "127.0.0.1",
       "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
       "simulators": [

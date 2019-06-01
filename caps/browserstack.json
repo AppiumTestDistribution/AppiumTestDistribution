@@ -1,6 +1,7 @@
 {
   "android": {
     "automationName": "UIAutomator2",
+    "project": "ATD",
     "app": "bs://83d1f27d72389ca34d3a50c82cecc93c24eced3b",
     "noSign": true
   },
@@ -21,15 +22,19 @@
   "cloud": {
     "android": [
       {
-        "deviceName": "Google Pixel",
-        "osVersion": "7.0"
+        "deviceName": "Google Pixel 3 XL",
+        "osVersion": "9.0"
+      },
+      {
+        "deviceName": "Google Pixel 3 XL",
+        "osVersion": "9.0"
       }
     ]
   },
   "hostMachines": [
     {
-      "isCloud": "true",
-      "machineIP": "browserstack"
+      "isCloud": true,
+      "machineIP": "hub-cloud.browserstack.com"
     }
   ]
 }
