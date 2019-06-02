@@ -127,7 +127,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>3.8.0</version>
+            <version>4.7.0</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
