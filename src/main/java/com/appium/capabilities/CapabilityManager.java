@@ -9,6 +9,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class CapabilityManager {
 
@@ -18,7 +19,7 @@ public class CapabilityManager {
     private CapabilityManager() {
         String capabilitiesFilePath = getCapabilityLocation();
         JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
-        capabilities = jsonParser.getObjectFromJSON();
+        capabilities = loadAndOverrideFromEnvVars(jsonParser.getObjectFromJSON(), new JSONObject());
     }
 
     public static CapabilityManager getInstance() {
@@ -26,6 +27,32 @@ public class CapabilityManager {
             instance = new CapabilityManager();
         }
         return instance;
+    }
+
+    private JSONObject loadAndOverrideFromEnvVars(JSONObject originalObject, JSONObject objectToUpdate) {
+        Set<String> keys = originalObject.keySet();
+        keys.forEach(keyStr ->
+        {
+            Object keyvalue = originalObject.get(keyStr);
+            if (keyvalue instanceof JSONObject) {
+                JSONObject jsonObject = new JSONObject();
+                objectToUpdate.put(keyStr, jsonObject);
+                loadAndOverrideFromEnvVars((JSONObject) keyvalue, jsonObject);
+            } else if (keyvalue instanceof JSONArray) {
+                JSONArray jsonArray = new JSONArray();
+                objectToUpdate.put(keyStr, jsonArray);
+                ((JSONArray) keyvalue).forEach(arrayItem -> {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonArray.put(jsonObject);
+                            loadAndOverrideFromEnvVars((JSONObject) arrayItem, jsonObject);
+                        }
+                );
+            } else {
+                String updatedValue = ((System.getenv(keyStr) == null) ? keyvalue.toString() : System.getenv(keyStr));
+                objectToUpdate.put(keyStr, updatedValue);
+            }
+        });
+        return objectToUpdate;
     }
 
     private String getCapabilityLocation() {
