@@ -29,10 +29,10 @@ public class CapabilityManager {
         return instance;
     }
 
-    private JSONObject loadAndOverrideFromEnvVars(JSONObject originalObject, JSONObject objectToUpdate) {
+    private JSONObject loadAndOverrideFromEnvVars(JSONObject originalObject,
+                                                  JSONObject objectToUpdate) {
         Set<String> keys = originalObject.keySet();
-        keys.forEach(keyStr ->
-        {
+        keys.forEach(keyStr -> {
             Object keyvalue = originalObject.get(keyStr);
             if (keyvalue instanceof JSONObject) {
                 JSONObject jsonObject = new JSONObject();
@@ -48,7 +48,8 @@ public class CapabilityManager {
                         }
                 );
             } else {
-                String updatedValue = ((System.getenv(keyStr) == null) ? keyvalue.toString() : System.getenv(keyStr));
+                String getValueFromEnv = System.getenv(keyStr);
+                String updatedValue = ((null == getValueFromEnv) ? keyvalue.toString() : getValueFromEnv);
                 objectToUpdate.put(keyStr, updatedValue);
             }
         });
