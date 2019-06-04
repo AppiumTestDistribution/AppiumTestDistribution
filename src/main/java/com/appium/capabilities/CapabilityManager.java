@@ -42,14 +42,14 @@ public class CapabilityManager {
                 JSONArray jsonArray = new JSONArray();
                 objectToUpdate.put(keyStr, jsonArray);
                 ((JSONArray) keyvalue).forEach(arrayItem -> {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonArray.put(jsonObject);
-                            loadAndOverrideFromEnvVars((JSONObject) arrayItem, jsonObject);
-                        }
+                        JSONObject jsonObject = new JSONObject();
+                        jsonArray.put(jsonObject);
+                        loadAndOverrideFromEnvVars((JSONObject) arrayItem, jsonObject);
+                    }
                 );
             } else {
-                String getValueFromEnv = System.getenv(keyStr);
-                String updatedValue = ((null == getValueFromEnv) ? keyvalue.toString() : getValueFromEnv);
+                String getFromEnv = System.getenv(keyStr);
+                String updatedValue = (null == getFromEnv) ? keyvalue.toString() : getFromEnv;
                 objectToUpdate.put(keyStr, updatedValue);
             }
         });
