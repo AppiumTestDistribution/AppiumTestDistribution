@@ -2,7 +2,6 @@ package com.appium.utils;
 
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.HostMachineDeviceManager;
-import com.appium.manager.AppiumDeviceManager;
 import org.json.JSONObject;
 import org.springframework.util.ResourceUtils;
 
