@@ -174,8 +174,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                         .length();
                 if (length == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                     appPath = hostArtifact.getArtifactPath("APP");
-                }
-                else if (length == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                } else if (length == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
                     appPath = hostArtifact.getArtifactPath("IPA");
                 }
             }

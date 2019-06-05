@@ -78,7 +78,7 @@ public class ArtifactsUploader {
             if (isCloud(hostMachine)) {
                 appPath = androidApp.getString("cloud");
             }
-            artifactPaths.put("APK", getArtifactPath (hostMachine, appPath));
+            artifactPaths.put("APK", getArtifactPath(hostMachine, appPath));
         }
         if (iOSAppPath != null && iOSAppPath.has("app")
             && platform.equalsIgnoreCase("ios")
