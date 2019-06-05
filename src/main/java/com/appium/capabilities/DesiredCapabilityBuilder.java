@@ -82,8 +82,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                 .getHostArtifacts();
             String hostAppPath = hostAppPath(values, hostArtifacts);
             Path path = FileSystems.getDefault().getPath(hostAppPath);
-            if (ResourceUtils.isUrl(hostAppPath)
-                || AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()) {
+            if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
+                || ResourceUtils.isUrl(hostAppPath)) {
                 desiredCapabilities.setCapability(appCapability, hostAppPath);
             } else {
                 desiredCapabilities.setCapability(appCapability,
@@ -111,7 +111,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                     desiredCapabilities.setCapability("chromeDriverPort",
                         AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
                 } catch (Exception e) {
-                    new RuntimeException("Unable to allocate chromedriver with unique port");
+                    throw new RuntimeException("Unable to allocate chromedriver with unique port");
                 }
             }
             capabilityObject(desiredCapabilities, platFormCapabilities, key);
@@ -165,14 +165,19 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             .collect(toList()).parallelStream()
             .findFirst().get();
         if (values instanceof JSONObject) {
-            int length = AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getUdid().length();
-            if (length
-                == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-                appPath = hostArtifact.getArtifactPath("APP");
-            } else if (length
-                == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-                appPath = hostArtifact.getArtifactPath("IPA");
+            appPath = hostArtifact.getArtifactPath("APK");
+            if (!AppiumDeviceManager.getAppiumDevice()
+                    .getDevice().isCloud()) {
+                int length = AppiumDeviceManager.getAppiumDevice()
+                        .getDevice()
+                        .getUdid()
+                        .length();
+                if (length == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+                    appPath = hostArtifact.getArtifactPath("APP");
+                }
+                else if (length == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                    appPath = hostArtifact.getArtifactPath("IPA");
+                }
             }
         } else {
             appPath = hostArtifact.getArtifactPath("APK");
