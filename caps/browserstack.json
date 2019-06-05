@@ -2,7 +2,10 @@
   "android": {
     "automationName": "UIAutomator2",
     "project": "ATD",
-    "app": "bs://83d1f27d72389ca34d3a50c82cecc93c24eced3b",
+    "app": {
+      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
+      "cloud": "bs://bfc1e12a3181c8b67737abe1c2d049e572b0a414"
+    },
     "noSign": true
   },
   "iOS": {
@@ -24,10 +27,6 @@
       {
         "deviceName": "Google Pixel 3 XL",
         "osVersion": "9.0"
-      },
-      {
-        "deviceName": "Google Pixel 3 XL",
-        "osVersion": "9.0"
       }
     ]
   },
@@ -35,6 +34,16 @@
     {
       "isCloud": true,
       "machineIP": "hub-cloud.browserstack.com"
+    },
+    {
+      "machineIP": "127.0.0.1",
+      "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
+      "simulators": [
+        {
+          "deviceName": "iPhone 6",
+          "OS": "12.1"
+        }
+      ]
     }
   ]
 }
