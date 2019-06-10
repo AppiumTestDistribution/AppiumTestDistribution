@@ -21,7 +21,7 @@ public class CapabilityManager {
         String capabilitiesFilePath = getCapabilityLocation();
         JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
         StringBuilder varParsing = new StringBuilder(200);
-        varParsing.append("atd").append(".");
+        varParsing.append("atd").append("_");
         capabilities = loadAndOverrideFromEnvVars(jsonParser.getObjectFromJSON(),
                 new JSONObject(),
                 getAllATDOverrideEnvVars(),
@@ -82,7 +82,7 @@ public class CapabilityManager {
         String getFromEnv = System.getenv(currentPath.toString());
         String updatedValue = (null == getFromEnv) ? keyvalue.toString() : getFromEnv;
         objectToUpdate.put(keyStr, updatedValue);
-        currentPath.delete(currentPath.lastIndexOf(".") + 1, currentPath.length());
+        currentPath.delete(currentPath.lastIndexOf("_") + 1, currentPath.length());
     }
 
     private void processJSONArray(JSONObject objectToUpdate,
@@ -92,7 +92,7 @@ public class CapabilityManager {
                                   JSONArray keyvalue) {
         JSONArray jsonArray = new JSONArray();
         objectToUpdate.put(keyStr, jsonArray);
-        currentPath.append(keyStr).append(".");
+        currentPath.append(keyStr).append("_");
         JSONArray arrayValues = keyvalue;
         for (int arrIndex = 0; arrIndex < arrayValues.length(); arrIndex++) {
             processJSONArrayItem(allATDOverrideEnvVars,
@@ -112,7 +112,7 @@ public class CapabilityManager {
         JSONObject arrayItem = (JSONObject) arrayValues.get(arrIndex);
         JSONObject jsonObject = new JSONObject();
         jsonArray.put(jsonObject);
-        currentPath.append(arrIndex).append(".");
+        currentPath.append(arrIndex).append("_");
         loadAndOverrideFromEnvVars((JSONObject) arrayItem,
                 jsonObject,
                 allATDOverrideEnvVars,
@@ -127,7 +127,7 @@ public class CapabilityManager {
                                    JSONObject keyvalue) {
         JSONObject jsonObject = new JSONObject();
         objectToUpdate.put(keyStr, jsonObject);
-        currentPath.append(keyStr).append(".");
+        currentPath.append(keyStr).append("_");
         loadAndOverrideFromEnvVars(keyvalue, jsonObject, allATDOverrideEnvVars, currentPath);
         currentPath.delete(currentPath.lastIndexOf(keyStr), currentPath.length());
     }
