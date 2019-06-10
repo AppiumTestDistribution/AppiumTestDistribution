@@ -4,7 +4,9 @@
     "platformVersion": "7.0",
     "automationName": "Espresso",
     "androidInstallTimeout": 50000,
-    "app": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
+    "app": {
+      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
+    },
     "deviceName": "android",
     "noSign": true
   },

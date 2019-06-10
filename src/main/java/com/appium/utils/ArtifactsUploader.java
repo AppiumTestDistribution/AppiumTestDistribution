@@ -73,7 +73,12 @@ public class ArtifactsUploader {
         if (android != null && android.has(app)
             && platform.equalsIgnoreCase("android")
             || platform.equalsIgnoreCase("both")) {
-            artifactPaths.put("APK", getArtifactPath(hostMachine, android.getString("app")));
+            JSONObject androidApp = android.getJSONObject("app");
+            String appPath = androidApp.getString("local");
+            if (isCloud(hostMachine)) {
+                appPath = androidApp.getString("cloud");
+            }
+            artifactPaths.put("APK", getArtifactPath(hostMachine, appPath));
         }
         if (iOSAppPath != null && iOSAppPath.has("app")
             && platform.equalsIgnoreCase("ios")
