@@ -3,7 +3,6 @@ package com.appium.cucumber.report;
 import com.appium.filelocations.FileLocations;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
-import net.masterthought.cucumber.presentation.PresentationMode;
 import org.apache.velocity.exception.VelocityException;
 
 import java.io.File;
