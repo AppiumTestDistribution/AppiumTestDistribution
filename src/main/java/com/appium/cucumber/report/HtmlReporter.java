@@ -3,6 +3,7 @@ package com.appium.cucumber.report;
 import com.appium.filelocations.FileLocations;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
+import net.masterthought.cucumber.presentation.PresentationMode;
 import org.apache.velocity.exception.VelocityException;
 
 import java.io.File;
@@ -33,12 +34,8 @@ public class HtmlReporter {
         String jenkinsBasePath = "";
         String buildNumber = "1";
         String projectName = "cucumber-jvm";
-        boolean runWithJenkins = false;
-        boolean parallelTesting = false;
 
         Configuration configuration = new Configuration(reportOutputDirectory, projectName);
-        configuration.setParallelTesting(parallelTesting);
-        configuration.setRunWithJenkins(runWithJenkins);
         configuration.setBuildNumber(buildNumber);
 
         ReportBuilder reportBuilder = new ReportBuilder(list, configuration);
