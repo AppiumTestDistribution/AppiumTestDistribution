@@ -9,6 +9,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CapabilityManager {
 
@@ -18,7 +20,12 @@ public class CapabilityManager {
     private CapabilityManager() {
         String capabilitiesFilePath = getCapabilityLocation();
         JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
-        capabilities = jsonParser.getObjectFromJSON();
+        StringBuilder varParsing = new StringBuilder(200);
+        varParsing.append("atd").append("_");
+        capabilities = loadAndOverrideFromEnvVars(jsonParser.getObjectFromJSON(),
+                new JSONObject(),
+                getAllATDOverrideEnvVars(),
+                varParsing);
     }
 
     public static CapabilityManager getInstance() {
@@ -26,6 +33,103 @@ public class CapabilityManager {
             instance = new CapabilityManager();
         }
         return instance;
+    }
+
+    private Map<String, String> getAllATDOverrideEnvVars() {
+        Map<String, String> atdOverrideEnv = new HashMap<>();
+        System.getenv().forEach((key, value) -> {
+            if (key.startsWith("atd")) {
+                atdOverrideEnv.put(key, value);
+            }
+        });
+        return atdOverrideEnv;
+    }
+
+    private JSONObject loadAndOverrideFromEnvVars(JSONObject originalObject,
+                                                  JSONObject objectToUpdate,
+                                                  Map<String, String> allATDOverrideEnvVars,
+                                                  StringBuilder currentPath) {
+        Set<String> keys = originalObject.keySet();
+        keys.forEach(keyStr -> {
+            Object keyvalue = originalObject.get(keyStr);
+            if (keyvalue instanceof JSONObject) {
+                processJSONObject(objectToUpdate,
+                        allATDOverrideEnvVars,
+                        currentPath,
+                        keyStr,
+                        (JSONObject) keyvalue);
+            } else if (keyvalue instanceof JSONArray) {
+                processJSONArray(objectToUpdate,
+                        allATDOverrideEnvVars,
+                        currentPath,
+                        keyStr,
+                        (JSONArray) keyvalue);
+            } else {
+                processJSONString(objectToUpdate,
+                        currentPath,
+                        keyStr,
+                        keyvalue);
+            }
+        });
+        return objectToUpdate;
+    }
+
+    private void processJSONString(JSONObject objectToUpdate,
+                                   StringBuilder currentPath,
+                                   String keyStr,
+                                   Object keyvalue) {
+        currentPath.append(keyStr);
+        String getFromEnv = System.getenv(currentPath.toString());
+        String updatedValue = (null == getFromEnv) ? keyvalue.toString() : getFromEnv;
+        objectToUpdate.put(keyStr, updatedValue);
+        currentPath.delete(currentPath.lastIndexOf("_") + 1, currentPath.length());
+    }
+
+    private void processJSONArray(JSONObject objectToUpdate,
+                                  Map<String, String> allATDOverrideEnvVars,
+                                  StringBuilder currentPath,
+                                  String keyStr,
+                                  JSONArray keyvalue) {
+        JSONArray jsonArray = new JSONArray();
+        objectToUpdate.put(keyStr, jsonArray);
+        currentPath.append(keyStr).append("_");
+        JSONArray arrayValues = keyvalue;
+        for (int arrIndex = 0; arrIndex < arrayValues.length(); arrIndex++) {
+            processJSONArrayItem(allATDOverrideEnvVars,
+                    currentPath,
+                    jsonArray,
+                    arrayValues,
+                    arrIndex);
+        }
+        currentPath.delete(currentPath.lastIndexOf(keyStr), currentPath.length());
+    }
+
+    private void processJSONArrayItem(Map<String, String> allATDOverrideEnvVars,
+                                      StringBuilder currentPath,
+                                      JSONArray jsonArray,
+                                      JSONArray arrayValues,
+                                      int arrIndex) {
+        JSONObject arrayItem = (JSONObject) arrayValues.get(arrIndex);
+        JSONObject jsonObject = new JSONObject();
+        jsonArray.put(jsonObject);
+        currentPath.append(arrIndex).append("_");
+        loadAndOverrideFromEnvVars((JSONObject) arrayItem,
+                jsonObject,
+                allATDOverrideEnvVars,
+                currentPath);
+        currentPath.delete(currentPath.lastIndexOf(String.valueOf(arrIndex)), currentPath.length());
+    }
+
+    private void processJSONObject(JSONObject objectToUpdate,
+                                   Map<String, String> allATDOverrideEnvVars,
+                                   StringBuilder currentPath,
+                                   String keyStr,
+                                   JSONObject keyvalue) {
+        JSONObject jsonObject = new JSONObject();
+        objectToUpdate.put(keyStr, jsonObject);
+        currentPath.append(keyStr).append("_");
+        loadAndOverrideFromEnvVars(keyvalue, jsonObject, allATDOverrideEnvVars, currentPath);
+        currentPath.delete(currentPath.lastIndexOf(keyStr), currentPath.length());
     }
 
     private String getCapabilityLocation() {
