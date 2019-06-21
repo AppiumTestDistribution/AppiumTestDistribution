@@ -75,7 +75,7 @@ public class ArtifactsUploader {
             || platform.equalsIgnoreCase("both"))) {
             JSONObject androidApp = android.getJSONObject("app");
             String appPath = androidApp.getString("local");
-            if (isCloud(hostMachine) && androidApp.has ("cloud")) {
+            if (isCloud(hostMachine) && androidApp.has("cloud")) {
                 appPath = androidApp.getString("cloud");
             }
             artifactPaths.put("APK", getArtifactPath(hostMachine, appPath));
