@@ -2,8 +2,7 @@
   "android": {
     "automationName": "UIAutomator2",
     "app": {
-      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
-      "cloud": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
+      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
     },
     "noSign": true
   },
