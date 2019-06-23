@@ -80,7 +80,7 @@
         <dependency>
             <groupId>com.github.temyers</groupId>
             <artifactId>cucumber-jvm-parallel-plugin</artifactId>
-            <version>4.2.0</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.6.2</version>
+            <version>2.8.5</version>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-testng</artifactId>
-            <version>LATEST</version>
+            <version>4.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
@@ -122,12 +122,12 @@
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>logger-java-log4j</artifactId>
-            <version>LATEST</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>3.8.0</version>
+            <version>4.7.0</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
-            <version>3.1.2</version>
+            <version>4.0.9</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -147,7 +147,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.11</version>
+            <version>6.14.3</version>
         </dependency>
         <dependency>
             <groupId>org.im4java</groupId>
@@ -177,12 +177,12 @@
         <dependency>
             <groupId>com.github.lalyos</groupId>
             <artifactId>jfiglet</artifactId>
-            <version>0.0.7</version>
+            <version>0.0.8</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
-            <version>1.69</version>
+            <version>1.72</version>
         </dependency>
         <dependency>
             <groupId>com.github.AppiumTestDistribution</groupId>
@@ -203,7 +203,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20171018</version>
+            <version>20180813</version>
         </dependency>
         <dependency>
             <groupId>com.github.everit-org.json-schema</groupId>

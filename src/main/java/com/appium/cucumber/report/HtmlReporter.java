@@ -33,12 +33,8 @@ public class HtmlReporter {
         String jenkinsBasePath = "";
         String buildNumber = "1";
         String projectName = "cucumber-jvm";
-        boolean runWithJenkins = false;
-        boolean parallelTesting = false;
 
         Configuration configuration = new Configuration(reportOutputDirectory, projectName);
-        configuration.setParallelTesting(parallelTesting);
-        configuration.setRunWithJenkins(runWithJenkins);
         configuration.setBuildNumber(buildNumber);
 
         ReportBuilder reportBuilder = new ReportBuilder(list, configuration);
