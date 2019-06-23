@@ -6,6 +6,8 @@ import com.appium.capabilities.CapabilityManager;
 import com.appium.device.DevicesByHost;
 import com.appium.utils.Helpers;
 import com.appium.device.HostMachineDeviceManager;
+import com.context.SessionContext;
+import com.context.TestExecutionContext;
 import org.json.JSONObject;
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
@@ -62,6 +64,7 @@ public final class AppiumParallelTestListener extends Helpers
             throw new SkipException("Skipped because property was set to :::"
                     + annotation.platform());
         }
+        new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
     }
 
     /*
@@ -91,6 +94,7 @@ public final class AppiumParallelTestListener extends Helpers
         } catch (Exception e) {
             e.printStackTrace();
         }
+        SessionContext.remove(Thread.currentThread().getId(), testResult);
     }
 
 
