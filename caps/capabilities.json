@@ -2,7 +2,7 @@
   "android": {
     "platformName": "android",
     "platformVersion": "7.0",
-    "automationName": "Espresso",
+    "automationName": "UiAutomator2",
     "androidInstallTimeout": 50000,
     "app": {
       "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
@@ -31,7 +31,7 @@
       "simulators": [
         {
           "deviceName": "iPhone 6",
-          "OS": "12.1"
+          "OS": "12.2"
         }
       ]
     }
