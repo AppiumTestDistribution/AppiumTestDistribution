@@ -7,6 +7,7 @@ import io.appium.java_client.AppiumDriver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class TestExecutionContext {
     private final String testName;
@@ -14,6 +15,8 @@ public class TestExecutionContext {
     private final HashMap<String, Object> testExecutionState;
     private String deviceId = "NOT-YET-SET";
     private final Map<String, String> configFileMap;
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
+
 
     public TestExecutionContext(String testName) {
         SessionContext.addContext(Thread.currentThread().getId(), this);
@@ -27,6 +30,7 @@ public class TestExecutionContext {
             this.driver = AppiumDriverManager.getDriver();
             this.deviceId = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
         }
+        LOGGER.info(String.format("%s - TestExecution context created", testName));
     }
 
     public String getTestName() {
@@ -35,6 +39,10 @@ public class TestExecutionContext {
 
     public String getDeviceId() {
         return deviceId;
+    }
+
+    public Map<String, String> getLoadedConfig() {
+        return configFileMap;
     }
 
     public AppiumDriver getDriver() {
