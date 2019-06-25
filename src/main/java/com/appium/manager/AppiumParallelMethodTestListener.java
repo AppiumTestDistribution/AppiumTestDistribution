@@ -7,6 +7,8 @@ import com.appium.capabilities.CapabilityManager;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 
+import com.context.SessionContext;
+import com.context.TestExecutionContext;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
@@ -131,6 +133,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     + annotation.platform());
             }
         }
+        new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
     }
 
     /*
@@ -167,6 +170,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 e.printStackTrace();
             }
         }
+        SessionContext.remove(Thread.currentThread().getId(), iTestResult);
     }
 
     /*
