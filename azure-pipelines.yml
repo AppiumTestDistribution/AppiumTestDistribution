@@ -18,7 +18,7 @@ steps:
 
 - script: |
      node -v
-     npm install -g appium@1.13.1-rc.1
+     npm install -g appium@beta
      appium -v
   displayName: 'Install Appium'
 
