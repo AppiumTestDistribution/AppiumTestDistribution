@@ -1,7 +1,5 @@
 package com.appium.capabilities;
 
-import static java.util.stream.Collectors.toList;
-
 import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDevice;
@@ -23,6 +21,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Created by saikrisv on 20/05/17.
@@ -160,7 +160,6 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     }
 
     private String hostAppPath(Object values, List<HostArtifact> hostArtifacts, String platform) {
-        String appPath = null;
         HostArtifact hostArtifact;
         hostArtifact = hostArtifacts.stream().filter(s ->
             s.getHost()
@@ -169,9 +168,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                     .getHostName()))
             .collect(toList()).parallelStream()
             .findFirst().get();
+        String appPath = hostArtifact.getArtifactPath("APK");
         if (values instanceof JSONObject) {
-            appPath = hostArtifact.getArtifactPath(platform.equalsIgnoreCase("android") ? "APK"
-                    : "APP");
             if (!AppiumDeviceManager.getAppiumDevice()
                     .getDevice().isCloud()) {
                 int length = AppiumDeviceManager.getAppiumDevice()
@@ -183,9 +181,13 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                 } else if (length == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
                     appPath = hostArtifact.getArtifactPath("IPA");
                 }
+            } else {
+                if (isEmpty(appPath)) {
+                    appPath = hostArtifact.getArtifactPath(((JSONObject) values)
+                        .has("simulator")
+                            ? "APP" : "IPA");
+                }
             }
-        } else {
-            appPath = hostArtifact.getArtifactPath("APK");
         }
         return appPath;
     }
