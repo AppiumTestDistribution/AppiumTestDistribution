@@ -106,6 +106,6 @@ jobs:
 
     - script: |
          mvn clean install -Dmaven.test.skip=true
-         Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
+         Platform='ios' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
 
       displayName: 'Run Test on Sauce on iOS and Android'
