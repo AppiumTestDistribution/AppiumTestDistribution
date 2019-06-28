@@ -93,3 +93,19 @@ jobs:
          Platform='both' RUNNER_LEVEL="parallel" mvn clean -Dtest=Runner test
 
       displayName: 'Run Parallel on iOS and Android'
+
+  - job: SauceLabs
+    pool:
+      vmImage: 'macOS 10.13'
+
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.12.0'
+
+    - script: |
+         mvn clean install -Dmaven.test.skip=true
+         Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
+
+      displayName: 'Run Test on Sauce on iOS and Android'
