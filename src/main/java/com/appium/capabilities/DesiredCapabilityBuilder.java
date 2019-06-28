@@ -66,9 +66,13 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         AppiumDevice deviceProperty = AppiumDeviceManager.getAppiumDevice();
         desiredCapabilities.setCapability("device",
             deviceProperty.getDevice().getName());
+        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
+                deviceProperty.getDevice().getName());
         desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
         desiredCapabilities.setCapability(CapabilityType.VERSION,
             deviceProperty.getDevice().getOsVersion());
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
+                deviceProperty.getDevice().getOsVersion());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
 
     }
@@ -80,7 +84,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             Object values = platFormCapabilities.get(appCapability);
             List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
                 .getHostArtifacts();
-            String hostAppPath = hostAppPath(values, hostArtifacts);
+            String hostAppPath = hostAppPath(values, hostArtifacts, platFormCapabilities.get(
+                    "platformName").toString());
             Path path = FileSystems.getDefault().getPath(hostAppPath);
             if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
                 || ResourceUtils.isUrl(hostAppPath)) {
@@ -154,7 +159,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 
-    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts) {
+    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts, String platform) {
         String appPath = null;
         HostArtifact hostArtifact;
         hostArtifact = hostArtifacts.stream().filter(s ->
@@ -165,7 +170,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             .collect(toList()).parallelStream()
             .findFirst().get();
         if (values instanceof JSONObject) {
-            appPath = hostArtifact.getArtifactPath("APK");
+            appPath = hostArtifact.getArtifactPath(platform.equalsIgnoreCase("android") ? "APK"
+                    : "APP");
             if (!AppiumDeviceManager.getAppiumDevice()
                     .getDevice().isCloud()) {
                 int length = AppiumDeviceManager.getAppiumDevice()

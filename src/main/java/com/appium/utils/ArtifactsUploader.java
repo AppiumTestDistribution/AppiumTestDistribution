@@ -91,7 +91,7 @@ public class ArtifactsUploader {
                 }
                 if (iOSApp.has("device")) {
                     String deviceIPA = iOSApp.getString("device");
-                    artifactPaths.put("IPA", getArtifactPath(hostMachine, deviceIPA));
+                    artifactPaths.put("APP", getArtifactPath(hostMachine, deviceIPA));
                 }
                 if (isCloud(hostMachine) && iOSApp.has("cloud")) {
                     String cloudApp = iOSApp.getString("cloud");

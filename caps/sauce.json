@@ -25,10 +25,12 @@
       {
         "deviceName": "GalaxyS7FHDGoogleAPI",
         "osVersion": "8.1"
-      },
+      }
+    ],
+    "iOS": [
       {
-        "deviceName": "GalaxyS7FHDGoogleAPI",
-        "osVersion": "8.1"
+        "deviceName": "iPhone 7 Simulator",
+        "osVersion": "12.2"
       }
     ]
   },
@@ -36,16 +38,6 @@
     {
       "isCloud": true,
       "machineIP": "ondemand.eu-central-1.saucelabs.com"
-    },
-    {
-      "machineIP": "127.0.0.1",
-      "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
-      "simulators": [
-        {
-          "deviceName": "iPhone 6",
-          "OS": "12.2"
-        }
-      ]
     }
   ]
 }
