@@ -43,6 +43,7 @@ public class AppiumDriverManager {
         throws Exception {
         AppiumDriver currentDriverSession;
         DesiredCapabilities desiredCapabilities = capabilities.get();
+        LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
         if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
             && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {

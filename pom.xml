@@ -85,9 +85,8 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>23.0</version>
+            <version>28.0-jre</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -110,6 +109,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.9</version>
+        </dependency>
+        <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-cucumber</artifactId>
             <version>4.0.6</version>
@@ -117,7 +121,7 @@
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>logger-java-logback</artifactId>
-            <version>LATEST</version>
+            <version>4.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
@@ -157,7 +161,7 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>1.2.4</version>
+            <version>1.2.5</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -187,7 +191,7 @@
         <dependency>
             <groupId>com.github.AppiumTestDistribution</groupId>
             <artifactId>DeviceManager</artifactId>
-            <version>2e2e95f77c</version>
+            <version>8b2e3a3</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -199,7 +203,6 @@
             <artifactId>fliptables</artifactId>
             <version>1.0.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -208,7 +211,7 @@
         <dependency>
             <groupId>com.github.everit-org.json-schema</groupId>
             <artifactId>org.everit.json.schema</artifactId>
-            <version>1.9.2</version>
+            <version>1.11.1</version>
         </dependency>
     </dependencies>
 

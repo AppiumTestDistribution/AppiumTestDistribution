@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="1" verbose="2" name="TestNG Forum" parallel="classes">
-    <listeners>
-        <listener class-name="com.appium.manager.AppiumParallelTestListener"/>
-        <listener class-name="com.appium.utils.RetryListener"/>
-    </listeners>
     <test name="TestNG Cloud Test">
         <classes>
             <class name="com.test.site.Runner"/>
