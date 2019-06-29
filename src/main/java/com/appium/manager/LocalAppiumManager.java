@@ -27,7 +27,7 @@ public class LocalAppiumManager implements IAppiumManager {
         return appiumDriverLocalService;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(LocalAppiumManager.class.getSimpleName());
 
     private static void setAppiumDriverLocalService(
             AppiumDriverLocalService appiumDriverLocalService) {
@@ -55,11 +55,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public void startAppiumServer(String host) throws Exception {
-        System.out.println(
-                "**************************************************************************\n");
-        System.out.println("Starting Appium Server on Localhost......");
-        System.out.println(
-                "**************************************************************************\n");
+        LOGGER.info(LOGGER.getName() + "Starting Appium Server on Localhost");
         AppiumDriverLocalService appiumDriverLocalService;
         AppiumServiceBuilder builder =
                 getAppiumServerBuilder(host)
@@ -72,12 +68,8 @@ public class LocalAppiumManager implements IAppiumManager {
                         .usingAnyFreePort();
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
-        System.out.println(
-                "**************************************************************************\n");
-        System.out.println("Appium Server Started at......"
+        LOGGER.info(LOGGER.getName() + "Appium Server Started at......"
                 + appiumDriverLocalService.getUrl());
-        System.out.println(
-                "**************************************************************************\n");
         setAppiumDriverLocalService(appiumDriverLocalService);
     }
 
