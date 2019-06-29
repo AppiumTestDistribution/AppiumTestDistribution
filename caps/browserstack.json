@@ -27,6 +27,10 @@
       {
         "deviceName": "Google Pixel 3 XL",
         "osVersion": "9.0"
+      },
+      {
+        "deviceName": "Samsung Galaxy S9 Plus",
+        "osVersion": "9.0"
       }
     ]
   },
@@ -34,16 +38,6 @@
     {
       "isCloud": true,
       "machineIP": "hub-cloud.browserstack.com"
-    },
-    {
-      "machineIP": "127.0.0.1",
-      "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
-      "simulators": [
-        {
-          "deviceName": "iPhone 6",
-          "OS": "12.2"
-        }
-      ]
     }
   ]
 }
