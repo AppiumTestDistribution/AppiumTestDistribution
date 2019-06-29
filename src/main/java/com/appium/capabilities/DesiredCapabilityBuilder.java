@@ -84,8 +84,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             Object values = platFormCapabilities.get(appCapability);
             List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
                 .getHostArtifacts();
-            String hostAppPath = hostAppPath(values, hostArtifacts, platFormCapabilities.get(
-                    "platformName").toString());
+            String hostAppPath = hostAppPath(values, hostArtifacts);
             Path path = FileSystems.getDefault().getPath(hostAppPath);
             if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
                 || ResourceUtils.isUrl(hostAppPath)) {
@@ -159,7 +158,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 
-    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts, String platform) {
+    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts) {
         HostArtifact hostArtifact;
         hostArtifact = hostArtifacts.stream().filter(s ->
             s.getHost()
@@ -182,9 +181,10 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                     appPath = hostArtifact.getArtifactPath("IPA");
                 }
             } else {
-                if (isEmpty(appPath)) {
+                if (isEmpty(appPath) || (((JSONObject) values).has("simulator")
+                                          || ((JSONObject) values).has("device"))) {
                     appPath = hostArtifact.getArtifactPath(((JSONObject) values)
-                        .has("simulator")
+                            .has("simulator")
                             ? "APP" : "IPA");
                 }
             }
