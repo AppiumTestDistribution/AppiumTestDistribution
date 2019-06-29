@@ -170,7 +170,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 e.printStackTrace();
             }
         }
-        SessionContext.remove(Thread.currentThread().getId(), iTestResult);
+        SessionContext.remove(Thread.currentThread().getId());
     }
 
     /*
