@@ -64,6 +64,10 @@ Add the below dependencies in your pom.xml (Master)
 
 ## [Configure-tests-for-Cucumber](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-test-for-Cucumber)
 
+## [Configure-tests-for-Sauce](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-Cloud-Sauce)
+
+## [Configure-tests-for-Browserstack](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-BrowserStack-cloud)
+
 ## [Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
 ## [Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
