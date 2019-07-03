@@ -85,7 +85,7 @@ Add the below dependencies in your pom.xml (Master)
 * Install mp4box. [windows] (https://gpac.wp.mines-telecom.fr/downloads/)
 
 ## Runner
-    ##Videos will be logged for failure tests
+    Videos will be logged for failure tests
     VIDEO_LOGS="true" mvn clean -Dtest=Runner test 
 
 ## Credits
