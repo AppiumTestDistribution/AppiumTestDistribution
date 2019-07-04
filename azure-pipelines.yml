@@ -3,46 +3,159 @@
 # Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
-pool:
-  vmImage: 'macOS 10.13'
+jobs:
+  - job: Distribute
+    pool:
+      vmImage: 'macOS 10.13'
 
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '8.12.0'
-- script: |
-    brew outdated xctool || brew upgrade xctool
-    xcrun simctl list
-  displayName: 'iOS Sim Versions'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.12.0'
+    - script: |
+        brew outdated xctool || brew upgrade xctool
+        xcrun simctl list
+      displayName: 'iOS Sim Versions'
 
-- script: |
-     node -v
-     npm install -g appium@1.13.1-rc.1
-     appium -v
-  displayName: 'Install Appium'
+    - script: |
+         node -v
+         npm install -g appium@beta
+         appium -v
+      displayName: 'Install Appium'
 
-- bash: |
-    echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
-  displayName: 'install Android image'
-- script: |
-        $ANDROID_HOME/emulator/emulator -list-avds
-        echo '---'
-        echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
-        echo '---'
-        $ANDROID_HOME/emulator/emulator -list-avds
-  displayName: 'create AVD'
+    - bash: |
+        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
+      displayName: 'install Android image'
+    - script: |
+            $ANDROID_HOME/emulator/emulator -list-avds
+            echo '---'
+            echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
+            echo '---'
+            $ANDROID_HOME/emulator/emulator -list-avds
+      displayName: 'create AVD'
 
-- script: |
-        $ANDROID_HOME/platform-tools/adb devices
-        echo '---'
-        nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
-        echo '---'
-        $ANDROID_HOME/platform-tools/adb devices
-  displayName: 'start Android emulator'
+    - script: |
+            $ANDROID_HOME/platform-tools/adb devices
+            echo '---'
+            nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+            echo '---'
+            $ANDROID_HOME/platform-tools/adb devices
+      displayName: 'start Android emulator'
 
-- script: |
-     mvn clean install -Dmaven.test.skip=true
-     Platform='both' mvn clean -Dtest=Runner test
+    - script: |
+         mvn clean install -Dmaven.test.skip=true
+         Platform='both' mvn clean -Dtest=Runner test
 
-  displayName: 'Build with Maven'
+      displayName: 'Run Distribute on iOS and Android'
+
+  - job: Parallel
+    pool:
+      vmImage: 'macOS 10.13'
+
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.12.0'
+    - script: |
+        brew outdated xctool || brew upgrade xctool
+        xcrun simctl list
+      displayName: 'iOS Sim Versions'
+
+    - script: |
+         node -v
+         npm install -g appium@beta
+         appium -v
+      displayName: 'Install Appium'
+
+    - bash: |
+        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
+      displayName: 'install Android image'
+    - script: |
+            $ANDROID_HOME/emulator/emulator -list-avds
+            echo '---'
+            echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
+            echo '---'
+            $ANDROID_HOME/emulator/emulator -list-avds
+      displayName: 'create AVD'
+
+    - script: |
+            $ANDROID_HOME/platform-tools/adb devices
+            echo '---'
+            nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+            echo '---'
+            $ANDROID_HOME/platform-tools/adb devices
+      displayName: 'start Android emulator'
+
+    - script: |
+         mvn clean install -Dmaven.test.skip=true
+         Platform='both' RUNNER_LEVEL="parallel" mvn clean -Dtest=Runner test
+
+      displayName: 'Run Parallel on iOS and Android'
+
+  - job: SauceLabs
+    pool:
+      vmImage: 'macOS 10.13'
+
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.12.0'
+
+    - script: |
+         mvn clean install -Dmaven.test.skip=true
+         Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
+
+      displayName: 'Run Test on Sauce on iOS and Android'
+
+  - job: SauceLabs_Android
+    pool:
+      vmImage: 'macOS 10.13'
+
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.12.0'
+
+    - script: |
+         mvn clean install -Dmaven.test.skip=true
+         Platform='android' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
+
+      displayName: 'Run Test on Sauce on iOS and Android'
+
+  - job: SauceLabs_iOS
+    pool:
+      vmImage: 'macOS 10.13'
+
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.12.0'
+
+    - script: |
+         mvn clean install -Dmaven.test.skip=true
+         Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
+
+      displayName: 'Run Test on Sauce on iOS and Android'
+
+  - job: BrowserStack_Android
+    pool:
+      vmImage: 'macOS 10.13'
+
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.12.0'
+
+    - script: |
+         mvn clean install -Dmaven.test.skip=true
+         Platform='android' CLOUD_USER=$(user_bs) CLOUD_KEY=$(pass_bs) CONFIG_FILE='bs_config.properties' mvn clean -Dtest=Runner test
+
+      displayName: 'Run Test on Sauce on iOS and Android'
+
+  

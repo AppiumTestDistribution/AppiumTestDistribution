@@ -2,8 +2,9 @@
   "android": {
     "platformName": "android",
     "platformVersion": "7.0",
-    "automationName": "Espresso",
-    "androidInstallTimeout": 50000,
+    "automationName": "UiAutomator2",
+    "uiautomator2ServerInstallTimeout": 50000,
+    "adbExecTimeout": 60000,
     "app": {
       "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
     },

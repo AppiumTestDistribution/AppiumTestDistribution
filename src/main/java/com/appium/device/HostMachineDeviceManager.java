@@ -141,9 +141,7 @@ public class HostMachineDeviceManager {
                 ip, simulators);
             devices.addAll(simulatorsToBoot);
         }
-        List<AppiumDevice> appiumDevices = getAppiumDevices(ip, devices);
-
-        return appiumDevices;
+        return getAppiumDevices(ip, devices);
     }
 
 
@@ -167,11 +165,11 @@ public class HostMachineDeviceManager {
                         List<Device> device = new ArrayList<>();
                         JSONObject cloud = capabilityManager.getCapabilityObjectFromKey("cloud");
                         cloud.toMap().forEach((devicePlatform, devices) -> {
-                            ((ArrayList) devices).forEach(o -> {
+                            ((List) devices).forEach(o -> {
                                 Device d = new Device();
                                 d.setOs(devicePlatform);
-                                d.setOsVersion(((HashMap) o).get("osVersion").toString());
-                                d.setName(((HashMap) o).get("deviceName").toString());
+                                d.setOsVersion(((Map) o).get("osVersion").toString());
+                                d.setName(((Map) o).get("deviceName").toString());
                                 d.setCloud(true);
                                 device.add(d);
                             });

@@ -35,8 +35,8 @@ public class CapabilityManager {
         return instance;
     }
 
-    private Map<String, String> getAllATDOverrideEnvVars() {
-        Map<String, String> atdOverrideEnv = new HashMap<>();
+    private Map<String, Object> getAllATDOverrideEnvVars() {
+        Map<String, Object> atdOverrideEnv = new HashMap<>();
         System.getenv().forEach((key, value) -> {
             if (key.startsWith("atd")) {
                 atdOverrideEnv.put(key, value);
@@ -47,7 +47,7 @@ public class CapabilityManager {
 
     private JSONObject loadAndOverrideFromEnvVars(JSONObject originalObject,
                                                   JSONObject objectToUpdate,
-                                                  Map<String, String> allATDOverrideEnvVars,
+                                                  Map<String, Object> allATDOverrideEnvVars,
                                                   StringBuilder currentPath) {
         Set<String> keys = originalObject.keySet();
         keys.forEach(keyStr -> {
@@ -65,7 +65,7 @@ public class CapabilityManager {
                         keyStr,
                         (JSONArray) keyvalue);
             } else {
-                processJSONString(objectToUpdate,
+                processJSONObject(objectToUpdate,
                         currentPath,
                         keyStr,
                         keyvalue);
@@ -74,19 +74,19 @@ public class CapabilityManager {
         return objectToUpdate;
     }
 
-    private void processJSONString(JSONObject objectToUpdate,
-                                   StringBuilder currentPath,
-                                   String keyStr,
-                                   Object keyvalue) {
+    private void processJSONObject(JSONObject objectToUpdate,
+                                    StringBuilder currentPath,
+                                    String keyStr,
+                                    Object keyvalue) {
         currentPath.append(keyStr);
         String getFromEnv = System.getenv(currentPath.toString());
-        String updatedValue = (null == getFromEnv) ? keyvalue.toString() : getFromEnv;
+        Object updatedValue = (null == getFromEnv) ? keyvalue : getFromEnv;
         objectToUpdate.put(keyStr, updatedValue);
         currentPath.delete(currentPath.lastIndexOf("_") + 1, currentPath.length());
     }
 
     private void processJSONArray(JSONObject objectToUpdate,
-                                  Map<String, String> allATDOverrideEnvVars,
+                                  Map<String, Object> allATDOverrideEnvVars,
                                   StringBuilder currentPath,
                                   String keyStr,
                                   JSONArray keyvalue) {
@@ -104,7 +104,7 @@ public class CapabilityManager {
         currentPath.delete(currentPath.lastIndexOf(keyStr), currentPath.length());
     }
 
-    private void processJSONArrayItem(Map<String, String> allATDOverrideEnvVars,
+    private void processJSONArrayItem(Map<String, Object> allATDOverrideEnvVars,
                                       StringBuilder currentPath,
                                       JSONArray jsonArray,
                                       JSONArray arrayValues,
@@ -121,7 +121,7 @@ public class CapabilityManager {
     }
 
     private void processJSONObject(JSONObject objectToUpdate,
-                                   Map<String, String> allATDOverrideEnvVars,
+                                   Map<String, Object> allATDOverrideEnvVars,
                                    StringBuilder currentPath,
                                    String keyStr,
                                    JSONObject keyvalue) {
@@ -216,11 +216,11 @@ public class CapabilityManager {
     private <T> T appiumServerProp(String host, String arg) throws Exception {
         JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
-        Object machineIP = hostIP.stream().filter(object -> ((HashMap) object).get("machineIP")
+        Object machineIP = hostIP.stream().filter(object -> ((Map) object).get("machineIP")
             .toString().equalsIgnoreCase(host)
-            && ((HashMap) object).get(arg) != null)
+            && ((Map) object).get(arg) != null)
             .findFirst().orElse(null);
-        return (T) ((HashMap) machineIP).get(arg);
+        return (T) ((Map) machineIP).get(arg);
     }
 
     public String getAppiumServerPort(String host) throws Exception {

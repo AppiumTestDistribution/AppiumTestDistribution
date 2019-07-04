@@ -1,23 +1,25 @@
 package com.context;
 
-import org.testng.ITestResult;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
+import org.testng.ITestResult;
 
 public class SessionContext {
     static final String TEST_RUNNER = "testrunner";
     private static final HashMap<String, TestExecutionContext> allTestsExecutionContext;
+    private static final Logger LOGGER = Logger.getLogger(SessionContext.class.getSimpleName());
 
     static {
-        System.out.println("SessionContext default constructor");
+        LOGGER.info("SessionContext default constructor");
         new SessionContext();
         allTestsExecutionContext = new HashMap<>();
-        System.out.println("Initialized SessionContext");
+        LOGGER.info("Initialized SessionContext");
     }
 
     static synchronized void addContext(long threadId, TestExecutionContext testExecutionContext) {
         allTestsExecutionContext.put(String.valueOf(threadId), testExecutionContext);
-        System.out.println(String.format("Adding context for thread - %s", threadId));
+        LOGGER.info(String.format("Adding context for thread - %s", threadId));
     }
 
     public static synchronized TestExecutionContext getTestExecutionContext(long threadId) {
@@ -25,7 +27,7 @@ public class SessionContext {
     }
 
     public static synchronized void remove(long threadId, ITestResult testResult) {
-        System.out.println(String.format("Removing context for thread - %s", threadId));
+        LOGGER.info(String.format("Removing context for thread - %s", threadId));
         TestExecutionContext testExecutionContext = getTestExecutionContext(threadId);
         allTestsExecutionContext.remove(String.valueOf(threadId));
     }

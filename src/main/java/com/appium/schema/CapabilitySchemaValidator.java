@@ -1,5 +1,6 @@
 package com.appium.schema;
 
+import com.appium.manager.RemoteAppiumManager;
 import com.appium.utils.FigletHelper;
 
 import com.appium.capabilities.CapabilityManager;
@@ -13,9 +14,12 @@ import org.json.JSONTokener;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.InetAddress;
+import java.util.logging.Logger;
 
 
 public class CapabilitySchemaValidator {
+
+    private static final Logger LOGGER = Logger.getLogger(RemoteAppiumManager.class.getName());
 
     public void validateCapabilitySchema(JSONObject capability) {
         try {
@@ -31,7 +35,7 @@ public class CapabilitySchemaValidator {
                     .map(ValidationException::getMessage)
                     .forEach(System.out::println);
             } else {
-                System.out.println(e.getErrorMessage());
+                LOGGER.info(e.getErrorMessage());
             }
 
             throw new ValidationException("Capability json provided is missing the above schema");
@@ -81,7 +85,7 @@ public class CapabilitySchemaValidator {
                     String machineIP = (String) hostMachineJson.get("machineIP");
                     if (isCloud
                         || InetAddress.getByName(machineIP).isReachable(5000)) {
-                        System.out.println("ATD is Running on " + machineIP);
+                        LOGGER.info("ATD is Running on " + machineIP);
                     } else {
                         FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
                         throw new ConnectException();

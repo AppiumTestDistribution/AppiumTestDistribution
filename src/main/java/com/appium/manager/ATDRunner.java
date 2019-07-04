@@ -15,6 +15,7 @@ import com.appium.device.HostMachineDeviceManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /*
  * This class picks the devices connected
@@ -37,6 +38,7 @@ public class ATDRunner {
     private HtmlReporter htmlReporter;
     private CapabilityManager capabilityManager;
     private HostMachineDeviceManager hostMachineDeviceManager;
+    private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
 
     public ATDRunner() {
         capabilityManager = CapabilityManager.getInstance();
@@ -57,7 +59,6 @@ public class ATDRunner {
         if (!file.exists()) {
             file.mkdirs();
         }
-        System.out.println("OUTPUT DIRECTORY :" + file.getAbsolutePath());
     }
 
     @Deprecated
@@ -89,9 +90,8 @@ public class ATDRunner {
             System.exit(0);
         }
 
-        System.out.println("***************************************************\n");
-        System.out.println("Total Number of devices detected::" + deviceCount + "\n");
-        System.out.println("***************************************************\n");
+        LOGGER.info(LOGGER.getName()
+            + "Total Number of devices detected::" + deviceCount + "\n");
 
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();

@@ -6,12 +6,13 @@ import com.appium.utils.CommandPrompt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Created by saikrisv on 2016/09/23.
  */
 public class Flick extends CommandPrompt implements IScreenRecord {
-
+    private static final Logger LOGGER = Logger.getLogger(Flick.class.getSimpleName());
 
     /**
      * @param className     - Current test class name
@@ -22,7 +23,7 @@ public class Flick extends CommandPrompt implements IScreenRecord {
      */
     public void stopVideoRecording(String className, String methodName,
                                    String videoFileName) throws IOException, InterruptedException {
-        System.out.println("**************Stopping Video Recording**************");
+        LOGGER.info("**************Stopping Video Recording**************");
         flickRecordingCommand("stop", className, methodName, videoFileName);
 
     }
@@ -36,7 +37,7 @@ public class Flick extends CommandPrompt implements IScreenRecord {
      */
     public void startVideoRecording(String className, String methodName,
                                     String videoFileName) throws IOException, InterruptedException {
-        System.out.println("**************Starting Video Recording**************");
+        LOGGER.info("**************Starting Video Recording**************");
         flickRecordingCommand("start", className, methodName, videoFileName);
     }
 
