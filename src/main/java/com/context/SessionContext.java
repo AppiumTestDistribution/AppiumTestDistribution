@@ -48,14 +48,18 @@ public class SessionContext {
             String reportPortalPropertiesFile = "src/test/resources/reportportal.properties";
             if (System.getenv().containsKey("REPORT_PORTAL_FILE")) {
                 reportPortalPropertiesFile = System.getenv().get("REPORT_PORTAL_FILE");
-                LOGGER.info("Using reportportal.properties file from "
-                        + reportPortalPropertiesFile);
             }
-
+            LOGGER.info("Using reportportal.properties file from "
+                    + reportPortalPropertiesFile);
             File reportPortalFile = new File(reportPortalPropertiesFile);
             String absolutePath = reportPortalFile.getAbsolutePath();
-            properties.load(new FileInputStream(absolutePath));
-            System.out.println("Loaded property file - " + absolutePath);
+            if (reportPortalFile.exists()) {
+                properties.load(new FileInputStream(absolutePath));
+                LOGGER.info("Loaded reportportal.properties file - " + absolutePath);
+            } else {
+                LOGGER.info("reportportal.properties file NOT FOUND - " + absolutePath);
+            }
+
         } catch (IOException e) {
             LOGGER.severe("ERROR in loading reportportal.properties file\n" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -63,16 +67,14 @@ public class SessionContext {
         return properties;
     }
 
-    public static Properties getReportPortalProperties() {
-        return reportPortalProperties;
-    }
-
     public static void setReportPortalLaunchURL(ITestContext iTestContext) {
-        Optional reportPortal = Arrays.stream(iTestContext.getSuite().getXmlSuite()
+        Optional reportPortalListener = Arrays.stream(iTestContext.getSuite().getXmlSuite()
                 .getListeners().toArray()).filter(x ->
                 x.equals("com.epam.reportportal.testng.ReportPortalTestNGListener"))
                 .findFirst();
-        if (reportPortal.isPresent()) {
+        boolean isReportPortalEnabledInProperties = (null == reportPortalProperties.getProperty("rp.enable")
+                || (reportPortalProperties.getProperty("rp.enable").equalsIgnoreCase("true")));
+        if (reportPortalListener.isPresent() && isReportPortalEnabledInProperties) {
             reportPortalLaunchURL = String.format("%s/ui/#%s/launches/all/%s",
                     reportPortalProperties.getProperty("rp.endpoint"),
                     reportPortalProperties.getProperty("rp.project"),
