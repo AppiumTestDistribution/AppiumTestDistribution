@@ -178,7 +178,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ISuite iSuite) {
-
+        System.out.println();
     }
 
     /*
@@ -236,7 +236,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ITestContext iTestContext) {
-
+        SessionContext.setReportPortalLaunchURL(iTestContext);
     }
 
     public static ITestNGMethod getTestMethod() {

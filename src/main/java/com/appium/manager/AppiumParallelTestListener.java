@@ -232,7 +232,7 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void onFinish(ITestContext iTestContext) {
-
+        SessionContext.setReportPortalLaunchURL(iTestContext);
     }
 
     public static ITestNGMethod getTestMethod() {
