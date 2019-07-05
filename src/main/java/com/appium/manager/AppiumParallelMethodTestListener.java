@@ -20,7 +20,6 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -237,15 +236,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ITestContext iTestContext) {
-        System.out.println("");
-        Optional reportPortal = Arrays.stream(iTestContext.getSuite().getXmlSuite()
-            .getListeners().toArray()).filter(x ->
-            x.equals("com.epam.reportportal.testng.ReportPortalTestNGListener"))
-            .findFirst();
-        if (reportPortal.isPresent()) {
-
-        }
-
+        SessionContext.setReportPortalLaunchURL(iTestContext);
     }
 
     public static ITestNGMethod getTestMethod() {
