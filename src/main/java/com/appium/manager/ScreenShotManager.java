@@ -1,4 +1,4 @@
-package com.appium.utils;
+package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
@@ -6,6 +6,8 @@ import com.appium.filelocations.FileLocations;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumParallelMethodTestListener;
+import com.appium.utils.Helpers;
+import com.appium.utils.ImageUtils;
 import com.epam.reportportal.service.ReportPortal;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
@@ -43,7 +45,7 @@ public class ScreenShotManager extends Helpers {
         this.framedCapturedScreen = framedCapturedScreen;
     }
 
-    private String getCapturedScreen() {
+    protected String getCapturedScreen() {
         return capturedScreen;
     }
 
@@ -51,7 +53,7 @@ public class ScreenShotManager extends Helpers {
         this.capturedScreen = capturedScreen;
     }
 
-    public String getFramedFailedScreen() {
+    protected String getFramedFailedScreen() {
         return framedFailedScreen;
     }
 
@@ -59,7 +61,7 @@ public class ScreenShotManager extends Helpers {
         this.framedFailedScreen = framedFailedScreen;
     }
 
-    public String getFailedScreen() {
+    protected String getFailedScreen() {
         return failedScreen;
     }
 
@@ -72,7 +74,7 @@ public class ScreenShotManager extends Helpers {
         imageUtils = new ImageUtils();
     }
 
-    public String captureScreenShot(int status, String className, String screenShotName,
+    protected String captureScreenShot(int status, String className, String screenShotName,
                                     String methodName, String deviceModel) {
         String getDeviceModel = null;
         if (AppiumDriverManager.getDriver().getSessionId() != null) {

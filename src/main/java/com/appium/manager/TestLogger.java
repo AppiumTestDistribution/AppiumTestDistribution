@@ -3,11 +3,9 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.Helpers;
-import com.appium.utils.ScreenShotManager;
 import com.epam.reportportal.service.ReportPortal;
 import com.video.recorder.AppiumScreenRecordFactory;
 import com.video.recorder.IScreenRecord;
-import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 
@@ -75,7 +73,7 @@ class TestLogger extends Helpers {
             logs.put("adbLogs", adbPath);
             log_file_writer.get().println(logEntries.get());
             log_file_writer.get().close();
-            ReportPortal.emitLog("ADB Logs", "ERROR", new Date(), new File(adbPath));
+            ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(adbPath));
         }
         /*
          * Failure Block
