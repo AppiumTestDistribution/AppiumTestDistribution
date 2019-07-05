@@ -72,7 +72,8 @@ public class SessionContext {
                 .getListeners().toArray()).filter(x ->
                 x.equals("com.epam.reportportal.testng.ReportPortalTestNGListener"))
                 .findFirst();
-        boolean isReportPortalEnabledInProperties = (null == reportPortalProperties.getProperty("rp.enable")
+        boolean isReportPortalEnabledInProperties =
+                (null == reportPortalProperties.getProperty("rp.enable")
                 || (reportPortalProperties.getProperty("rp.enable").equalsIgnoreCase("true")));
         if (reportPortalListener.isPresent() && isReportPortalEnabledInProperties) {
             reportPortalLaunchURL = String.format("%s/ui/#%s/launches/all/%s",
