@@ -205,7 +205,6 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
-        System.out.println("Skipped...");
         if (atdHost.isPresent() && atdPort.isPresent()) {
             String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
             sendResultsToAtdService(iTestResult, "Skipped", url, new HashMap<>());
