@@ -38,7 +38,6 @@ public class SessionContext {
 
     public static synchronized void remove(long threadId) {
         LOGGER.info(String.format("Removing context for thread - %s", threadId));
-        TestExecutionContext testExecutionContext = getTestExecutionContext(threadId);
         allTestsExecutionContext.remove(String.valueOf(threadId));
     }
 
