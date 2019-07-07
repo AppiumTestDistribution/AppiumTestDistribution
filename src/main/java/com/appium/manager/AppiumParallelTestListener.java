@@ -94,7 +94,7 @@ public final class AppiumParallelTestListener extends Helpers
         } catch (Exception e) {
             e.printStackTrace();
         }
-        SessionContext.remove(Thread.currentThread().getId(), testResult);
+        SessionContext.remove(Thread.currentThread().getId());
     }
 
 

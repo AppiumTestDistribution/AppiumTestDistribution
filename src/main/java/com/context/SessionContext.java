@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Logger;
-import org.testng.ITestResult;
 
 public class SessionContext {
     static final String TEST_RUNNER = "testrunner";
@@ -37,7 +36,7 @@ public class SessionContext {
         return allTestsExecutionContext.get(String.valueOf(threadId));
     }
 
-    public static synchronized void remove(long threadId, ITestResult testResult) {
+    public static synchronized void remove(long threadId) {
         LOGGER.info(String.format("Removing context for thread - %s", threadId));
         TestExecutionContext testExecutionContext = getTestExecutionContext(threadId);
         allTestsExecutionContext.remove(String.valueOf(threadId));
