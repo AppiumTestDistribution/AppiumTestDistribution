@@ -30,20 +30,20 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
             String base64 = ((IOSDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
             saveVideo(base64, videoLocationIOS);
         } else {
-            String videoLocationIOS =
+            String videoLocationAndroid =
                 videoPath + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                     + "/" + getCurrentTestClassName()
                     + "/" + getCurrentTestMethodName()
                     + "/" + getCurrentTestMethodName() + ".mp4";
             String base64 = ((AndroidDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
-            saveVideo(base64, videoLocationIOS);
+            saveVideo(base64, videoLocationAndroid);
         }
     }
 
-    private void saveVideo(String base64, String videoLocationIOS) throws IOException {
+    private void saveVideo(String base64, String videoLocation) throws IOException {
         byte[] decode = Base64.getDecoder().decode(base64);
-        FileUtils.writeByteArrayToFile(new File(videoLocationIOS),
+        FileUtils.writeByteArrayToFile(new File(videoLocation),
                 decode);
     }
 

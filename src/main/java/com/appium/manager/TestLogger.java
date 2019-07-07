@@ -3,7 +3,6 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.Helpers;
-import com.appium.utils.ScreenShotManager;
 import com.epam.reportportal.service.ReportPortal;
 import com.video.recorder.AppiumScreenRecordFactory;
 import com.video.recorder.IScreenRecord;
@@ -24,8 +23,8 @@ import java.util.logging.Level;
 class TestLogger extends Helpers {
 
     private File logFile;
-    private List<LogEntry> logEntries;
-    private PrintWriter log_file_writer;
+    private ThreadLocal<List<LogEntry>> logEntries = new ThreadLocal<>();
+    private ThreadLocal<PrintWriter> log_file_writer = new ThreadLocal<>();
     private ScreenShotManager screenShotManager;
     private String videoPath;
 
@@ -47,11 +46,12 @@ class TestLogger extends Helpers {
                 && AppiumDriverManager.getDriver().getCapabilities()
                 .getCapability("browserName") == null) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
-            logEntries = AppiumDriverManager.getDriver().manage()
-                    .logs().get("logcat").filter(Level.ALL);
+            List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
+                .logs().get("logcat").filter(Level.ALL);
+            logEntries.set(logcat);
             logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
                     + udid + "__" + methodName + ".txt");
-            log_file_writer = new PrintWriter(logFile);
+            log_file_writer.set(new PrintWriter(logFile));
         }
         if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
             IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
@@ -71,9 +71,9 @@ class TestLogger extends Helpers {
                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                     + "__" + result.getMethod().getMethodName() + ".txt";
             logs.put("adbLogs", adbPath);
-            log_file_writer.println(logEntries);
-            log_file_writer.close();
-            ReportPortal.emitLog("ADB Logs", "ERROR", new Date(), new File(adbPath));
+            log_file_writer.get().println(logEntries.get());
+            log_file_writer.get().close();
+            ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(adbPath));
         }
         /*
          * Failure Block
