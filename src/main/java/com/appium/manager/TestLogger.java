@@ -144,7 +144,6 @@ class TestLogger extends Helpers {
                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/"
                     + className + "/" + result.getMethod().getMethodName()
                     + "/" + result.getMethod().getMethodName() + ".mp4");
-            System.out.println(String.format("Deleting video file - %s, if it exists", videoFile));
             if (videoFile.exists()) {
                 videoFile.delete();
             }
