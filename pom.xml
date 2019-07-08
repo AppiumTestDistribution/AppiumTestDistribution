@@ -69,7 +69,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>7.0.0</version>
+            <version>7.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
