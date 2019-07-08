@@ -136,13 +136,14 @@ class TestLogger extends Helpers {
     }
 
     private void deleteSuccessVideos(ITestResult result, String className) {
-        if (result.isSuccess()) {
+        if (result.isSuccess()
+                && (null != System.getenv("KEEP_ALL_VIDEOS"))
+                && !(System.getenv("KEEP_ALL_VIDEOS").equalsIgnoreCase("true"))) {
             File videoFile = new File(System.getProperty("user.dir")
                     + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/"
                     + className + "/" + result.getMethod().getMethodName()
                     + "/" + result.getMethod().getMethodName() + ".mp4");
-            System.out.println(videoFile);
             if (videoFile.exists()) {
                 videoFile.delete();
             }
