@@ -1,0 +1,29 @@
+{
+  "android": {
+    "automationName": "UIAutomator2",
+    "project": "ATD",
+    "app": {
+      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
+    },
+    "noSign": true
+  },
+  "genycloud": {
+    "android": [
+      {
+        "udid": "107d757e-463a-4a18-8667-b8dec6e4c87e",
+        "deviceName": "Google Pixel",
+        "osVersion": "9.0"
+      },
+      {
+        "udid": "a59951f2-ed13-40f9-80b9-3ddceb3c89f5",
+        "deviceName": "Google Nexus 6",
+        "osVersion": "8.0"
+      }
+    ]
+  },
+  "hostMachines": [
+    {
+      "machineIP": "127.0.0.1"
+    }
+  ]
+}
