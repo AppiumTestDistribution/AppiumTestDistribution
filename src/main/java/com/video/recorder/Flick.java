@@ -59,7 +59,7 @@ public class Flick extends CommandPrompt implements IScreenRecord {
                             + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
                     runCommandThruProcess(android);
 
-                } catch (IOException | InterruptedException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
