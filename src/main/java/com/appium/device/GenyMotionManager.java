@@ -31,12 +31,15 @@ public class GenyMotionManager {
         } catch (IOException e) {
             throw new RuntimeException("Failed to Connect to geny cloud..");
         }
-        LOGGER.info("Starting Device on genymotion cloud instance...");
+
         ((ArrayList)devices).parallelStream().forEach(o -> {
+
             String instanceUdid = (String) ((HashMap) o).get("udid");
             String instanceName = (String) ((HashMap) o).get("deviceName");
             String gnInstance = "gmsaas instances start "
                 + instanceUdid + " " + "\"" + instanceName + "\"";
+            LOGGER.info("Starting Device on genymotion cloud instance with uuid"
+                + instanceUdid + "and device name " + instanceName);
             String createdInstance;
             try {
                 createdInstance = new CommandPrompt()
