@@ -20,7 +20,7 @@ public class GenyMotionManager {
     private static String cloud_user = System.getenv("CLOUD_USER");
     private static String cloud_key = System.getenv("CLOUD_KEY");
 
-    protected  static void connectToGenyCloud(String udid, Object devices) {
+    protected  static void connectToGenyCloud(String udid, Object devices) throws IOException {
 
         String gmLogin = "gmsaas auth login "
             + cloud_user + " " + cloud_key;
@@ -29,7 +29,7 @@ public class GenyMotionManager {
                 .runCommandThruProcess(gmLogin);
             LOGGER.info("Connected to Genymotion Cloud..");
         } catch (IOException e) {
-            throw new RuntimeException("Failed to Connect to geny cloud..");
+            throw new IOException("Failed to Connect to geny cloud..");
         }
 
         ((ArrayList)devices).parallelStream().forEach(o -> {
@@ -72,7 +72,7 @@ public class GenyMotionManager {
         String post = api.post("https://api.geny.io/cloud/v1/users/login", jsonObject.toString());
         JSONParser parser = new JSONParser();
         Object parse = parser.parse(post);
-        Object token = ((org.json.simple.JSONObject) parse).get("token");
+        Object token = ((JSONObject) parse).get("token");
         Response response = api.requestBuilderWithBearerToken("https://api.geny.io/cloud/v1/instances", token.toString());
         String string = response.body().string();
         JSONParser responseUdid = new JSONParser();

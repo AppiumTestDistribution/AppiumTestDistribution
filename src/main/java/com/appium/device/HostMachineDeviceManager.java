@@ -33,8 +33,6 @@ public class HostMachineDeviceManager {
     private static HostMachineDeviceManager instance;
     private String atdHost = null;
     private String atdPort = null;
-    private static final Logger LOGGER = Logger
-        .getLogger(HostMachineDeviceManager.class.getSimpleName());
 
     private HostMachineDeviceManager() {
         try {
@@ -182,7 +180,11 @@ public class HostMachineDeviceManager {
                         if (capabilityManager.getCapabilityObjectFromKey("genycloud") != null) {
                             JSONObject cloud = capabilityManager
                                 .getCapabilityObjectFromKey("genycloud");
-                            cloud.toMap().forEach(GenyMotionManager::connectToGenyCloud);
+                            for (Map.Entry<String, Object> entry : cloud.toMap().entrySet()) {
+                                String key = entry.getKey();
+                                Object value = entry.getValue();
+                                GenyMotionManager.connectToGenyCloud(key, value);
+                            }
                         }
                         devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
                     }
