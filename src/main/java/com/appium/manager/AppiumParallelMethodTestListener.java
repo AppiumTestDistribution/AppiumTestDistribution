@@ -4,11 +4,13 @@ import com.annotation.values.Author;
 import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.CapabilityManager;
+import com.appium.device.GenyMotionManager;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
+import org.json.simple.parser.ParseException;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
@@ -178,7 +180,14 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ISuite iSuite) {
-        System.out.println();
+        if (CapabilityManager.getInstance()
+            .getCapabilityObjectFromKey("genycloud") != null) {
+            try {
+                new GenyMotionManager().stopAllGenymotionInstances();
+            } catch (ParseException | IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /*
