@@ -48,7 +48,7 @@ Add the below dependencies in your pom.xml (Master)
     <dependency>
       <groupId>com.github.saikrishna321</groupId>
       <artifactId>AppiumTestDistribution</artifactId>
-      <version>10.0.0</version>
+      <version>10.0.1</version>
     </dependency>
    ```
 
@@ -69,6 +69,8 @@ Add the below dependencies in your pom.xml (Master)
 ## [Configure-tests-for-Sauce](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-Cloud-Sauce)
 
 ## [Configure-tests-for-Browserstack](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-BrowserStack-cloud)
+
+## [Configure-tests-for-GenyMotionCloud](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-Genymotion-cloud)
 
 ## [Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
