@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class HostMachineDeviceManager {
@@ -176,6 +177,15 @@ public class HostMachineDeviceManager {
                         });
                         devicesByHost.put(ip, getAppiumDevices(ip, device));
                     } else {
+                        if (capabilityManager.getCapabilityObjectFromKey("genycloud") != null) {
+                            JSONObject cloud = capabilityManager
+                                .getCapabilityObjectFromKey("genycloud");
+                            for (Map.Entry<String, Object> entry : cloud.toMap().entrySet()) {
+                                String key = entry.getKey();
+                                Object value = entry.getValue();
+                                GenyMotionManager.connectToGenyCloud(key, value);
+                            }
+                        }
                         devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
                     }
 
@@ -223,7 +233,6 @@ public class HostMachineDeviceManager {
         }
         return devices;
     }
-
 }
 
 

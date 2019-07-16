@@ -202,7 +202,11 @@ public class CapabilityManager {
     }
 
     public String getAppiumServerPath(String host) throws Exception {
-        return appiumServerProp(host, "appiumServerPath");
+        try {
+            return appiumServerProp(host, "appiumServerPath");
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public boolean isCloud(String host) {
