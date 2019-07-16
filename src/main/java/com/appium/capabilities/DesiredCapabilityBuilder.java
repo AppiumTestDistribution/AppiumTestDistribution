@@ -45,7 +45,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
     public void buildDesiredCapability(String jsonPath) throws Exception {
         int port = AppiumDeviceManager.getAppiumDevice().getPort();
-        String platform = AppiumDeviceManager.getAppiumDevice().getDevice().getOs();
+        String platform = System.getenv("Platform");
         boolean isCloud = AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (isCloud) {
