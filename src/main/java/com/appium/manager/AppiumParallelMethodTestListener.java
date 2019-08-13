@@ -1,6 +1,5 @@
 package com.appium.manager;
 
-import com.annotation.values.Author;
 import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.CapabilityManager;
@@ -88,31 +87,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     private void startReportLogging(ITestResult iTestResult) throws IOException,
         InterruptedException {
-        testLogger.startLogging(iTestResult.getMethod().getMethodName(),
-            iTestResult.getTestClass()
-                .getRealClass().getSimpleName());
-        // Sets description for each test method with platform and Device UDID allocated to it.
-        Optional<String> originalDescription = Optional.ofNullable(iTestResult
-            .getMethod().getDescription());
-        String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-            + " UDID: " + AppiumDeviceManager.getAppiumDevice()
-            .getDevice().getUdid()
-            + " Name: " + AppiumDeviceManager.getAppiumDevice()
-            .getDevice().getName()
-            + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
-        Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
-            .getAnnotation(Author.class);
-        if (annotation != null) {
-            description += "\nAuthor: " + annotation.name();
-        }
-        if (originalDescription.isPresent()
-            && !originalDescription.get().contains(AppiumDeviceManager.getAppiumDevice()
-            .getDevice().getUdid())) {
-            iTestResult.getMethod().setDescription(originalDescription.get()
-                + "\n" + description);
-        } else {
-            iTestResult.getMethod().setDescription(description);
-        }
+        testLogger.startLogging(iTestResult);
     }
 
     /*

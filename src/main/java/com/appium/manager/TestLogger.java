@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.annotation.values.Author;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.Helpers;
@@ -15,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 
 /**
@@ -40,11 +42,13 @@ class TestLogger extends Helpers {
         screenShotManager = new ScreenShotManager();
     }
 
-    protected void startLogging(String methodName, String className)
+    protected void startLogging(ITestResult iTestResult)
             throws IOException, InterruptedException {
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-                && AppiumDriverManager.getDriver().getCapabilities()
-                .getCapability("browserName") == null) {
+        String methodName = iTestResult.getMethod().getMethodName();
+        String className = iTestResult.getTestClass()
+            .getRealClass().getSimpleName();
+
+        if (isNativeAndroid()) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
             List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
                 .logs().get("logcat").filter(Level.ALL);
@@ -57,6 +61,32 @@ class TestLogger extends Helpers {
             IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
             videoRecording.startVideoRecording(className, methodName, methodName);
         }
+        setDescription(iTestResult);
+    }
+
+    private void setDescription(ITestResult iTestResult) {
+        Optional<String> originalDescription = Optional.ofNullable(iTestResult
+            .getMethod().getDescription());
+        String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
+            + " UDID: " + AppiumDeviceManager.getAppiumDevice()
+            .getDevice().getUdid()
+            + " Name: " + AppiumDeviceManager.getAppiumDevice()
+            .getDevice().getName()
+            + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
+        Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+            .getAnnotation(Author.class);
+        if (annotation != null) {
+            description += "\nAuthor: " + annotation.name();
+        }
+        if (originalDescription.isPresent()
+            && !originalDescription.get()
+            .contains(AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getUdid())) {
+            iTestResult.getMethod().setDescription(originalDescription.get()
+                + "\n" + description);
+        } else {
+            iTestResult.getMethod().setDescription(description);
+        }
     }
 
     protected HashMap<String, String> endLogging(ITestResult result, String deviceModel)
@@ -64,9 +94,7 @@ class TestLogger extends Helpers {
         HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
         stopViewRecording(result, className);
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-                && AppiumDriverManager.getDriver().getCapabilities()
-                .getCapability("browserName") == null) {
+        if (isNativeAndroid()) {
             String adbPath = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                     + "__" + result.getMethod().getMethodName() + ".txt";
@@ -123,6 +151,12 @@ class TestLogger extends Helpers {
             }
         }
         return logs;
+    }
+
+    private boolean isNativeAndroid() {
+        return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
+            && AppiumDriverManager.getDriver().getCapabilities()
+            .getCapability("browserName") == null;
     }
 
     private void stopViewRecording(ITestResult result, String className)
