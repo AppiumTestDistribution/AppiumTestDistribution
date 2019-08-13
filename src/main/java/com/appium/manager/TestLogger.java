@@ -99,7 +99,9 @@ class TestLogger extends Helpers {
                     + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
                     + "__" + result.getMethod().getMethodName() + ".txt";
             logs.put("adbLogs", adbPath);
-            log_file_writer.get().println(logEntries.get());
+            logEntries.get().forEach(logEntry -> {
+                    log_file_writer.get().println(logEntry);
+            });
             log_file_writer.get().close();
             ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(adbPath));
         }
