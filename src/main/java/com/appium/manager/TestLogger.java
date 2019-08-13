@@ -46,12 +46,12 @@ class TestLogger extends Helpers {
             throws IOException, InterruptedException {
         String methodName = iTestResult.getMethod().getMethodName();
         String className = iTestResult.getTestClass()
-            .getRealClass().getSimpleName();
+                .getRealClass().getSimpleName();
 
         if (isNativeAndroid()) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
             List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
-                .logs().get("logcat").filter(Level.ALL);
+                    .logs().get("logcat").filter(Level.ALL);
             logEntries.set(logcat);
             logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
                     + udid + "__" + methodName + ".txt");
@@ -66,24 +66,24 @@ class TestLogger extends Helpers {
 
     private void setDescription(ITestResult iTestResult) {
         Optional<String> originalDescription = Optional.ofNullable(iTestResult
-            .getMethod().getDescription());
+                .getMethod().getDescription());
         String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-            + " UDID: " + AppiumDeviceManager.getAppiumDevice()
-            .getDevice().getUdid()
-            + " Name: " + AppiumDeviceManager.getAppiumDevice()
-            .getDevice().getName()
-            + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
+                + " UDID: " + AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getUdid()
+                + " Name: " + AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getName()
+                + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
         Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
-            .getAnnotation(Author.class);
+                .getAnnotation(Author.class);
         if (annotation != null) {
             description += "\nAuthor: " + annotation.name();
         }
         if (originalDescription.isPresent()
-            && !originalDescription.get()
-            .contains(AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getUdid())) {
+                && !originalDescription.get()
+                .contains(AppiumDeviceManager.getAppiumDevice()
+                        .getDevice().getUdid())) {
             iTestResult.getMethod().setDescription(originalDescription.get()
-                + "\n" + description);
+                    + "\n" + description);
         } else {
             iTestResult.getMethod().setDescription(description);
         }
@@ -100,7 +100,7 @@ class TestLogger extends Helpers {
                     + "__" + result.getMethod().getMethodName() + ".txt";
             logs.put("adbLogs", adbPath);
             logEntries.get().forEach(logEntry -> {
-                    log_file_writer.get().println(logEntry);
+                log_file_writer.get().println(logEntry);
             });
             log_file_writer.get().close();
             ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(adbPath));
@@ -157,8 +157,8 @@ class TestLogger extends Helpers {
 
     private boolean isNativeAndroid() {
         return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-            && AppiumDriverManager.getDriver().getCapabilities()
-            .getCapability("browserName") == null;
+                && AppiumDriverManager.getDriver().getCapabilities()
+                .getCapability("browserName") == null;
     }
 
     private void stopViewRecording(ITestResult result, String className)
