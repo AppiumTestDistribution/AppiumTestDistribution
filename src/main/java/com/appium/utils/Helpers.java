@@ -16,7 +16,7 @@ public class Helpers {
 
     protected String getRemoteAppiumManagerPort(String host) throws Exception {
         String serverPort = CapabilityManager.getInstance()
-                .getRemoteAppiumManangerPort(host);
+            .getRemoteAppiumManangerPort(host);
         if (serverPort == null) {
             return "4567";
         } else {
@@ -44,9 +44,9 @@ public class Helpers {
         String reportEventJson;
         try {
             reportEventJson = new TestStatusManager()
-                    .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                            testStatus,
-                            testResult, logs);
+                .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
+                    testStatus,
+                    testResult, logs);
             new Api().post(url, reportEventJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -66,7 +66,7 @@ public class Helpers {
         String appiumVersion = null;
         try {
             appiumVersion = new CommandPrompt().runCommand("appium -v")
-                    .replaceAll("\n", "");
+                .replaceAll("\n", "");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -74,7 +74,10 @@ public class Helpers {
     }
 
     public boolean isRetry(ITestResult iTestResult) {
-        return iTestResult.getMethod().getRetryAnalyzer().retry(iTestResult);
+        if (iTestResult.getMethod().getRetryAnalyzer() != null) {
+            return iTestResult.getMethod().getRetryAnalyzer().retry(iTestResult);
+        }
+        return false;
     }
 
     public String getCurrentTestClassName() {

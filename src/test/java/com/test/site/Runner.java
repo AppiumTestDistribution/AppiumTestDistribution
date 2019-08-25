@@ -19,6 +19,7 @@ public class Runner {
         //tests.add("HomePageTest2");
         //tests.add("SliderTest");
         tests.add("DragnDropTest");
+        tests.add("SliderTest");
         ATDRunner atdRunner = new ATDRunner();
         boolean hasFailures = atdRunner.runner("com.test.site",tests);
         Assert.assertFalse(hasFailures, "Testcases have failed in parallel execution");
