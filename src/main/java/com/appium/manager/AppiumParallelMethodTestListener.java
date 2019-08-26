@@ -19,6 +19,9 @@ import org.testng.ITestListener;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -69,16 +72,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onTestStart(ITestResult iTestResult) {
-        try {
-            deviceAllocationManager.allocateDevice(deviceAllocationManager
-                .getNextAvailableDevice());
-            appiumDriverManager.startAppiumDriverInstance();
-            if (!isCloudExecution()) {
-                startReportLogging(iTestResult);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     private boolean isCloudExecution() {
@@ -95,6 +89,19 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
+        boolean beforeCalled = false;
+        BeforeMethod beforeMethodAnnotation = iInvokedMethod.getTestMethod()
+            .getConstructorOrMethod().getMethod().getAnnotation(BeforeMethod.class);
+        BeforeTest beforeTestAnnotation = iInvokedMethod.getTestMethod()
+            .getConstructorOrMethod().getMethod().getAnnotation(BeforeTest.class);
+        if (beforeTestAnnotation != null) {
+            throw new RuntimeException("ATD will only support @BeforeMethod annotation.");
+        }
+        if (beforeMethodAnnotation != null || AppiumDriverManager.getDriver() == null) {
+            beforeCalled = true;
+            allocateDeviceAndStartDriver(iTestResult);
+        }
+
         if (!isCloudExecution()) {
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
@@ -113,6 +120,19 @@ public final class AppiumParallelMethodTestListener extends Helpers
         new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
     }
 
+    private void allocateDeviceAndStartDriver(ITestResult iTestResult) {
+        try {
+            deviceAllocationManager.allocateDevice(deviceAllocationManager
+                .getNextAvailableDevice());
+            appiumDriverManager.startAppiumDriverInstance();
+            if (!isCloudExecution()) {
+                startReportLogging(iTestResult);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /*
      * Stops driver after each test method execution
      * De-allocates device after each test method execution
@@ -120,34 +140,41 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        try {
-            if (!isCloudExecution() && !isRetry(iTestResult)) {
-                HashMap<String, String> logs = testLogger.endLogging(iTestResult,
-                    AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
-                if (atdHost.isPresent() && atdPort.isPresent()) {
-                    String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
-                } else {
-                    new FileFilterParser()
-                        .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-                            .getDevice().getUdid(), iTestResult);
-                    testResults.set(logs);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            AppiumDriverManager.getDriver().quit();
-            deviceAllocationManager.freeDevice();
+        boolean afterMethod = false;
+        Test annotation = iInvokedMethod.getTestMethod()
+            .getConstructorOrMethod().getMethod().getAnnotation(Test.class);
+        if (annotation != null) {
+            afterMethod = true;
             try {
-                if (!isCloudExecution()) {
-                    appiumDriverManager.stopAppiumDriver();
+                if (!isCloudExecution() && !isRetry(iTestResult)) {
+                    HashMap<String, String> logs = testLogger.endLogging(iTestResult,
+                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                    if (atdHost.isPresent() && atdPort.isPresent()) {
+                        String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                        sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                    } else {
+                        new FileFilterParser()
+                            .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
+                                .getDevice().getUdid(), iTestResult);
+                        testResults.set(logs);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                AppiumDriverManager.getDriver().quit();
+                deviceAllocationManager.freeDevice();
+                try {
+                    if (!isCloudExecution()) {
+                        appiumDriverManager.stopAppiumDriver();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         SessionContext.remove(Thread.currentThread().getId());
+
     }
 
     /*
