@@ -30,6 +30,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
     private AvailablePorts availablePorts;
+    private List<AppiumDevice> appiumDevices;
 
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
         = new ThreadLocal<>();
@@ -44,49 +45,53 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     }
 
     public void buildDesiredCapability(String jsonPath) throws Exception {
-        int port = AppiumDeviceManager.getAppiumDevice().getPort();
-        String platform = AppiumDeviceManager.getAppiumDevice().getDevice().getOs();
-        boolean isCloud = AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        if (isCloud) {
-            desiredCapabilityForCloud(platform, jsonPath, desiredCapabilities);
-        } else {
-            desiredCapabilityForLocalAndRemoteATD(platform, jsonPath, port, desiredCapabilities);
+        appiumDevices = AppiumDeviceManager.getAppiumDevices();
+        for (AppiumDevice appiumDevice : appiumDevices) {
+            int port = appiumDevice.getPort();
+            String platform = appiumDevice.getDevice().getOs();
+            boolean isCloud = appiumDevice.getDevice().isCloud();
+            DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+            if (isCloud) {
+                desiredCapabilityForCloud(platform, jsonPath, desiredCapabilities, appiumDevice);
+            } else {
+                desiredCapabilityForLocalAndRemoteATD(platform, jsonPath, port, desiredCapabilities, appiumDevice);
 
+            }
         }
     }
 
     private void desiredCapabilityForCloud(String platform, String jsonPath,
-                                           DesiredCapabilities desiredCapabilities) {
+                                           DesiredCapabilities desiredCapabilities,
+                                           AppiumDevice appiumDevice) {
         JSONObject platFormCapabilities = new JsonParser(jsonPath).getObjectFromJSON()
             .getJSONObject(platform);
         platFormCapabilities.keySet().forEach(key -> {
-            capabilityObject(desiredCapabilities, platFormCapabilities, key);
+            capabilityObject(desiredCapabilities, platFormCapabilities, key, appiumDevice);
         });
-        AppiumDevice deviceProperty = AppiumDeviceManager.getAppiumDevice();
         desiredCapabilities.setCapability("device",
-            deviceProperty.getDevice().getName());
+            appiumDevice.getDevice().getName());
         desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                deviceProperty.getDevice().getName());
+            appiumDevice.getDevice().getName());
         desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
         desiredCapabilities.setCapability(CapabilityType.VERSION,
-            deviceProperty.getDevice().getOsVersion());
+            appiumDevice.getDevice().getOsVersion());
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                deviceProperty.getDevice().getOsVersion());
+            appiumDevice.getDevice().getOsVersion());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
 
     }
 
     private void capabilityObject(DesiredCapabilities desiredCapabilities,
-                                  JSONObject platFormCapabilities, String key) {
+                                  JSONObject platFormCapabilities, String key,
+                                  AppiumDevice device) {
         String appCapability = "app";
         if (appCapability.equals(key)) {
             Object values = platFormCapabilities.get(appCapability);
             List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
                 .getHostArtifacts();
-            String hostAppPath = hostAppPath(values, hostArtifacts);
+            String hostAppPath = hostAppPath(values, hostArtifacts, device);
             Path path = FileSystems.getDefault().getPath(hostAppPath);
-            if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
+            if (device.getDevice().isCloud()
                 || ResourceUtils.isUrl(hostAppPath)) {
                 desiredCapabilities.setCapability(appCapability, hostAppPath);
             } else {
@@ -101,7 +106,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     private void desiredCapabilityForLocalAndRemoteATD(String platform,
                                                        String jsonPath,
                                                        int port,
-                                                       DesiredCapabilities desiredCapabilities)
+                                                       DesiredCapabilities desiredCapabilities,
+                                                       AppiumDevice device)
         throws Exception {
         JSONObject platFormCapabilities = new JsonParser(jsonPath).getObjectFromJSON()
             .getJSONObject(platform);
@@ -109,41 +115,37 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         platFormCapabilities.keySet().forEach(key -> {
             if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
                 try {
-                    AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(
-                        availablePorts.getAvailablePort(AppiumDeviceManager
-                            .getAppiumDevice().getHostName()));
+                    device.setChromeDriverPort(
+                        availablePorts.getAvailablePort(device.getHostName()));
                     desiredCapabilities.setCapability("chromeDriverPort",
-                        AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
+                        device.getChromeDriverPort());
                 } catch (Exception e) {
                     throw new RuntimeException("Unable to allocate chromedriver with unique port");
                 }
             }
-            capabilityObject(desiredCapabilities, platFormCapabilities, key);
+            capabilityObject(desiredCapabilities, platFormCapabilities, key, device);
         });
 
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+        if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid()).equals(MobilePlatform.ANDROID)) {
             desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,"android");
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                 port);
             appPackage(desiredCapabilities);
-        } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+        } else if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid()).equals(MobilePlatform.IOS)) {
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
-            if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
+            if (device.getDevice().getUdid().length()
                 == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
 
-                AppiumDevice deviceProperty = AppiumDeviceManager.getAppiumDevice();
                 desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                    deviceProperty.getDevice().getName());
+                    device.getDevice().getName());
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                    deviceProperty.getDevice().getOsVersion());
+                    device.getDevice().getOsVersion());
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
-                    new AvailablePorts().getAvailablePort(AppiumDeviceManager
-                        .getAppiumDevice().getHostName()));
+                    new AvailablePorts().getAvailablePort(device.getHostName()));
             } else {
                 desiredCapabilities.setCapability("webkitDebugProxyPort",
-                    new AvailablePorts().getAvailablePort(AppiumDeviceManager
-                        .getAppiumDevice().getHostName()));
+                    new AvailablePorts().getAvailablePort(device.getHostName()));
             }
 
             desiredCapabilities.setCapability(IOSMobileCapabilityType
@@ -151,27 +153,26 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
                 AutomationName.IOS_XCUI_TEST);
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+                device.getDevice().getUdid());
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-            AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+            device.getDevice().getUdid());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 
-    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts) {
+    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts, AppiumDevice device) {
         HostArtifact hostArtifact;
         hostArtifact = hostArtifacts.stream().filter(s ->
             s.getHost()
-                .equalsIgnoreCase(AppiumDeviceManager
-                    .getAppiumDevice()
+                .equalsIgnoreCase(device
                     .getHostName()))
             .collect(toList()).parallelStream()
             .findFirst().get();
         String appPath = hostArtifact.getArtifactPath("APK");
         if (values instanceof JSONObject) {
-            if (!AppiumDeviceManager.getAppiumDevice()
+            if (!device
                     .getDevice().isCloud()) {
-                int length = AppiumDeviceManager.getAppiumDevice()
+                int length = device
                         .getDevice()
                         .getUdid()
                         .length();

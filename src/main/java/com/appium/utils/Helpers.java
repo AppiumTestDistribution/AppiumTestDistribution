@@ -38,21 +38,6 @@ public class Helpers {
     }
 
 
-    public void sendResultsToAtdService(ITestResult testResult,
-                                        String testStatus, String url,
-                                        HashMap<String, String> logs) {
-        String reportEventJson;
-        try {
-            reportEventJson = new TestStatusManager()
-                .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                    testStatus,
-                    testResult, logs);
-            new Api().post(url, reportEventJson);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String getHostMachineIpAddress() throws IOException {
         String localHost = InetAddress.getLocalHost().toString();
         if (localHost.contains("/")) {

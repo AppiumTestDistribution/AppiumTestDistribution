@@ -8,13 +8,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
 public class UserBaseTest {
-    public AppiumDriver<MobileElement> driver;
+    public List<AppiumDriver<MobileElement>> driver;
 
 
     public AppiumDriver<MobileElement> getDriver() {
-        driver = AppiumDriverManager.getDriver();
-        return driver;
+        driver = AppiumDriverManager.getDrivers();
+        return driver.get(0);
     }
 
     public WebElement login(String locator) {

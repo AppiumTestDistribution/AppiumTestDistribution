@@ -4,7 +4,6 @@ import com.appium.device.DevicesByHost;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.utils.ArtifactsUploader;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -30,7 +29,7 @@ public class DeviceAllocationManager extends ArtifactsUploader {
     }
 
 
-    public static DeviceAllocationManager getInstance()  {
+    public static DeviceAllocationManager getInstance() {
         if (instance == null) {
             try {
                 instance = new DeviceAllocationManager();
@@ -47,16 +46,17 @@ public class DeviceAllocationManager extends ArtifactsUploader {
         return hostMachineDeviceManager.getDevicesByHost().getAllDevices();
     }
 
-    public synchronized AppiumDevice getNextAvailableDevice() {
-        int i = 0;
-        for (AppiumDevice device : allDevices) {
-            Thread t = Thread.currentThread();
-            t.setName("Thread_" + i);
-            i++;
-            if (device.isAvailable()) {
-                device.blockDevice();
-                return device;
+    public synchronized List<AppiumDevice> getNextAvailableDevice(int devices) {
+        List<AppiumDevice> appiumDevice = new ArrayList<>();
+        for (int i = 0; i < devices; i++) {
+            AppiumDevice appiumDevice1 = allDevices.get(i);
+            if (appiumDevice1.isAvailable()) {
+                appiumDevice1.blockDevice();
+                appiumDevice.add(appiumDevice1);
             }
+        }
+        if (appiumDevice.size() >= 1) {
+            return appiumDevice;
         }
         if (Thread.activeCount() > allDevices.size()) {
             suspendedThreads.add(Thread.currentThread());
@@ -66,18 +66,22 @@ public class DeviceAllocationManager extends ArtifactsUploader {
     }
 
     public synchronized void freeDevice() {
-        AppiumDeviceManager.getAppiumDevice().freeDevice();
-        LOGGER.info("DeAllocated Device " + AppiumDeviceManager.getAppiumDevice().getDevice()
+        List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
+        appiumDevices.forEach(appiumDevice -> {
+            appiumDevice.freeDevice();
+            LOGGER.info("DeAllocated Device " + appiumDevice.getDevice()
                 .getUdid()
                 + " from execution list");
+        });
+
         if (suspendedThreads.size() > 0) {
             suspendedThreads.get(0).resume();
             suspendedThreads.remove(0);
         }
     }
 
-    public void allocateDevice(AppiumDevice appiumDevice) {
-        LOGGER.info("Allocated Device " + appiumDevice + " for Execution");
+    public void allocateDevice(List<AppiumDevice> appiumDevice) {
+        LOGGER.info("Allocated DevicesDevice " + appiumDevice + " for Execution");
         AppiumDeviceManager.setDevice(appiumDevice);
     }
 

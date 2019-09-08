@@ -1,6 +1,5 @@
 package com.appium.manager;
 
-import com.appium.entities.MobilePlatform;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.ConfigFileManager;
@@ -12,15 +11,24 @@ import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 public class AppiumDriverManager {
-    private static ThreadLocal<AppiumDriver> appiumDriver
+    private static ThreadLocal<List<AppiumDriver<MobileElement>>> appiumDrivers
         = new ThreadLocal<>();
+
+    private static ThreadLocal<AppiumDriver<MobileElement>> appiumDriver
+        = new ThreadLocal<AppiumDriver<MobileElement>>();
+
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
@@ -30,59 +38,86 @@ public class AppiumDriverManager {
         prop = ConfigFileManager.getInstance();
     }
 
-    public static AppiumDriver getDriver() {
-        return appiumDriver.get();
+    public static AppiumDriver<MobileElement> getDriver() {
+        return appiumDrivers.get().get(0);
     }
 
-    protected static void setDriver(AppiumDriver driver) {
-        appiumDriver.set(driver);
+    public static List<AppiumDriver<MobileElement>> getDrivers() {
+        return appiumDrivers.get();
     }
 
-    private AppiumDriver<MobileElement> initialiseDriver(
+    protected static void setDrivers(List<AppiumDriver<MobileElement>> driver) {
+        appiumDrivers.set(driver);
+    }
+
+    private List<AppiumDriver<MobileElement>> initialiseDriver(
         Optional<DesiredCapabilities> capabilities)
         throws Exception {
-        AppiumDriver currentDriverSession;
+        List<AppiumDriver<MobileElement>> driverSessions = new ArrayList<>();
         DesiredCapabilities desiredCapabilities = capabilities.get();
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
-        String remoteWDHubIP = getRemoteWDHubIP();
-        if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
-            currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
-            LOGGER.info("Session Created for iOS ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
-        } else if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("android")) {
-            currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
-            LOGGER.info("Session Created for Android ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
-        } else {
-            currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                desiredCapabilities);
-            LOGGER.info("Session Created ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getRemoteAddress().getHost() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+        List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
 
-        }
+        appiumDevices.parallelStream().forEachOrdered(appiumDevice -> {
+            String remoteWDHubIP = null;
+            try {
+                remoteWDHubIP = getRemoteWDHubIP(appiumDevice);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            AppiumDriver driverSession = null;
+            if (!appiumDevice.getDevice().isCloud()
+                && appiumDevice.getDevice().getOs().equalsIgnoreCase("iOS")) {
+                try {
+                    driverSession = new IOSDriver(new URL(remoteWDHubIP),
+                        desiredCapabilities);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                LOGGER.info("Session Created for iOS ---- "
+                    + driverSession.getSessionId() + "---"
+                    + driverSession.getSessionDetail("udid"));
+            } else if (!appiumDevice.getDevice().isCloud()
+                && appiumDevice.getDevice().getOs().equalsIgnoreCase("android")) {
+                try {
+                    driverSession = new AndroidDriver(new URL(remoteWDHubIP),
+                        desiredCapabilities);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                LOGGER.info("Session Created for Android ---- "
+                    + driverSession.getSessionId() + "---"
+                    + driverSession.getSessionDetail("udid"));
+            } else {
+                try {
+                    driverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
+                        desiredCapabilities);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                LOGGER.info("Session Created ---- "
+                    + driverSession.getSessionId() + "---"
+                    + driverSession.getRemoteAddress().getHost() + "---"
+                    + driverSession.getSessionDetail("udid"));
 
-        return currentDriverSession;
+            }
+            driverSessions.add(driverSession);
+        });
+        return driverSessions;
     }
 
-    private String getRemoteWDHubIP() throws Exception {
-        String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
+    private String getRemoteWDHubIP(AppiumDevice appiumDevice) throws Exception {
+        String hostName = appiumDevice.getHostName();
         IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(hostName);
         return appiumManager.getRemoteWDHubIP(hostName);
     }
 
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession;
+        List<AppiumDriver<MobileElement>> currentDriverSession;
+        // TODO use parallel stream to start session
         currentDriverSession = initialiseDriver(desiredCapabilities);
-        AppiumDriverManager.setDriver(currentDriverSession);
+        AppiumDriverManager.setDrivers(currentDriverSession);
     }
 
     // Should be used by Cucumber as well
@@ -120,29 +155,43 @@ public class AppiumDriverManager {
         }
     }
 
-    protected void stopAppiumDriver() throws Exception {
+    protected void stopAppiumDriver() {
         String OS = System.getProperty("os.name").toLowerCase();
-        String command;
-        if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
-            == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
-            String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
-            AppiumManagerFactory.getAppiumManager(hostName).destoryIOSWebKitProxy(hostName);
-        }
-        if (AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() > 0) {
-            if (OS.contains("mac")) {
-                command = "kill -9 $(lsof -ti tcp:"
-                    + AppiumDeviceManager.getAppiumDevice().getChromeDriverPort() + ")";
-                new CommandPrompt().runCommand(command);
+        AtomicReference<String> command = null;
+        List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
+
+        for (AppiumDevice appiumDevice : appiumDevices) {
+            if (appiumDevice.getDevice().getUdid().length()
+                == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                String hostName = appiumDevice.getHostName();
+                try {
+                    AppiumManagerFactory.getAppiumManager(hostName)
+                        .destoryIOSWebKitProxy(hostName, appiumDevice);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(0);
-        }
-        if (AppiumDriverManager.getDriver() != null
-            && AppiumDriverManager.getDriver().getSessionId() != null) {
-            LOGGER.info("Session Deleting ---- "
-                + AppiumDriverManager.getDriver().getSessionId() + "---"
-                + AppiumDriverManager.getDriver().getSessionDetail("udid"));
-            AppiumDriverManager.getDriver().quit();
+            if (appiumDevice.getChromeDriverPort() > 0) {
+                if (OS.contains("mac")) {
+                    command.set("kill -9 $(lsof -ti tcp:"
+                        + appiumDevice.getChromeDriverPort() + ")");
+                    try {
+                        new CommandPrompt().runCommand(command.get());
+                    } catch (InterruptedException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                appiumDevice.setChromeDriverPort(0);
+            }
+            List<AppiumDriver<MobileElement>> drivers = AppiumDriverManager.getDrivers();
+            drivers.parallelStream().forEach(driver -> {
+                if (driver.getSessionId() != null) {
+                    LOGGER.info("Session Deleting ---- "
+                        + driver.getSessionId() + "---"
+                        + driver.getSessionDetail("udid"));
+                    driver.quit();
+                }
+            });
         }
     }
-
 }

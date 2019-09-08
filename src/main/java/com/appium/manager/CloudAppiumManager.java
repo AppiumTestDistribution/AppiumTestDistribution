@@ -45,7 +45,7 @@ public class CloudAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public void destoryIOSWebKitProxy(String host) {
+    public void destoryIOSWebKitProxy(String host, AppiumDevice device) {
 
     }
 }

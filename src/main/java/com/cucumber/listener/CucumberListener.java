@@ -30,7 +30,6 @@ import io.appium.java_client.MobileElement;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.IM4JavaException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 
@@ -88,7 +87,7 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
     }
 
     public void result(Result result) {
-        if ("passed".equals(result.getStatus())) {
+        /*if ("passed".equals(result.getStatus())) {
             // To Be Worked out
         } else if ("failed".equals(result.getStatus())) {
             String failed_StepName = testSteps.poll().getName();
@@ -101,17 +100,17 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
                 AppiumDriverManager.getDriver().context("NATIVE_APP");
                 contextChanged = true;
             }
-            File scrFile = ((TakesScreenshot) AppiumDriverManager.getDriver())
+            File scrFile = (AppiumDriverManager.getDriver())
                     .getScreenshotAs(OutputType.FILE);
             if (contextChanged) {
                 AppiumDriverManager.getDriver().context(context);
             }
-            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-                deviceModel = androidDevice.getDeviceModel();
+            if (AppiumDeviceManager.getMobilePlatform("").equals(MobilePlatform.ANDROID)) {
+                deviceModel = androidDevice.getDeviceModel("");
                 screenShotAndFrame(failed_StepName, scrFile, "android");
             } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 deviceModel =
-                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel();
+                        AppiumDeviceManager.getAppiumDevices().getDevice().getDeviceModel();
                 screenShotAndFrame(failed_StepName, scrFile, "iPhone");
             }
             try {
@@ -119,7 +118,7 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     public void after(Match match, Result result) {
@@ -151,7 +150,7 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
         String[] tagsArray = getTagArray(feature.getTags());
         String tags = String.join(",", tagsArray);
         deviceAllocationManager.allocateDevice(
-                deviceAllocationManager.getNextAvailableDevice());
+                deviceAllocationManager.getNextAvailableDevice(1));
     }
 
     private String[] getTagArray(List<Tag> tags) {
@@ -226,13 +225,13 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
 
 
     public void screenShotAndFrame(String failed_StepName, File scrFile, String device) {
-        try {
+        /*try {
             File framePath =
                     new File(System.getProperty("user.dir") + "/src/test/resources/frames/");
             FileUtils.copyFile(scrFile, new File(
                     System.getProperty("user.dir")
                             + FileLocations.SCREENSHOTS_DIRECTORY + device + "/"
-                            + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                            + AppiumDeviceManager.getAppiumDevices().getDevice().getUdid()
                             + "/" + deviceModel
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
             File[] files1 = framePath.listFiles();
@@ -248,7 +247,7 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
                                         files1[i].toString(),
                                         System.getProperty("user.dir")
                                                 + FileLocations.SCREENSHOTS_DIRECTORY + device
-                                                + "/" + AppiumDeviceManager.getAppiumDevice()
+                                                + "/" + AppiumDeviceManager.getAppiumDevices()
                                                 .getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
@@ -256,7 +255,7 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
                                         System.getProperty("user.dir")
                                                 + FileLocations.SCREENSHOTS_DIRECTORY
                                                 + device
-                                                + "/" + AppiumDeviceManager.getAppiumDevice()
+                                                + "/" + AppiumDeviceManager.getAppiumDevices()
                                                 .getDevice().getUdid()
                                                 .replaceAll("\\W", "_") + "/"
                                                 + deviceModel + "/failed_"
@@ -276,11 +275,12 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("Resource Directory was not found");
-        }
+        }*/
     }
 
+    @SuppressWarnings("checkstyle:CommentsIndentation")
     public void attachScreenShotToReport(String stepName) throws IOException {
-        String platform = null;
+/*        String platform = null;
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             platform = "android";
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
@@ -290,9 +290,9 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
                 System.getProperty("user.dir")
                         + FileLocations.SCREENSHOTS_DIRECTORY
                         + platform + "/"
-                        + AppiumDeviceManager.getAppiumDevice()
+                        + AppiumDeviceManager.getAppiumDevices()
                         .getDevice().getUdid() + "/" + deviceModel
-                        + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
+                        + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");*/
 
     }
 

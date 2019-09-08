@@ -25,36 +25,17 @@ public class AndroidDeviceConfiguration {
     /*
      * This method gets the device model name
      */
-    public String getDeviceModel() {
-        AppiumDevice getModel = getDevice();
-        return (getModel.getDevice().getDeviceModel()
-                + getModel.getDevice().getBrand())
-                .replaceAll("[^a-zA-Z0-9\\.\\-]", "");
+    public String getDeviceModel(AppiumDevice device) {
+        return (device.getDevice().getDeviceModel()
+            + device.getDevice().getBrand())
+            .replaceAll("[^a-zA-Z0-9\\.\\-]", "");
     }
 
-    /*
-     * This method gets the device OS API Level
-     */
-    public String getDeviceOS() {
-        AppiumDevice deviceOS = getDevice();
-        return deviceOS.getDevice().getOsVersion();
-    }
 
-    private AppiumDevice getDevice() {
-        return AppiumDeviceManager.getAppiumDevice();
-    }
-
-    public String screenRecord(String fileName) {
-        return "adb -s " + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                + " shell screenrecord --bit-rate 3000000 /sdcard/" + fileName
-                + ".mp4";
-    }
-
-    public boolean checkIfRecordable() throws IOException, InterruptedException {
+    public boolean checkIfRecordable(AppiumDevice device) throws IOException, InterruptedException {
         String screenrecord =
-                cmd.runCommand("adb -s " + AppiumDeviceManager
-                        .getAppiumDevice().getDevice().getUdid()
-                        + " shell ls /system/bin/screenrecord");
+            cmd.runCommand("adb -s " + device.getDevice().getUdid()
+                + " shell ls /system/bin/screenrecord");
         if (screenrecord.trim().equals("/system/bin/screenrecord")) {
             return true;
         } else {
@@ -62,19 +43,20 @@ public class AndroidDeviceConfiguration {
         }
     }
 
-    public String getDeviceManufacturer() {
-        return devicesByHost.getDeviceProperty(AppiumDeviceManager
-                .getAppiumDevice().getDevice().getUdid())
-                .getDevice().getDeviceManufacturer();
+    public String getDeviceManufacturer(AppiumDevice device) {
+        return devicesByHost.getDeviceProperty(device
+            .getDevice().getUdid())
+            .getDevice().getDeviceManufacturer();
     }
 
-    public AndroidDeviceConfiguration pullVideoFromDevice(String fileName, String destination)
-            throws IOException, InterruptedException {
+    public AndroidDeviceConfiguration pullVideoFromDevice(AppiumDevice device,
+                                                          String fileName, String destination)
+        throws IOException, InterruptedException {
         ProcessBuilder pb =
-                new ProcessBuilder("adb", "-s",
-                        AppiumDeviceManager.getAppiumDevice().getDevice().getUdid(),
-                        "pull", "/sdcard/" + fileName + ".mp4",
-                        destination);
+            new ProcessBuilder("adb", "-s",
+                device.getDevice().getUdid(),
+                "pull", "/sdcard/" + fileName + ".mp4",
+                destination);
         Process pc = pb.start();
         pc.waitFor();
         System.out.println("Exited with Code::" + pc.exitValue());
@@ -83,12 +65,11 @@ public class AndroidDeviceConfiguration {
         return new AndroidDeviceConfiguration();
     }
 
-    public void removeVideoFileFromDevice(String fileName)
-            throws IOException, InterruptedException {
-        cmd.runCommand("adb -s " + AppiumDeviceManager
-                .getAppiumDevice().getDevice().getUdid()
-                + " shell rm -f /sdcard/"
-                + fileName + ".mp4");
+    public void removeVideoFileFromDevice(AppiumDevice device, String fileName)
+        throws IOException, InterruptedException {
+        cmd.runCommand("adb -s " + device.getDevice().getUdid()
+            + " shell rm -f /sdcard/"
+            + fileName + ".mp4");
     }
 
     public void setValidDevices(List<String> deviceID) {

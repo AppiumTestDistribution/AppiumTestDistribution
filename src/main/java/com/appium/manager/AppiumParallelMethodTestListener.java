@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.annotation.values.MultiATDDriver;
 import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.CapabilityManager;
@@ -10,6 +11,7 @@ import com.appium.utils.Helpers;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import org.json.simple.parser.ParseException;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
@@ -25,6 +27,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -76,12 +79,13 @@ public final class AppiumParallelMethodTestListener extends Helpers
     }
 
     private boolean isCloudExecution() {
-        return AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
+        return AppiumDeviceManager.getAppiumDevices()
+            .stream().allMatch(device -> device.getDevice().isCloud());
     }
 
     private void startReportLogging(ITestResult iTestResult) throws IOException,
         InterruptedException {
-        testLogger.startLogging(iTestResult);
+        //testLogger.startLogging(iTestResult);
     }
 
     /*
@@ -97,33 +101,39 @@ public final class AppiumParallelMethodTestListener extends Helpers
         if (beforeTestAnnotation != null) {
             throw new RuntimeException("ATD will only support @BeforeMethod annotation.");
         }
-        if (beforeMethodAnnotation != null || AppiumDriverManager.getDriver() == null) {
+        allocateDeviceAndStartDriver(iTestResult);
+/*        if (beforeMethodAnnotation != null) {
             beforeCalled = true;
-            allocateDeviceAndStartDriver(iTestResult);
-        }
+        }*/
 
         if (!isCloudExecution()) {
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
-            if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
+/*            if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
                 .equalsIgnoreCase(annotation.platform())) {
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     HashMap<String, String> logs = new HashMap<>();
                     String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                    //sendResultsToAtdService(iTestResult, "Completed", url, logs);
                 }
                 throw new SkipException("Skipped because property was set to :::"
                     + annotation.platform());
-            }
+            }*/
         }
         new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
     }
 
     private void allocateDeviceAndStartDriver(ITestResult iTestResult) {
+        MultiATDDriver multiATDDriver = iTestResult.getMethod().getConstructorOrMethod()
+            .getMethod().getAnnotation(MultiATDDriver.class);
+        int numberOfMultiTestDrivers = 1;
+        if (multiATDDriver != null) {
+            numberOfMultiTestDrivers = multiATDDriver.devices();
+        }
         try {
             deviceAllocationManager.allocateDevice(deviceAllocationManager
-                .getNextAvailableDevice());
+                .getNextAvailableDevice(numberOfMultiTestDrivers));
             appiumDriverManager.startAppiumDriverInstance();
             if (!isCloudExecution()) {
                 startReportLogging(iTestResult);
@@ -147,22 +157,20 @@ public final class AppiumParallelMethodTestListener extends Helpers
             afterMethod = true;
             try {
                 if (!isCloudExecution() && !isRetry(iTestResult)) {
-                    HashMap<String, String> logs = testLogger.endLogging(iTestResult,
-                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                    //HashMap<String, String> logs = testLogger.endLogging(iTestResult);
                     if (atdHost.isPresent() && atdPort.isPresent()) {
                         String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                        sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                        //sendResultsToAtdService(iTestResult, "Completed", url, logs);
                     } else {
-                        new FileFilterParser()
-                            .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-                                .getDevice().getUdid(), iTestResult);
-                        testResults.set(logs);
+//                        new FileFilterParser()
+//                            .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
+//                                .getDevice().getUdid(), iTestResult);
+//                        testResults.set(logs);
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                AppiumDriverManager.getDriver().quit();
                 deviceAllocationManager.freeDevice();
                 try {
                     if (!isCloudExecution()) {
@@ -220,7 +228,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             if (retryCount == null && (atdHost.isPresent() && atdPort.isPresent())) {
                 HashMap<String, String> logs = new HashMap<>();
                 String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                //sendResultsToAtdService(iTestResult, "Completed", url, logs);
             }
         }
 

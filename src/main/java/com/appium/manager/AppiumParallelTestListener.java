@@ -1,6 +1,5 @@
 package com.appium.manager;
 
-import com.annotation.values.Author;
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.DevicesByHost;
@@ -74,18 +73,17 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         JSONObject json = new JSONObject();
-        json.put("id", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-        json.put("version", new AppiumDeviceManager().getDeviceVersion());
-        json.put("platform", AppiumDeviceManager.getMobilePlatform());
-        json.put("model", new AppiumDeviceManager().getDeviceModel());
+//        json.put("id", AppiumDeviceManager.getAppiumDevices().getDevice().getUdid());
+//        json.put("version", new AppiumDeviceManager().getDeviceVersion());
+//        json.put("platform", AppiumDeviceManager.getMobilePlatform());
+//        json.put("model", new AppiumDeviceManager().getDeviceModel());
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
-                HashMap<String, String> logs = testLogger.endLogging(testResult,
-                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                HashMap<String, String> logs = testLogger.endLogging(testResult);
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
+                    //sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
                 }
             }
             if (method.isTestMethod()) {
@@ -132,7 +130,7 @@ public final class AppiumParallelTestListener extends Helpers
             String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
             DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
             AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
-            deviceAllocationManager.allocateDevice(appiumDevice);
+            //deviceAllocationManager.allocateDevice(appiumDevice);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,7 +181,7 @@ public final class AppiumParallelTestListener extends Helpers
     public void onTestSkipped(ITestResult iTestResult) {
         if (atdHost.isPresent() && atdPort.isPresent()) {
             String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-            sendResultsToAtdService(iTestResult, "Skipped", url, new HashMap<>());
+            //sendResultsToAtdService(iTestResult, "Skipped", url, new HashMap<>());
         }
     }
 

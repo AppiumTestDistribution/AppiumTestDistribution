@@ -1,6 +1,7 @@
 package com.test.site;
 
 import com.annotation.values.Author;
+import com.annotation.values.MultiATDDriver;
 import com.annotation.values.RetryCount;
 
 import com.annotation.values.SkipIf;
@@ -26,31 +27,12 @@ import java.util.concurrent.TimeUnit;
 public class SliderTest extends UserBaseTest {
 
 
-
-    @BeforeMethod
-    public void beforeMethod() {
-        System.out.println("In Before Slider Method"
-            + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-    }
-
-
-    @AfterMethod
-    public void afterMethod() {
-        System.out.println("In After Slider Method"
-            + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-    }
-
-
     @Test
+    @MultiATDDriver(devices = 2)
     public void dragNDrop() {
         login("login").click();
-        waitForElement("dragAndDrop").click();
-        new WebDriverWait(driver, 30)
-            .until(ExpectedConditions
-                .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
-
     }
-
+/*
     @Test
     public void dragNDropNew() {
         login("login").click();
@@ -59,5 +41,5 @@ public class SliderTest extends UserBaseTest {
             .until(ExpectedConditions
                 .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
 
-    }
+    }*/
 }

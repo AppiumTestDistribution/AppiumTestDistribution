@@ -30,7 +30,7 @@ public class LocalAppiumManager implements IAppiumManager {
     private static final Logger LOGGER = Logger.getLogger(LocalAppiumManager.class.getSimpleName());
 
     private static void setAppiumDriverLocalService(
-            AppiumDriverLocalService appiumDriverLocalService) {
+        AppiumDriverLocalService appiumDriverLocalService) {
         LocalAppiumManager.appiumDriverLocalService = appiumDriverLocalService;
     }
 
@@ -58,18 +58,18 @@ public class LocalAppiumManager implements IAppiumManager {
         LOGGER.info(LOGGER.getName() + "Starting Appium Server on Localhost");
         AppiumDriverLocalService appiumDriverLocalService;
         AppiumServiceBuilder builder =
-                getAppiumServerBuilder(host)
-                        .withLogFile(new File(
-                                System.getProperty("user.dir")
-                                        + FileLocations.APPIUM_LOGS_DIRECTORY
-                                        + "appium_logs.txt"))
-                        .withIPAddress(host)
-                        .withArgument(GeneralServerFlag.RELAXED_SECURITY)
-                        .usingAnyFreePort();
+            getAppiumServerBuilder(host)
+                .withLogFile(new File(
+                    System.getProperty("user.dir")
+                        + FileLocations.APPIUM_LOGS_DIRECTORY
+                        + "appium_logs.txt"))
+                .withIPAddress(host)
+                .withArgument(GeneralServerFlag.RELAXED_SECURITY)
+                .usingAnyFreePort();
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
         LOGGER.info(LOGGER.getName() + "Appium Server Started at......"
-                + appiumDriverLocalService.getUrl());
+            + appiumDriverLocalService.getUrl());
         setAppiumDriverLocalService(appiumDriverLocalService);
     }
 
@@ -77,15 +77,15 @@ public class LocalAppiumManager implements IAppiumManager {
     public List<Device> getDevices(String machineIP, String platform) throws Exception {
         List<Device> devices = new ArrayList<>();
         if (platform.equalsIgnoreCase(OSType.ANDROID.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
+            || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             devices.addAll(new AndroidManager().getDevices());
         }
         if (platform.equalsIgnoreCase(OSType.iOS.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
+            || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             if (CapabilityManager.getInstance().isApp()) {
                 if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
                     devices.addAll(new SimulatorManager()
-                            .getAllBootedSimulators(OSType.iOS.name()));
+                        .getAllBootedSimulators(OSType.iOS.name()));
                 }
                 if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
                     devices.addAll(new IOSManager().getDevices());
@@ -99,7 +99,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public Device getSimulator(String machineIP, String deviceName, String os)
-            throws IOException, InterruptedException {
+        throws IOException, InterruptedException {
         return new SimulatorManager().getDevice(deviceName, os, OSType.iOS.name());
     }
 
@@ -114,23 +114,22 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public int startIOSWebKitProxy(String host) throws Exception {
-        int port = getAvailablePort(host);
-        String webkitRunner = "ios_webkit_debug_proxy -c "
-                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                + ":" + port;
-        String process = Runtime.getRuntime().exec(webkitRunner).toString();
-        AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(process);
-        return port;
+//        int port = getAvailablePort(host);
+//        String webkitRunner = "ios_webkit_debug_proxy -c "
+//                + AppiumDeviceManager.getAppiumDevices().getDevice().getUdid()
+//                + ":" + port;
+//        String process = Runtime.getRuntime().exec(webkitRunner).toString();
+//        AppiumDeviceManager.getAppiumDevices().setWebkitProcessID(process);
+        return 1;
     }
 
     @Override
-    public void destoryIOSWebKitProxy(String host) throws Exception {
-        if (AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
-            String command = "kill -9 " + AppiumDeviceManager
-                    .getAppiumDevice().getWebkitProcessID();
+    public void destoryIOSWebKitProxy(String host, AppiumDevice device) throws Exception   {
+        if (device.getWebkitProcessID() != null) {
+            String command = "kill -9 " + device.getWebkitProcessID();
             LOGGER.info("Kills webkit proxy" + "******************" + command);
             Runtime.getRuntime().exec(command);
-            AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
+            device.setWebkitProcessID(null);
         }
     }
 
@@ -145,9 +144,9 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host)
-            throws Exception {
+        throws Exception {
         return new AppiumServiceBuilder().withAppiumJS(
-                new File(CapabilityManager.getInstance().getAppiumServerPath(host)));
+            new File(CapabilityManager.getInstance().getAppiumServerPath(host)));
     }
 
     private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath() {

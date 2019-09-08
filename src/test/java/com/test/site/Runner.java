@@ -17,8 +17,8 @@ public class Runner {
         System.out.println(deviceList);*/
         List<String> tests = new ArrayList<>();
         //tests.add("HomePageTest2");
-        //tests.add("SliderTest");
-        tests.add("DragnDropTest");
+        tests.add("SliderTest");
+        //tests.add("DragnDropTest");
         tests.add("SliderTest");
         ATDRunner atdRunner = new ATDRunner();
         boolean hasFailures = atdRunner.runner("com.test.site",tests);
