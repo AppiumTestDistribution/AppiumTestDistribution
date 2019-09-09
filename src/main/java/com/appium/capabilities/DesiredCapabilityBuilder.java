@@ -19,6 +19,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -32,7 +33,10 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     private AvailablePorts availablePorts;
     private List<AppiumDevice> appiumDevices;
 
-    public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
+    public static ThreadLocal<List<DesiredCapabilities>> desiredCapabilitiesThreadLocal
+        = new ThreadLocal<>();
+
+    public static ThreadLocal<DesiredCapabilities> desiredCapabilitieThreadLocal
         = new ThreadLocal<>();
 
     public DesiredCapabilityBuilder() {
@@ -40,29 +44,37 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         availablePorts = new AvailablePorts();
     }
 
-    public static DesiredCapabilities getDesiredCapability() {
+    public static List<DesiredCapabilities> getDesiredCapabilities() {
         return desiredCapabilitiesThreadLocal.get();
+    }
+
+    public static DesiredCapabilities getDesiredCapability() {
+        return desiredCapabilitieThreadLocal.get();
     }
 
     public void buildDesiredCapability(String jsonPath) throws Exception {
         appiumDevices = AppiumDeviceManager.getAppiumDevices();
+        List<DesiredCapabilities> capabilities = new ArrayList<>();
         for (AppiumDevice appiumDevice : appiumDevices) {
             int port = appiumDevice.getPort();
             String platform = appiumDevice.getDevice().getOs();
             boolean isCloud = appiumDevice.getDevice().isCloud();
             DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
             if (isCloud) {
-                desiredCapabilityForCloud(platform, jsonPath, desiredCapabilities, appiumDevice);
+                desiredCapabilities = desiredCapabilityForCloud(platform, jsonPath,
+                    desiredCapabilities, appiumDevice);
             } else {
-                desiredCapabilityForLocalAndRemoteATD(platform, jsonPath, port, desiredCapabilities, appiumDevice);
-
+                desiredCapabilities = desiredCapabilityForLocalAndRemoteATD(platform, jsonPath,
+                    port, desiredCapabilities, appiumDevice);
             }
+            capabilities.add(desiredCapabilities);
         }
+        desiredCapabilitiesThreadLocal.set(capabilities);
     }
 
-    private void desiredCapabilityForCloud(String platform, String jsonPath,
-                                           DesiredCapabilities desiredCapabilities,
-                                           AppiumDevice appiumDevice) {
+    private DesiredCapabilities desiredCapabilityForCloud(String platform, String jsonPath,
+                                                          DesiredCapabilities desiredCapabilities,
+                                                          AppiumDevice appiumDevice) {
         JSONObject platFormCapabilities = new JsonParser(jsonPath).getObjectFromJSON()
             .getJSONObject(platform);
         platFormCapabilities.keySet().forEach(key -> {
@@ -77,8 +89,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             appiumDevice.getDevice().getOsVersion());
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
             appiumDevice.getDevice().getOsVersion());
-        desiredCapabilitiesThreadLocal.set(desiredCapabilities);
-
+        return desiredCapabilities;
     }
 
     private void capabilityObject(DesiredCapabilities desiredCapabilities,
@@ -103,11 +114,11 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         }
     }
 
-    private void desiredCapabilityForLocalAndRemoteATD(String platform,
-                                                       String jsonPath,
-                                                       int port,
-                                                       DesiredCapabilities desiredCapabilities,
-                                                       AppiumDevice device)
+    private DesiredCapabilities desiredCapabilityForLocalAndRemoteATD(String platform,
+                                                                      String jsonPath,
+                                                                      int port,
+                                                                      DesiredCapabilities desiredCapabilities,
+                                                                      AppiumDevice device)
         throws Exception {
         JSONObject platFormCapabilities = new JsonParser(jsonPath).getObjectFromJSON()
             .getJSONObject(platform);
@@ -127,7 +138,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         });
 
         if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid()).equals(MobilePlatform.ANDROID)) {
-            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,"android");
+            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "android");
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                 port);
             appPackage(desiredCapabilities);
@@ -157,7 +168,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
             device.getDevice().getUdid());
-        desiredCapabilitiesThreadLocal.set(desiredCapabilities);
+        return desiredCapabilities;
     }
 
     private String hostAppPath(Object values, List<HostArtifact> hostArtifacts, AppiumDevice device) {
@@ -171,11 +182,11 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         String appPath = hostArtifact.getArtifactPath("APK");
         if (values instanceof JSONObject) {
             if (!device
-                    .getDevice().isCloud()) {
+                .getDevice().isCloud()) {
                 int length = device
-                        .getDevice()
-                        .getUdid()
-                        .length();
+                    .getDevice()
+                    .getUdid()
+                    .length();
                 if (length == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
                     appPath = hostArtifact.getArtifactPath("APP");
                 } else if (length == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
@@ -183,10 +194,10 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                 }
             } else {
                 if (isEmpty(appPath) || (((JSONObject) values).has("simulator")
-                                          || ((JSONObject) values).has("device"))) {
+                    || ((JSONObject) values).has("device"))) {
                     appPath = hostArtifact.getArtifactPath(((JSONObject) values)
-                            .has("simulator")
-                            ? "APP" : "IPA");
+                        .has("simulator")
+                        ? "APP" : "IPA");
                 }
             }
         }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class AppiumDriverManager {
     private static ThreadLocal<List<AppiumDriver<MobileElement>>> appiumDrivers
@@ -51,14 +52,17 @@ public class AppiumDriverManager {
     }
 
     private List<AppiumDriver<MobileElement>> initialiseDriver(
-        Optional<DesiredCapabilities> capabilities)
-        throws Exception {
+        Optional<List<DesiredCapabilities>> capabilities) {
         List<AppiumDriver<MobileElement>> driverSessions = new ArrayList<>();
-        DesiredCapabilities desiredCapabilities = capabilities.get();
+        List<DesiredCapabilities> desiredCapabilities = capabilities.get();
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
 
-        appiumDevices.parallelStream().forEachOrdered(appiumDevice -> {
+        appiumDevices.parallelStream().forEach(appiumDevice -> {
+            DesiredCapabilities dc = desiredCapabilities.stream().filter(cap ->
+                cap.getCapability("udid")
+                    .equals(appiumDevice.getDevice().getUdid())).findAny()                                      // If 'findAny' then return found
+                .orElse(null);
             String remoteWDHubIP = null;
             try {
                 remoteWDHubIP = getRemoteWDHubIP(appiumDevice);
@@ -70,7 +74,7 @@ public class AppiumDriverManager {
                 && appiumDevice.getDevice().getOs().equalsIgnoreCase("iOS")) {
                 try {
                     driverSession = new IOSDriver(new URL(remoteWDHubIP),
-                        desiredCapabilities);
+                        dc);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
@@ -81,7 +85,7 @@ public class AppiumDriverManager {
                 && appiumDevice.getDevice().getOs().equalsIgnoreCase("android")) {
                 try {
                     driverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                        desiredCapabilities);
+                        dc);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
@@ -90,8 +94,8 @@ public class AppiumDriverManager {
                     + driverSession.getSessionDetail("udid"));
             } else {
                 try {
-                    driverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                        desiredCapabilities);
+                    driverSession = new AppiumDriver(new URL(remoteWDHubIP),
+                        dc);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
@@ -112,7 +116,7 @@ public class AppiumDriverManager {
         return appiumManager.getRemoteWDHubIP(hostName);
     }
 
-    private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
+    private void startAppiumDriverInstance(Optional<List<DesiredCapabilities>> desiredCapabilities)
         throws Exception {
         List<AppiumDriver<MobileElement>> currentDriverSession;
         // TODO use parallel stream to start session
@@ -123,7 +127,7 @@ public class AppiumDriverManager {
     // Should be used by Cucumber as well
     public void startAppiumDriverInstance() throws Exception {
         String userSpecifiedCaps;
-        DesiredCapabilities desiredCapabilities;
+        List<DesiredCapabilities> desiredCapabilities;
         userSpecifiedCaps = getCapsPath();
         desiredCapabilities = buildDesiredCapabilities(userSpecifiedCaps);
         startAppiumDriverInstance(Optional.ofNullable(desiredCapabilities));
@@ -138,7 +142,7 @@ public class AppiumDriverManager {
         }
     }
 
-    private DesiredCapabilities buildDesiredCapabilities(String capabilityPath)
+    private List<DesiredCapabilities> buildDesiredCapabilities(String capabilityPath)
         throws Exception {
         String capabilities = capabilityPath;
         if (new File(capabilityPath).exists()) {
@@ -149,7 +153,7 @@ public class AppiumDriverManager {
             }
             desiredCapabilityBuilder
                 .buildDesiredCapability(capabilities);
-            return DesiredCapabilityBuilder.getDesiredCapability();
+            return DesiredCapabilityBuilder.getDesiredCapabilities();
         } else {
             throw new RuntimeException("Capability file not found");
         }
