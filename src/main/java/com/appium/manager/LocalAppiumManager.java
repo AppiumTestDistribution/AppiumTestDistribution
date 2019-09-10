@@ -114,12 +114,12 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public int startIOSWebKitProxy(String host) throws Exception {
-//        int port = getAvailablePort(host);
-//        String webkitRunner = "ios_webkit_debug_proxy -c "
-//                + AppiumDeviceManager.getAppiumDevices().getDevice().getUdid()
-//                + ":" + port;
-//        String process = Runtime.getRuntime().exec(webkitRunner).toString();
-//        AppiumDeviceManager.getAppiumDevices().setWebkitProcessID(process);
+        /*int port = getAvailablePort(host);
+        String webkitRunner = "ios_webkit_debug_proxy -c "
+                + AppiumDeviceManager.getAppiumDevices().getDevice().getUdid()
+                + ":" + port;
+        String process = Runtime.getRuntime().exec(webkitRunner).toString();
+        AppiumDeviceManager.getAppiumDevices().setWebkitProcessID(process);*/
         return 1;
     }
 

@@ -280,7 +280,7 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
 
     @SuppressWarnings("checkstyle:CommentsIndentation")
     public void attachScreenShotToReport(String stepName) throws IOException {
-/*        String platform = null;
+        /*String platform = null;
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             platform = "android";
         } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {

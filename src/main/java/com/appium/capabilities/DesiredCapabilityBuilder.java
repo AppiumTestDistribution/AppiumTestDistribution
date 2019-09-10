@@ -114,11 +114,12 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         }
     }
 
-    private DesiredCapabilities desiredCapabilityForLocalAndRemoteATD(String platform,
-                                                                      String jsonPath,
-                                                                      int port,
-                                                                      DesiredCapabilities desiredCapabilities,
-                                                                      AppiumDevice device)
+    private DesiredCapabilities desiredCapabilityForLocalAndRemoteATD(
+        String platform,
+        String jsonPath,
+        int port,
+        DesiredCapabilities desiredCapabilities,
+        AppiumDevice device)
         throws Exception {
         JSONObject platFormCapabilities = new JsonParser(jsonPath).getObjectFromJSON()
             .getJSONObject(platform);
@@ -137,12 +138,14 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             capabilityObject(desiredCapabilities, platFormCapabilities, key, device);
         });
 
-        if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid()).equals(MobilePlatform.ANDROID)) {
+        if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid())
+            .equals(MobilePlatform.ANDROID)) {
             desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "android");
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                 port);
             appPackage(desiredCapabilities);
-        } else if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid()).equals(MobilePlatform.IOS)) {
+        } else if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid())
+            .equals(MobilePlatform.IOS)) {
             appPackageBundle(desiredCapabilities);
             //Check if simulator.json exists and add the deviceName and OS
             if (device.getDevice().getUdid().length()
@@ -171,7 +174,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         return desiredCapabilities;
     }
 
-    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts, AppiumDevice device) {
+    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts,
+                               AppiumDevice device) {
         HostArtifact hostArtifact;
         hostArtifact = hostArtifacts.stream().filter(s ->
             s.getHost()

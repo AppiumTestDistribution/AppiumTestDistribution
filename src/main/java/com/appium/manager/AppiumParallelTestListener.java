@@ -20,6 +20,7 @@ import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -72,11 +73,11 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        JSONObject json = new JSONObject();
-//        json.put("id", AppiumDeviceManager.getAppiumDevices().getDevice().getUdid());
-//        json.put("version", new AppiumDeviceManager().getDeviceVersion());
-//        json.put("platform", AppiumDeviceManager.getMobilePlatform());
-//        json.put("model", new AppiumDeviceManager().getDeviceModel());
+        /*JSONObject json = new JSONObject();
+        json.put("id", AppiumDeviceManager.getAppiumDevices().getDevice().getUdid());
+        json.put("version", new AppiumDeviceManager().getDeviceVersion());
+        json.put("platform", AppiumDeviceManager.getMobilePlatform());
+        json.put("model", new AppiumDeviceManager().getDeviceModel());*/
         try {
             if (testResult.getStatus() == ITestResult.SUCCESS
                     || testResult.getStatus() == ITestResult.FAILURE) {
@@ -130,7 +131,7 @@ public final class AppiumParallelTestListener extends Helpers
             String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
             DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
             AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
-            //deviceAllocationManager.allocateDevice(appiumDevice);
+            deviceAllocationManager.allocateDevice(Collections.singletonList(appiumDevice));
         } catch (Exception e) {
             e.printStackTrace();
         }

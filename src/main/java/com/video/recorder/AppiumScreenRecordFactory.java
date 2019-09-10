@@ -9,13 +9,15 @@ import java.io.IOException;
 
 public class AppiumScreenRecordFactory {
     private static AndroidDeviceConfiguration androidDeviceConfiguration
-            = new AndroidDeviceConfiguration();
+        = new AndroidDeviceConfiguration();
 
-    public static IScreenRecord recordScreen(AppiumDevice device) throws IOException, InterruptedException {
-        if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid()).equals(MobilePlatform.ANDROID)) {
+    public static IScreenRecord recordScreen(AppiumDevice device)
+        throws IOException, InterruptedException {
+        if (AppiumDeviceManager.getMobilePlatform(device.getDevice().getUdid())
+            .equals(MobilePlatform.ANDROID)) {
             if (androidDeviceConfiguration.getDeviceManufacturer(device)
-                    .equals("unknown") && !androidDeviceConfiguration
-                    .checkIfRecordable(device)) {
+                .equals("unknown") && !androidDeviceConfiguration
+                .checkIfRecordable(device)) {
                 return new Flick();
             }
         }

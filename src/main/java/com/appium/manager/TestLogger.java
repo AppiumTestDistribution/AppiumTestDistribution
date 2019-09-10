@@ -30,6 +30,8 @@ class TestLogger extends Helpers {
     private ScreenShotManager screenShotManager;
     private String videoPath;
     private List<AppiumDevice> appiumDevices;
+    private static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
+
 
     private String getVideoPath() {
         return videoPath;
@@ -64,33 +66,32 @@ class TestLogger extends Helpers {
                     .recordScreen(appiumDevice);
                 videoRecording.startVideoRecording(className, methodName, methodName, appiumDevice);
             }
-            setDescription(iTestResult);
+            setDescription(iTestResult, appiumDevice);
         }
     }
 
-    private void setDescription(ITestResult iTestResult) {
-//        Optional<String> originalDescription = Optional.ofNullable(iTestResult
-//            .getMethod().getDescription());
-//        String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-//            + " UDID: " + AppiumDeviceManager.getAppiumDevices()
-//            .getDevice().getUdid()
-//            + " Name: " + AppiumDeviceManager.getAppiumDevices()
-//            .getDevice().getName()
-//            + " Host: " + AppiumDeviceManager.getAppiumDevices().getHostName();
-//        Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
-//            .getAnnotation(Author.class);
-//        if (annotation != null) {
-//            description += "\nAuthor: " + annotation.name();
-//        }
-//        if (originalDescription.isPresent()
-//            && !originalDescription.get()
-//            .contains(AppiumDeviceManager.getAppiumDevices()
-//                .getDevice().getUdid())) {
-//            iTestResult.getMethod().setDescription(originalDescription.get()
-//                + "\n" + description);
-//        } else {
-//            iTestResult.getMethod().setDescription(description);
-//        }
+    private void setDescription(ITestResult iTestResult, AppiumDevice appiumDevice) {
+        Optional<String> originalDescription = Optional.ofNullable(iTestResult
+            .getMethod().getDescription());
+        String description = "Platform: " + AppiumDeviceManager
+            .getMobilePlatform(appiumDevice.getDevice().getUdid())
+            + " UDID: " + appiumDevice.getDevice().getUdid()
+            + " Name: " + appiumDevice
+            .getDevice().getName()
+            + " Host: " + appiumDevice.getHostName();
+        Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+            .getAnnotation(Author.class);
+        if (annotation != null) {
+            description += "\nAuthor: " + annotation.name();
+        }
+        if (originalDescription.isPresent()
+            && !originalDescription.get()
+            .contains(appiumDevice.getDevice().getUdid())) {
+            iTestResult.getMethod().setDescription(originalDescription.get()
+                + "\n" + description);
+        } else {
+            iTestResult.getMethod().setDescription(description);
+        }
     }
 
     protected HashMap<String, String> endLogging(ITestResult result)
@@ -99,6 +100,18 @@ class TestLogger extends Helpers {
         String className = result.getInstance().getClass().getSimpleName();
         List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
         for (AppiumDevice appiumDevice : appiumDevices) {
+
+            /*if (atdHost.isPresent() && atdPort.isPresent()) {
+                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                //sendResultsToAtdService(iTestResult, "Completed", url, logs);
+            } else {
+                new FileFilterParser()
+                    .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
+                        .getDevice().getUdid(), iTestResult);
+                testResults.set(logs);
+            }*/
+
+
             String deviceModel = appiumDevice.getDevice().getDeviceModel();
             stopViewRecording(result, className, appiumDevice);
             if (isNativeAndroid(appiumDevice.getDevice().getUdid())) {

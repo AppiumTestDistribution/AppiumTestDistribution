@@ -5,13 +5,13 @@ import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.GenyMotionManager;
-import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
 import org.json.simple.parser.ParseException;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
@@ -35,17 +35,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class AppiumParallelMethodTestListener extends Helpers
     implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
-    private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
     private AppiumDriverManager appiumDriverManager;
     private Optional<String> atdHost;
     private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
-    private static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
 
     public AppiumParallelMethodTestListener() {
-        testLogger = new TestLogger();
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
@@ -93,7 +90,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        boolean beforeCalled = false;
         BeforeMethod beforeMethodAnnotation = iInvokedMethod.getTestMethod()
             .getConstructorOrMethod().getMethod().getAnnotation(BeforeMethod.class);
         BeforeTest beforeTestAnnotation = iInvokedMethod.getTestMethod()
@@ -102,24 +98,27 @@ public final class AppiumParallelMethodTestListener extends Helpers
             throw new RuntimeException("ATD will only support @BeforeMethod annotation.");
         }
         allocateDeviceAndStartDriver(iTestResult);
-/*        if (beforeMethodAnnotation != null) {
-            beforeCalled = true;
+
+        /*if (beforeMethodAnnotation != null) {
         }*/
 
         if (!isCloudExecution()) {
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
-/*            if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
-                .equalsIgnoreCase(annotation.platform())) {
-                if (atdHost.isPresent() && atdPort.isPresent()) {
-                    HashMap<String, String> logs = new HashMap<>();
-                    String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    //sendResultsToAtdService(iTestResult, "Completed", url, logs);
+            if (annotation != null) {
+                List<AppiumDriver<MobileElement>> drivers = AppiumDriverManager.getDrivers();
+                if (!(drivers.size() > 1)) {
+                    // TODO check for driver to skip
+                    if (atdHost.isPresent() && atdPort.isPresent()) {
+                        HashMap<String, String> logs = new HashMap<>();
+                        String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                        //sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                    }
+                    throw new SkipException("Skipped because property was set to :::"
+                        + annotation.platform());
                 }
-                throw new SkipException("Skipped because property was set to :::"
-                    + annotation.platform());
-            }*/
+            }
         }
         new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
     }
@@ -150,23 +149,12 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        boolean afterMethod = false;
         Test annotation = iInvokedMethod.getTestMethod()
             .getConstructorOrMethod().getMethod().getAnnotation(Test.class);
         if (annotation != null) {
-            afterMethod = true;
             try {
                 if (!isCloudExecution() && !isRetry(iTestResult)) {
-                    //HashMap<String, String> logs = testLogger.endLogging(iTestResult);
-                    if (atdHost.isPresent() && atdPort.isPresent()) {
-                        String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                        //sendResultsToAtdService(iTestResult, "Completed", url, logs);
-                    } else {
-//                        new FileFilterParser()
-//                            .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-//                                .getDevice().getUdid(), iTestResult);
-//                        testResults.set(logs);
-                    }
+                    // HashMap<String, String> logs = testLogger.endLogging(iTestResult);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
