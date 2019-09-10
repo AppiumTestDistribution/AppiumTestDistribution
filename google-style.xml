@@ -32,7 +32,6 @@
     <module name="TreeWalker">
         <module name="OuterTypeFilename"/>
         <!-- Make the @SuppressWarnings annotations available to Checkstyle -->
-        <module name="SuppressWarningsHolder"/>
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
             <property name="format"
