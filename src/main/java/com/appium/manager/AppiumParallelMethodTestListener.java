@@ -38,18 +38,12 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
     private AppiumDriverManager appiumDriverManager;
-    private Optional<String> atdHost;
-    private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
 
     public AppiumParallelMethodTestListener() {
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
-        atdHost = Optional.ofNullable(CapabilityManager.getInstance()
-            .getMongoDbHostAndPort().get("atdHost"));
-        atdPort = Optional.ofNullable(CapabilityManager.getInstance()
-            .getMongoDbHostAndPort().get("atdPort"));
     }
 
     /*
@@ -64,16 +58,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
         }
     }
 
-    /*
-     * Allocates Devices to each test method
-     * Instantiate Android or IOS Driver Instance
-     * Starts ADB, Video Logging
-     * Set Description for each test method with platform and UDID allocated to it.
-     */
-    @Override
-    public void onTestStart(ITestResult iTestResult) {
-
-    }
 
     private boolean isCloudExecution() {
         return AppiumDeviceManager.getAppiumDevices()
@@ -87,6 +71,10 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     /*
      * Skips execution based on platform
+     * Allocates Devices to each test method
+     * Instantiate Android or IOS Driver Instance
+     * Starts ADB, Video Logging
+     * Set Description for each test method with platform and UDID allocated to it.
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
@@ -97,10 +85,10 @@ public final class AppiumParallelMethodTestListener extends Helpers
         if (beforeTestAnnotation != null) {
             throw new RuntimeException("ATD will only support @BeforeMethod annotation.");
         }
-        allocateDeviceAndStartDriver(iTestResult);
 
-        /*if (beforeMethodAnnotation != null) {
-        }*/
+        if (beforeMethodAnnotation != null || AppiumDriverManager.getDrivers() == null) {
+            allocateDeviceAndStartDriver(iTestResult);
+        }
 
         if (!isCloudExecution()) {
             currentMethods.set(iInvokedMethod.getTestMethod());
@@ -110,11 +98,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 List<AppiumDriver<MobileElement>> drivers = AppiumDriverManager.getDrivers();
                 if (!(drivers.size() > 1)) {
                     // TODO check for driver to skip
-                    if (atdHost.isPresent() && atdPort.isPresent()) {
-                        HashMap<String, String> logs = new HashMap<>();
-                        String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                        //sendResultsToAtdService(iTestResult, "Completed", url, logs);
-                    }
                     throw new SkipException("Skipped because property was set to :::"
                         + annotation.platform());
                 }
@@ -188,55 +171,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
         }
     }
 
-    /*
-     * Document to make codacy happy
-     */
-    @Override
-    public void onTestSuccess(ITestResult iTestResult) {
-
-    }
-
-    /*
-     * Document to make codacy happy
-     */
-    @Override
-    public void onTestFailure(ITestResult iTestResult) {
-
-    }
-
-    /*
-     * Document to make codacy happy
-     */
-    @Override
-    public void onTestSkipped(ITestResult iTestResult) {
-        if (!isCloudExecution()) {
-            System.out.println("In Skipped...");
-            RetryCount retryCount = iTestResult.getMethod().getConstructorOrMethod()
-                .getMethod().getAnnotation(RetryCount.class);
-            if (retryCount == null && (atdHost.isPresent() && atdPort.isPresent())) {
-                HashMap<String, String> logs = new HashMap<>();
-                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                //sendResultsToAtdService(iTestResult, "Completed", url, logs);
-            }
-        }
-
-    }
-
-    /*
-     * Document to make codacy happy
-     */
-    @Override
-    public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
-
-    }
-
-    /*
-     * Document to make codacy happy
-     */
-    @Override
-    public void onStart(ITestContext iTestContext) {
-
-    }
 
     /*
      * Document to make codacy happy

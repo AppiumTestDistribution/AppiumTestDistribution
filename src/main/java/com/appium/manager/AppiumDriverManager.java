@@ -59,10 +59,23 @@ public class AppiumDriverManager {
         List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
 
         appiumDevices.parallelStream().forEach(appiumDevice -> {
-            DesiredCapabilities dc = desiredCapabilities.stream().filter(cap ->
-                cap.getCapability("udid")
-                    .equals(appiumDevice.getDevice().getUdid())).findAny()
-                .orElse(null);
+            Optional<DesiredCapabilities> found = Optional.empty();
+            for (DesiredCapabilities cap : desiredCapabilities) {
+                if (cap.getCapabilityNames().contains("udid")) {
+                    if (cap.getCapability("udid")
+                        .equals(appiumDevice.getDevice().getUdid())) {
+                        found = Optional.of(cap);
+                        break;
+                    }
+                } else if (cap.getCapability("deviceName")
+                    .equals(appiumDevice.getDevice().getName())) {
+                    found = Optional.of(cap);
+                    break;
+                }
+            }
+            DesiredCapabilities dc = found
+                .orElseGet(null);
+
             String remoteWDHubIP = null;
             try {
                 remoteWDHubIP = getRemoteWDHubIP(appiumDevice);
