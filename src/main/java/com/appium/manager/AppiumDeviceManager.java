@@ -34,4 +34,10 @@ public class AppiumDeviceManager {
             return MobilePlatform.ANDROID;
         }
     }
+
+    public static AppiumDevice getAppiumDevice(String uuid) {
+        return AppiumDeviceManager.getAppiumDevices().parallelStream().filter(device ->
+            device.getDevice().getUdid().equalsIgnoreCase(uuid)
+        ).collect(Collectors.toList()).get(0);
+    }
 }

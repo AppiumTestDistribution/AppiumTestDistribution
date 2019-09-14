@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class AppiumDriverManager {
     private static ThreadLocal<List<AppiumDriver<MobileElement>>> appiumDrivers

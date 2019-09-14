@@ -33,7 +33,6 @@ public class ScreenShotManager extends Helpers {
     private String failedScreen;
     private String framedFailedScreen;
     private String framedCapturedScreen;
-    private List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
 
 
     private String getFramedCapturedScreen() {
@@ -78,6 +77,8 @@ public class ScreenShotManager extends Helpers {
         String getDeviceModel = null;
         List<AppiumDriver<MobileElement>> drivers = AppiumDriverManager.getDrivers();
         for (AppiumDriver<MobileElement> driver : drivers) {
+            AppiumDevice device = AppiumDeviceManager.getAppiumDevice(driver
+                .getSessionDetails().get("udid").toString());
             if (driver.getSessionId() != null) {
                 System.out.println("Current Running Thread Status"
                     + driver.getSessionId());
@@ -85,14 +86,14 @@ public class ScreenShotManager extends Helpers {
                     .getScreenshotAs(OutputType.FILE);
                 screenShotNameWithTimeStamp = currentDateAndTime();
                 if (AppiumDeviceManager.getMobilePlatform(driver.getSessionDetails()
-                    .get("platform").toString().toUpperCase()).equals(MobilePlatform.ANDROID)) {
+                    .get("udid").toString().toUpperCase()).equals(MobilePlatform.ANDROID)) {
                     getDeviceModel = screenShotNameWithTimeStamp;
                     screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                        "android", deviceModel, screenShotName);
+                        "android", deviceModel, screenShotName, device);
                 } else {
                     getDeviceModel = screenShotNameWithTimeStamp;
                     screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
-                        "iOS", deviceModel, screenShotName);
+                        "iOS", deviceModel, screenShotName, device);
                 }
             }
         }
@@ -103,18 +104,19 @@ public class ScreenShotManager extends Helpers {
     public void captureScreenShot(String screenShotName) {
         String className = getCurrentTestClassName();
         String methodName = getCurrentTestMethodName();
-        String deviceModel = null;
-        for (AppiumDevice appiumDevice : appiumDevices) {
+        List<AppiumDevice> appiumDevices = AppiumDeviceManager.getAppiumDevices();
+
+        appiumDevices.forEach(appiumDevice -> {
+            String deviceModel = null;
             if (AppiumDeviceManager.getMobilePlatform(appiumDevice.getDevice()
-                .getOs().toUpperCase()).equals(MobilePlatform.ANDROID)) {
+                .getUdid()).equals(MobilePlatform.ANDROID)) {
                 deviceModel = new AndroidDeviceConfiguration().getDeviceModel(appiumDevice);
             } else if (AppiumDeviceManager.getMobilePlatform(appiumDevice.getDevice()
-                .getOs().toUpperCase()).equals(MobilePlatform.IOS)) {
+                .getUdid()).equals(MobilePlatform.IOS)) {
                 deviceModel = appiumDevice.getDevice().getDeviceModel();
             }
             captureScreenShot(1, className, screenShotName, methodName, deviceModel);
-        }
-
+        });
     }
 
 
@@ -129,85 +131,83 @@ public class ScreenShotManager extends Helpers {
                                     File scrFile, String methodName,
                                     String className, String model,
                                     String platform, String deviceModel,
-                                    String screenShotName) {
-        for (AppiumDevice device : appiumDevices) {
-            String udid = device.getDevice().getUdid();
-            setFailedScreen(
-                "screenshot/" + platform + "/" + udid
-                    + "/" + className + "/"
-                    + methodName + "/"
-                    + screenShotNameWithTimeStamp + "-"
-                    + screenShotName + "_failed" + ".jpeg");
-            setCapturedScreen(
-                "screenshot/" + platform + "/" + udid
-                    + "/" + className
-                    + "/" + methodName + "/"
-                    + screenShotNameWithTimeStamp + "-"
-                    + screenShotName + "_results.jpeg");
-
-            setFramedCapturedScreen("screenshot/" + platform + "/" + udid
+                                    String screenShotName, AppiumDevice device) {
+        String udid = device.getDevice().getUdid();
+        setFailedScreen(
+            "screenshot/" + platform + "/" + udid
+                + "/" + className + "/"
+                + methodName + "/"
+                + screenShotNameWithTimeStamp + "-"
+                + screenShotName + "_failed" + ".jpeg");
+        setCapturedScreen(
+            "screenshot/" + platform + "/" + udid
                 + "/" + className
                 + "/" + methodName + "/"
                 + screenShotNameWithTimeStamp + "-"
                 + screenShotName + "_results.jpeg");
-            setFramedFailedScreen(
-                "screenshot/" + platform + "/" + udid
-                    + "/" + className + "/" + methodName + "/"
-                    + screenShotNameWithTimeStamp + "-"
-                    + screenShotName + "_failed.jpeg");
 
-            try {
-                File framePath =
-                    new File(System.getProperty("user.dir")
-                        + "/src/test/resources/frames/");
-                if (status == ITestResult.FAILURE) {
-                    FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")
-                        + FileLocations.OUTPUT_DIRECTORY + getFailedScreen().trim()));
-                } else {
-                    String capturedScreenshotPath = System.getProperty("user.dir")
-                        + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen().trim();
-                    FileUtils.copyFile(scrFile, new File(capturedScreenshotPath));
-                }
+        setFramedCapturedScreen("screenshot/" + platform + "/" + udid
+            + "/" + className
+            + "/" + methodName + "/"
+            + screenShotNameWithTimeStamp + "-"
+            + screenShotName + "_results.jpeg");
+        setFramedFailedScreen(
+            "screenshot/" + platform + "/" + udid
+                + "/" + className + "/" + methodName + "/"
+                + screenShotNameWithTimeStamp + "-"
+                + screenShotName + "_failed.jpeg");
 
-                File[] files1 = framePath.listFiles();
-                if (framePath.exists()) {
-                    for (int i = 0; i < files1.length; i++) {
-                        if (files1[i].isFile()) {
-                            Path p = Paths.get(files1[i].toString());
-                            String fileName = p.getFileName().toString().toLowerCase();
-                            if (deviceModel.toLowerCase()
-                                .contains(fileName.split(".png")[0].toLowerCase())) {
-                                try {
-                                    if (status == ITestResult.FAILURE) {
-                                        String screenToFrame = System.getProperty("user.dir")
-                                            + FileLocations.OUTPUT_DIRECTORY + getFailedScreen();
-                                        imageUtils.wrapDeviceFrames(files1[i].toString(),
-                                            screenToFrame,
-                                            System.getProperty("user.dir")
-                                                + FileLocations.OUTPUT_DIRECTORY
-                                                + getFramedFailedScreen());
-                                    } else {
-                                        String screenToFrame = System.getProperty("user.dir")
-                                            + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen();
-                                        imageUtils.wrapDeviceFrames(files1[i].toString(),
-                                            screenToFrame,
-                                            System.getProperty("user.dir")
-                                                + FileLocations.OUTPUT_DIRECTORY
-                                                + getFramedCapturedScreen());
-                                    }
+        try {
+            File framePath =
+                new File(System.getProperty("user.dir")
+                    + "/src/test/resources/frames/");
+            if (status == ITestResult.FAILURE) {
+                FileUtils.copyFile(scrFile, new File(System.getProperty("user.dir")
+                    + FileLocations.OUTPUT_DIRECTORY + getFailedScreen().trim()));
+            } else {
+                String capturedScreenshotPath = System.getProperty("user.dir")
+                    + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen().trim();
+                FileUtils.copyFile(scrFile, new File(capturedScreenshotPath));
+            }
 
-                                    break;
-                                } catch (InterruptedException | IM4JavaException e) {
-                                    e.printStackTrace();
+            File[] files1 = framePath.listFiles();
+            if (framePath.exists()) {
+                for (int i = 0; i < files1.length; i++) {
+                    if (files1[i].isFile()) {
+                        Path p = Paths.get(files1[i].toString());
+                        String fileName = p.getFileName().toString().toLowerCase();
+                        if (deviceModel.toLowerCase()
+                            .contains(fileName.split(".png")[0].toLowerCase())) {
+                            try {
+                                if (status == ITestResult.FAILURE) {
+                                    String screenToFrame = System.getProperty("user.dir")
+                                        + FileLocations.OUTPUT_DIRECTORY + getFailedScreen();
+                                    imageUtils.wrapDeviceFrames(files1[i].toString(),
+                                        screenToFrame,
+                                        System.getProperty("user.dir")
+                                            + FileLocations.OUTPUT_DIRECTORY
+                                            + getFramedFailedScreen());
+                                } else {
+                                    String screenToFrame = System.getProperty("user.dir")
+                                        + FileLocations.OUTPUT_DIRECTORY + getCapturedScreen();
+                                    imageUtils.wrapDeviceFrames(files1[i].toString(),
+                                        screenToFrame,
+                                        System.getProperty("user.dir")
+                                            + FileLocations.OUTPUT_DIRECTORY
+                                            + getFramedCapturedScreen());
                                 }
+
+                                break;
+                            } catch (InterruptedException | IM4JavaException e) {
+                                e.printStackTrace();
                             }
                         }
                     }
                 }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

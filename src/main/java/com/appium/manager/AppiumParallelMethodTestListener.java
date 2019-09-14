@@ -39,8 +39,10 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private AppiumServerManager appiumServerManager;
     private AppiumDriverManager appiumDriverManager;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
+    TestLogger testLogger;
 
     public AppiumParallelMethodTestListener() {
+        testLogger = new TestLogger();
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
@@ -66,7 +68,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     private void startReportLogging(ITestResult iTestResult) throws IOException,
         InterruptedException {
-        //testLogger.startLogging(iTestResult);
+        testLogger.startLogging(iTestResult);
     }
 
     /*
@@ -137,7 +139,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
         if (annotation != null) {
             try {
                 if (!isCloudExecution() && !isRetry(iTestResult)) {
-                    // HashMap<String, String> logs = testLogger.endLogging(iTestResult);
+                    HashMap<String, String> logs = testLogger.endLogging(iTestResult);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

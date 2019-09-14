@@ -3,6 +3,7 @@ package com.appium.manager;
 import com.annotation.values.Author;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
+import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 import com.epam.reportportal.service.ReportPortal;
 import com.video.recorder.AppiumScreenRecordFactory;
@@ -171,6 +172,8 @@ class TestLogger extends Helpers {
                     }
                 }
             }
+            new FileFilterParser().getScreenShotPaths(
+                appiumDevice.getDevice().getUdid(), result);
 
         }
 
