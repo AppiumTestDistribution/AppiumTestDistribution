@@ -47,7 +47,6 @@ public class AppiumDriverManager {
         throws Exception {
         AppiumDriver currentDriverSession;
         DesiredCapabilities desiredCapabilities = capabilities.get();
-        LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String isChromDriverPath = (String) desiredCapabilities.getCapability(
                 AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
         boolean isPlatformAndroid = AppiumDeviceManager.getMobilePlatform().name()
@@ -58,6 +57,7 @@ public class AppiumDriverManager {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE,
                     pathForChromDriverForDevice);
         }
+        LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
         if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
             && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
