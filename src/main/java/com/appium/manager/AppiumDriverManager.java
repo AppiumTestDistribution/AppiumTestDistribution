@@ -1,20 +1,24 @@
 package com.appium.manager;
 
-import com.appium.entities.MobilePlatform;
+import com.appium.capabilities.DesiredCapabilityBuilder;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.ConfigFileManager;
-import com.appium.capabilities.DesiredCapabilityBuilder;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.remote.AndroidMobileCapabilityType;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -44,6 +48,16 @@ public class AppiumDriverManager {
         AppiumDriver currentDriverSession;
         DesiredCapabilities desiredCapabilities = capabilities.get();
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
+        String isChromDriverPath = (String) desiredCapabilities.getCapability(
+                AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
+        boolean isPlatformAndroid = AppiumDeviceManager.getMobilePlatform().name()
+                .equalsIgnoreCase("android");
+        if (isPlatformAndroid && (null == isChromDriverPath)) {
+            String udid = (String) desiredCapabilities.getCapability("udid");
+            String pathForChromDriverForDevice = getPathForChromeDriver(udid);
+            desiredCapabilities.setCapability(AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE,
+                    pathForChromDriverForDevice);
+        }
         String remoteWDHubIP = getRemoteWDHubIP();
         if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
             && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
@@ -53,7 +67,7 @@ public class AppiumDriverManager {
                 + currentDriverSession.getSessionId() + "---"
                 + currentDriverSession.getSessionDetail("udid"));
         } else if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("android")) {
+                && isPlatformAndroid) {
             currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
                 desiredCapabilities);
             LOGGER.info("Session Created for Android ---- "
@@ -70,6 +84,35 @@ public class AppiumDriverManager {
         }
 
         return currentDriverSession;
+    }
+
+    private String getPathForChromeDriver(String id) throws IOException {
+        int[] versionNamesArr = getChromeVersionsFor(id);
+        int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
+        String message = "ChromeDriver for Chrome version " + highestChromeVersion
+                + "on device: " + id;
+        LOGGER.info(message);
+        WebDriverManager.chromedriver().version(String.valueOf(highestChromeVersion)).setup();
+        return WebDriverManager.chromedriver().getBinaryPath();
+    }
+
+    private int[] getChromeVersionsFor(String id) throws IOException {
+        CommandPrompt cmd = new CommandPrompt();
+        String resultStdOut = cmd.runCommandThruProcess("adb -s " + id
+                + " shell dumpsys package com.android.chrome | grep versionName");
+        int[] versionNamesArr = {};
+        if (resultStdOut.contains("versionName=")) {
+            String[] foundVersions = resultStdOut.split("\n");
+            for (String foundVersion : foundVersions) {
+                String version = foundVersion.split("=")[1].split("\\.")[0];
+                String format = String.format("Found Chrome version - '%s' on - '%s'", version, id);
+                LOGGER.info(format);
+                versionNamesArr = ArrayUtils.add(versionNamesArr, Integer.parseInt(version));
+            }
+        } else {
+            LOGGER.info(String.format("Chrome not found on device - '%s'", id));
+        }
+        return versionNamesArr;
     }
 
     private String getRemoteWDHubIP() throws Exception {
