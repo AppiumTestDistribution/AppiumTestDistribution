@@ -89,7 +89,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        boolean beforeCalled = false;
         BeforeMethod beforeMethodAnnotation = iInvokedMethod.getTestMethod()
             .getConstructorOrMethod().getMethod().getAnnotation(BeforeMethod.class);
         BeforeTest beforeTestAnnotation = iInvokedMethod.getTestMethod()
@@ -97,8 +96,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
         if (beforeTestAnnotation != null) {
             throw new RuntimeException("ATD will only support @BeforeMethod annotation.");
         }
-        if (beforeMethodAnnotation != null || AppiumDriverManager.getDriver() == null) {
-            beforeCalled = true;
+        if (beforeMethodAnnotation != null) {
             allocateDeviceAndStartDriver(iTestResult);
         }
 
