@@ -59,7 +59,6 @@ jobs:
       displayName: 'start Android emulator'
 
     - script: |
-         mvn clean install -Dmaven.test.skip=true
          Platform='both' mvn clean -Dtest=Runner test
 
       displayName: 'Run Distribute on iOS and Android'
@@ -104,7 +103,6 @@ jobs:
       displayName: 'start Android emulator'
 
     - script: |
-         mvn clean install -Dmaven.test.skip=true
          Platform='both' RUNNER_LEVEL="parallel" mvn clean -Dtest=Runner test
 
       displayName: 'Run Parallel on iOS and Android'
@@ -120,7 +118,6 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         mvn clean install -Dmaven.test.skip=true
          Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
 
       displayName: 'Run Test on Sauce on iOS and Android'
@@ -136,7 +133,6 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         mvn clean install -Dmaven.test.skip=true
          Platform='android' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
 
       displayName: 'Run Test on Sauce on iOS and Android'
@@ -152,7 +148,6 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         mvn clean install -Dmaven.test.skip=true
          Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test
 
       displayName: 'Run Test on Sauce on iOS and Android'
@@ -168,7 +163,6 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         mvn clean install -Dmaven.test.skip=true
          Platform='android' CLOUD_USER=$(user_bs) CLOUD_KEY=$(pass_bs) CONFIG_FILE='bs_config.properties' mvn clean -Dtest=Runner test
 
       displayName: 'Run Test on Sauce on iOS and Android'
@@ -198,7 +192,6 @@ jobs:
       displayName: 'Set Android Sdk Path'
 
     - script: |
-         mvn clean install -Dmaven.test.skip=true
          Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='gm_config.properties' mvn clean -Dtest=Runner test
 
       displayName: 'Run Test on Genymotion Android'
