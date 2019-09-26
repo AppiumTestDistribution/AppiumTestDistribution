@@ -19,9 +19,6 @@ import org.testng.ITestListener;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -72,7 +69,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onTestStart(ITestResult iTestResult) {
-
+        allocateDeviceAndStartDriver(iTestResult);
     }
 
     private boolean isCloudExecution() {
@@ -89,7 +86,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        allocateDeviceAndStartDriver(iTestResult);
         if (!isCloudExecution()) {
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
@@ -157,7 +153,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
         }
 
         SessionContext.remove(Thread.currentThread().getId());
-
     }
 
     /*
