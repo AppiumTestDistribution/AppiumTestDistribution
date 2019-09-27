@@ -204,6 +204,11 @@
             <version>1.0.2</version>
         </dependency>
         <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>8.24</version>
+        </dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20180813</version>
@@ -301,14 +306,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.0</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>[8.18,)</version>
-                    </dependency>
-                </dependencies>
+                <version>3.0.0</version>
                 <configuration>
                     <configLocation>${basedir}/google-style.xml</configLocation>
                     <encoding>UTF-8</encoding>
