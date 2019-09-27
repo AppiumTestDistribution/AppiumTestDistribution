@@ -15,7 +15,7 @@ jobs:
           versionSpec: '8.12.0'
 
       - script: |
-          mvn clean install -Dmaven.test.skip=true
+          mvn clean install -Dmaven.test.skip=true -Dgpg.skip
 
         displayName: 'Checkstyle'
 
