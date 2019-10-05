@@ -12,33 +12,8 @@ import org.testng.annotations.Test;
 
 public class DragnDropTest extends UserBaseTest {
 
-
-    @BeforeMethod
-    public void beforeMethod() {
-        System.out.println("In Before Drag Method"
-            + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-    }
-
-
-    @AfterMethod
-    public void afterMethod() {
-        System.out.println("In After Drag Method"
-            + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-    }
-
-
     @Test
     public void dragNDrop() {
-        login("login").click();
-        waitForElement("dragAndDrop").click();
-        new WebDriverWait(driver, 30)
-            .until(ExpectedConditions
-                .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
-
-    }
-
-    @Test
-    public void dragNDropNew() {
         login("login").click();
         waitForElement("dragAndDrop").click();
         new WebDriverWait(driver, 30)
