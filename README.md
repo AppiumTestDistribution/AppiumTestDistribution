@@ -48,7 +48,7 @@ Add the below dependencies in your pom.xml (Master)
     <dependency>
       <groupId>com.github.saikrishna321</groupId>
       <artifactId>AppiumTestDistribution</artifactId>
-      <version>11.0.0</version>
+      <version>11.0.1</version>
     </dependency>
    ```
 
