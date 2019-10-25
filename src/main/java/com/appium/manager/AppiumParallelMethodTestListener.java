@@ -28,7 +28,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
     private static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
-    List<ITestNGListener> listeners;
+    private List<ITestNGListener> listeners;
 
     public AppiumParallelMethodTestListener() {
         testLogger = new TestLogger();
@@ -96,7 +96,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
         }
         new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
 
-        queueMethodListeners(iInvokedMethod, iTestResult, listeners);
+        queueBeforeInvocationListeners(iInvokedMethod, iTestResult, listeners);
     }
 
     private void allocateDeviceAndStartDriver(ITestResult iTestResult) {
@@ -148,12 +148,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
         }
 
         SessionContext.remove(Thread.currentThread().getId());
-        for (ITestNGListener listener : listeners) {
-            //Lets filter out only IInvokedMethodListener instances.
-            if (listener instanceof IInvokedMethodListener) {
-                ((IInvokedMethodListener) listener).afterInvocation(iInvokedMethod, iTestResult);
-            }
-        }
+        queueAfterInvocationListener(iInvokedMethod, iTestResult, listeners);
     }
 
     /*

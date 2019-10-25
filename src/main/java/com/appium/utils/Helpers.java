@@ -42,13 +42,25 @@ public class Helpers {
         }
     }
 
-    protected void queueMethodListeners(IInvokedMethod iInvokedMethod,
-                                      ITestResult iTestResult,
-                                      List<ITestNGListener> listeners) {
+    protected void queueBeforeInvocationListeners(IInvokedMethod iInvokedMethod,
+                                                  ITestResult iTestResult,
+                                                  List<ITestNGListener> listeners) {
         for (ITestNGListener listener : listeners) {
             //Lets filter out only IInvokedMethodListener instances.
             if (listener instanceof IInvokedMethodListener) {
                 ((IInvokedMethodListener) listener).beforeInvocation(iInvokedMethod, iTestResult);
+            }
+        }
+    }
+
+
+    protected void queueAfterInvocationListener(IInvokedMethod iInvokedMethod,
+                                              ITestResult iTestResult,
+                                              List<ITestNGListener> listeners) {
+        for (ITestNGListener listener : listeners) {
+            //Lets filter out only IInvokedMethodListener instances.
+            if (listener instanceof IInvokedMethodListener) {
+                ((IInvokedMethodListener) listener).afterInvocation(iInvokedMethod, iTestResult);
             }
         }
     }
