@@ -1,6 +1,6 @@
 package com.appium.manager;
 
-import com.annotation.values.Author;
+
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.DevicesByHost;
@@ -9,11 +9,23 @@ import com.appium.device.HostMachineDeviceManager;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import org.json.JSONObject;
-import org.testng.*;
+
+import org.testng.IClassListener;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
+import org.testng.ITestContext;
+import org.testng.ITestClass;
+import org.testng.ITestListener;
+import org.testng.ITestNGMethod;
+import org.testng.ITestResult;
+import org.testng.SkipException;
+import org.testng.ITestNGListener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
