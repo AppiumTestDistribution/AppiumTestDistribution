@@ -12,14 +12,8 @@ import com.context.TestExecutionContext;
 import org.json.simple.parser.ParseException;
 import org.testng.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,7 +28,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
     private static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
-    private List<ITestNGListener> listeners = new LinkedList<>();
+    List<ITestNGListener> listeners;
 
     public AppiumParallelMethodTestListener() {
         testLogger = new TestLogger();
@@ -45,7 +39,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             .getMongoDbHostAndPort().get("atdHost"));
         atdPort = Optional.ofNullable(CapabilityManager.getInstance()
             .getMongoDbHostAndPort().get("atdPort"));
-        initialiseListeners();
+        listeners = initialiseListeners();
     }
 
     /*
@@ -102,12 +96,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
         }
         new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
 
-        for (ITestNGListener listener : listeners) {
-            //Lets filter out only IInvokedMethodListener instances.
-            if (listener instanceof IInvokedMethodListener) {
-                ((IInvokedMethodListener) listener).beforeInvocation(iInvokedMethod, iTestResult);
-            }
-        }
+        queueMethodListeners(iInvokedMethod, iTestResult, listeners);
     }
 
     private void allocateDeviceAndStartDriver(ITestResult iTestResult) {
@@ -244,42 +233,5 @@ public final class AppiumParallelMethodTestListener extends Helpers
         return checkNotNull(currentMethods.get(),
             "Did you forget to register the %s listener?",
             AppiumParallelMethodTestListener.class.getName());
-    }
-
-    private void initialiseListeners() {
-        String file = "META-INF/services/listeners.txt";
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(file)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                listeners.add(instantiate(line));
-            }
-        } catch (IOException e) {
-            throw new TestNGException(e);
-        }
-    }
-
-    private static InputStream getStream(String file) {
-        InputStream stream;
-        stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
-        if (stream == null) {
-            throw new IllegalStateException("Unable to locate the file " + file);
-        }
-        return stream;
-    }
-
-    private static ITestNGListener instantiate(String className) {
-        if (className == null || className.trim().isEmpty()) {
-            throw new IllegalArgumentException("Please provide a valid class name");
-        }
-        try {
-            Class<?> clazz = Class.forName(className);
-            if (!ITestNGListener.class.isAssignableFrom(clazz)) {
-                throw new IllegalArgumentException(className
-                    + " does not implement a TestNG listener");
-            }
-            return (ITestNGListener) clazz.newInstance();
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            throw new TestNGException(e);
-        }
     }
 }
