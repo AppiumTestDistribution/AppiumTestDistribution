@@ -175,6 +175,11 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 e.printStackTrace();
             }
         }
+        try {
+            appiumServerManager.stopAppiumServer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*
