@@ -16,8 +16,11 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Helpers {
+
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     protected String getRemoteAppiumManagerPort(String host) throws Exception {
         String serverPort = CapabilityManager.getInstance()
@@ -55,8 +58,8 @@ public class Helpers {
 
 
     protected void queueAfterInvocationListener(IInvokedMethod iInvokedMethod,
-                                              ITestResult iTestResult,
-                                              List<ITestNGListener> listeners) {
+                                                ITestResult iTestResult,
+                                                List<ITestNGListener> listeners) {
         for (ITestNGListener listener : listeners) {
             //Lets filter out only IInvokedMethodListener instances.
             if (listener instanceof IInvokedMethodListener) {
@@ -68,13 +71,16 @@ public class Helpers {
     protected List<ITestNGListener> initialiseListeners() {
         List<ITestNGListener> listeners = new LinkedList<>();
         String file = "META-INF/services/listeners.txt";
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(file)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                listeners.add(instantiate(line));
+        InputStream stream = getStream(file);
+        if (stream != null) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    listeners.add(instantiate(line));
+                }
+            } catch (IOException e) {
+                throw new TestNGException(e);
             }
-        } catch (IOException e) {
-            throw new TestNGException(e);
         }
         return listeners;
     }
@@ -83,7 +89,7 @@ public class Helpers {
         InputStream stream;
         stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
         if (stream == null) {
-            throw new IllegalStateException("Unable to locate the file " + file);
+            LOGGER.info("Custom Listener not found!!");
         }
         return stream;
     }
