@@ -167,32 +167,32 @@ jobs:
 
       displayName: 'Run Test on Sauce on iOS and Android'
 
-  - job: Genymotion
-    pool:
-      vmImage: 'macOS 10.13'
-
-
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '8.12.0'
-
-    - script: |
-        node -v
-        npm install -g appium@beta
-        appium -v
-      displayName: 'Install Appium'
-
-    - bash: |
-        pip3 install gmsaas
-      displayName: 'Download Genymotion Installer'
-
-    - bash: |
-        gmsaas config set android-sdk-path $ANDROID_HOME
-      displayName: 'Set Android Sdk Path'
-
-    - script: |
-         Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='gm_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-      displayName: 'Run Test on Genymotion Android'
+#  - job: Genymotion
+#    pool:
+#      vmImage: 'macOS 10.13'
+#
+#
+#    steps:
+#    - task: NodeTool@0
+#      inputs:
+#        versionSpec: '8.12.0'
+#
+#    - script: |
+#        node -v
+#        npm install -g appium@beta
+#        appium -v
+#      displayName: 'Install Appium'
+#
+#    - bash: |
+#        pip3 install gmsaas
+#      displayName: 'Download Genymotion Installer'
+#
+#    - bash: |
+#        gmsaas config set android-sdk-path $ANDROID_HOME
+#      displayName: 'Set Android Sdk Path'
+#
+#    - script: |
+#         Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='gm_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+#
+#      displayName: 'Run Test on Genymotion Android'
 

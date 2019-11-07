@@ -19,10 +19,12 @@ import org.testng.ITestListener;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
+import org.testng.ITestNGListener;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,6 +39,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
     private static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
+    private List<ITestNGListener> listeners;
 
     public AppiumParallelMethodTestListener() {
         testLogger = new TestLogger();
@@ -47,6 +50,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             .getMongoDbHostAndPort().get("atdHost"));
         atdPort = Optional.ofNullable(CapabilityManager.getInstance()
             .getMongoDbHostAndPort().get("atdPort"));
+        listeners = initialiseListeners();
     }
 
     /*
@@ -102,6 +106,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
             }
         }
         new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
+
+        queueBeforeInvocationListeners(iInvokedMethod, iTestResult, listeners);
     }
 
     private void allocateDeviceAndStartDriver(ITestResult iTestResult) {
@@ -153,6 +159,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
         }
 
         SessionContext.remove(Thread.currentThread().getId());
+        queueAfterInvocationListener(iInvokedMethod, iTestResult, listeners);
     }
 
     /*
@@ -167,6 +174,11 @@ public final class AppiumParallelMethodTestListener extends Helpers
             } catch (ParseException | IOException e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            appiumServerManager.stopAppiumServer();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
