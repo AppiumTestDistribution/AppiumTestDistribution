@@ -9,6 +9,8 @@ import static com.appium.utils.ConfigFileManager.RUNNER_LEVEL;
 import static com.appium.utils.ConfigFileManager.SUITE_NAME;
 import static com.appium.utils.FigletHelper.figlet;
 import static java.lang.System.getProperty;
+import static java.util.Collections.addAll;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.DeviceAllocationManager;
@@ -92,7 +94,7 @@ public class MyTestExecutor {
     private Set<Method> getMethods(String pack) throws MalformedURLException {
         URL newUrl;
         List<URL> newUrls = new ArrayList<>();
-        Collections.addAll(items, pack.split("\\s*,\\s*"));
+        addAll(items, pack.split("\\s*,\\s*"));
         int a = 0;
         Collection<URL> urls = ClasspathHelper.forPackage(items.get(a));
         Iterator<URL> iter = urls.iterator();
@@ -269,8 +271,11 @@ public class MyTestExecutor {
         }
     }
 
-    private void include(List<String> groupsInclude, ConfigFileManager include) {
-        Collections.addAll(groupsInclude, include.get().split("\\s*,\\s*"));
+    private void include(List<String> groupsInclude, ConfigFileManager config) {
+        String listItems = config.get();
+        if (isNotEmpty(listItems)) {
+            addAll(groupsInclude, listItems.split("\\s*,\\s*"));
+        }
     }
 
     private XmlClass createClass(String className) {
