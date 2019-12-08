@@ -60,7 +60,6 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
     public String deviceModel;
     public ImageUtils imageUtils = new ImageUtils();
     public XpathXML xpathXML = new XpathXML();
-    private ConfigFileManager prop;
     private String CI_BASE_URI = null;
 
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap() {
@@ -81,7 +80,6 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
         deviceSingleton = DeviceSingleton.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
-        prop = ConfigFileManager.getInstance();
     }
 
     public void before(Match match, Result result) {
@@ -144,8 +142,6 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
     public void uri(String s) {
 
     }
-
-
 
     public void feature(Feature feature) {
         String[] tagsArray = getTagArray(feature.getTags());
@@ -237,35 +233,33 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
                             + "/failed_" + failed_StepName.replaceAll(" ", "_") + ".jpeg"));
             File[] files1 = framePath.listFiles();
             if (framePath.exists()) {
-                for (int i = 0; i < files1.length; i++) {
-                    if (files1[i].isFile()) { //this line weeds out other directories/folders
-                        Path p = Paths.get(files1[i].toString());
+                for (File file : files1) {
+                    if (file.isFile()) { //this line weeds out other directories/folders
+                        Path p = Paths.get(file.toString());
                         String fileName = p.getFileName().toString().toLowerCase();
                         if (deviceModel.toString().toLowerCase()
-                                .contains(fileName.split(".png")[0].toLowerCase())) {
+                            .contains(fileName.split(".png")[0].toLowerCase())) {
                             try {
                                 imageUtils.wrapDeviceFrames(
-                                        files1[i].toString(),
-                                        System.getProperty("user.dir")
-                                                + FileLocations.SCREENSHOTS_DIRECTORY + device
-                                                + "/" + AppiumDeviceManager.getAppiumDevice()
-                                                .getDevice().getUdid()
-                                                .replaceAll("\\W", "_") + "/"
-                                                + deviceModel + "/failed_"
-                                                + failed_StepName.replaceAll(" ", "_") + ".jpeg",
-                                        System.getProperty("user.dir")
-                                                + FileLocations.SCREENSHOTS_DIRECTORY
-                                                + device
-                                                + "/" + AppiumDeviceManager.getAppiumDevice()
-                                                .getDevice().getUdid()
-                                                .replaceAll("\\W", "_") + "/"
-                                                + deviceModel + "/failed_"
-                                                + failed_StepName.replaceAll(" ", "_")
-                                                + "_framed.jpeg");
+                                    file.toString(),
+                                    System.getProperty("user.dir")
+                                        + FileLocations.SCREENSHOTS_DIRECTORY + device
+                                        + "/" + AppiumDeviceManager.getAppiumDevice()
+                                        .getDevice().getUdid()
+                                        .replaceAll("\\W", "_") + "/"
+                                        + deviceModel + "/failed_"
+                                        + failed_StepName.replaceAll(" ", "_") + ".jpeg",
+                                    System.getProperty("user.dir")
+                                        + FileLocations.SCREENSHOTS_DIRECTORY
+                                        + device
+                                        + "/" + AppiumDeviceManager.getAppiumDevice()
+                                        .getDevice().getUdid()
+                                        .replaceAll("\\W", "_") + "/"
+                                        + deviceModel + "/failed_"
+                                        + failed_StepName.replaceAll(" ", "_")
+                                        + "_framed.jpeg");
                                 break;
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (IM4JavaException e) {
+                            } catch (InterruptedException | IM4JavaException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -273,7 +267,6 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
                 }
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.out.println("Resource Directory was not found");
         }
@@ -293,7 +286,6 @@ public class CucumberListener implements Reporter, Formatter,ISuiteListener {
                         + AppiumDeviceManager.getAppiumDevice()
                         .getDevice().getUdid() + "/" + deviceModel
                         + "/failed_" + stepName.replaceAll(" ", "_") + "_framed.jpeg");
-
     }
 
     @Override

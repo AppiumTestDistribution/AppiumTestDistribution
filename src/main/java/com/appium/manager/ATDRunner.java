@@ -1,5 +1,7 @@
 package com.appium.manager;
 
+import static com.appium.utils.ConfigFileManager.FRAMEWORK;
+import static com.appium.utils.ConfigFileManager.RUNNER;
 import static com.appium.utils.FigletHelper.figlet;
 
 import com.appium.android.AndroidDeviceConfiguration;
@@ -23,14 +25,11 @@ import java.util.logging.Logger;
  *
  * Thanks to @Thote_Gowda(thotegowda.gr@gmail.com)
  */
-
-
 public class ATDRunner {
     private static final String ANDROID = "android";
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
 
-    private ConfigFileManager configFileManager;
     private DeviceAllocationManager deviceAllocationManager;
     private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
@@ -45,7 +44,6 @@ public class ATDRunner {
         new CapabilitySchemaValidator()
                 .validateCapabilitySchema(capabilityManager.getCapabilities());
         deviceAllocationManager = DeviceAllocationManager.getInstance();
-        configFileManager = ConfigFileManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
         myTestExecutor = new MyTestExecutor();
@@ -70,7 +68,7 @@ public class ATDRunner {
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
-        figlet(configFileManager.getProperty("RUNNER"));
+        figlet(RUNNER.get());
         return triggerTest(pack, tests);
     }
 
@@ -106,16 +104,10 @@ public class ATDRunner {
             }
             generateDirectoryForAdbLogs();
         }
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("mac") && platform.equalsIgnoreCase(IOS)
-                || platform.equalsIgnoreCase(BOTH)) {
-            //iosDevice.checkExecutePermissionForIOSDebugProxyLauncher();
-        }
 
         boolean hasFailures = false;
-        String runner = configFileManager.getProperty("RUNNER");
-        String framework = configFileManager.getProperty("FRAMEWORK");
-
+        String runner = RUNNER.get();
+        String framework = FRAMEWORK.get();
 
         if (framework.equalsIgnoreCase("testng")) {
             String executionType = runner.equalsIgnoreCase("distribute")
@@ -177,7 +169,6 @@ public class ATDRunner {
             if (!file.exists()) {
                 file.mkdir();
             }
-
         }
     }
 
@@ -188,6 +179,4 @@ public class ATDRunner {
             platformDirectory.mkdirs();
         }
     }
-
 }
-

@@ -1,8 +1,9 @@
 package com.report.factory;
 
-import com.appium.utils.ConfigFileManager;
-import com.appium.manager.AppiumDevice;
+import static com.appium.utils.ConfigFileManager.RUNNER;
+
 import com.appium.device.DevicesByHost;
+import com.appium.manager.AppiumDevice;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,7 +23,7 @@ public class TestStatusManager extends Helpers {
     public String getReportEventJson(AppiumDevice appiumDevice,
                                      String testStatus, ITestResult iTestResult,
                                      HashMap<String, String> logs)
-            throws JsonProcessingException {
+        throws JsonProcessingException {
         DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
         JSONObject test = new JSONObject();
         JSONArray dataProvider = new JSONArray();
@@ -39,7 +40,7 @@ public class TestStatusManager extends Helpers {
             test.put("testException", iTestResult.getThrowable().getMessage());
         }
         test.put("testClassName", iTestResult.getInstance()
-                .getClass().getSimpleName());
+            .getClass().getSimpleName());
         if (logs.size() > 0) {
             test.put("adbLogs", logs.get("adbLogs"));
             test.put("screenShotFailure", logs.get("screenShotFailure"));
@@ -50,11 +51,11 @@ public class TestStatusManager extends Helpers {
             test.put("endTime", endTime);
             test.put("startTime", startTime);
             test.put("screenPath", new FileFilterParser()
-                    .getScreenShotPaths(appiumDevice.getDevice().getUdid(), iTestResult));
+                .getScreenShotPaths(appiumDevice.getDevice().getUdid(), iTestResult));
         }
         String deviceDetails = new ObjectMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(appiumDevice);
+            .writerWithDefaultPrettyPrinter()
+            .writeValueAsString(appiumDevice);
         JSONArray device = new JSONArray();
         device.put(deviceDetails);
         test.put("deviceinfo", JSON.parse(deviceDetails.replace("/\r?\n|\r/g", "")));
@@ -65,7 +66,7 @@ public class TestStatusManager extends Helpers {
         JSONObject env = new JSONObject();
         env.put("SeleniumVersion", "3.14.X");
         env.put("AppiumServer", getAppiumServerVersion());
-        env.put("Runner", ConfigFileManager.getInstance().getProperty("RUNNER"));
+        env.put("Runner", RUNNER.get());
         env.put("AppiumClient", "7.0.0");
         env.put("TotalDevices", deviceSize);
         return env.toString();
@@ -77,16 +78,16 @@ public class TestStatusManager extends Helpers {
             if (host.equals("127.0.0.1")) {
                 try {
                     logs.put(host, "http://" + getHostMachineIpAddress() + ":"
-                            + getRemoteAppiumManagerPort(host)
-                            + "/appiumlogs/appium_logs.txt");
+                        + getRemoteAppiumManagerPort(host)
+                        + "/appiumlogs/appium_logs.txt");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
                     logs.put(host, "http://" + getHostMachineIpAddress() + ":"
-                            + getRemoteAppiumManagerPort(host)
-                            + "/appium/logs");
+                        + getRemoteAppiumManagerPort(host)
+                        + "/appium/logs");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

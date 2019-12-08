@@ -1,12 +1,18 @@
 package com.appium.utils;
 
+import static com.appium.utils.ConfigFileManager.RUNNER;
+
 import com.appium.capabilities.CapabilityManager;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.manager.AppiumParallelTestListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.factory.TestStatusManager;
-import org.testng.*;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
+import org.testng.ITestNGListener;
+import org.testng.ITestResult;
+import org.testng.TestNGException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +25,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class Helpers {
-
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     protected String getRemoteAppiumManagerPort(String host) throws Exception {
@@ -110,7 +115,6 @@ public class Helpers {
         }
     }
 
-
     public void sendResultsToAtdService(ITestResult testResult,
                                         String testStatus, String url,
                                         HashMap<String, String> logs) {
@@ -154,7 +158,7 @@ public class Helpers {
     }
 
     public String getCurrentTestClassName() {
-        String runner = ConfigFileManager.getInstance().getProperty("RUNNER");
+        String runner = RUNNER.get();
         if (runner.equalsIgnoreCase("distribute")) {
             return AppiumParallelMethodTestListener.getTestMethod().getRealClass().getSimpleName();
         } else {
@@ -163,7 +167,7 @@ public class Helpers {
     }
 
     public String getCurrentTestMethodName() {
-        String runner = ConfigFileManager.getInstance().getProperty("RUNNER");
+        String runner = RUNNER.get();
         if (runner.equalsIgnoreCase("distribute")) {
             return AppiumParallelMethodTestListener.getTestMethod().getMethodName();
         } else {
