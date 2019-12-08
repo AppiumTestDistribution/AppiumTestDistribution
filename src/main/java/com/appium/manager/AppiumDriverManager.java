@@ -1,9 +1,10 @@
 package com.appium.manager;
 
+import static com.appium.utils.ConfigFileManager.CAPS;
+
 import com.appium.capabilities.DesiredCapabilityBuilder;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
-import com.appium.utils.ConfigFileManager;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -27,12 +28,10 @@ public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver
         = new ThreadLocal<>();
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
-    private ConfigFileManager prop;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     public AppiumDriverManager() {
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();
-        prop = ConfigFileManager.getInstance();
     }
 
     public static AppiumDriver getDriver() {
@@ -82,7 +81,6 @@ public class AppiumDriverManager {
                 + currentDriverSession.getSessionDetail("udid"));
 
         }
-
         return currentDriverSession;
     }
 
@@ -157,12 +155,7 @@ public class AppiumDriverManager {
     }
 
     private String getCapsPath() {
-        if (prop.getProperty("CAPS") == null) {
-            return System.getProperty("user.dir")
-                + "/caps/capabilities.json";
-        } else {
-            return prop.getProperty("CAPS");
-        }
+        return CAPS.get();
     }
 
     private DesiredCapabilities buildDesiredCapabilities(String capabilityPath)
@@ -206,5 +199,4 @@ public class AppiumDriverManager {
             AppiumDriverManager.getDriver().quit();
         }
     }
-
 }

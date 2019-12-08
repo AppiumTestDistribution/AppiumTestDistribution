@@ -1,5 +1,7 @@
 package com.appium.utils;
 
+import static com.appium.utils.ConfigFileManager.MAX_RETRY_COUNT;
+
 import com.annotation.values.RetryCount;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
@@ -7,11 +9,9 @@ import org.testng.ITestResult;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Retry implements IRetryAnalyzer {
-    private ConfigFileManager prop;
     private AtomicInteger COUNTER;
 
     public Retry() {
-        prop = ConfigFileManager.getInstance();
         COUNTER = new AtomicInteger(0);
     }
 
@@ -24,7 +24,7 @@ public class Retry implements IRetryAnalyzer {
             maxRetryCount = annotation.maxRetryCount();
         } else {
             try {
-                maxRetryCount = Integer.parseInt(prop.getProperty("MAX_RETRY_COUNT"));
+                maxRetryCount = MAX_RETRY_COUNT.getInt();
             } catch (Exception e) {
                 maxRetryCount = 0;
             }

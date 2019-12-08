@@ -14,13 +14,10 @@ public class TestExecutionContext {
     private final AppiumDriver driver;
     private final HashMap<String, Object> testExecutionState;
     private String deviceId = "NOT-YET-SET";
-    private final Map<String, String> configFileMap;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
-
 
     public TestExecutionContext(String testName) {
         SessionContext.addContext(Thread.currentThread().getId(), this);
-        this.configFileMap = ConfigFileManager.configFileMap;
         this.testName = testName;
         this.testExecutionState = new HashMap<String, Object>();
         if (testName.equalsIgnoreCase(SessionContext.TEST_RUNNER)) {
@@ -39,10 +36,6 @@ public class TestExecutionContext {
 
     public String getDeviceId() {
         return deviceId;
-    }
-
-    public Map<String, String> getLoadedConfig() {
-        return configFileMap;
     }
 
     public AppiumDriver getDriver() {

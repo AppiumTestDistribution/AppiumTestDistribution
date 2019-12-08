@@ -1,6 +1,7 @@
 package com.appium.capabilities;
 
-import com.appium.utils.ConfigFileManager;
+import static com.appium.utils.ConfigFileManager.CAPS;
+
 import com.appium.utils.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class CapabilityManager {
-
     private static CapabilityManager instance;
     private JSONObject capabilities;
 
@@ -23,9 +23,9 @@ public class CapabilityManager {
         StringBuilder varParsing = new StringBuilder(200);
         varParsing.append("atd").append("_");
         capabilities = loadAndOverrideFromEnvVars(jsonParser.getObjectFromJSON(),
-                new JSONObject(),
-                getAllATDOverrideEnvVars(),
-                varParsing);
+            new JSONObject(),
+            getAllATDOverrideEnvVars(),
+            varParsing);
     }
 
     public static CapabilityManager getInstance() {
@@ -54,30 +54,30 @@ public class CapabilityManager {
             Object keyvalue = originalObject.get(keyStr);
             if (keyvalue instanceof JSONObject) {
                 processJSONObject(objectToUpdate,
-                        allATDOverrideEnvVars,
-                        currentPath,
-                        keyStr,
-                        (JSONObject) keyvalue);
+                    allATDOverrideEnvVars,
+                    currentPath,
+                    keyStr,
+                    (JSONObject) keyvalue);
             } else if (keyvalue instanceof JSONArray) {
                 processJSONArray(objectToUpdate,
-                        allATDOverrideEnvVars,
-                        currentPath,
-                        keyStr,
-                        (JSONArray) keyvalue);
+                    allATDOverrideEnvVars,
+                    currentPath,
+                    keyStr,
+                    (JSONArray) keyvalue);
             } else {
                 processJSONObject(objectToUpdate,
-                        currentPath,
-                        keyStr,
-                        keyvalue);
+                    currentPath,
+                    keyStr,
+                    keyvalue);
             }
         });
         return objectToUpdate;
     }
 
     private void processJSONObject(JSONObject objectToUpdate,
-                                    StringBuilder currentPath,
-                                    String keyStr,
-                                    Object keyvalue) {
+                                   StringBuilder currentPath,
+                                   String keyStr,
+                                   Object keyvalue) {
         currentPath.append(keyStr);
         String getFromEnv = System.getenv(currentPath.toString());
         Object updatedValue = (null == getFromEnv) ? keyvalue : getFromEnv;
@@ -93,13 +93,12 @@ public class CapabilityManager {
         JSONArray jsonArray = new JSONArray();
         objectToUpdate.put(keyStr, jsonArray);
         currentPath.append(keyStr).append("_");
-        JSONArray arrayValues = keyvalue;
-        for (int arrIndex = 0; arrIndex < arrayValues.length(); arrIndex++) {
+        for (int arrIndex = 0; arrIndex < keyvalue.length(); arrIndex++) {
             processJSONArrayItem(allATDOverrideEnvVars,
-                    currentPath,
-                    jsonArray,
-                    arrayValues,
-                    arrIndex);
+                currentPath,
+                jsonArray,
+                keyvalue,
+                arrIndex);
         }
         currentPath.delete(currentPath.lastIndexOf(keyStr), currentPath.length());
     }
@@ -114,9 +113,9 @@ public class CapabilityManager {
         jsonArray.put(jsonObject);
         currentPath.append(arrIndex).append("_");
         loadAndOverrideFromEnvVars((JSONObject) arrayItem,
-                jsonObject,
-                allATDOverrideEnvVars,
-                currentPath);
+            jsonObject,
+            allATDOverrideEnvVars,
+            currentPath);
         currentPath.delete(currentPath.lastIndexOf(String.valueOf(arrIndex)), currentPath.length());
     }
 
@@ -135,8 +134,7 @@ public class CapabilityManager {
     private String getCapabilityLocation() {
         String path = System.getProperty("user.dir") + "/caps/"
             + "capabilities.json";
-        String caps = ConfigFileManager.getInstance()
-            .getProperty("CAPS");
+        String caps = CAPS.get();
         if (caps != null) {
             Path userDefinedCapsPath = FileSystems.getDefault().getPath(caps);
             if (!userDefinedCapsPath.getParent().isAbsolute()) {
@@ -242,5 +240,4 @@ public class CapabilityManager {
     public JSONObject getCapabilities() {
         return capabilities;
     }
-
 }
