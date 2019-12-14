@@ -151,8 +151,8 @@ public class Helpers {
     }
 
     public boolean isRetry(ITestResult iTestResult) {
-        if (iTestResult.getMethod().getRetryAnalyzer() != null) {
-            return iTestResult.getMethod().getRetryAnalyzer().retry(iTestResult);
+        if (iTestResult.getMethod().getRetryAnalyzer(iTestResult) != null) {
+            return iTestResult.getMethod().getRetryAnalyzer(iTestResult).retry(iTestResult);
         }
         return false;
     }
