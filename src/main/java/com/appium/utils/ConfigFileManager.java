@@ -22,7 +22,7 @@ public enum ConfigFileManager {
     INCLUDE_GROUPS(""),
     EXCLUDE_GROUPS(""),
     FRAMEWORK("testng"),
-    MAX_RETRY_COUNT("2"),
+    MAX_RETRY_COUNT("0"),
     CAPS("./caps/capabilities.json"),
     RUNNER_LEVEL("methods"),
     RUNNER("distribute");
