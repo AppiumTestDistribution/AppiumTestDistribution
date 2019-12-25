@@ -1,12 +1,13 @@
 package com.appium.manager;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.GenyMotionManager;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
-
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import org.json.simple.parser.ParseException;
@@ -16,17 +17,15 @@ import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
+import org.testng.ITestNGListener;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
-import org.testng.ITestNGListener;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Optional;
 
 public final class AppiumParallelMethodTestListener extends Helpers
     implements ITestListener, IInvokedMethodListener, ISuiteListener {
@@ -73,7 +72,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onTestStart(ITestResult iTestResult) {
-        allocateDeviceAndStartDriver(iTestResult);
+
     }
 
     private boolean isCloudExecution() {
@@ -90,6 +89,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
+        allocateDeviceAndStartDriver(iTestResult);
         if (!isCloudExecution()) {
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
