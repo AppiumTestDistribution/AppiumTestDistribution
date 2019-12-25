@@ -327,7 +327,7 @@ public class MyTestExecutor {
         for (int i = 0; i < deviceCount; i++) {
             XmlTest test = new XmlTest(suite);
             test.setName("TestNG Test" + i);
-            test.setPreserveOrder("false");
+            test.setPreserveOrder(false);
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
             test.setPackages(getPackages());
         }
