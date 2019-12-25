@@ -10,6 +10,7 @@ import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
+import io.appium.java_client.AppiumDriver;
 import org.json.simple.parser.ParseException;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -112,11 +113,14 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     private void allocateDeviceAndStartDriver(ITestResult iTestResult) {
         try {
-            deviceAllocationManager.allocateDevice(deviceAllocationManager
-                .getNextAvailableDevice());
-            appiumDriverManager.startAppiumDriverInstance();
-            if (!isCloudExecution()) {
-                startReportLogging(iTestResult);
+            AppiumDriver driver = AppiumDriverManager.getDriver();
+            if (driver == null || driver.getSessionId() == null) {
+                deviceAllocationManager.allocateDevice(deviceAllocationManager
+                    .getNextAvailableDevice());
+                appiumDriverManager.startAppiumDriverInstance();
+                if (!isCloudExecution()) {
+                    startReportLogging(iTestResult);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
