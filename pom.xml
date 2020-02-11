@@ -54,7 +54,7 @@
             </snapshots>
             <id>bintray-epam-reportportal</id>
             <name>bintray</name>
-            <url>http://dl.bintray.com/epam/reportportal</url>
+            <url>https://dl.bintray.com/epam/reportportal</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
