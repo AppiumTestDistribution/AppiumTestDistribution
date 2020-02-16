@@ -8,7 +8,6 @@ jobs:
     pool:
       vmImage: 'macOS 10.13'
 
-
     steps:
       - task: NodeTool@0
         inputs:
@@ -22,7 +21,6 @@ jobs:
   - job: Distribute
     pool:
       vmImage: 'macOS 10.13'
-
 
     steps:
     - task: NodeTool@0
@@ -118,7 +116,7 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+         Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
       displayName: 'Run Test on Sauce on iOS and Android'
 
@@ -133,7 +131,7 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         Platform='android' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+         Platform='android' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
       displayName: 'Run Test on Sauce on iOS and Android'
 
@@ -148,7 +146,7 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+         Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
       displayName: 'Run Test on Sauce on iOS and Android'
 
@@ -163,7 +161,7 @@ jobs:
         versionSpec: '8.12.0'
 
     - script: |
-         Platform='android' CLOUD_USER=$(user_bs) CLOUD_KEY=$(pass_bs) CONFIG_FILE='bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+         Platform='android' CLOUD_USER=$(user_bs) CLOUD_KEY=$(pass_bs) CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
       displayName: 'Run Test on Sauce on iOS and Android'
 
@@ -192,7 +190,7 @@ jobs:
 #      displayName: 'Set Android Sdk Path'
 #
 #    - script: |
-#         Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='gm_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+#         Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='./configs/gm_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 #
 #      displayName: 'Run Test on Genymotion Android'
 
