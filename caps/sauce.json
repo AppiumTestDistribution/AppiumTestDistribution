@@ -9,7 +9,7 @@
   "iOS": {
     "platformName": "iOS",
     "app": {
-      "simulator": "https://github.com/saikrishna321/AppiumTestDistribution/blob/master/VodQAReactNative.zip?raw=true"
+      "simulator": "https://github.com/saikrishna321/AppiumTestDistribution/blob/master/apps/VodQAReactNative.zip?raw=true"
     },
     "deviceName": "iPhone",
     "wdaLaunchTimeout": 80000,
