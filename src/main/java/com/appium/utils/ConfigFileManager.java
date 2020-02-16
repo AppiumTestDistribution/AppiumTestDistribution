@@ -32,8 +32,8 @@ public enum ConfigFileManager {
 
     static {
         PROPERTIES = new Properties();
-        String configFile = ofNullable(getenv("CONFIG_FILE")).orElse("config.properties");
-        LOGGER.info(format("Using config file from {0}", configFile));
+        String configFile = ofNullable(getenv("CONFIG_FILE")).orElse("./configs/config.properties");
+        LOGGER.info(format("Using config file from [{0}]", configFile));
         try (FileInputStream inputStream = new FileInputStream(configFile)) {
             PROPERTIES.load(inputStream);
         } catch (IOException e) {

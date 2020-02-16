@@ -317,7 +317,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <configLocation>${basedir}/google-style.xml</configLocation>
+                    <configLocation>checkstyle/google-style.xml</configLocation>
                     <encoding>UTF-8</encoding>
                     <linkXRef>true</linkXRef>
                     <consoleOutput>true</consoleOutput>
@@ -354,7 +354,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <configLocation>${basedir}/google-style.xml</configLocation>
+                    <configLocation>checkstyle/google-style.xml</configLocation>
                     <encoding>UTF-8</encoding>
                     <linkXRef>false</linkXRef>
                     <consoleOutput>true</consoleOutput>
