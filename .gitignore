@@ -18,3 +18,6 @@ testng.xml
 /target/
 webContent/app/public/screenshot
 webContent/app/src/data/Report.json
+.classpath
+.project
+.settings/
