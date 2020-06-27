@@ -33,7 +33,7 @@ jobs:
 
     - script: |
          node -v
-         npm install -g appium@beta
+         npm install -g appium
          appium -v
       displayName: 'Install Appium'
 
@@ -77,7 +77,7 @@ jobs:
 
     - script: |
          node -v
-         npm install -g appium@beta
+         npm install -g appium
          appium -v
       displayName: 'Install Appium'
 
