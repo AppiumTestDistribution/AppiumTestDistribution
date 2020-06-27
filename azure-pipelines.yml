@@ -6,7 +6,7 @@
 jobs:
   - job: CheckStyle
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macos-10.15'
 
     steps:
       - task: NodeTool@0
@@ -20,7 +20,7 @@ jobs:
 
   - job: Distribute
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macos-10.15'
 
     steps:
     - task: NodeTool@0
@@ -63,7 +63,7 @@ jobs:
 
   - job: Parallel
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macos-10.15'
 
 
     steps:
@@ -107,7 +107,7 @@ jobs:
 
   - job: SauceLabs
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macos-10.15'
 
 
     steps:
@@ -122,7 +122,7 @@ jobs:
 
   - job: SauceLabs_Android
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macos-10.15'
 
 
     steps:
@@ -137,7 +137,7 @@ jobs:
 
   - job: SauceLabs_iOS
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macos-10.15'
 
 
     steps:
@@ -152,7 +152,7 @@ jobs:
 
   - job: BrowserStack_Android
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macos-10.15'
 
 
     steps:
@@ -167,7 +167,7 @@ jobs:
 
 #  - job: Genymotion
 #    pool:
-#      vmImage: 'macOS 10.13'
+#      vmImage: 'macos-10.15'
 #
 #
 #    steps:
