@@ -14,7 +14,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class ApiHelper {
-    private static final OkHttpClient CLIENT = new OkHttpClient.Builder().connectTimeout(90, TimeUnit.SECONDS)
+    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
+        .connectTimeout(90, TimeUnit.SECONDS)
         .writeTimeout(90, TimeUnit.SECONDS)
         .readTimeout(90, TimeUnit.SECONDS)
         .build();
