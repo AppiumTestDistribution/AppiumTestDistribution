@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>11.0.1</version>
+    <version>11.0.2</version>
     <packaging>jar</packaging>
     <name>AppiumTestDistribution</name>
     <description>A tool run Android and iOS test in parallel across devices</description>
@@ -191,7 +191,7 @@
         <dependency>
             <groupId>com.github.AppiumTestDistribution</groupId>
             <artifactId>DeviceManager</artifactId>
-            <version>2863590efe</version>
+            <version>4cddf8dd45</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

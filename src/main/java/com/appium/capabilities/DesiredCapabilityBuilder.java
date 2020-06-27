@@ -8,6 +8,7 @@ import com.appium.utils.ArtifactsUploader;
 import com.appium.utils.AvailablePorts;
 import com.appium.utils.HostArtifact;
 import com.appium.utils.JsonParser;
+import com.github.device.Device;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -67,12 +68,12 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         desiredCapabilities.setCapability("device",
             deviceProperty.getDevice().getName());
         desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                deviceProperty.getDevice().getName());
+            deviceProperty.getDevice().getName());
         desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
         desiredCapabilities.setCapability(CapabilityType.VERSION,
             deviceProperty.getDevice().getOsVersion());
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                deviceProperty.getDevice().getOsVersion());
+            deviceProperty.getDevice().getOsVersion());
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
 
     }
@@ -122,7 +123,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         });
 
         if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,"android");
+            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "android");
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                 port);
             appPackage(desiredCapabilities);
@@ -169,23 +170,22 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             .findFirst().get();
         String appPath = hostArtifact.getArtifactPath("APK");
         if (values instanceof JSONObject) {
-            if (!AppiumDeviceManager.getAppiumDevice()
-                    .getDevice().isCloud()) {
-                int length = AppiumDeviceManager.getAppiumDevice()
-                        .getDevice()
-                        .getUdid()
-                        .length();
-                if (length == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
+            Device device = AppiumDeviceManager.getAppiumDevice()
+                .getDevice();
+            if (!device.isCloud()) {
+                String deviceOS = device
+                    .getOs();
+                if (deviceOS.equalsIgnoreCase("iOS") && !device.isDevice()) {
                     appPath = hostArtifact.getArtifactPath("APP");
-                } else if (length == IOSDeviceConfiguration.IOS_UDID_LENGTH) {
+                } else if (deviceOS.equals("iOS") && device.isDevice()) {
                     appPath = hostArtifact.getArtifactPath("IPA");
                 }
             } else {
                 if (isEmpty(appPath) || (((JSONObject) values).has("simulator")
-                                          || ((JSONObject) values).has("device"))) {
+                    || ((JSONObject) values).has("device"))) {
                     appPath = hostArtifact.getArtifactPath(((JSONObject) values)
-                            .has("simulator")
-                            ? "APP" : "IPA");
+                        .has("simulator")
+                        ? "APP" : "IPA");
                 }
             }
         }
