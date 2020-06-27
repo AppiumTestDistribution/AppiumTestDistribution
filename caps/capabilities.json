@@ -28,11 +28,10 @@
   "hostMachines": [
     {
       "machineIP": "127.0.0.1",
-      "appiumServerPath": "/usr/local/lib/node_modules/appium/build/lib/main.js",
       "simulators": [
         {
-          "deviceName": "iPhone 6",
-          "OS": "12.1"
+          "deviceName": "iPhone 11",
+          "OS": "13.5"
         }
       ]
     }

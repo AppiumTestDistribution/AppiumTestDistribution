@@ -14,7 +14,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class ApiHelper {
-    private static final OkHttpClient CLIENT = new OkHttpClient.Builder().connectTimeout(90, TimeUnit.SECONDS)
+    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
+        .connectTimeout(90, TimeUnit.SECONDS)
         .writeTimeout(90, TimeUnit.SECONDS)
         .readTimeout(90, TimeUnit.SECONDS)
         .build();
@@ -28,7 +29,8 @@ public class ApiHelper {
             return null;
         }
     };
-    private final Function<String, Request.Builder> request = path -> new Request.Builder().url(path);
+    private final Function<String, Request.Builder> request = path ->
+        new Request.Builder().url(path);
 
     public ResponseBody delete(String url) {
         return execute.apply(request.apply(url)
