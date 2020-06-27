@@ -11,7 +11,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '8.12.0'
+          versionSpec: '12.18.1'
 
       - script: |
           mvn clean install -Dmaven.test.skip=true -Dgpg.skip
@@ -25,7 +25,7 @@ jobs:
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '8.12.0'
+        versionSpec: '12.18.1'
     - script: |
         brew outdated xctool || brew upgrade xctool
         xcrun simctl list
@@ -69,7 +69,7 @@ jobs:
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '8.12.0'
+        versionSpec: '12.18.1'
     - script: |
         brew outdated xctool || brew upgrade xctool
         xcrun simctl list
@@ -113,7 +113,7 @@ jobs:
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '8.12.0'
+        versionSpec: '12.18.1'
 
     - script: |
          Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -143,7 +143,7 @@ jobs:
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '8.12.0'
+        versionSpec: '12.18.1'
 
     - script: |
          Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -158,7 +158,7 @@ jobs:
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '8.12.0'
+        versionSpec: '12.18.1'
 
     - script: |
          Platform='android' CLOUD_USER=$(user_bs) CLOUD_KEY=$(pass_bs) CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
