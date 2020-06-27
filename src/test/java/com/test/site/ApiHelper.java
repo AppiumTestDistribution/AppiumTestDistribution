@@ -29,7 +29,8 @@ public class ApiHelper {
             return null;
         }
     };
-    private final Function<String, Request.Builder> request = path -> new Request.Builder().url(path);
+    private final Function<String, Request.Builder> request = path ->
+        new Request.Builder().url(path);
 
     public ResponseBody delete(String url) {
         return execute.apply(request.apply(url)

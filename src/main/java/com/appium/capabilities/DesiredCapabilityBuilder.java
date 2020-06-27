@@ -150,7 +150,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             desiredCapabilities.setCapability(IOSMobileCapabilityType
                 .WDA_LOCAL_PORT, port);
             desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                AutomationName.IOS_XCUI_TEST);
+                "XCUITest");
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         }
