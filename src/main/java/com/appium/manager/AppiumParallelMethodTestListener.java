@@ -151,8 +151,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            AppiumDriverManager.getDriver().quit();
-            deviceAllocationManager.freeDevice();
             try {
                 if (!isCloudExecution()) {
                     appiumDriverManager.stopAppiumDriver();
@@ -160,6 +158,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            AppiumDriverManager.getDriver().quit();
+            deviceAllocationManager.freeDevice();
         }
 
         SessionContext.remove(Thread.currentThread().getId());
