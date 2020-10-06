@@ -51,7 +51,7 @@ public class AppiumDriverManager {
         String isChromDriverPath = (String) desiredCapabilities.getCapability(
                 AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
         boolean isPlatformAndroid = AppiumDeviceManager.getMobilePlatform().name()
-                                            .equalsIgnoreCase("android");
+                .equalsIgnoreCase("android");
         addChromeDriverPathIfChromeOnDevice(
                 desiredCapabilities,
                 isChromDriverPath,
