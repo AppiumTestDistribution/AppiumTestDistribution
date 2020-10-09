@@ -42,7 +42,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -315,7 +314,7 @@ public class MyTestExecutor {
     }
 
     public XmlSuite constructXmlSuiteForParallelCucumber(
-        int deviceCount, List<AppiumDevice> deviceSerail) {
+            String pack, int deviceCount, List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.cucumber.listener.CucumberListener");
         XmlSuite suite = new XmlSuite();
@@ -329,12 +328,12 @@ public class MyTestExecutor {
             test.setName("TestNG Test" + i);
             test.setPreserveOrder(false);
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
-            test.setPackages(getPackages());
+            test.setPackages(getPackages(pack));
         }
         return getXmlSuite(suite);
     }
 
-    public XmlSuite constructXmlSuiteDistributeCucumber(int deviceCount) {
+    public XmlSuite constructXmlSuiteDistributeCucumber(String pack, int deviceCount) {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.cucumber.listener.CucumberListener");
         XmlSuite suite = new XmlSuite();
@@ -346,7 +345,7 @@ public class MyTestExecutor {
         XmlTest test = new XmlTest(suite);
         test.setName("TestNG Test");
         test.addParameter("device", "");
-        test.setPackages(getPackages());
+        test.setPackages(getPackages(pack));
         return getXmlSuite(suite);
     }
 
@@ -364,11 +363,13 @@ public class MyTestExecutor {
         return suite;
     }
 
-    private static List<XmlPackage> getPackages() {
+    private static List<XmlPackage> getPackages(String pack) {
         List<XmlPackage> allPackages = new ArrayList<>();
         XmlPackage eachPackage = new XmlPackage();
-        eachPackage.setName("output");
-        allPackages.add(eachPackage);
+        Arrays.stream(pack.split(",")).distinct().forEach(eachPach -> {
+            eachPackage.setName(eachPach.trim());
+            allPackages.add(eachPackage);
+        });
         return allPackages;
     }
 

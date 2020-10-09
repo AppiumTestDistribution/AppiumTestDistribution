@@ -120,14 +120,14 @@ public class ATDRunner {
         if (framework.equalsIgnoreCase("cucumber")) {
             if (runner.equalsIgnoreCase("distribute")) {
                 myTestExecutor
-                        .constructXmlSuiteDistributeCucumber(deviceCount);
+                        .constructXmlSuiteDistributeCucumber(pack, deviceCount);
                 hasFailures = myTestExecutor.runMethodParallel();
             } else if (runner.equalsIgnoreCase("parallel")) {
                 myTestExecutor
-                        .constructXmlSuiteForParallelCucumber(deviceCount,
+                        .constructXmlSuiteForParallelCucumber(pack, deviceCount,
                                 hostMachineDeviceManager.getDevicesByHost().getAllDevices());
                 hasFailures = myTestExecutor.runMethodParallel();
-                htmlReporter.generateReports();
+//                htmlReporter.generateReports();
             }
         }
         return hasFailures;

@@ -21,6 +21,7 @@ public class SampleSteps {
 
   @When("^I click on (\\d+) number")
   public void I_sleep_for_seconds(int arg1) throws InterruptedException {
+    System.out.println("sleep for " + arg1 + " sec");
     Thread.sleep(arg1 * 1000);
     getDriver().findElementByXPath(".//*[@text=" + arg1 + "]").click();
     System.out.println("Passed");
