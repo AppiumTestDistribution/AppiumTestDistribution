@@ -105,8 +105,9 @@ public class AppiumDriverManager {
             String message = "ChromeDriver for Chrome version " + highestChromeVersion
                     + "on device: " + id;
             LOGGER.info(message);
-            WebDriverManager.chromedriver().version(String.valueOf(highestChromeVersion)).setup();
-            return WebDriverManager.chromedriver().getBinaryPath();
+            WebDriverManager.chromedriver()
+                    .browserVersion(String.valueOf(highestChromeVersion)).setup();
+            return WebDriverManager.chromedriver().getDownloadedDriverVersion();
         } else {
             return null;
         }
