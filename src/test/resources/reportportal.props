@@ -1,0 +1,11 @@
+rp.endpoint=http://localhost:8080
+rp.uuid=86bc7b4f-33a4-4f6b-bdbb-0f99973f9f0d
+rp.launch=default_TEST_EXAMPLE
+rp.project=default_personal
+rp.enable=true
+rp.description=My awesome launch
+rp.attributes=key:value; value;
+rp.convertimage=true
+rp.mode=DEFAULT
+rp.skipped.issue=true
+rp.batch.size.logs=20
