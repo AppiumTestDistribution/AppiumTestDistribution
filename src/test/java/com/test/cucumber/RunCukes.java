@@ -39,9 +39,9 @@ public class RunCukes extends AbstractTestNGCucumberTests {
   private final Optional<String> atdHost;
   private final Optional<String> atdPort;
 
-  public RunCukes() {
+  public RunCukes() throws Exception {
     System.out.printf("ThreadID: %d: RunCucumberTest", Thread.currentThread().getId());
-    ATDRunner atdRunner = new ATDRunner();
+    new ATDRunner();
     appiumServerManager = new AppiumServerManager();
     deviceAllocationManager = DeviceAllocationManager.getInstance();
     appiumDriverManager = new AppiumDriverManager();
