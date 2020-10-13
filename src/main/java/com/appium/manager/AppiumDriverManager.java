@@ -103,7 +103,7 @@ public class AppiumDriverManager {
         if (versionNamesArr.length > 0) {
             int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
             String message = "ChromeDriver for Chrome version " + highestChromeVersion
-                    + "on device: " + id;
+                    + " on device: " + id;
             LOGGER.info(message);
             WebDriverManager.chromedriver()
                     .browserVersion(String.valueOf(highestChromeVersion)).setup();
