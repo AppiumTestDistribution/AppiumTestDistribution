@@ -314,7 +314,7 @@ public class MyTestExecutor {
     }
 
     public XmlSuite constructXmlSuiteForParallelCucumber(
-            String pack, int deviceCount, List<AppiumDevice> deviceSerail) {
+            int deviceCount, List<AppiumDevice> deviceSerail) {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.cucumber.listener.CucumberListener");
         XmlSuite suite = new XmlSuite();
@@ -328,12 +328,12 @@ public class MyTestExecutor {
             test.setName("TestNG Test" + i);
             test.setPreserveOrder(false);
             test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
-            test.setPackages(getPackages(pack));
+            test.setPackages(getPackages());
         }
         return getXmlSuite(suite);
     }
 
-    public XmlSuite constructXmlSuiteDistributeCucumber(String pack, int deviceCount) {
+    public XmlSuite constructXmlSuiteDistributeCucumber(int deviceCount) {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.cucumber.listener.CucumberListener");
         XmlSuite suite = new XmlSuite();
@@ -345,7 +345,7 @@ public class MyTestExecutor {
         XmlTest test = new XmlTest(suite);
         test.setName("TestNG Test");
         test.addParameter("device", "");
-        test.setPackages(getPackages(pack));
+        test.setPackages(getPackages());
         return getXmlSuite(suite);
     }
 
@@ -363,13 +363,11 @@ public class MyTestExecutor {
         return suite;
     }
 
-    private static List<XmlPackage> getPackages(String pack) {
+    private static List<XmlPackage> getPackages() {
         List<XmlPackage> allPackages = new ArrayList<>();
         XmlPackage eachPackage = new XmlPackage();
-        Arrays.stream(pack.split(",")).distinct().forEach(eachPach -> {
-            eachPackage.setName(eachPach.trim());
-            allPackages.add(eachPackage);
-        });
+        eachPackage.setName("output");
+        allPackages.add(eachPackage);
         return allPackages;
     }
 

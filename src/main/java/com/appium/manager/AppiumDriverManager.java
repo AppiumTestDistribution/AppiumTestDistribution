@@ -176,7 +176,7 @@ public class AppiumDriverManager {
         }
     }
 
-    protected void stopAppiumDriver() throws Exception {
+    public void stopAppiumDriver() throws Exception {
         String OS = System.getProperty("os.name").toLowerCase();
         String command;
         AppiumDevice appiumDevice = AppiumDeviceManager.getAppiumDevice();

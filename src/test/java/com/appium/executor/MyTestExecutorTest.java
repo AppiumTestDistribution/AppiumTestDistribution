@@ -155,7 +155,7 @@ public class MyTestExecutorTest {
             methods.add(m);
         }
         XmlSuite xmlSuite =
-            ex1.constructXmlSuiteForParallelCucumber("output", devices.size(),
+            ex1.constructXmlSuiteForParallelCucumber(devices.size(),
                     HostMachineDeviceManager.getInstance().getDevicesByHost().getAllDevices());
         System.out.println("xml:" + xmlSuite.toXml());
         File file = new File(System.getProperty("user.dir") + FileLocations.PARALLEL_XML_LOCATION);
