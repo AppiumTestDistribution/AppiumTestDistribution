@@ -1,12 +1,16 @@
 package com.test.cucumber;
 
+import com.test.site.UserBaseTest;
+import io.appium.java_client.MobileBy;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.appium.manager.AppiumDriverManager.getDriver;
 
-public class SampleSteps {
+public class SampleSteps extends UserBaseTest {
 
     public SampleSteps() {
         super();
@@ -30,5 +34,22 @@ public class SampleSteps {
     @Then("^It should finnish$")
     public void It_should_finnish() {
         System.out.println("Passed");
+    }
+
+    @Given("I login")
+    public void iLogin() {
+        login("login").click();
+    }
+
+    @When("I drag & drop")
+    public void iDragDrop() {
+        waitForElement("dragAndDrop").click();
+    }
+
+    @Then("drag and drop should have worked")
+    public void dragAndDropShouldHaveWorked() {
+        new WebDriverWait(driver, 30)
+                .until(ExpectedConditions
+                        .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
     }
 }
