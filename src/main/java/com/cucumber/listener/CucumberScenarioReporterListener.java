@@ -23,50 +23,51 @@ import java.util.Map;
 
 public class CucumberScenarioReporterListener extends ScenarioReporter {
 
-  private DeviceAllocationManager deviceAllocationManager;
-  public AppiumServerManager appiumServerManager;
-  public AppiumDriverManager appiumDriverManager;
-  public DeviceSingleton deviceSingleton;
-  public LinkedList<Step> testSteps;
-  public AppiumDriver<MobileElement> appium_driver;
-  private AndroidDeviceConfiguration androidDevice;
-  private IOSDeviceConfiguration iosDevice;
-  public String deviceModel;
-  public ImageUtils imageUtils = new ImageUtils();
-  public XpathXML xpathXML = new XpathXML();
-  private String CI_BASE_URI = null;
+    private DeviceAllocationManager deviceAllocationManager;
+    public AppiumServerManager appiumServerManager;
+    public AppiumDriverManager appiumDriverManager;
+    public DeviceSingleton deviceSingleton;
+    public LinkedList<Step> testSteps;
+    public AppiumDriver<MobileElement> appium_driver;
+    private AndroidDeviceConfiguration androidDevice;
+    private IOSDeviceConfiguration iosDevice;
+    public String deviceModel;
+    public ImageUtils imageUtils = new ImageUtils();
+    public XpathXML xpathXML = new XpathXML();
+    private String CI_BASE_URI = null;
 
-  private static final Map<String, String> MIME_TYPES_EXTENSIONS =
-      new HashMap() {
-        {
-          this.put("image/bmp", "bmp");
-          this.put("image/gif", "gif");
-          this.put("image/jpeg", "jpg");
-          this.put("image/png", "png");
-          this.put("image/svg+xml", "svg");
-          this.put("video/ogg", "ogg");
-        }
-      };
+    private static final Map<String, String> MIME_TYPES_EXTENSIONS =
+        new HashMap() {
+            {
+                this.put("image/bmp", "bmp");
+                this.put("image/gif", "gif");
+                this.put("image/jpeg", "jpg");
+                this.put("image/png", "png");
+                this.put("image/svg+xml", "svg");
+                this.put("video/ogg", "ogg");
+            }
+        };
 
     public CucumberScenarioReporterListener() throws Exception {
-      System.out.println("CucumberListener");
-          appiumServerManager = new AppiumServerManager();
-          appiumDriverManager = new AppiumDriverManager();
-          deviceAllocationManager = DeviceAllocationManager.getInstance();
-          deviceSingleton = DeviceSingleton.getInstance();
-          iosDevice = new IOSDeviceConfiguration();
-          androidDevice = new AndroidDeviceConfiguration();
+        System.out.println("CucumberListener");
+        appiumServerManager = new AppiumServerManager();
+        appiumDriverManager = new AppiumDriverManager();
+        deviceAllocationManager = DeviceAllocationManager.getInstance();
+        deviceSingleton = DeviceSingleton.getInstance();
+        iosDevice = new IOSDeviceConfiguration();
+        androidDevice = new AndroidDeviceConfiguration();
     }
 
     @Override
     protected void startRootItem() {
-        this.rootSuiteId = Suppliers.memoize(() -> {
-            StartTestItemRQ rq = new StartTestItemRQ();
-            rq.setName("My Tests");
-            rq.setStartTime(Calendar.getInstance().getTime());
-            rq.setType("SUITE");
-            return ((Launch)this.launch.get()).startTestItem(rq);
-        });
+        this.rootSuiteId =
+            Suppliers.memoize(
+                () -> {
+                    StartTestItemRQ rq = new StartTestItemRQ();
+                    rq.setName("My Tests");
+                    rq.setStartTime(Calendar.getInstance().getTime());
+                    rq.setType("SUITE");
+                    return ((Launch) this.launch.get()).startTestItem(rq);
+                });
     }
-
 }

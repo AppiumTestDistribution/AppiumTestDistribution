@@ -25,6 +25,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+
 public class AtdServiceTest {
     private static final ApiHelper API = new ApiHelper();
     private static final String URL = "http://localhost:8888";
@@ -32,7 +34,7 @@ public class AtdServiceTest {
     private AndroidDriver<AndroidElement> driver;
 
     @BeforeClass
-    public void setup() {
+    public void setup() throws IOException {
         String response = allocate(UUID);
         DocumentContext path = parse(response);
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -48,7 +50,7 @@ public class AtdServiceTest {
     }
 
     @AfterClass
-    public void teardown() {
+    public void teardown() throws IOException {
         driver.quit();
         free(UUID);
     }
@@ -64,13 +66,13 @@ public class AtdServiceTest {
     }
 
     @SneakyThrows
-    private String allocate(String uuid) {
+    private String allocate(String uuid) throws IOException {
         return API.post(format("{0}/devices/{1}/allocate", URL, uuid))
             .string();
     }
 
     @SneakyThrows
-    private void free(String uuid) {
+    private void free(String uuid) throws IOException {
         API.delete(format("{0}/devices/{1}/freeDevice", URL, uuid))
             .string();
     }
