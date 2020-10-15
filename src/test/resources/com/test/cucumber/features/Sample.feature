@@ -9,3 +9,7 @@ Feature: Sample Feature
     Given I login
     When I drag & drop
     Then drag and drop should have worked
+
+  Scenario: Example 4 that sleep 1 seconds
+    And I click on 2 number
+    Then It should finnish

@@ -1,12 +1,20 @@
 package com.cucumber.listener;
 
 import com.appium.capabilities.CapabilityManager;
-import com.appium.manager.*;
+import com.appium.manager.ATDRunner;
+import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.AppiumDriverManager;
+import com.appium.manager.AppiumServerManager;
+import com.appium.manager.DeviceAllocationManager;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
 import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.event.*;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
@@ -21,15 +29,18 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private final Optional<String> atdPort;
 
     public CucumberScenarioListener() {
-        System.out.printf("ThreadID: %d: CucumberScenarioListener", Thread.currentThread().getId());
+        System.out.printf("ThreadID: %d: CucumberScenarioListener",
+                Thread.currentThread().getId());
         new ATDRunner();
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
         atdHost =
-                Optional.ofNullable(CapabilityManager.getInstance().getMongoDbHostAndPort().get("atdHost"));
+                Optional.ofNullable(CapabilityManager.getInstance()
+                        .getMongoDbHostAndPort().get("atdHost"));
         atdPort =
-                Optional.ofNullable(CapabilityManager.getInstance().getMongoDbHostAndPort().get("atdPort"));
+                Optional.ofNullable(CapabilityManager.getInstance()
+                        .getMongoDbHostAndPort().get("atdPort"));
     }
 
     @BeforeSuite(alwaysRun = true)
@@ -46,7 +57,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
             if (driver == null || driver.getSessionId() == null) {
-                deviceAllocationManager.allocateDevice(deviceAllocationManager.getNextAvailableDevice());
+                deviceAllocationManager.allocateDevice(
+                        deviceAllocationManager.getNextAvailableDevice());
                 appiumDriverManager.startAppiumDriverInstance();
             }
         } catch (Exception e) {
