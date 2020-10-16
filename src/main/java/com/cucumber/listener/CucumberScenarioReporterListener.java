@@ -49,7 +49,7 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
         };
 
     public CucumberScenarioReporterListener() throws Exception {
-        System.out.println("CucumberListener");
+        System.out.println("CucumberScenarioReporterListener");
         appiumServerManager = new AppiumServerManager();
         appiumDriverManager = new AppiumDriverManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();

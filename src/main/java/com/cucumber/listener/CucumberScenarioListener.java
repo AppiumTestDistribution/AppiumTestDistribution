@@ -29,7 +29,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private final Optional<String> atdPort;
 
     public CucumberScenarioListener() {
-        System.out.printf("ThreadID: %d: CucumberScenarioListener",
+        System.out.printf("ThreadID: %d: CucumberScenarioListener%n",
                 Thread.currentThread().getId());
         new ATDRunner();
         appiumServerManager = new AppiumServerManager();

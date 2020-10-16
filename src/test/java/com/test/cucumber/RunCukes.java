@@ -14,7 +14,7 @@ import org.testng.annotations.DataProvider;
         })
 public class RunCukes extends AbstractTestNGCucumberTests {
     public RunCukes() {
-        System.out.printf("ThreadID: %d: RunCucumberTest", Thread.currentThread().getId());
+        System.out.printf("ThreadID: %d: RunCucumberTest%n", Thread.currentThread().getId());
     }
 
     @Override
