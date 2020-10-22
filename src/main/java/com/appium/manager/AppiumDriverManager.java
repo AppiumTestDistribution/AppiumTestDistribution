@@ -1,9 +1,6 @@
 package com.appium.manager;
 
-import static com.appium.utils.ConfigFileManager.CAPS;
-
 import com.appium.capabilities.DesiredCapabilityBuilder;
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.utils.CommandPrompt;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -23,9 +20,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import static com.appium.utils.ConfigFileManager.CAPS;
+
 public class AppiumDriverManager {
-    private static ThreadLocal<AppiumDriver> appiumDriver
-        = new ThreadLocal<>();
+    private static ThreadLocal<AppiumDriver> appiumDriver = new ThreadLocal<>();
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
