@@ -104,7 +104,8 @@ public class ATDRunner {
         if (framework.equalsIgnoreCase("testng")) {
             String executionType = runner.equalsIgnoreCase("distribute")
                     ? "distribute" : "parallel";
-            result = ATDExecutor.constructXMLAndTriggerParallelRunner(tests, pack, deviceCount, executionType);
+            result = ATDExecutor.constructXMLAndTriggerParallelRunner(tests, pack, deviceCount,
+                    executionType);
         }
         return result;
     }

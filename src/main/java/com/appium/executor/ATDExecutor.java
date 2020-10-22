@@ -12,6 +12,7 @@ import static java.lang.System.getProperty;
 import static java.util.Collections.addAll;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import com.appium.manager.AppiumDevice;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.ConfigFileManager;
 import com.google.common.collect.ArrayListMultimap;
@@ -55,8 +56,9 @@ public class ATDExecutor {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
     }
 
-    public boolean constructXMLAndTriggerParallelRunner(List<String> test, String pack, int deviceCount,
-                                                        String executionType) throws Exception {
+    public boolean constructXMLAndTriggerParallelRunner(List<String> test, String pack,
+                                                        int deviceCount, String executionType)
+            throws Exception {
         boolean result;
         String suiteName = SUITE_NAME.get();
         String categoryName = CATEGORY.get();
@@ -70,8 +72,8 @@ public class ATDExecutor {
                 constructXmlSuiteForClassLevelDistributionRunner(test, getTestMethods(setOfMethods),
                         suiteName, categoryName, deviceCount);
             } else {
-                constructXmlSuiteForMethodLevelDistributionRunner(test, getTestMethods(setOfMethods),
-                        suiteName, categoryName, deviceCount);
+                constructXmlSuiteForMethodLevelDistributionRunner(test,
+                        getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
             }
         } else {
             constructXmlSuiteForParallelRunner(test, getTestMethods(setOfMethods),
@@ -103,8 +105,9 @@ public class ATDExecutor {
             XmlTest test = new XmlTest(suite);
             test.setName(categoryName + "-" + i);
             test.setPreserveOrder(false);
-            test.addParameter("device", deviceAllocationManager.getDevices().get(i).getDevice().getUdid());
-            test.addParameter("hostName", deviceAllocationManager.getDevices().get(i).getHostName());
+            final AppiumDevice appiumDevice = deviceAllocationManager.getDevices().get(i);
+            test.addParameter("device", appiumDevice.getDevice().getUdid());
+            test.addParameter("hostName", appiumDevice.getHostName());
             test.setIncludedGroups(groupsInclude);
             test.setExcludedGroups(groupsExclude);
             List<XmlClass> xmlClasses = writeXmlClass(tests, methods);
@@ -115,10 +118,8 @@ public class ATDExecutor {
     }
 
     public XmlSuite constructXmlSuiteForClassLevelDistributionRunner(List<String> tests,
-                                                                     Map<String, List<Method>> methods,
-                                                                     String suiteName,
-                                                                     String categoryName,
-                                                                     int deviceCount) {
+                   Map<String, List<Method>> methods,
+                   String suiteName, String categoryName, int deviceCount) {
         XmlSuite suite = new XmlSuite();
         suite.setName(suiteName);
         suite.setThreadCount(deviceCount);
@@ -143,10 +144,8 @@ public class ATDExecutor {
 
 
     public XmlSuite constructXmlSuiteForMethodLevelDistributionRunner(List<String> tests,
-                                                                      Map<String, List<Method>> methods,
-                                                                      String suiteName,
-                                                                      String category,
-                                                                      int deviceCount) {
+                             Map<String, List<Method>> methods, String suiteName,
+                             String category, int deviceCount) {
         include(groupsInclude, INCLUDE_GROUPS);
         XmlSuite suite = new XmlSuite();
         suite.setName(suiteName);
@@ -229,7 +228,8 @@ public class ATDExecutor {
         }
     }
 
-    private List<XmlClass> writeXmlClass(List<String> testCases, Map<String, List<Method>> methods) {
+    private List<XmlClass> writeXmlClass(List<String> testCases, Map<String,
+            List<Method>> methods) {
         List<XmlClass> xmlClasses = new ArrayList<>();
         for (String className : methods.keySet()) {
             XmlClass xmlClass = new XmlClass();

@@ -6,7 +6,11 @@ import org.testng.annotations.Test;
 import org.testng.xml.XmlSuite;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ATDExecutorTest {
     ATDExecutor ATDExecutor;
@@ -18,12 +22,12 @@ public class ATDExecutorTest {
 
     @Test
     public void constructXmlSuiteForClassLevelDistributionRunnerTest() {
-        Set<Method> methods = new HashSet<>();
         ArrayList<String> devices = new ArrayList<>();
         devices.add("192.168.0.1");
         devices.add("192.168.0.2");
         devices.add("192.168.0.3");
         devices.add("192.168.0.4");
+        Set<Method> methods = new HashSet<>();
         Method[] thizMethods = ATDExecutorTest.class.getMethods();
         Collections.addAll(methods, thizMethods);
 
@@ -47,12 +51,12 @@ public class ATDExecutorTest {
 
     @Test
     public void constructXmlSuiteForMethodLevelDistributionRunnerTest() {
-        Set<Method> methods = new HashSet<>();
         ArrayList<String> devices = new ArrayList<>();
         devices.add("192.168.0.1");
         devices.add("192.168.0.2");
         devices.add("192.168.0.3");
         devices.add("192.168.0.4");
+        Set<Method> methods = new HashSet<>();
         Method[] thizMethods = ATDExecutorTest.class.getMethods();
         Collections.addAll(methods, thizMethods);
 
@@ -76,12 +80,12 @@ public class ATDExecutorTest {
 
     @Test
     public void constructXmlSuiteForParallelRunnerTest() {
-        Set<Method> methods = new HashSet<>();
         ArrayList<String> devices = new ArrayList<>();
         devices.add("192.168.0.1");
         devices.add("192.168.0.2");
         devices.add("192.168.0.3");
         devices.add("192.168.0.4");
+        Set<Method> methods = new HashSet<>();
         Method[] thizMethods = ATDExecutorTest.class.getMethods();
         Collections.addAll(methods, thizMethods);
 
