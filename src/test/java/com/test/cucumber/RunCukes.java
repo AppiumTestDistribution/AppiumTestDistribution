@@ -9,8 +9,8 @@ import org.testng.annotations.DataProvider;
                 "com.cucumber.listener.CucumberScenarioReporterListener",
                 "com.cucumber.listener.CucumberScenarioListener",
                 "html:target/results.html",
-                "message:target/results.ndjson",
-                "timeline:target/timline"
+                "message:target/results.json",
+                "timeline:target/timeline"
         })
 public class RunCukes extends AbstractTestNGCucumberTests {
     public RunCukes() {

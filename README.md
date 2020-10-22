@@ -96,8 +96,7 @@ Add the below dependencies in your pom.xml (Master)
 Thanks to
 * [@thote](https://github.com/thote) and [@jaydeepc](https://github.com/jaydeepc) for the motivation.
 * [@SrinivasanTarget](https://github.com/SrinivasanTarget) for contributing on iOS parallel.
-* [@temyers](https://github.com/temyers) for letting us use the cucumber-jvm-parallel-plugin(https://github.com/temyers/cucumber-jvm-parallel-plugin) 
-as part of framework which helps generating a Cucumber JUnit or TestNG runner for each feature file.
+* [@anandbagmar](https://github.com/anandbagmar) for fixing cucumber support.
 
 ### Reports
 
