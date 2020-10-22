@@ -6,8 +6,10 @@ Feature: Sample Feature
   So we can prove that it runs in parallel
 
   Scenario: Example 1 that sleep 1 seconds
-    Given I accept the tip screen
-    When I click on 2 number
-    And I click on 3 number
-    Then It should finnish
+    Given I login
+    When I drag & drop
+    Then drag and drop should have worked
 
+  Scenario: Example 4 that sleep 1 seconds
+    And I click on 2 number
+    Then It should finnish

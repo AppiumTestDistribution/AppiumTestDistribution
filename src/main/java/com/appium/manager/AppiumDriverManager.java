@@ -44,41 +44,41 @@ public class AppiumDriverManager {
 
     @Synchronized
     private AppiumDriver<MobileElement> initialiseDriver(
-        Optional<DesiredCapabilities> capabilities)
-        throws Exception {
+            Optional<DesiredCapabilities> capabilities)
+            throws Exception {
         AppiumDriver currentDriverSession;
         DesiredCapabilities desiredCapabilities = capabilities.get();
         String isChromDriverPath = (String) desiredCapabilities.getCapability(
-            AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
+                AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
         boolean isPlatformAndroid = AppiumDeviceManager.getMobilePlatform().name()
-            .equalsIgnoreCase("android");
+                .equalsIgnoreCase("android");
         addChromeDriverPathIfChromeOnDevice(
-            desiredCapabilities,
-            isChromDriverPath,
-            isPlatformAndroid);
+                desiredCapabilities,
+                isChromDriverPath,
+                isPlatformAndroid);
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
         if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
+                    && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
             currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
+                    desiredCapabilities);
             LOGGER.info("Session Created for iOS ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+                                + currentDriverSession.getSessionId() + "---"
+                                + currentDriverSession.getSessionDetail("udid"));
         } else if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-                && isPlatformAndroid) {
+                           && isPlatformAndroid) {
             currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
+                    desiredCapabilities);
             LOGGER.info("Session Created for Android ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+                                + currentDriverSession.getSessionId() + "---"
+                                + currentDriverSession.getSessionDetail("udid"));
         } else {
             currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                desiredCapabilities);
+                    desiredCapabilities);
             LOGGER.info("Session Created ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getRemoteAddress().getHost() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+                                + currentDriverSession.getSessionId() + "---"
+                                + currentDriverSession.getRemoteAddress().getHost() + "---"
+                                + currentDriverSession.getSessionDetail("udid"));
 
         }
         return currentDriverSession;
@@ -103,10 +103,11 @@ public class AppiumDriverManager {
         if (versionNamesArr.length > 0) {
             int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
             String message = "ChromeDriver for Chrome version " + highestChromeVersion
-                    + "on device: " + id;
+                    + " on device: " + id;
             LOGGER.info(message);
-            WebDriverManager.chromedriver().version(String.valueOf(highestChromeVersion)).setup();
-            return WebDriverManager.chromedriver().getBinaryPath();
+            WebDriverManager.chromedriver()
+                    .browserVersion(String.valueOf(highestChromeVersion)).setup();
+            return WebDriverManager.chromedriver().getDownloadedDriverVersion();
         } else {
             return null;
         }
@@ -175,7 +176,7 @@ public class AppiumDriverManager {
         }
     }
 
-    protected void stopAppiumDriver() throws Exception {
+    public void stopAppiumDriver() throws Exception {
         String OS = System.getProperty("os.name").toLowerCase();
         String command;
         AppiumDevice appiumDevice = AppiumDeviceManager.getAppiumDevice();

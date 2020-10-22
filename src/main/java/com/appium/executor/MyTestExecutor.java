@@ -42,7 +42,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -284,14 +283,6 @@ public class MyTestExecutor {
         return clazz;
     }
 
-    private List<XmlInclude> constructIncludes(List<Method> methods) {
-        List<XmlInclude> includes = new ArrayList<>();
-        for (Method m : methods) {
-            includes.add(new XmlInclude(m.getName()));
-        }
-        return includes;
-    }
-
     public Map<String, List<Method>> createTestsMap(Set<Method> methods) {
         Map<String, List<Method>> testsMap = new HashMap<>();
         methods.forEach(method -> {
@@ -302,74 +293,6 @@ public class MyTestExecutor {
             methodsList.add(method);
         });
         return testsMap;
-    }
-
-    private void deleteOutputDirectory() {
-        File delete_output = new File(getProperty("user.dir")
-            + "/src/test/java/output/");
-        File[] files = delete_output.listFiles();
-
-        for (File file : files) {
-            file.delete();
-        }
-    }
-
-    public XmlSuite constructXmlSuiteForParallelCucumber(
-        int deviceCount, List<AppiumDevice> deviceSerail) {
-        ArrayList<String> listeners = new ArrayList<>();
-        listeners.add("com.cucumber.listener.CucumberListener");
-        XmlSuite suite = new XmlSuite();
-        suite.setName("TestNG Forum");
-        suite.setThreadCount(deviceCount);
-        suite.setParallel(ParallelMode.TESTS);
-        suite.setVerbose(2);
-        suite.setListeners(listeners);
-        for (int i = 0; i < deviceCount; i++) {
-            XmlTest test = new XmlTest(suite);
-            test.setName("TestNG Test" + i);
-            test.setPreserveOrder(false);
-            test.addParameter("device", deviceSerail.get(i).getDevice().getUdid());
-            test.setPackages(getPackages());
-        }
-        return getXmlSuite(suite);
-    }
-
-    public XmlSuite constructXmlSuiteDistributeCucumber(int deviceCount) {
-        ArrayList<String> listeners = new ArrayList<>();
-        listeners.add("com.cucumber.listener.CucumberListener");
-        XmlSuite suite = new XmlSuite();
-        suite.setName("TestNG Forum");
-        suite.setThreadCount(deviceCount);
-        suite.setParallel(ParallelMode.CLASSES);
-        suite.setVerbose(2);
-        suite.setListeners(listeners);
-        XmlTest test = new XmlTest(suite);
-        test.setName("TestNG Test");
-        test.addParameter("device", "");
-        test.setPackages(getPackages());
-        return getXmlSuite(suite);
-    }
-
-    private XmlSuite getXmlSuite(XmlSuite suite) {
-        File file = new File(getProperty("user.dir") + PARALLEL_XML_LOCATION);
-        try (FileWriter fw = new FileWriter(file.getAbsoluteFile())) {
-            try (BufferedWriter bw = new BufferedWriter(fw)) {
-                bw.write(suite.toXml());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return suite;
-    }
-
-    private static List<XmlPackage> getPackages() {
-        List<XmlPackage> allPackages = new ArrayList<>();
-        XmlPackage eachPackage = new XmlPackage();
-        eachPackage.setName("output");
-        allPackages.add(eachPackage);
-        return allPackages;
     }
 
     private String getSuiteName() {
