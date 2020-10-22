@@ -1,5 +1,17 @@
 package com.appium.executor;
 
+import static com.appium.filelocations.FileLocations.PARALLEL_XML_LOCATION;
+import static com.appium.utils.ConfigFileManager.CATEGORY;
+import static com.appium.utils.ConfigFileManager.EXCLUDE_GROUPS;
+import static com.appium.utils.ConfigFileManager.INCLUDE_GROUPS;
+import static com.appium.utils.ConfigFileManager.LISTENERS;
+import static com.appium.utils.ConfigFileManager.RUNNER_LEVEL;
+import static com.appium.utils.ConfigFileManager.SUITE_NAME;
+import static com.appium.utils.FigletHelper.figlet;
+import static java.lang.System.getProperty;
+import static java.util.Collections.addAll;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.ConfigFileManager;
 import com.google.common.collect.ArrayListMultimap;
@@ -31,13 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.appium.filelocations.FileLocations.PARALLEL_XML_LOCATION;
-import static com.appium.utils.ConfigFileManager.*;
-import static com.appium.utils.FigletHelper.figlet;
-import static java.lang.System.getProperty;
-import static java.util.Collections.addAll;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class ATDExecutor {
     private final DeviceAllocationManager deviceAllocationManager;
