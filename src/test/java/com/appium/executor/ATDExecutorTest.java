@@ -17,7 +17,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.apache.commons.io.IOUtils.toInputStream;
 import static org.mockito.Mockito.when;
@@ -66,12 +70,14 @@ public class ATDExecutorTest {
     }
 
     @Test
-    public void constructXmlSuiteForClassLevelDistributionRunnerTest() throws IOException, SAXException {
+    public void constructXmlSuiteForClassLevelDistributionRunnerTest() throws IOException,
+            SAXException {
         XmlSuite xmlSuite = ATDExecutor.constructXmlSuiteForClassLevelDistributionRunner(
                 new ArrayList<>(), ATDExecutor.getTestMethods(methods),
                 SUITE_NAME, CATEGORY_NAME,4);
 
-        Document document1 = db.parse(new File("./src/test/resources/XMLSuiteForClassLevelDistribution.xml"));
+        Document document1 = db.parse(
+                new File("./src/test/resources/XMLSuiteForClassLevelDistribution.xml"));
         document1.normalizeDocument();
 
         Document document2 = db.parse(toInputStream((xmlSuite.toXml())));
@@ -81,12 +87,14 @@ public class ATDExecutorTest {
     }
 
     @Test
-    public void constructXmlSuiteForMethodLevelDistributionRunnerTest() throws IOException, SAXException {
+    public void constructXmlSuiteForMethodLevelDistributionRunnerTest() throws IOException,
+            SAXException {
         XmlSuite xmlSuite = ATDExecutor.constructXmlSuiteForMethodLevelDistributionRunner(
                 new ArrayList<>(), ATDExecutor.getTestMethods(methods),
                 SUITE_NAME, CATEGORY_NAME, 4);
 
-        Document document1 = db.parse(new File("./src/test/resources/XMLSuiteForMethodLevelDistribution.xml"));
+        Document document1 = db.parse(
+                new File("./src/test/resources/XMLSuiteForMethodLevelDistribution.xml"));
         document1.normalizeDocument();
 
         Document document2 = db.parse(toInputStream((xmlSuite.toXml())));
@@ -96,12 +104,14 @@ public class ATDExecutorTest {
     }
 
     @Test
-    public void constructXmlSuiteForParallelRunnerTest() throws IOException, SAXException {
+    public void constructXmlSuiteForParallelRunnerTest() throws IOException,
+            SAXException {
         XmlSuite xmlSuite = ATDExecutor.constructXmlSuiteForParallelRunner(new ArrayList<>(),
                 ATDExecutor.getTestMethods(methods),
                 SUITE_NAME, CATEGORY_NAME, 4);
 
-        Document document1 = db.parse(new File("./src/test/resources/XMLSuiteForParallelRunner.xml"));
+        Document document1 = db.parse(
+                new File("./src/test/resources/XMLSuiteForParallelRunner.xml"));
         document1.normalizeDocument();
 
         Document document2 = db.parse(toInputStream((xmlSuite.toXml())));
