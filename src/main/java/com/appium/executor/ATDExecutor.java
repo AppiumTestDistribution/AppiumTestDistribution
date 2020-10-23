@@ -15,9 +15,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.ConfigFileManager;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.jakewharton.fliptables.FlipTableConverters;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -36,7 +33,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,8 +59,6 @@ public class ATDExecutor {
         String suiteName = SUITE_NAME.get();
         String categoryName = CATEGORY.get();
         Set<Method> setOfMethods = getMethods(pack);
-        dryRunTestInfo(setOfMethods);
-
         String runnerLevel = RUNNER_LEVEL.get();
 
         if (executionType.equalsIgnoreCase("distribute")) {
@@ -202,30 +196,6 @@ public class ATDExecutor {
         Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(newUrls)
             .setScanners(new MethodAnnotationsScanner()));
         return reflections.getMethodsAnnotatedWith(Test.class);
-    }
-
-    private void dryRunTestInfo(Set<Method> resources) {
-        if (getProperty("dry-run") != null) {
-            Multimap<String, Map<String, String>> dryRunResults = ArrayListMultimap.create();
-            resources.forEach(method -> {
-                HashMap<String, String> methodAndGroups = new HashMap<>();
-                String className = method.getDeclaringClass().getSimpleName();
-                String methodName = method.getName();
-                String[] groups = method.getAnnotation(Test.class).groups();
-                methodAndGroups.put(methodName, Arrays.toString(groups));
-                dryRunResults.put(className, methodAndGroups);
-            });
-
-            List<TestNGTestInfo> testInfo = new ArrayList<>();
-            for (Map.Entry<String, Map<String, String>> stringObjectEntry
-                : dryRunResults.entries()) {
-                stringObjectEntry.getValue().forEach((key, value) ->
-                    testInfo.add(new TestNGTestInfo(stringObjectEntry.getKey(),
-                        key, value)));
-            }
-            System.out.println(FlipTableConverters.fromIterable(testInfo, TestNGTestInfo.class));
-            System.exit(1);
-        }
     }
 
     private List<XmlClass> writeXmlClass(List<String> testCases, Map<String,

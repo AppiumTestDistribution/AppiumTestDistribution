@@ -1,8 +1,5 @@
 package com.test.site;
 
-import com.appium.manager.AppiumDevice;
-import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumDriverManager;
 import io.appium.java_client.MobileBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;

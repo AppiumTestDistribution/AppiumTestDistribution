@@ -55,11 +55,7 @@ public class AndroidDeviceConfiguration {
                 cmd.runCommand("adb -s " + AppiumDeviceManager
                         .getAppiumDevice().getDevice().getUdid()
                         + " shell ls /system/bin/screenrecord");
-        if (screenrecord.trim().equals("/system/bin/screenrecord")) {
-            return true;
-        } else {
-            return false;
-        }
+        return screenrecord.trim().equals("/system/bin/screenrecord");
     }
 
     public String getDeviceManufacturer() {
