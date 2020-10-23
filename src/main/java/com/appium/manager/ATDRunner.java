@@ -43,7 +43,7 @@ public class ATDRunner {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
-        ATDExecutor = new ATDExecutor();
+        ATDExecutor = new ATDExecutor(deviceAllocationManager);
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }

@@ -52,8 +52,8 @@ public class ATDExecutor {
     private final List<String> groupsInclude = new ArrayList<>();
     private final List<String> groupsExclude = new ArrayList<>();
 
-    public ATDExecutor() {
-        deviceAllocationManager = DeviceAllocationManager.getInstance();
+    public ATDExecutor(DeviceAllocationManager deviceAllocationManager) {
+        this.deviceAllocationManager = deviceAllocationManager;
     }
 
     public boolean constructXMLAndTriggerParallelRunner(List<String> test, String pack,
