@@ -1,12 +1,16 @@
 package com.appium.manager;
 
-import com.appium.capabilities.DesiredCapabilityBuilder;
+import static com.appium.manager.AppiumDeviceManager.isPlatform;
+import static com.appium.utils.ConfigFileManager.CAPS;
+
+import com.appium.entities.MobilePlatform;
 import com.appium.utils.CommandPrompt;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
+import io.appium.java_client.windows.WindowsDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -41,49 +45,48 @@ public class AppiumDriverManager {
 
 
     private AppiumDriver<MobileElement> initialiseDriver(
-        Optional<DesiredCapabilities> capabilities)
-        throws Exception {
-        AppiumDriver currentDriverSession;
+            Optional<DesiredCapabilities> capabilities)
+            throws Exception {
+        AppiumDriver currentDriverSession = null;
         DesiredCapabilities desiredCapabilities = capabilities.get();
-        String isChromDriverPath = (String) desiredCapabilities.getCapability(
-            AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
-        boolean isPlatformAndroid = AppiumDeviceManager.getMobilePlatform().name()
-            .equalsIgnoreCase("android");
-        addChromeDriverPathIfChromeOnDevice(
-            desiredCapabilities,
-            isChromDriverPath,
-            isPlatformAndroid);
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
-        if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
-            currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
-            LOGGER.info("Session Created for iOS ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
-        } else if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-            && isPlatformAndroid) {
-            currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                desiredCapabilities);
-            LOGGER.info("Session Created for Android ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+        if (!isRunningInCloud()) {
+            if (isPlatform(MobilePlatform.IOS)) {
+                currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
+                        desiredCapabilities);
+            } else if (isPlatform(MobilePlatform.ANDROID)) {
+                addChromeDriverPathIfChromeOnDevice(
+                        desiredCapabilities,true);
+                currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
+                        desiredCapabilities);
+            } else if (isPlatform(MobilePlatform.WINDOWS)) {
+                currentDriverSession = new WindowsDriver(new URL(remoteWDHubIP),
+                        desiredCapabilities);
+            }
+            LOGGER.info("Session Created for " + AppiumDeviceManager.getMobilePlatform().name() + " ---- "
+                    + currentDriverSession.getSessionId() + "---"
+                    + currentDriverSession.getSessionDetail("udid"));
         } else {
             currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                desiredCapabilities);
-            LOGGER.info("Session Created ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getRemoteAddress().getHost() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
-
+                    desiredCapabilities);
+            LOGGER.info("Remote AppiumDriver Session Created ---- "
+                                + currentDriverSession.getSessionId() + "---"
+                                + currentDriverSession.getRemoteAddress().getHost() + "---"
+                                + currentDriverSession.getSessionDetail("udid"));
         }
         return currentDriverSession;
     }
 
+    private boolean isRunningInCloud () {
+        return AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
+    }
+
     private void addChromeDriverPathIfChromeOnDevice(DesiredCapabilities desiredCapabilities,
-                                                     String isChromDriverPath,
                                                      boolean isPlatformAndroid) throws IOException {
+        String isChromDriverPath = (String) desiredCapabilities.getCapability(
+                AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
+
         if (isPlatformAndroid && (null == isChromDriverPath)) {
             String udid = (String) desiredCapabilities.getCapability("udid");
             String pathForChromDriverForDevice = getPathForChromeDriver(udid);
@@ -138,35 +141,26 @@ public class AppiumDriverManager {
 
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession;
-        currentDriverSession = initialiseDriver(desiredCapabilities);
+        AppiumDriver<MobileElement> currentDriverSession = initialiseDriver(desiredCapabilities);
         AppiumDriverManager.setDriver(currentDriverSession);
     }
 
     // Should be used by Cucumber as well
     public void startAppiumDriverInstance() throws Exception {
-        String userSpecifiedCaps;
-        DesiredCapabilities desiredCapabilities;
-        userSpecifiedCaps = getCapsPath();
-        desiredCapabilities = buildDesiredCapabilities(userSpecifiedCaps);
-        startAppiumDriverInstance(Optional.ofNullable(desiredCapabilities));
+        startAppiumDriverInstance(Optional.ofNullable(buildDesiredCapabilities(CAPS.get())));
     }
 
-    private String getCapsPath() {
-        return CAPS.get();
-    }
-
-    private DesiredCapabilities buildDesiredCapabilities(String capabilityPath)
+    private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath)
         throws Exception {
-        String capabilities = capabilityPath;
-        if (new File(capabilityPath).exists()) {
-            Path path = FileSystems.getDefault().getPath(capabilityPath);
+        String absolutePathToCapabilities = capabilityFilePath;
+        if (new File(capabilityFilePath).exists()) {
+            Path path = FileSystems.getDefault().getPath(capabilityFilePath);
             if (!path.getParent().isAbsolute()) {
-                capabilities = path.normalize()
+                absolutePathToCapabilities = path.normalize()
                     .toAbsolutePath().toString();
             }
             desiredCapabilityBuilder
-                .buildDesiredCapability(capabilities);
+                .buildDesiredCapability(absolutePathToCapabilities);
             return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
             throw new RuntimeException("Capability file not found");

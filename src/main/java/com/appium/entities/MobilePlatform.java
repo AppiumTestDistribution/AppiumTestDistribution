@@ -6,7 +6,8 @@ package com.appium.entities;
 public enum MobilePlatform {
 
     IOS("IOS"),
-    ANDROID("ANDROID");
+    ANDROID("ANDROID"),
+    WINDOWS("WINDOWS");
 
     public final String platformName;
     MobilePlatform(String platformName) {

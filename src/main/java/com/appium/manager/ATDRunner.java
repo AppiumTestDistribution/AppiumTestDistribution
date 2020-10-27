@@ -27,6 +27,7 @@ public class ATDRunner {
     private static final String ANDROID = "android";
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
+    private static final String WINDOWS = "windows";
 
     private DeviceAllocationManager deviceAllocationManager;
     private AndroidDeviceConfiguration androidDevice;
