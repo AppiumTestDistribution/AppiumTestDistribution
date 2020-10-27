@@ -25,6 +25,12 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
+  "windows": {
+    "platformName": "windows",
+    "app": {
+      "local": "./temp/app.exe"
+    }
+  },
   "hostMachines": [
     {
       "machineIP": "127.0.0.1",

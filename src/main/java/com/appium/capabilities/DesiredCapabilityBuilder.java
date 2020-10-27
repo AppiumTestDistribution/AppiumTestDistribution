@@ -22,6 +22,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 
+import static com.appium.manager.AppiumDeviceManager.isPlatform;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -122,7 +123,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             capabilityObject(desiredCapabilities, platFormCapabilities, key);
         });
 
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+        if (isPlatform(MobilePlatform.ANDROID)) {
             desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "android");
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                 port);
@@ -179,6 +180,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                     appPath = hostArtifact.getArtifactPath("APP");
                 } else if (deviceOS.equals("iOS") && device.isDevice()) {
                     appPath = hostArtifact.getArtifactPath("IPA");
+                } else if (deviceOS.equals("windows") && device.isDevice()) {
+                    appPath = hostArtifact.getArtifactPath("EXE");
                 }
             } else {
                 if (isEmpty(appPath) || (((JSONObject) values).has("simulator")

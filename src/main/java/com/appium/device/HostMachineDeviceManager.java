@@ -1,5 +1,6 @@
 package com.appium.device;
 
+import com.appium.entities.MobilePlatform;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static com.appium.manager.AppiumDeviceManager.isPlatform;
 
 public class HostMachineDeviceManager {
 
@@ -132,7 +135,7 @@ public class HostMachineDeviceManager {
         throws Exception {
         IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
         List<Device> devices = appiumManager.getDevices(ip, platform);
-        if ((!platform.equalsIgnoreCase("android")
+        if ((!isPlatform(MobilePlatform.ANDROID)
             && capabilityManager.isSimulatorAppPresentInCapsJson()
             && hostMachineJson.has("simulators"))
             && !capabilityManager.getCapabilityObjectFromKey("iOS")

@@ -55,6 +55,9 @@ public class CapabilitySchemaValidator {
             case "ios":
                 schema = "/iOSSchema.json";
                 break;
+            case "windows":
+                schema = "/windowsSchema.json";
+                break;
             default:
                 System.out.println("Just for codacy!!");
                 break;
