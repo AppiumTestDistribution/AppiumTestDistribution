@@ -64,7 +64,8 @@ public class AppiumDriverManager {
                 currentDriverSession = new WindowsDriver(new URL(remoteWDHubIP),
                         desiredCapabilities);
             }
-            LOGGER.info("Session Created for " + AppiumDeviceManager.getMobilePlatform().name() + " ---- "
+            LOGGER.info("Session Created for " + AppiumDeviceManager.getMobilePlatform().name()
+                    + " ---- "
                     + currentDriverSession.getSessionId() + "---"
                     + currentDriverSession.getSessionDetail("udid"));
         } else {
@@ -74,11 +75,12 @@ public class AppiumDriverManager {
                                 + currentDriverSession.getSessionId() + "---"
                                 + currentDriverSession.getRemoteAddress().getHost() + "---"
                                 + currentDriverSession.getSessionDetail("udid"));
+
         }
         return currentDriverSession;
     }
 
-    private boolean isRunningInCloud () {
+    private boolean isRunningInCloud() {
         return AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
     }
 

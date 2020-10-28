@@ -25,7 +25,8 @@ public class AppiumDeviceManager {
 
 
     public static MobilePlatform getMobilePlatform() {
-        return MobilePlatform.valueOf(AppiumDeviceManager.getAppiumDevice().getDevice().getOs().toUpperCase());
+        return MobilePlatform.valueOf(AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getOs().toUpperCase());
     }
 
     public String getDeviceModel() {
@@ -37,7 +38,7 @@ public class AppiumDeviceManager {
         throw new IllegalArgumentException("DeviceModel is Empty");
     }
 
-    public static boolean isPlatform (MobilePlatform expectedPlatform) {
+    public static boolean isPlatform(MobilePlatform expectedPlatform) {
         return AppiumDeviceManager.getMobilePlatform().equals(expectedPlatform);
     }
 
