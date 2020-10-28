@@ -135,7 +135,7 @@ public class HostMachineDeviceManager {
         throws Exception {
         IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
         List<Device> devices = appiumManager.getDevices(ip, platform);
-        if ((!isPlatform(MobilePlatform.ANDROID)
+        if ((!platform.equalsIgnoreCase("android")
             && capabilityManager.isSimulatorAppPresentInCapsJson()
             && hostMachineJson.has("simulators"))
             && !capabilityManager.getCapabilityObjectFromKey("iOS")
