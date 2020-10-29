@@ -11,7 +11,6 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.Synchronized;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -42,7 +41,7 @@ public class AppiumDriverManager {
         appiumDriver.set(driver);
     }
 
-    @Synchronized
+
     private AppiumDriver<MobileElement> initialiseDriver(
             Optional<DesiredCapabilities> capabilities)
             throws Exception {
@@ -138,7 +137,7 @@ public class AppiumDriverManager {
         return appiumManager.getRemoteWDHubIP(hostName);
     }
 
-    @Synchronized
+
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;

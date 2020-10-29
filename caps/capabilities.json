@@ -21,17 +21,25 @@
     "wdaConnectionTimeout": 80000,
     "preventWDAAttachments": true,
     "clearSystemFiles": true,
+    "usePrebuiltWDA": true,
     "shouldUseSingletonTestManager": false,
     "simpleIsVisibleCheck": true,
+    "wdaStartupRetries": 10,
+    "wdaStartupRetryInterval": 100,
     "maxTypingFrequency": 10
   },
   "hostMachines": [
     {
       "machineIP": "127.0.0.1",
+      "appiumServerPath": "/Users/saikrisv/.node/lib/node_modules/appium/build/lib/main.js",
       "simulators": [
         {
           "deviceName": "iPhone 11",
-          "OS": "13.5"
+          "OS": "13.7"
+        },
+        {
+          "deviceName": "iPhone 8",
+          "OS": "13.7"
         }
       ]
     }
