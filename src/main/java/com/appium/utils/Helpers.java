@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class Helpers {
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
-    protected String getRemoteAppiumManagerPort(String host) throws Exception {
+    protected String getRemoteAppiumManagerPort(String host) {
         String serverPort = CapabilityManager.getInstance()
             .getRemoteAppiumManangerPort(host);
         if (serverPort == null) {

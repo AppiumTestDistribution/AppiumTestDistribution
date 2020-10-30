@@ -1,11 +1,11 @@
 package com.appium.device;
 
+import com.appium.capabilities.CapabilityManager;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.appium.utils.Api;
 import com.appium.utils.AvailablePorts;
-import com.appium.capabilities.CapabilityManager;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
@@ -55,12 +55,12 @@ public class HostMachineDeviceManager {
 
     private void initializeDevicesByHost() throws IOException {
         if (devicesByHost == null) {
-                Map<String, List<AppiumDevice>> allDevices = getDevices();
-                Map<String, List<AppiumDevice>> devicesFilteredByPlatform
+            Map<String, List<AppiumDevice>> allDevices = getDevices();
+            Map<String, List<AppiumDevice>> devicesFilteredByPlatform
                     = filterByDevicePlatform(allDevices);
-                Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
+            Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                     = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
-                devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
+            devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
             if (atdHost != null && atdPort != null) {
                 Api api = new Api();
                 api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
