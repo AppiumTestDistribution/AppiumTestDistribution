@@ -156,7 +156,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>6.8.0</version>
+            <version>6.8.2</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
