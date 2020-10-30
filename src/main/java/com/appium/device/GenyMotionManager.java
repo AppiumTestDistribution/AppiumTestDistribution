@@ -1,5 +1,6 @@
 package com.appium.device;
 
+import com.appium.exceptions.CloudConnectionException;
 import com.appium.utils.Api;
 import com.appium.utils.CommandPrompt;
 import okhttp3.Response;
@@ -20,7 +21,7 @@ public class GenyMotionManager {
     private static String cloud_user = System.getenv("CLOUD_USER");
     private static String cloud_key = System.getenv("CLOUD_KEY");
 
-    protected  static void connectToGenyCloud(String udid, Object devices) throws IOException {
+    protected  static void connectToGenyCloud(String udid, Object devices) {
 
         String gmLogin = "gmsaas auth login "
             + cloud_user + " " + cloud_key;
@@ -29,7 +30,7 @@ public class GenyMotionManager {
                 .runCommandThruProcess(gmLogin);
             LOGGER.info("Connected to Genymotion Cloud..");
         } catch (IOException e) {
-            throw new IOException("Failed to Connect to geny cloud..");
+            throw new CloudConnectionException("Failed to Connect to geny cloud..");
         }
 
         ((ArrayList)devices).parallelStream().forEach(o -> {

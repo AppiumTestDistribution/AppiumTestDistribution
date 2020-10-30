@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
 import static com.appium.manager.AppiumDeviceManager.isPlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
 
@@ -13,10 +14,12 @@ import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.windows.WindowsDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -51,32 +54,60 @@ public class AppiumDriverManager {
         DesiredCapabilities desiredCapabilities = capabilities.get();
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
-        if (!isRunningInCloud()) {
-            if (isPlatform(MobilePlatform.IOS)) {
+        if (isRunningInCloud()) {
+            currentDriverSession = getRemoteAppiumDriver(
+                    desiredCapabilities,
+                    remoteWDHubIP);
+        } else {
+            currentDriverSession = getLocalAppiumDriver(
+                    currentDriverSession,
+                    desiredCapabilities,
+                    remoteWDHubIP);
+        }
+        return currentDriverSession;
+    }
+
+    @NotNull
+    private AppiumDriver getRemoteAppiumDriver(
+            DesiredCapabilities desiredCapabilities,
+            String remoteWDHubIP) throws MalformedURLException {
+        AppiumDriver currentDriverSession;
+        currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
+                desiredCapabilities);
+        LOGGER.info("Remote AppiumDriver Session Created ---- "
+                            + currentDriverSession.getSessionId() + "---"
+                            + currentDriverSession.getRemoteAddress().getHost() + "---"
+                            + currentDriverSession.getSessionDetail("udid"));
+        return currentDriverSession;
+    }
+
+    @NotNull
+    private AppiumDriver getLocalAppiumDriver(
+            AppiumDriver currentDriverSession,
+            DesiredCapabilities desiredCapabilities,
+            String remoteWDHubIP)
+            throws IOException {
+        switch (getMobilePlatform()) {
+            case IOS:
                 currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
                         desiredCapabilities);
-            } else if (isPlatform(MobilePlatform.ANDROID)) {
+                break;
+            case ANDROID:
                 addChromeDriverPathIfChromeOnDevice(
                         desiredCapabilities,true);
                 currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
                         desiredCapabilities);
-            } else if (isPlatform(MobilePlatform.WINDOWS)) {
+                break;
+            case WINDOWS:
                 currentDriverSession = new WindowsDriver(new URL(remoteWDHubIP),
                         desiredCapabilities);
-            }
-            LOGGER.info("Session Created for " + AppiumDeviceManager.getMobilePlatform().name()
-                    + " ---- "
-                    + currentDriverSession.getSessionId() + "---"
-                    + currentDriverSession.getSessionDetail("udid"));
-        } else {
-            currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                    desiredCapabilities);
-            LOGGER.info("Remote AppiumDriver Session Created ---- "
-                                + currentDriverSession.getSessionId() + "---"
-                                + currentDriverSession.getRemoteAddress().getHost() + "---"
-                                + currentDriverSession.getSessionDetail("udid"));
-
+                break;
         }
+        LOGGER.info("Session Created for "
+                            + AppiumDeviceManager.getMobilePlatform().name()
+                            + " ---- "
+                            + currentDriverSession.getSessionId() + "---"
+                            + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 

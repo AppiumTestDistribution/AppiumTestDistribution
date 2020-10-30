@@ -177,11 +177,11 @@ public class CapabilityManager {
         return params;
     }
 
-    public JSONArray getHostMachineObject() throws Exception {
+    public JSONArray getHostMachineObject() {
         return getCapabilitiesArrayFromKey("hostMachines");
     }
 
-    public Boolean shouldExcludeLocalDevices() throws Exception {
+    public Boolean shouldExcludeLocalDevices() {
         return getCapabilityBoolean("excludeLocalDevices");
     }
 
