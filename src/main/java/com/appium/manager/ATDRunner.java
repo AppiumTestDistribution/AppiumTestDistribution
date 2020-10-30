@@ -13,6 +13,7 @@ import com.appium.schema.CapabilitySchemaValidator;
 import com.appium.capabilities.CapabilityManager;
 import com.appium.utils.ConfigFileManager;
 import com.appium.device.HostMachineDeviceManager;
+import com.appium.windows.WindowsDeviceConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class ATDRunner {
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
     private static final String WINDOWS = "windows";
+    private WindowsDeviceConfiguration windowsDevice;
 
     private DeviceAllocationManager deviceAllocationManager;
     private AndroidDeviceConfiguration androidDevice;
@@ -47,6 +49,7 @@ public class ATDRunner {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
+        windowsDevice = new WindowsDeviceConfiguration();
         myTestExecutor = new MyTestExecutor();
         htmlReporter = new HtmlReporter();
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();

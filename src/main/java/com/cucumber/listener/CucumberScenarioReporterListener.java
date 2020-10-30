@@ -7,6 +7,7 @@ import com.appium.manager.AppiumServerManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.manager.DeviceSingleton;
 import com.appium.utils.ImageUtils;
+import com.appium.windows.WindowsDeviceConfiguration;
 import com.epam.reportportal.cucumber.ScenarioReporter;
 import com.epam.reportportal.service.Launch;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 public class CucumberScenarioReporterListener extends ScenarioReporter {
 
+    private WindowsDeviceConfiguration windowsDevice;
     private DeviceAllocationManager deviceAllocationManager;
     public AppiumServerManager appiumServerManager;
     public AppiumDriverManager appiumDriverManager;
@@ -56,6 +58,7 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
         deviceSingleton = DeviceSingleton.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
+        windowsDevice = new WindowsDeviceConfiguration();
     }
 
     @Override

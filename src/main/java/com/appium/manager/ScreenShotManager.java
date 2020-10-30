@@ -25,6 +25,8 @@ import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
+
 /**
  * Created by saikrisv on 26/04/17.
  */
@@ -83,11 +85,11 @@ public class ScreenShotManager extends Helpers {
             File scrFile = AppiumDriverManager.getDriver()
                     .getScreenshotAs(OutputType.FILE);
             screenShotNameWithTimeStamp = currentDateAndTime();
-            if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
+            if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 getDeviceModel = screenShotNameWithTimeStamp;
                 screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                         "android", deviceModel, screenShotName);
-            } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
+            } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
                 getDeviceModel = screenShotNameWithTimeStamp;
                 screenShotAndFrame(status, scrFile, methodName, className, getDeviceModel,
                         "iOS", deviceModel, screenShotName);
@@ -100,10 +102,18 @@ public class ScreenShotManager extends Helpers {
         String className = getCurrentTestClassName();
         String methodName = getCurrentTestMethodName();
         String deviceModel = null;
-        if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
-        } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            deviceModel = AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel();
+        switch (getMobilePlatform()) {
+            case IOS:
+                deviceModel = AppiumDeviceManager.getAppiumDevice()
+                                      .getDevice().getDeviceModel();
+                break;
+            case ANDROID:
+                deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
+                break;
+            case WINDOWS:
+                deviceModel = AppiumDeviceManager.getAppiumDevice()
+                                      .getDevice().getDeviceModel();
+                break;
         }
         captureScreenShot(1, className, screenShotName, methodName, deviceModel);
     }
