@@ -87,7 +87,8 @@ public class AppiumDriverManager {
             DesiredCapabilities desiredCapabilities,
             String remoteWDHubIP)
             throws IOException {
-        switch (getMobilePlatform()) {
+        MobilePlatform mobilePlatform = getMobilePlatform();
+        switch (mobilePlatform) {
             case IOS:
                 currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
                         desiredCapabilities);
@@ -102,6 +103,8 @@ public class AppiumDriverManager {
                 currentDriverSession = new WindowsDriver(new URL(remoteWDHubIP),
                         desiredCapabilities);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + mobilePlatform);
         }
         LOGGER.info("Session Created for "
                             + AppiumDeviceManager.getMobilePlatform().name()

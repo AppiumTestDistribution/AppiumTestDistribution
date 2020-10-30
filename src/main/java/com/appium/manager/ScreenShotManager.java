@@ -102,7 +102,8 @@ public class ScreenShotManager extends Helpers {
         String className = getCurrentTestClassName();
         String methodName = getCurrentTestMethodName();
         String deviceModel = null;
-        switch (getMobilePlatform()) {
+        MobilePlatform mobilePlatform = getMobilePlatform();
+        switch (mobilePlatform) {
             case IOS:
                 deviceModel = AppiumDeviceManager.getAppiumDevice()
                                       .getDevice().getDeviceModel();
@@ -114,6 +115,8 @@ public class ScreenShotManager extends Helpers {
                 deviceModel = AppiumDeviceManager.getAppiumDevice()
                                       .getDevice().getDeviceModel();
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + mobilePlatform);
         }
         captureScreenShot(1, className, screenShotName, methodName, deviceModel);
     }
