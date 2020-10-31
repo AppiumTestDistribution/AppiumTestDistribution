@@ -21,7 +21,6 @@
     "wdaConnectionTimeout": 80000,
     "preventWDAAttachments": true,
     "clearSystemFiles": true,
-    "usePrebuiltWDA": true,
     "shouldUseSingletonTestManager": false,
     "simpleIsVisibleCheck": true,
     "wdaStartupRetries": 10,
