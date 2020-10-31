@@ -1,6 +1,7 @@
 package com.appium.capabilities;
 
 import com.appium.entities.MobilePlatform;
+import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
@@ -18,6 +19,7 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.util.ResourceUtils;
 
+import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
@@ -153,6 +155,13 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                 "XCUITest");
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+            File derivedDataPath = new File(System.getProperty("user.dir")
+                + FileLocations.DERIVED_DATA + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+            if (!derivedDataPath.exists()) {
+                derivedDataPath.mkdirs();
+            }
+            System.out.println("----" + derivedDataPath.getAbsolutePath());
+            desiredCapabilities.setCapability("derivedDataPath", derivedDataPath.getAbsolutePath());
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
             AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
