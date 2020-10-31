@@ -156,11 +156,11 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             desiredCapabilities.setCapability(MobileCapabilityType.UDID,
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
             File derivedDataPath = new File(System.getProperty("user.dir")
-                + FileLocations.DERIVED_DATA + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+                + FileLocations.DERIVED_DATA
+                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
             if (!derivedDataPath.exists()) {
                 derivedDataPath.mkdirs();
             }
-            System.out.println("----" + derivedDataPath.getAbsolutePath());
             desiredCapabilities.setCapability("derivedDataPath", derivedDataPath.getAbsolutePath());
         }
         desiredCapabilities.setCapability(MobileCapabilityType.UDID,
