@@ -88,7 +88,7 @@ public final class AppiumParallelTestListener extends Helpers
             if (testResult.getStatus() == ITestResult.SUCCESS
                 || testResult.getStatus() == ITestResult.FAILURE) {
                 HashMap<String, String> logs = testLogger.endLogging(testResult,
-                        AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                    AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
                     sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
