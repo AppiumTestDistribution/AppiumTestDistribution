@@ -134,7 +134,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        if(iInvokedMethod.isTestMethod()) {
+        {
             try {
                 if (!isCloudExecution() && !isRetry(iTestResult)) {
                     HashMap<String, String> logs = testLogger.endLogging(iTestResult,
@@ -149,20 +149,16 @@ public final class AppiumParallelMethodTestListener extends Helpers
                         testResults.set(logs);
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                AppiumDriverManager.getDriver().quit();
-                deviceAllocationManager.freeDevice();
-                try {
+                if(iInvokedMethod.isTestMethod()){
+                    AppiumDriverManager.getDriver().quit();
+                    deviceAllocationManager.freeDevice();
                     if (!isCloudExecution()) {
                         appiumDriverManager.stopAppiumDriver();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
             SessionContext.remove(Thread.currentThread().getId());
             queueAfterInvocationListener(iInvokedMethod, iTestResult, listeners);
         }

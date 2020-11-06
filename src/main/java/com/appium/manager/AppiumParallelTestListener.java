@@ -79,7 +79,6 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        if(method.isTestMethod()) {
             JSONObject json = new JSONObject();
             json.put("id", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
             json.put("version", new AppiumDeviceManager().getDeviceVersion());
@@ -103,7 +102,6 @@ public final class AppiumParallelTestListener extends Helpers
             }
             SessionContext.remove(Thread.currentThread().getId());
             queueAfterInvocationListener(method, testResult, iTestNGListeners);
-        }
     }
 
 
