@@ -79,29 +79,31 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        JSONObject json = new JSONObject();
-        json.put("id", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-        json.put("version", new AppiumDeviceManager().getDeviceVersion());
-        json.put("platform", AppiumDeviceManager.getMobilePlatform());
-        json.put("model", new AppiumDeviceManager().getDeviceModel());
-        try {
-            if (testResult.getStatus() == ITestResult.SUCCESS
-                || testResult.getStatus() == ITestResult.FAILURE) {
-                HashMap<String, String> logs = testLogger.endLogging(testResult,
-                    AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
-                if (atdHost.isPresent() && atdPort.isPresent()) {
-                    String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
+        if(method.isTestMethod()) {
+            JSONObject json = new JSONObject();
+            json.put("id", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+            json.put("version", new AppiumDeviceManager().getDeviceVersion());
+            json.put("platform", AppiumDeviceManager.getMobilePlatform());
+            json.put("model", new AppiumDeviceManager().getDeviceModel());
+            try {
+                if (testResult.getStatus() == ITestResult.SUCCESS
+                    || testResult.getStatus() == ITestResult.FAILURE) {
+                    HashMap<String, String> logs = testLogger.endLogging(testResult,
+                            AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                    if (atdHost.isPresent() && atdPort.isPresent()) {
+                        String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                        sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
+                    }
                 }
+                if (method.isTestMethod()) {
+                    appiumDriverManager.stopAppiumDriver();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            if (method.isTestMethod()) {
-                appiumDriverManager.stopAppiumDriver();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            SessionContext.remove(Thread.currentThread().getId());
+            queueAfterInvocationListener(method, testResult, iTestNGListeners);
         }
-        SessionContext.remove(Thread.currentThread().getId());
-        queueAfterInvocationListener(method, testResult, iTestNGListeners);
     }
 
 
