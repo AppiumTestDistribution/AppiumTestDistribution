@@ -11,7 +11,6 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.Synchronized;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -42,43 +41,43 @@ public class AppiumDriverManager {
         appiumDriver.set(driver);
     }
 
-    @Synchronized
+
     private AppiumDriver<MobileElement> initialiseDriver(
-            Optional<DesiredCapabilities> capabilities)
-            throws Exception {
+        Optional<DesiredCapabilities> capabilities)
+        throws Exception {
         AppiumDriver currentDriverSession;
         DesiredCapabilities desiredCapabilities = capabilities.get();
         String isChromDriverPath = (String) desiredCapabilities.getCapability(
-                AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
+            AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE);
         boolean isPlatformAndroid = AppiumDeviceManager.getMobilePlatform().name()
-                .equalsIgnoreCase("android");
+            .equalsIgnoreCase("android");
         addChromeDriverPathIfChromeOnDevice(
-                desiredCapabilities,
-                isChromDriverPath,
-                isPlatformAndroid);
+            desiredCapabilities,
+            isChromDriverPath,
+            isPlatformAndroid);
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
         if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-                    && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
+            && AppiumDeviceManager.getMobilePlatform().name().equalsIgnoreCase("iOS")) {
             currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                    desiredCapabilities);
+                desiredCapabilities);
             LOGGER.info("Session Created for iOS ---- "
-                                + currentDriverSession.getSessionId() + "---"
-                                + currentDriverSession.getSessionDetail("udid"));
+                + currentDriverSession.getSessionId() + "---"
+                + currentDriverSession.getSessionDetail("udid"));
         } else if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-                           && isPlatformAndroid) {
+            && isPlatformAndroid) {
             currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                    desiredCapabilities);
+                desiredCapabilities);
             LOGGER.info("Session Created for Android ---- "
-                                + currentDriverSession.getSessionId() + "---"
-                                + currentDriverSession.getSessionDetail("udid"));
+                + currentDriverSession.getSessionId() + "---"
+                + currentDriverSession.getSessionDetail("udid"));
         } else {
             currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                    desiredCapabilities);
+                desiredCapabilities);
             LOGGER.info("Session Created ---- "
-                                + currentDriverSession.getSessionId() + "---"
-                                + currentDriverSession.getRemoteAddress().getHost() + "---"
-                                + currentDriverSession.getSessionDetail("udid"));
+                + currentDriverSession.getSessionId() + "---"
+                + currentDriverSession.getRemoteAddress().getHost() + "---"
+                + currentDriverSession.getSessionDetail("udid"));
 
         }
         return currentDriverSession;
@@ -92,8 +91,8 @@ public class AppiumDriverManager {
             String pathForChromDriverForDevice = getPathForChromeDriver(udid);
             if (null != pathForChromDriverForDevice) {
                 desiredCapabilities.setCapability(
-                        AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE,
-                        pathForChromDriverForDevice);
+                    AndroidMobileCapabilityType.CHROMEDRIVER_EXECUTABLE,
+                    pathForChromDriverForDevice);
             }
         }
     }
@@ -103,11 +102,11 @@ public class AppiumDriverManager {
         if (versionNamesArr.length > 0) {
             int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
             String message = "ChromeDriver for Chrome version " + highestChromeVersion
-                    + " on device: " + id;
+                + " on device: " + id;
             LOGGER.info(message);
             WebDriverManager.chromedriver()
-                    .browserVersion(String.valueOf(highestChromeVersion)).setup();
-            return WebDriverManager.chromedriver().getDownloadedDriverVersion();
+                .version(String.valueOf(highestChromeVersion)).setup();
+            return WebDriverManager.chromedriver().getBinaryPath();
         } else {
             return null;
         }
@@ -116,7 +115,7 @@ public class AppiumDriverManager {
     private int[] getChromeVersionsFor(String id) throws IOException {
         CommandPrompt cmd = new CommandPrompt();
         String resultStdOut = cmd.runCommandThruProcess("adb -s " + id
-                + " shell dumpsys package com.android.chrome | grep versionName");
+            + " shell dumpsys package com.android.chrome | grep versionName");
         int[] versionNamesArr = {};
         if (resultStdOut.contains("versionName=")) {
             String[] foundVersions = resultStdOut.split("\n");
@@ -138,7 +137,7 @@ public class AppiumDriverManager {
         return appiumManager.getRemoteWDHubIP(hostName);
     }
 
-    @Synchronized
+
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
         AppiumDriver<MobileElement> currentDriverSession;
