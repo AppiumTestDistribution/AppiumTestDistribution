@@ -134,36 +134,34 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        try {
-            if (!isCloudExecution() && !isRetry(iTestResult)) {
-                HashMap<String, String> logs = testLogger.endLogging(iTestResult,
-                    AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
-                if (atdHost.isPresent() && atdPort.isPresent()) {
-                    String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
-                } else {
-                    new FileFilterParser()
-                        .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
-                            .getDevice().getUdid(), iTestResult);
-                    testResults.set(logs);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            AppiumDriverManager.getDriver().quit();
-            deviceAllocationManager.freeDevice();
+        {
             try {
-                if (!isCloudExecution()) {
-                    appiumDriverManager.stopAppiumDriver();
+                if (!isCloudExecution() && !isRetry(iTestResult)) {
+                    HashMap<String, String> logs = testLogger.endLogging(iTestResult,
+                            AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
+                    if (atdHost.isPresent() && atdPort.isPresent()) {
+                        String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
+                        sendResultsToAtdService(iTestResult, "Completed", url, logs);
+                    } else {
+                        new FileFilterParser()
+                                .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
+                                        .getDevice().getUdid(), iTestResult);
+                        testResults.set(logs);
+                    }
+                }
+                if (iInvokedMethod.isTestMethod()) {
+                    AppiumDriverManager.getDriver().quit();
+                    deviceAllocationManager.freeDevice();
+                    if (!isCloudExecution()) {
+                        appiumDriverManager.stopAppiumDriver();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            SessionContext.remove(Thread.currentThread().getId());
+            queueAfterInvocationListener(iInvokedMethod, iTestResult, listeners);
         }
-
-        SessionContext.remove(Thread.currentThread().getId());
-        queueAfterInvocationListener(iInvokedMethod, iTestResult, listeners);
     }
 
     /*
