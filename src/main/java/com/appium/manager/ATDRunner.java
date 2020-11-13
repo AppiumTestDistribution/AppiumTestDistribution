@@ -1,23 +1,21 @@
 package com.appium.manager;
 
-import static com.appium.utils.ConfigFileManager.FRAMEWORK;
-import static com.appium.utils.ConfigFileManager.RUNNER;
-import static com.appium.utils.FigletHelper.figlet;
-
 import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.cucumber.report.HtmlReporter;
-import com.appium.executor.MyTestExecutor;
+import com.appium.capabilities.CapabilityManager;
+import com.appium.device.HostMachineDeviceManager;
+import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.schema.CapabilitySchemaValidator;
-import com.appium.capabilities.CapabilityManager;
-import com.appium.utils.ConfigFileManager;
-import com.appium.device.HostMachineDeviceManager;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static com.appium.utils.ConfigFileManager.FRAMEWORK;
+import static com.appium.utils.ConfigFileManager.RUNNER;
+import static com.appium.utils.FigletHelper.figlet;
 
 /*
  * This class picks the devices connected
@@ -33,8 +31,7 @@ public class ATDRunner {
     private DeviceAllocationManager deviceAllocationManager;
     private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
-    private MyTestExecutor myTestExecutor;
-    private HtmlReporter htmlReporter;
+    private ATDExecutor ATDExecutor;
     private CapabilityManager capabilityManager;
     private HostMachineDeviceManager hostMachineDeviceManager;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
@@ -46,8 +43,7 @@ public class ATDRunner {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
-        myTestExecutor = new MyTestExecutor();
-        htmlReporter = new HtmlReporter();
+        ATDExecutor = new ATDExecutor(deviceAllocationManager);
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }
@@ -69,15 +65,11 @@ public class ATDRunner {
 
     public boolean runner(String pack, List<String> tests) throws Exception {
         figlet(RUNNER.get());
-        return triggerTest(pack, tests);
+        return parallelExecution(pack, tests);
     }
 
     public boolean runner(String pack) throws Exception {
-        return runner(pack, new ArrayList<>());
-    }
-
-    private boolean triggerTest(String pack, List<String> tests) throws Exception {
-        return parallelExecution(pack, tests);
+        return parallelExecution(pack, new ArrayList<>());
     }
 
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
@@ -105,22 +97,17 @@ public class ATDRunner {
             generateDirectoryForAdbLogs();
         }
 
-        boolean hasFailures = false;
+        boolean result = false;
         String runner = RUNNER.get();
         String framework = FRAMEWORK.get();
 
         if (framework.equalsIgnoreCase("testng")) {
             String executionType = runner.equalsIgnoreCase("distribute")
                     ? "distribute" : "parallel";
-            hasFailures = myTestExecutor
-                    .runMethodParallelAppium(tests, pack, deviceCount,
-                            executionType);
+            result = ATDExecutor.constructXMLAndTriggerParallelRunner(tests, pack, deviceCount,
+                    executionType);
         }
-
-        if (framework.equalsIgnoreCase("cucumber")) {
-            LOGGER.severe("This path is not used for Cucumber tests");
-        }
-        return hasFailures;
+        return result;
     }
 
     private void generateDirectoryForAdbLogs() {
