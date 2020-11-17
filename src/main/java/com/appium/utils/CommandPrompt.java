@@ -36,8 +36,13 @@ public class CommandPrompt {
 
     public BufferedReader getBufferedReader(String command) throws IOException {
         List<String> commands = new ArrayList<>();
-        commands.add("/bin/sh");
-        commands.add("-c");
+        if(System.getProperty("os.name").toLowerCase().contains("win")){
+            commands.add("cmd");
+            commands.add("/c");
+        }else{
+            commands.add("/bin/sh");
+            commands.add("-c");
+        }
         commands.add(command);
         ProcessBuilder builder = new ProcessBuilder(commands);
         Map<String, String> environ = builder.environment();
