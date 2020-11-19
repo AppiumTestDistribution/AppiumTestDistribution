@@ -36,10 +36,10 @@ public class CommandPrompt {
 
     public BufferedReader getBufferedReader(String command) throws IOException {
         List<String> commands = new ArrayList<>();
-        if(System.getProperty("os.name").toLowerCase().contains("win")){
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
             commands.add("cmd");
             commands.add("/c");
-        }else{
+        } else {
             commands.add("/bin/sh");
             commands.add("-c");
         }
