@@ -61,7 +61,7 @@ jobs:
 
       displayName: 'Run Distribute on iOS and Android'
 
-  - job: Distribute
+  - job: Windows
     pool:
       vmImage: 'windows-latest'
 
