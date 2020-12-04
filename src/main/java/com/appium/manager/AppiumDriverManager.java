@@ -4,6 +4,7 @@ import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
 import static com.appium.manager.AppiumDeviceManager.isPlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
 
+import com.appium.capabilities.DesiredCapabilityBuilder;
 import com.appium.entities.MobilePlatform;
 import com.appium.utils.CommandPrompt;
 import io.appium.java_client.AppiumDriver;

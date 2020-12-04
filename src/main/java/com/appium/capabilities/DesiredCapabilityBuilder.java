@@ -11,13 +11,12 @@ import com.appium.utils.HostArtifact;
 import com.appium.utils.JsonParser;
 import com.github.device.Device;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
-import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -91,7 +90,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             String hostAppPath = hostAppPath(values, hostArtifacts);
             Path path = FileSystems.getDefault().getPath(hostAppPath);
             if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-                || ResourceUtils.isUrl(hostAppPath)) {
+                || new UrlValidator().isValid(hostAppPath)) {
                 desiredCapabilities.setCapability(appCapability, hostAppPath);
             } else {
                 desiredCapabilities.setCapability(appCapability,
