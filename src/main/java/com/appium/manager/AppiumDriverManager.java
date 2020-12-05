@@ -48,30 +48,21 @@ public class AppiumDriverManager {
     }
 
 
-    private AppiumDriver<MobileElement> initialiseDriver(
-            Optional<DesiredCapabilities> capabilities)
+    private AppiumDriver<MobileElement> initialiseDriver(DesiredCapabilities desiredCapabilities)
             throws Exception {
-        AppiumDriver currentDriverSession = null;
-        DesiredCapabilities desiredCapabilities = capabilities.get();
         LOGGER.info("Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
         if (isRunningInCloud()) {
-            currentDriverSession = getRemoteAppiumDriver(
-                    desiredCapabilities,
-                    remoteWDHubIP);
+            return getRemoteAppiumDriver(desiredCapabilities, remoteWDHubIP);
         } else {
-            currentDriverSession = getLocalAppiumDriver(
-                    currentDriverSession,
-                    desiredCapabilities,
-                    remoteWDHubIP);
+            return getLocalAppiumDriver(desiredCapabilities, remoteWDHubIP);
         }
-        return currentDriverSession;
     }
 
     @NotNull
-    private AppiumDriver getRemoteAppiumDriver(
-            DesiredCapabilities desiredCapabilities,
-            String remoteWDHubIP) throws MalformedURLException {
+    private AppiumDriver getRemoteAppiumDriver(DesiredCapabilities desiredCapabilities,
+                                               String remoteWDHubIP)
+            throws MalformedURLException {
         AppiumDriver currentDriverSession;
         currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
                 desiredCapabilities);
@@ -83,11 +74,9 @@ public class AppiumDriverManager {
     }
 
     @NotNull
-    private AppiumDriver getLocalAppiumDriver(
-            AppiumDriver currentDriverSession,
-            DesiredCapabilities desiredCapabilities,
-            String remoteWDHubIP)
-            throws IOException {
+    private AppiumDriver getLocalAppiumDriver(DesiredCapabilities desiredCapabilities,
+                                              String remoteWDHubIP) throws IOException {
+        AppiumDriver currentDriverSession;
         MobilePlatform mobilePlatform = getMobilePlatform();
         switch (mobilePlatform) {
             case IOS:
@@ -178,7 +167,7 @@ public class AppiumDriverManager {
 
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession = initialiseDriver(desiredCapabilities);
+        AppiumDriver<MobileElement> currentDriverSession = initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
     }
 
