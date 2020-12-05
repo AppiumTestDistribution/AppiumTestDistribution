@@ -2,7 +2,7 @@
   "windows": {
     "platformName": "windows",
     "app": {
-      "local": "./apps/JioMeet.exe"
+      "local": "C:\\Windows\\System32\\notepad.exe"
     }
   },
   "hostMachines": [
