@@ -20,16 +20,12 @@ jobs:
 
   - job: Distribute
     pool:
-      vmImage: 'macos-10.15'
+      vmImage: 'windows-latest'
 
     steps:
     - task: NodeTool@0
       inputs:
         versionSpec: '12.18.1'
-    - script: |
-        brew outdated xctool || brew upgrade xctool
-        xcrun simctl list
-      displayName: 'iOS Sim Versions'
 
     - script: |
          node -v
@@ -37,160 +33,8 @@ jobs:
          appium -v
       displayName: 'Install Appium'
 
-    - bash: |
-        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
-      displayName: 'install Android image'
     - script: |
-            $ANDROID_HOME/emulator/emulator -list-avds
-            echo '---'
-            echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
-            echo '---'
-            $ANDROID_HOME/emulator/emulator -list-avds
-      displayName: 'create AVD'
-
-    - script: |
-            $ANDROID_HOME/platform-tools/adb devices
-            echo '---'
-            nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
-            echo '---'
-            $ANDROID_HOME/platform-tools/adb devices
-      displayName: 'start Android emulator'
-
-    - script: |
-         Platform='both' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+         mvn clean -Dtest=Runner test -Dcheckstyle.skip -DPlatform="windows"
 
       displayName: 'Run Distribute on iOS and Android'
-
-  - job: Parallel
-    pool:
-      vmImage: 'macos-10.15'
-
-
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '12.18.1'
-    - script: |
-        brew outdated xctool || brew upgrade xctool
-        xcrun simctl list
-      displayName: 'iOS Sim Versions'
-
-    - script: |
-         node -v
-         npm install -g appium
-         appium -v
-      displayName: 'Install Appium'
-
-    - bash: |
-        echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
-      displayName: 'install Android image'
-    - script: |
-            $ANDROID_HOME/emulator/emulator -list-avds
-            echo '---'
-            echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
-            echo '---'
-            $ANDROID_HOME/emulator/emulator -list-avds
-      displayName: 'create AVD'
-
-    - script: |
-            $ANDROID_HOME/platform-tools/adb devices
-            echo '---'
-            nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
-            echo '---'
-            $ANDROID_HOME/platform-tools/adb devices
-      displayName: 'start Android emulator'
-
-    - script: |
-         Platform='both' RUNNER_LEVEL="parallel" mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-      displayName: 'Run Parallel on iOS and Android'
-
-  - job: SauceLabs
-    pool:
-      vmImage: 'macos-10.15'
-
-
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '12.18.1'
-
-    - script: |
-         Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-      displayName: 'Run Test on Sauce on iOS and Android'
-
-  - job: SauceLabs_Android
-    pool:
-      vmImage: 'macos-10.15'
-
-
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '8.12.0'
-
-    - script: |
-         Platform='android' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-      displayName: 'Run Test on Sauce on iOS and Android'
-
-  - job: SauceLabs_iOS
-    pool:
-      vmImage: 'macos-10.15'
-
-
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '12.18.1'
-
-    - script: |
-         Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-      displayName: 'Run Test on Sauce on iOS and Android'
-
-  - job: BrowserStack_Android
-    pool:
-      vmImage: 'macos-10.15'
-
-
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '12.18.1'
-
-    - script: |
-         Platform='android' CLOUD_USER=$(user_bs) CLOUD_KEY=$(pass_bs) CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-      displayName: 'Run Test on Sauce on iOS and Android'
-
-#  - job: Genymotion
-#    pool:
-#      vmImage: 'macos-10.15'
-#
-#
-#    steps:
-#    - task: NodeTool@0
-#      inputs:
-#        versionSpec: '8.12.0'
-#
-#    - script: |
-#        node -v
-#        npm install -g appium@beta
-#        appium -v
-#      displayName: 'Install Appium'
-#
-#    - bash: |
-#        pip3 install gmsaas
-#      displayName: 'Download Genymotion Installer'
-#
-#    - bash: |
-#        gmsaas config set android-sdk-path $ANDROID_HOME
-#      displayName: 'Set Android Sdk Path'
-#
-#    - script: |
-#         Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='./configs/gm_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-#
-#      displayName: 'Run Test on Genymotion Android'
 
