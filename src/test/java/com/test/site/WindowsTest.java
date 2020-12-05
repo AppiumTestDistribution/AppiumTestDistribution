@@ -10,7 +10,9 @@ public class WindowsTest extends UserBaseTest {
 
     @Test
     public void sessionTest() {
-        List<MobileElement> edit = driver.findElementsByClassName("Edit");
+        System.out.println(driver.getSessionDetails().toString());
+        System.out.println(driver.getPageSource());
+        MobileElement edit = driver.findElementByClassName("Edit");
         Assert.assertNotNull(edit);
     }
 }
