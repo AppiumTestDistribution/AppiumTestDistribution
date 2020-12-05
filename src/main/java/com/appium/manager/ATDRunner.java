@@ -88,13 +88,11 @@ public class ATDRunner {
             + "Total Number of devices detected::" + deviceCount + "\n");
 
         createAppiumLogsFolder();
-        createSnapshotDirectoryFor();
+        //createSnapshotDirectoryFor();
         String platform = System.getenv("Platform");
-        if (deviceAllocationManager.getDevices() != null && platform
-                .equalsIgnoreCase(ANDROID)
+        if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
-            if (!capabilityManager.getCapabilityObjectFromKey("android")
-                    .has("automationName")) {
+            if (!capabilityManager.getCapabilityObjectFromKey("android").has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName "
                         + "as UIAutomator2 or Espresso to create Android driver");
             }

@@ -70,6 +70,8 @@ public class ArtifactsUploader {
             .getCapabilityObjectFromKey("android");
         JSONObject iOSAppPath = capabilityManager
             .getCapabilityObjectFromKey("iOS");
+        JSONObject windowsAppPath = capabilityManager
+                .getCapabilityObjectFromKey("windows");
         if (android != null && android.has(app)
             && (platform.equalsIgnoreCase("android")
             || platform.equalsIgnoreCase("both"))) {
@@ -98,6 +100,11 @@ public class ArtifactsUploader {
                     artifactPaths.put("APP", getArtifactPath(hostMachine, cloudApp));
                 }
             }
+        }
+        if (windowsAppPath != null && windowsAppPath.has(app)) {
+            JSONObject windowsApp = windowsAppPath.getJSONObject("app");
+            String appPath = windowsApp.getString("local");
+            artifactPaths.put("EXE", getArtifactPath(hostMachine, appPath));
         }
         return artifactPaths;
     }

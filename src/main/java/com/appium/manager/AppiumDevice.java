@@ -6,12 +6,12 @@ public class AppiumDevice {
 
     private static final String AVAILABLE = "AVAILABLE";
     private static final String BUSY = "BUSY";
-    private Device device;
+    private final Device device;
     private int port;
     private int chromeDriverPort;
     private String webkitProcessID;
     private String deviceState;
-    private String ipAddress;
+    private final String ipAddress;
 
     public AppiumDevice(Device device, String ipAddress) {
         this.device = device;

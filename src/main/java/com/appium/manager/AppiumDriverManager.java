@@ -167,7 +167,8 @@ public class AppiumDriverManager {
 
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
-        AppiumDriver<MobileElement> currentDriverSession = initialiseDriver(desiredCapabilities.get());
+        AppiumDriver<MobileElement> currentDriverSession =
+                initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
     }
 

@@ -1,32 +1,4 @@
 {
-  "android": {
-    "platformName": "android",
-    "platformVersion": "7.0",
-    "automationName": "UiAutomator2",
-    "uiautomator2ServerInstallTimeout": 50000,
-    "adbExecTimeout": 60000,
-    "app": {
-      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
-    },
-    "deviceName": "android",
-    "noSign": true
-  },
-  "iOS": {
-    "platformName": "iOS",
-    "app": {
-      "simulator": "https://github.com/saikrishna321/AppiumTestDistribution/blob/master/apps/VodQAReactNative.zip?raw=true"
-    },
-    "deviceName": "iPhone",
-    "wdaLaunchTimeout": 80000,
-    "wdaConnectionTimeout": 80000,
-    "preventWDAAttachments": true,
-    "clearSystemFiles": true,
-    "shouldUseSingletonTestManager": false,
-    "simpleIsVisibleCheck": true,
-    "wdaStartupRetries": 10,
-    "wdaStartupRetryInterval": 100,
-    "maxTypingFrequency": 10
-  },
   "windows": {
     "platformName": "windows",
     "app": {
@@ -35,17 +7,7 @@
   },
   "hostMachines": [
     {
-      "machineIP": "127.0.0.1",
-      "simulators": [
-        {
-          "deviceName": "iPhone 11",
-          "OS": "14.0"
-        },
-        {
-          "deviceName": "iPhone 8",
-          "OS": "14.0"
-        }
-      ]
+      "machineIP": "127.0.0.1"
     }
   ]
 }

@@ -79,7 +79,23 @@ public class LocalAppiumManager implements IAppiumManager {
         List<Device> devices = new ArrayList<>();
         getAndroidDevices(platform, devices);
         getIOSDevices(platform, devices);
+        getWindowsDevice(platform, devices);
         return devices;
+    }
+
+    private void getWindowsDevice(String platform, List<Device> devices) {
+        if (platform.equalsIgnoreCase(OSType.WINDOWS.name())
+                && CapabilityManager.getInstance().isWindowsApp()) {
+            Device device = new Device();
+            device.setName("windows");
+            device.setOs("windows");
+            device.setName("windows");
+            device.setUdid("win-123");
+            device.setDevice(true);
+            List<Device> deviceList = new ArrayList<>();
+            deviceList.add(device);
+            devices.addAll(deviceList);
+        }
     }
 
     private void getIOSDevices(String platform, List<Device> devices) {

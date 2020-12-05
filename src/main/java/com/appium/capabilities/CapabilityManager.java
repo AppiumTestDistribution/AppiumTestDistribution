@@ -194,6 +194,10 @@ public class CapabilityManager {
         return getCapabilityObjectFromKey("iOS").has("app");
     }
 
+    public boolean isWindowsApp() {
+        return getCapabilityObjectFromKey("windows").has("app");
+    }
+
     public boolean isRealDeviceAppPresentInCapsJson() {
         boolean hasApp = getCapabilityObjectFromKey("iOS").has("app");
         return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("device");

@@ -29,7 +29,7 @@ public class AndroidDeviceConfiguration {
         AppiumDevice getModel = getDevice();
         return (getModel.getDevice().getDeviceModel()
                 + getModel.getDevice().getBrand())
-                .replaceAll("[^a-zA-Z0-9\\.\\-]", "");
+                .replaceAll("[^a-zA-Z0-9.\\-]", "");
     }
 
     /*
