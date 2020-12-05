@@ -1,0 +1,13 @@
+{
+  "windows": {
+    "platformName": "windows",
+    "app": {
+      "local": "C:\\Windows\\System32\\notepad.exe"
+    }
+  },
+  "hostMachines": [
+    {
+      "machineIP": "127.0.0.1"
+    }
+  ]
+}
