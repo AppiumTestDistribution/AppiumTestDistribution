@@ -88,7 +88,7 @@ public class ATDRunner {
             + "Total Number of devices detected::" + deviceCount + "\n");
 
         createAppiumLogsFolder();
-        //createSnapshotDirectoryFor();
+        createSnapshotDirectoryFor();
         String platform = System.getenv("Platform");
         if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
