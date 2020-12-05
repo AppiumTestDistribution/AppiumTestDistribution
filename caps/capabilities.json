@@ -2,7 +2,7 @@
   "windows": {
     "platformName": "windows",
     "app": {
-      "local": "https://github.com/AppiumTestDistribution/PageObjectPatternAppium/blob/master/build/JioMeet.exe?raw=true"
+      "local": "./apps/JioMeet.exe"
     }
   },
   "hostMachines": [
