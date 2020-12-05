@@ -57,7 +57,7 @@ jobs:
         displayName: 'start Android emulator'
 
       - script: |
-          Platform='both' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+          Platform='both' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: 'Run Distribute on iOS and Android'
 
@@ -101,7 +101,7 @@ jobs:
         displayName: 'start Android emulator'
 
       - script: |
-          Platform='both' RUNNER_LEVEL="parallel" mvn clean -Dtest=Runner test -Dcheckstyle.skip
+          Platform='both' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: 'Run Parallel on iOS and Android'
 
