@@ -5,11 +5,12 @@ Feature: Sample Feature
   It is not meant to do anything, but sleep
   So we can prove that it runs in parallel
 
-  Scenario: Example 1 that sleep 1 seconds
+  Scenario: Scenario 1 Sample
     Given I login
     When I drag & drop
     Then drag and drop should have worked
 
-  Scenario: Example 4 that sleep 1 seconds
-    And I click on 2 number
-    Then It should finnish
+  Scenario: Scenario 2 Sample
+    Given I login
+    When I drag & drop
+    Then drag and drop should have worked

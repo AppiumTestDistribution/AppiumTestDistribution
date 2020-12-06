@@ -104,7 +104,7 @@ jobs:
 
         displayName: "Run Parallel on iOS and Android"
 
-  - job: Parallel_Cucumber
+  - job: Cucumber
     pool:
       vmImage: "macos-10.15"
 
@@ -143,7 +143,7 @@ jobs:
         displayName: "start Android emulator"
 
       - script: |
-          Platform='both' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/cucumberConfig.properties' mvn clean -Dtest=RunCukes -Ddataproviderthreadcount=3 test -Dcheckstyle.skip
+          Platform='android' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/cucumberConfig.properties' mvn clean -Dtest=RunCukes -Ddataproviderthreadcount=2 test -Dcheckstyle.skip
 
         displayName: "Run Parallel on iOS and Android - Cucumber"
 

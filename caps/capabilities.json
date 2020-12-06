@@ -6,7 +6,7 @@
     "uiautomator2ServerInstallTimeout": 50000,
     "adbExecTimeout": 60000,
     "app": {
-      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
+      "local": "./apps/VodQA.apk"
     },
     "deviceName": "android",
     "noSign": true
@@ -14,7 +14,7 @@
   "iOS": {
     "platformName": "iOS",
     "app": {
-      "simulator": "https://github.com/saikrishna321/AppiumTestDistribution/blob/master/apps/VodQAReactNative.zip?raw=true"
+      "simulator": "./apps/VodQAReactNative.zip"
     },
     "deviceName": "iPhone",
     "wdaLaunchTimeout": 80000,

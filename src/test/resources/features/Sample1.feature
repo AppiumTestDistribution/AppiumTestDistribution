@@ -5,7 +5,7 @@ Feature: Sample1 Feature
   It is not meant to do anything, but sleep
   So we can prove that it runs in parallel
 
-  Scenario Outline: Example 2 that sleep 1 seconds
+  Scenario Outline: Scenario 1 Sample 1
 #    Given I accept the tip screen
     When I click on <t1> number
     And I click on <t2> number
@@ -15,8 +15,7 @@ Feature: Sample1 Feature
       | 4  | 3  |
       | 1  | 2  |
 
-  Scenario: Example 3 that sleep 1 seconds
-#    Given I accept the tip screen
-    When I click on 5 number
-    And I click on 2 number
-    Then It should finnish
+  Scenario: Scenario 2 Sample 1
+    Given I login
+    When I drag & drop
+    Then drag and drop should have worked
