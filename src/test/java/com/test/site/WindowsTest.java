@@ -1,10 +1,8 @@
 package com.test.site;
 
-import io.appium.java_client.MobileElement;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.util.List;
 
 public class WindowsTest extends UserBaseTest {
 
@@ -13,7 +11,7 @@ public class WindowsTest extends UserBaseTest {
         System.out.println("------"+ getDriver());
         System.out.println("******" + getDriver().getSessionDetails().toString());
         System.out.println("@@@@@@@" + getDriver().getPageSource());
-        MobileElement edit = getDriver().findElementByClassName("Edit");
+        final RemoteWebElement edit = getDriver().findElementByClassName("Edit");
         Assert.assertNotNull(edit);
     }
 }
