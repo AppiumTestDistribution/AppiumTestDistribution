@@ -1,11 +1,5 @@
 name: Tests in Android and iOS
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ anandbagmar-master ]
-
 jobs:
   build:
     runs-on: macOS-latest
