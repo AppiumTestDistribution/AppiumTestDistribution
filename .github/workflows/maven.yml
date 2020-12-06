@@ -1,5 +1,9 @@
 name: Tests in Android and iOS
 
+on:
+  push:
+    branches: [anandbagmar-master]
+
 jobs:
   build:
     runs-on: macOS-latest
@@ -12,7 +16,7 @@ jobs:
       - name: Set up Node JS
         uses: actions/setup-node@v1
         with:
-          node-version: '10.17.0'
+          node-version: "10.17.0"
       - name: Clean Packages
         run: |
           rm -rf node_modules
