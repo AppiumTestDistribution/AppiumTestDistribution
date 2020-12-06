@@ -41,6 +41,5 @@ jobs:
         run: |
           xcrun simctl list
       - name: Setup Maven
-        uses: stCarolas/setup-maven@v4
         run: mvn clean compile
 
