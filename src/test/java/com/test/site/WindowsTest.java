@@ -10,9 +10,10 @@ public class WindowsTest extends UserBaseTest {
 
     @Test
     public void sessionTest() {
-        System.out.println(driver.getSessionDetails().toString());
-        System.out.println(driver.getPageSource());
-        MobileElement edit = driver.findElementByClassName("Edit");
+        System.out.println("------"+ getDriver());
+        System.out.println("******" + getDriver().getSessionDetails().toString());
+        System.out.println("@@@@@@@" + getDriver().getPageSource());
+        MobileElement edit = getDriver().findElementByClassName("Edit");
         Assert.assertNotNull(edit);
     }
 }
