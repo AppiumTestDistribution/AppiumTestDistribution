@@ -11,9 +11,9 @@ import org.testng.annotations.DataProvider;
                 "html:target/results.html",
                 "message:target/results.json",
                 "timeline:target/timeline"
-        }, features = { "features/Sample.feature", "features/Sample1.feature"})
-public class RunCukes extends AbstractTestNGCucumberTests {
-    public RunCukes() {
+        }, features = "features/windows.feature")
+public class WindowsRunCukes extends AbstractTestNGCucumberTests {
+    public WindowsRunCukes() {
         System.out.printf("ThreadID: %d: RunCucumberTest%n", Thread.currentThread().getId());
     }
 

@@ -228,7 +228,7 @@ jobs:
         displayName: "Install Appium"
 
       - script: |
-          mvn clean -Dtest=RunCukes test -Dcheckstyle.skip -DPlatform="windows"
+          mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip -DPlatform="windows"
     displayName: "Run windows app - Cucumber"
 
   - job: BrowserStack_Android
