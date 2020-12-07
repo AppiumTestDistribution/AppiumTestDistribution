@@ -18,8 +18,8 @@ public class Flick extends CommandPrompt implements IScreenRecord {
      * @param className     - Current test class name
      * @param methodName    - Current test method name
      * @param videoFileName - filename should have TimeStamp,deviceID with TestMethod name
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws IOException  -
+     * @throws InterruptedException -
      */
     public void stopVideoRecording(String className, String methodName,
                                    String videoFileName) throws IOException, InterruptedException {
@@ -32,8 +32,8 @@ public class Flick extends CommandPrompt implements IScreenRecord {
      * @param className     - Current test class name
      * @param methodName    - Current test method name
      * @param videoFileName - filename should have TimeStamp,deviceID with TestMethod name
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws IOException  -
+     * @throws InterruptedException -
      */
     public void startVideoRecording(String className, String methodName,
                                     String videoFileName) throws IOException, InterruptedException {

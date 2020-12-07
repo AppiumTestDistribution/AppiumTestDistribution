@@ -2,8 +2,8 @@ package com.appium.utils;
 
 import com.appium.capabilities.CapabilityManager;
 import com.appium.device.HostMachineDeviceManager;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,6 +70,8 @@ public class ArtifactsUploader {
             .getCapabilityObjectFromKey("android");
         JSONObject iOSAppPath = capabilityManager
             .getCapabilityObjectFromKey("iOS");
+        JSONObject windowsAppPath = capabilityManager
+                .getCapabilityObjectFromKey("windows");
         if (android != null && android.has(app)
             && (platform.equalsIgnoreCase("android")
             || platform.equalsIgnoreCase("both"))) {
@@ -99,12 +101,18 @@ public class ArtifactsUploader {
                 }
             }
         }
+        if (windowsAppPath != null && windowsAppPath.has(app)) {
+            JSONObject windowsApp = windowsAppPath.getJSONObject("app");
+            String appPath = windowsApp.getString("local");
+            artifactPaths.put("EXE", getArtifactPath(hostMachine, appPath));
+        }
         return artifactPaths;
     }
 
     private String getArtifactPath(String hostMachine, String artifact) throws Exception {
         String path;
-        if (!isCloud(hostMachine) && !isLocalhost(hostMachine) && !ResourceUtils.isUrl(artifact)) {
+        if (!isCloud(hostMachine) && !isLocalhost(hostMachine)
+                && !new UrlValidator().isValid(artifact)) {
             path = uploadFile(hostMachine, artifact);
         } else {
             path = artifact;

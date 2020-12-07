@@ -1,5 +1,6 @@
 package com.appium.manager;
 
+import com.appium.exceptions.LocalConnectionException;
 import com.appium.filelocations.FileLocations;
 import com.appium.capabilities.CapabilityManager;
 import com.appium.utils.OSType;
@@ -40,7 +41,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
 
     @Override
-    public void destroyAppiumNode(String host) throws IOException {
+    public void destroyAppiumNode(String host) {
         getAppiumDriverLocalService().stop();
         if (getAppiumDriverLocalService().isRunning()) {
             LOGGER.info("AppiumServer didn't shut... Trying to quit again....");
@@ -49,7 +50,7 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public String getRemoteWDHubIP(String host) throws IOException {
+    public String getRemoteWDHubIP(String host) {
         return getAppiumUrl().toString();
     }
 
@@ -74,18 +75,41 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     @Override
-    public List<Device> getDevices(String machineIP, String platform) throws Exception {
+    public List<Device> getDevices(String machineIP, String platform) {
         List<Device> devices = new ArrayList<>();
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            devices.addAll(new AndroidManager().getDevices());
+        getAndroidDevices(platform, devices);
+        getIOSDevices(platform, devices);
+        getWindowsDevice(platform, devices);
+        return devices;
+    }
+
+    private void getWindowsDevice(String platform, List<Device> devices) {
+        if (platform.equalsIgnoreCase(OSType.WINDOWS.name())
+                && CapabilityManager.getInstance().isWindowsApp()) {
+            Device device = new Device();
+            device.setName("windows");
+            device.setOs("windows");
+            device.setName("windows");
+            device.setUdid("win-123");
+            device.setDevice(true);
+            List<Device> deviceList = new ArrayList<>();
+            deviceList.add(device);
+            devices.addAll(deviceList);
         }
+    }
+
+    private void getIOSDevices(String platform, List<Device> devices) {
         if (platform.equalsIgnoreCase(OSType.iOS.name())
                 || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             if (CapabilityManager.getInstance().isApp()) {
                 if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
-                    devices.addAll(new SimulatorManager()
-                            .getAllBootedSimulators(OSType.iOS.name()));
+                    try {
+                        devices.addAll(new SimulatorManager()
+                                .getAllBootedSimulators(OSType.iOS.name()));
+                    } catch (InterruptedException | IOException e) {
+                        throw new LocalConnectionException(
+                                "Exception getting booted simulators", e);
+                    }
                 }
                 if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
                     devices.addAll(new IOSManager().getDevices());
@@ -94,13 +118,26 @@ public class LocalAppiumManager implements IAppiumManager {
                 devices.addAll(new IOSManager().getDevices());
             }
         }
-        return devices;
+    }
+
+    private void getAndroidDevices(String platform, List<Device> devices) {
+        if (platform.equalsIgnoreCase(OSType.ANDROID.name())
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
+            try {
+                devices.addAll(new AndroidManager().getDevices());
+            } catch (Exception e) {
+                throw new LocalConnectionException("Exception getting devices", e);
+            }
+        }
     }
 
     @Override
-    public Device getSimulator(String machineIP, String deviceName, String os)
-            throws IOException, InterruptedException {
-        return new SimulatorManager().getDevice(deviceName, os, OSType.iOS.name());
+    public Device getSimulator(String machineIP, String deviceName, String os) {
+        try {
+            return new SimulatorManager().getDevice(deviceName, os, OSType.iOS.name());
+        } catch (InterruptedException | IOException e) {
+            throw new LocalConnectionException("Exception getting simulators", e);
+        }
     }
 
     @Override

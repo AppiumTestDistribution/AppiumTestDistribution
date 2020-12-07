@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "windows": {
+        "platformName": "windows",
+        "app": {
+          "local": "./temp/app.exe"
+        }
+      },
+      "hostMachines": [
+        {
+          "machineIP": "127.0.0.1"
+        }
+      ]
+    }
+  ],
+  "required": [
+    "windows",
+    "hostMachines"
+  ],
+  "properties": {
+    "windows": {
+      "$id": "#/properties/windows",
+      "type": "object",
+      "title": "The windows schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": {},
+      "examples": [
+        {
+          "platformName": "windows",
+          "app": {
+            "local": "./temp/app.exe"
+          }
+        }
+      ],
+      "required": [
+        "platformName",
+        "app"
+      ],
+      "properties": {
+        "platformName": {
+          "$id": "#/properties/windows/properties/platformName",
+          "type": "string",
+          "title": "The platformName schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": "",
+          "examples": [
+            "windows"
+          ]
+        },
+        "app": {
+          "$id": "#/properties/windows/properties/app",
+          "type": "object",
+          "title": "The app schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": {},
+          "examples": [
+            {
+              "local": "./temp/app.exe"
+            }
+          ],
+          "required": [
+            "local"
+          ],
+          "properties": {
+            "local": {
+              "$id": "#/properties/windows/properties/app/properties/local",
+              "type": "string",
+              "title": "The local schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                "./temp/app.exe"
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "hostMachines": {
+      "$id": "#/properties/hostMachines",
+      "type": "array",
+      "title": "The hostMachines schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": [],
+      "examples": [
+        [
+          {
+            "machineIP": "127.0.0.1"
+          }
+        ]
+      ],
+      "additionalItems": true,
+      "items": {
+        "$id": "#/properties/hostMachines/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/hostMachines/items/anyOf/0",
+            "type": "object",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "machineIP": "127.0.0.1"
+              }
+            ],
+            "required": [
+              "machineIP"
+            ],
+            "properties": {
+              "machineIP": {
+                "$id": "#/properties/hostMachines/items/anyOf/0/properties/machineIP",
+                "type": "string",
+                "title": "The machineIP schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "127.0.0.1"
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": true
+}

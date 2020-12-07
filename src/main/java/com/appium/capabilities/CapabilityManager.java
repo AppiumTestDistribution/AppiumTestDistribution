@@ -177,11 +177,11 @@ public class CapabilityManager {
         return params;
     }
 
-    public JSONArray getHostMachineObject() throws Exception {
+    public JSONArray getHostMachineObject() {
         return getCapabilitiesArrayFromKey("hostMachines");
     }
 
-    public Boolean shouldExcludeLocalDevices() throws Exception {
+    public Boolean shouldExcludeLocalDevices() {
         return getCapabilityBoolean("excludeLocalDevices");
     }
 
@@ -192,6 +192,10 @@ public class CapabilityManager {
 
     public boolean isApp() {
         return getCapabilityObjectFromKey("iOS").has("app");
+    }
+
+    public boolean isWindowsApp() {
+        return getCapabilityObjectFromKey("windows").has("app");
     }
 
     public boolean isRealDeviceAppPresentInCapsJson() {

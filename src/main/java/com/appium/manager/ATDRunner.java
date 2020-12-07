@@ -7,6 +7,7 @@ import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.schema.CapabilitySchemaValidator;
+import com.appium.windows.WindowsDeviceConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public class ATDRunner {
     private static final String ANDROID = "android";
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
+    private static final String WINDOWS = "windows";
+    private WindowsDeviceConfiguration windowsDevice;
 
     private DeviceAllocationManager deviceAllocationManager;
     private AndroidDeviceConfiguration androidDevice;
@@ -44,6 +47,7 @@ public class ATDRunner {
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
         ATDExecutor = new ATDExecutor(deviceAllocationManager);
+        windowsDevice = new WindowsDeviceConfiguration();
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }
@@ -86,11 +90,9 @@ public class ATDRunner {
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();
         String platform = System.getenv("Platform");
-        if (deviceAllocationManager.getDevices() != null && platform
-                .equalsIgnoreCase(ANDROID)
+        if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
-            if (!capabilityManager.getCapabilityObjectFromKey("android")
-                    .has("automationName")) {
+            if (!capabilityManager.getCapabilityObjectFromKey("android").has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName "
                         + "as UIAutomator2 or Espresso to create Android driver");
             }
