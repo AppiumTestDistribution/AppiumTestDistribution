@@ -231,11 +231,6 @@ public class HostMachineDeviceManager {
         devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
     }
 
-    private void addWindowsDeviceOfHostMachine() {
-        List<Device> device = new ArrayList<>();
-
-    }
-
     private void addDevicesFromCloud(Map<String,
                                      List<AppiumDevice>> devicesByHost,
                                      String ip) {
