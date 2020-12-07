@@ -104,49 +104,6 @@ jobs:
 
         displayName: "Run Parallel on iOS and Android"
 
-  - job: Cucumber
-    pool:
-      vmImage: "macos-10.15"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "12.18.1"
-      - script: |
-          brew outdated xctool || brew upgrade xctool
-          xcrun simctl list
-        displayName: "iOS Sim Versions"
-
-      - script: |
-          node -v
-          npm install -g appium
-          appium -v
-        displayName: "Install Appium"
-
-      - bash: |
-          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
-        displayName: "install Android image"
-      - script: |
-          $ANDROID_HOME/emulator/emulator -list-avds
-          echo '---'
-          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
-          echo '---'
-          $ANDROID_HOME/emulator/emulator -list-avds
-        displayName: "create AVD"
-
-      - script: |
-          $ANDROID_HOME/platform-tools/adb devices
-          echo '---'
-          nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
-          echo '---'
-          $ANDROID_HOME/platform-tools/adb devices
-        displayName: "start Android emulator"
-
-      - script: |
-          Platform='both' CONFIG_FILE='./configs/cucumberConfig.properties' mvn clean -Dtest=RunCukes -Ddataproviderthreadcount=3 test -Dcheckstyle.skip
-
-        displayName: "Run on Android - Cucumber"
-
   - job: SauceLabs
     pool:
       vmImage: "macos-10.15"
