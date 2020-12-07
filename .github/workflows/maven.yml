@@ -40,11 +40,5 @@ jobs:
       - name: List iOS Devices & Platforms
         run: |
           xcrun simctl list
-      - name: Setup Maven
-        run: |
-          mvn clean compile
-          Platform='both' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-          Platform='both' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-          Platform='both' CONFIG_FILE='./configs/cucumberConfig.properties' mvn clean -Dtest=RunCukes -Ddataproviderthreadcount=3 test -Dcheckstyle.skip
-          
-
+      - name: Execute tests
+        run: Platform='both' CONFIG_FILE='./configs/cucumberConfig.properties' mvn clean -Dtest=RunCukes -Ddataproviderthreadcount=3 test -Dcheckstyle.skip
