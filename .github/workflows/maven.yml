@@ -1,8 +1,6 @@
-name: Tests in Android and iOS
+name: Test on Android and iOS
 
-on:
-  push:
-    branches: [anandbagmar-master]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -41,4 +39,4 @@ jobs:
         run: |
           xcrun simctl list
       - name: Execute tests
-        run: Platform='both' CONFIG_FILE='./configs/cucumberConfig.properties' mvn clean -Dtest=RunCukes -Ddataproviderthreadcount=3 test -Dcheckstyle.skip
+        run: mvn clean compile
