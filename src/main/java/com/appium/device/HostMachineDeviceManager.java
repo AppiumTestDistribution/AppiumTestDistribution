@@ -54,26 +54,28 @@ public class HostMachineDeviceManager {
     }
 
     private void initializeDevicesByHost() throws IOException {
-        if (devicesByHost == null) {
-            Map<String, List<AppiumDevice>> allDevices = getDevices();
-            Map<String, List<AppiumDevice>> devicesFilteredByPlatform
-                    = filterByDevicePlatform(allDevices);
-            Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
-                    = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
-            devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
-            if (atdHost != null && atdPort != null) {
-                Api api = new Api();
-                api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
-                api.post("http://" + atdHost + ":" + atdPort + "/devices",
-                    new ObjectMapper().writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(devicesByHost));
-                api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
-                    new TestStatusManager()
-                        .envInfo(devicesByHost.getAllDevices().size()));
-                api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
-                    new TestStatusManager()
-                        .appiumLogs(devicesByHost));
-            }
+        if (devicesByHost != null) {
+            return;
+        }
+        
+        Map<String, List<AppiumDevice>> allDevices = getDevices();
+        Map<String, List<AppiumDevice>> devicesFilteredByPlatform
+                = filterByDevicePlatform(allDevices);
+        Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
+                = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
+        devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
+        if (atdHost != null && atdPort != null) {
+            Api api = new Api();
+            api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
+            api.post("http://" + atdHost + ":" + atdPort + "/devices",
+                new ObjectMapper().writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(devicesByHost));
+            api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
+                new TestStatusManager()
+                    .envInfo(devicesByHost.getAllDevices().size()));
+            api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
+                new TestStatusManager()
+                    .appiumLogs(devicesByHost));
         }
     }
 
@@ -151,48 +153,48 @@ public class HostMachineDeviceManager {
         String platform = System.getenv(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
 
-        if (capabilities.getCapabilities().has("hostMachines")) {
-            JSONArray hostMachines = capabilities.getHostMachineObject();
-            for (Object hostMachine : hostMachines) {
-                JSONObject hostMachineJson = (JSONObject) hostMachine;
-                Object machineIPs = hostMachineJson.get("machineIP");
-                if (machineIPs instanceof JSONArray) {
-                    for (Object machineIP : (JSONArray) machineIPs) {
-                        String ip = machineIP.toString();
-                        devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
-                    }
-                } else if (machineIPs instanceof String) {
-                    String ip = hostMachineJson.getString("machineIP");
-                    if (Capabilities.getInstance().isCloud(ip)) {
-                        List<Device> device = new ArrayList<>();
-                        JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
-                        cloud.toMap().forEach((devicePlatform, devices) -> {
-                            ((List) devices).forEach(o -> {
-                                Device d = new Device();
-                                d.setOs(devicePlatform);
-                                d.setOsVersion(((Map) o).get("osVersion").toString());
-                                d.setName(((Map) o).get("deviceName").toString());
-                                d.setCloud(true);
-                                device.add(d);
-                            });
+        if (!capabilities.getCapabilities().has("hostMachines")) {
+            throw new RuntimeException("Provide hostMachine in Caps.json for execution");
+        }
+
+        JSONArray hostMachines = capabilities.getHostMachineObject();
+        for (Object hostMachine : hostMachines) {
+            JSONObject hostMachineJson = (JSONObject) hostMachine;
+            Object machineIPs = hostMachineJson.get("machineIP");
+            if (machineIPs instanceof JSONArray) {
+                for (Object machineIP : (JSONArray) machineIPs) {
+                    String ip = machineIP.toString();
+                    devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
+                }
+            } else if (machineIPs instanceof String) {
+                String ip = hostMachineJson.getString("machineIP");
+                if (Capabilities.getInstance().isCloud(ip)) {
+                    List<Device> device = new ArrayList<>();
+                    JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
+                    cloud.toMap().forEach((devicePlatform, devices) -> {
+                        ((List) devices).forEach(o -> {
+                            Device d = new Device();
+                            d.setOs(devicePlatform);
+                            d.setOsVersion(((Map) o).get("osVersion").toString());
+                            d.setName(((Map) o).get("deviceName").toString());
+                            d.setCloud(true);
+                            device.add(d);
                         });
-                        devicesByHost.put(ip, getAppiumDevices(ip, device));
-                    } else {
-                        if (capabilities.getCapabilityObjectFromKey("genycloud") != null) {
-                            JSONObject cloud = capabilities
-                                    .getCapabilityObjectFromKey("genycloud");
-                            for (Map.Entry<String, Object> entry : cloud.toMap().entrySet()) {
-                                String key = entry.getKey();
-                                Object value = entry.getValue();
-                                GenyMotionManager.connectToGenyCloud(key, value);
-                            }
+                    });
+                    devicesByHost.put(ip, getAppiumDevices(ip, device));
+                } else {
+                    if (capabilities.getCapabilityObjectFromKey("genycloud") != null) {
+                        JSONObject cloud = capabilities
+                                .getCapabilityObjectFromKey("genycloud");
+                        for (Map.Entry<String, Object> entry : cloud.toMap().entrySet()) {
+                            String key = entry.getKey();
+                            Object value = entry.getValue();
+                            GenyMotionManager.connectToGenyCloud(key, value);
                         }
-                        devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
                     }
+                    devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));
                 }
             }
-        } else {
-            throw new RuntimeException("Provide hostMachine in Caps.json for execution");
         }
         return devicesByHost;
     }
