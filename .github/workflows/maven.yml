@@ -39,4 +39,4 @@ jobs:
         run: |
           xcrun simctl list
       - name: Execute tests
-        run: mvn clean compile
+        run: Platform='both' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
