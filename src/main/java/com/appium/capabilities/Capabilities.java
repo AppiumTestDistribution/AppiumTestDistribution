@@ -244,4 +244,8 @@ public class Capabilities {
     public JSONObject getCapabilities() {
         return capabilities;
     }
+
+    public boolean hasHostMachines() {
+        return getCapabilities().has("hostMachines");
+    }
 }

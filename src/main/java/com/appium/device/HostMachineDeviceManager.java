@@ -26,20 +26,29 @@ import java.util.stream.Collectors;
 public class HostMachineDeviceManager {
 
     private static final String PLATFORM = "Platform";
-    private static final String UDIDS = "udids";
-    private Capabilities capabilities;
+    private static final String UNIQUE_DEVICE_IDENTIFIERS = "udids";
+    protected Capabilities capabilities;
     private DevicesByHost devicesByHost;
     private static HostMachineDeviceManager instance;
     private String atdHost = null;
     private String atdPort = null;
 
-    private HostMachineDeviceManager() {
+    protected HostMachineDeviceManager() {
         try {
             capabilities = Capabilities.getInstance();
-            atdHost = Capabilities.getInstance()
-                .getMongoDbHostAndPort().get("atdHost");
-            atdPort = Capabilities.getInstance()
-                .getMongoDbHostAndPort().get("atdPort");
+            atdHost = Capabilities.getInstance().getMongoDbHostAndPort().get("atdHost");
+            atdPort = Capabilities.getInstance().getMongoDbHostAndPort().get("atdPort");
+            initializeDevicesByHost();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected HostMachineDeviceManager(Capabilities capabilities) {
+        try {
+            this.capabilities = capabilities;
+            atdHost = Capabilities.getInstance().getMongoDbHostAndPort().get("atdHost");
+            atdPort = Capabilities.getInstance().getMongoDbHostAndPort().get("atdPort");
             initializeDevicesByHost();
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,7 +66,7 @@ public class HostMachineDeviceManager {
         if (devicesByHost != null) {
             return;
         }
-        
+
         Map<String, List<AppiumDevice>> allDevices = getDevices();
         Map<String, List<AppiumDevice>> devicesFilteredByPlatform
                 = filterByDevicePlatform(allDevices);
@@ -68,41 +77,40 @@ public class HostMachineDeviceManager {
             Api api = new Api();
             api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
             api.post("http://" + atdHost + ":" + atdPort + "/devices",
-                new ObjectMapper().writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(devicesByHost));
+                    new ObjectMapper().writerWithDefaultPrettyPrinter()
+                            .writeValueAsString(devicesByHost));
             api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
-                new TestStatusManager()
-                    .envInfo(devicesByHost.getAllDevices().size()));
+                    new TestStatusManager()
+                            .envInfo(devicesByHost.getAllDevices().size()));
             api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
-                new TestStatusManager()
-                    .appiumLogs(devicesByHost));
+                    new TestStatusManager()
+                            .appiumLogs(devicesByHost));
         }
     }
 
     private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(
-        Map<String, List<AppiumDevice>> devicesByHost) {
-        String udidsString = System.getenv(UDIDS);
-        List<String> udids = udidsString == null ? Collections.emptyList()
-            : Arrays.asList(udidsString.split(","));
+            Map<String, List<AppiumDevice>> devicesByHost) {
+        String uniqueDeviceIdentifiersString = System.getenv(UNIQUE_DEVICE_IDENTIFIERS);
+        List<String> uniqueDeviceIdentifiers = uniqueDeviceIdentifiersString == null
+                ? Collections.emptyList() : Arrays.asList(uniqueDeviceIdentifiersString.split(","));
 
-        if (udids.size() == 0) {
+        if (uniqueDeviceIdentifiers.size() == 0) {
             return devicesByHost;
-        } else {
-            HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
-            devicesByHost.forEach((hostName, appiumDevices) -> {
-                List<AppiumDevice> filteredDevices = appiumDevices.stream()
-                    .filter(appiumDevice -> udids.contains(appiumDevice
-                        .getDevice().getUdid())).collect(Collectors.toList());
-                if (!filteredDevices.isEmpty()) {
-                    filteredDevicesHostName.put(hostName, filteredDevices);
-                }
-            });
-            return filteredDevicesHostName;
         }
+        HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
+        devicesByHost.forEach((hostName, appiumDevices) -> {
+            List<AppiumDevice> filteredDevices = appiumDevices.stream()
+                    .filter(appiumDevice -> uniqueDeviceIdentifiers.contains(appiumDevice
+                            .getDevice().getUdid())).collect(Collectors.toList());
+            if (!filteredDevices.isEmpty()) {
+                filteredDevicesHostName.put(hostName, filteredDevices);
+            }
+        });
+        return filteredDevicesHostName;
     }
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(
-        Map<String, List<AppiumDevice>> devicesByHost) {
+            Map<String, List<AppiumDevice>> devicesByHost) {
         String platform = System.getenv(PLATFORM);
         if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
@@ -110,8 +118,8 @@ public class HostMachineDeviceManager {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
             devicesByHost.forEach((hostName, appiumDevices) -> {
                 List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice ->
-                    appiumDevice.getDevice().getOs()
-                        .equalsIgnoreCase(platform)).collect(Collectors.toList());
+                        appiumDevice.getDevice().getOs()
+                                .equalsIgnoreCase(platform)).collect(Collectors.toList());
                 if (!filteredDevices.isEmpty()) {
                     filteredDevicesHostName.put(hostName, filteredDevices);
                 }
@@ -137,10 +145,10 @@ public class HostMachineDeviceManager {
                                    JSONObject hostMachineJson,
                                    List<Device> devices) {
         if ((platform.equalsIgnoreCase("iOS")
-            && capabilities.isSimulatorAppPresentInCapsJson()
-            && hostMachineJson.has("simulators"))
-            && !capabilities.getCapabilityObjectFromKey("iOS")
-            .has("browserName")) {
+                && capabilities.isSimulatorAppPresentInCapsJson()
+                && hostMachineJson.has("simulators"))
+                && !capabilities.getCapabilityObjectFromKey("iOS")
+                .has("browserName")) {
             JSONArray simulators = hostMachineJson.getJSONArray("simulators");
             List<Device> simulatorsToBoot = getSimulatorsToBoot(
                     ip, simulators);
@@ -153,7 +161,7 @@ public class HostMachineDeviceManager {
         String platform = System.getenv(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
 
-        if (!capabilities.getCapabilities().has("hostMachines")) {
+        if (!capabilities.hasHostMachines()) {
             throw new RuntimeException("Provide hostMachine in Caps.json for execution");
         }
 
@@ -169,7 +177,7 @@ public class HostMachineDeviceManager {
             } else if (machineIPs instanceof String) {
                 String ip = hostMachineJson.getString("machineIP");
                 if (Capabilities.getInstance().isCloud(ip)) {
-                    List<Device> device = new ArrayList<>();
+                    List<Device> cloudDevices = new ArrayList<>();
                     JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
                     cloud.toMap().forEach((devicePlatform, devices) -> {
                         ((List) devices).forEach(o -> {
@@ -178,10 +186,10 @@ public class HostMachineDeviceManager {
                             d.setOsVersion(((Map) o).get("osVersion").toString());
                             d.setName(((Map) o).get("deviceName").toString());
                             d.setCloud(true);
-                            device.add(d);
+                            cloudDevices.add(d);
                         });
                     });
-                    devicesByHost.put(ip, getAppiumDevices(ip, device));
+                    devicesByHost.put(ip, getAppiumDevices(ip, cloudDevices));
                 } else {
                     if (capabilities.getCapabilityObjectFromKey("genycloud") != null) {
                         JSONObject cloud = capabilities
@@ -223,7 +231,7 @@ public class HostMachineDeviceManager {
                                          JSONObject hostMachineJson, String ip) {
         if (capabilities.getCapabilityObjectFromKey("genycloud") != null) {
             JSONObject cloud = capabilities
-                .getCapabilityObjectFromKey("genycloud");
+                    .getCapabilityObjectFromKey("genycloud");
             for (Map.Entry<String, Object> entry : cloud.toMap().entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
@@ -234,7 +242,7 @@ public class HostMachineDeviceManager {
     }
 
     private void addDevicesFromCloud(Map<String,
-                                     List<AppiumDevice>> devicesByHost,
+            List<AppiumDevice>> devicesByHost,
                                      String ip) {
         List<Device> device = new ArrayList<>();
         JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
@@ -253,7 +261,7 @@ public class HostMachineDeviceManager {
 
     private void addDevicesFromListOfHostMachines(String platform,
                                                   Map<String,
-                                                  List<AppiumDevice>> devicesByHost,
+                                                          List<AppiumDevice>> devicesByHost,
                                                   JSONObject hostMachineJson,
                                                   JSONArray machineIPs) {
         for (Object machineIP : machineIPs) {
