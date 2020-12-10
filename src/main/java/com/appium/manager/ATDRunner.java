@@ -29,6 +29,7 @@ public class ATDRunner {
     private static final String BOTH = "Both";
     private static final String IOS = "iOS";
     private static final String WINDOWS = "windows";
+    public static final String USER_DIR = "user.dir";
     private WindowsDeviceConfiguration windowsDevice;
 
     private DeviceAllocationManager deviceAllocationManager;
@@ -53,7 +54,7 @@ public class ATDRunner {
     }
 
     private void createOutputDirectoryIfNotExist() {
-        File file = new File(System.getProperty("user.dir"), FileLocations.OUTPUT_DIRECTORY);
+        File file = new File(System.getProperty(USER_DIR), FileLocations.OUTPUT_DIRECTORY);
         if (!file.exists()) {
             file.mkdirs();
         }
@@ -113,7 +114,7 @@ public class ATDRunner {
     }
 
     private void generateDirectoryForAdbLogs() {
-        File adb_logs = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY);
+        File adb_logs = new File(System.getProperty(USER_DIR) + FileLocations.ADB_LOGS_DIRECTORY);
         if (!adb_logs.exists()) {
             try {
                 adb_logs.mkdir();
@@ -124,7 +125,7 @@ public class ATDRunner {
     }
 
     private void createAppiumLogsFolder() {
-        File f = new File(System.getProperty("user.dir") + FileLocations.APPIUM_LOGS_DIRECTORY);
+        File f = new File(System.getProperty(USER_DIR) + FileLocations.APPIUM_LOGS_DIRECTORY);
         if (!f.exists()) {
             try {
                 f.mkdir();
@@ -142,7 +143,7 @@ public class ATDRunner {
             createPlatformDirectory(os);
             String deviceId = udid.getDevice().getUdid();
             File file = new File(
-                    System.getProperty("user.dir")
+                    System.getProperty(USER_DIR)
                             + FileLocations.SCREENSHOTS_DIRECTORY + os + "/"
                             + deviceId);
             if (!file.exists()) {
@@ -152,7 +153,7 @@ public class ATDRunner {
     }
 
     private void createPlatformDirectory(String platform) {
-        File platformDirectory = new File(System.getProperty("user.dir")
+        File platformDirectory = new File(System.getProperty(USER_DIR)
                 + FileLocations.SCREENSHOTS_DIRECTORY + platform);
         if (!platformDirectory.exists()) {
             platformDirectory.mkdirs();
