@@ -1,6 +1,6 @@
 package com.cucumber.listener;
 
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.manager.ATDRunner;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
@@ -36,10 +36,10 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
         atdHost =
-                Optional.ofNullable(CapabilityManager.getInstance()
+                Optional.ofNullable(Capabilities.getInstance()
                         .getMongoDbHostAndPort().get("atdHost"));
         atdPort =
-                Optional.ofNullable(CapabilityManager.getInstance()
+                Optional.ofNullable(Capabilities.getInstance()
                         .getMongoDbHostAndPort().get("atdPort"));
     }
 

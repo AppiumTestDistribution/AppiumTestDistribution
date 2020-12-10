@@ -1,7 +1,7 @@
 package com.appium.utils;
 
 
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.epam.reportportal.service.ReportPortal;
 import org.json.simple.JSONObject;
 import org.testng.ITestResult;
@@ -90,9 +90,9 @@ public class FileFilterParser extends Helpers {
                     Optional<String> atdHost;
                     Optional<String> atdPort;
                     try {
-                        atdHost = Optional.ofNullable(CapabilityManager.getInstance()
+                        atdHost = Optional.ofNullable(Capabilities.getInstance()
                                 .getMongoDbHostAndPort().get("atdHost"));
-                        atdPort = Optional.ofNullable(CapabilityManager.getInstance()
+                        atdPort = Optional.ofNullable(Capabilities.getInstance()
                                 .getMongoDbHostAndPort().get("atdPort"));
                         if (atdHost.isPresent() && atdPort.isPresent()) {
                             list.put(screenName, "http://" + getHostMachineIpAddress() + ":"

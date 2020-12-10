@@ -3,7 +3,7 @@ package com.appium.schema;
 import com.appium.manager.RemoteAppiumManager;
 import com.appium.utils.FigletHelper;
 
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -74,11 +74,11 @@ public class CapabilitySchemaValidator {
     }
 
     private void validateRemoteHosts() {
-        CapabilityManager capabilityManager;
+        Capabilities capabilities;
         try {
-            capabilityManager = CapabilityManager.getInstance();
-            if (capabilityManager.getCapabilities().has("hostMachines")) {
-                JSONArray hostMachines = capabilityManager.getHostMachineObject();
+            capabilities = Capabilities.getInstance();
+            if (capabilities.getCapabilities().has("hostMachines")) {
+                JSONArray hostMachines = capabilities.getHostMachineObject();
                 for (Object hostMachine : hostMachines) {
                     JSONObject hostMachineJson = ((JSONObject) hostMachine);
                     boolean isCloud = hostMachineJson.has("isCloud");

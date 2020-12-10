@@ -2,7 +2,7 @@ package com.appium.manager;
 
 
 import com.annotation.values.SkipIf;
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.device.DevicesByHost;
 import com.appium.utils.Helpers;
 import com.appium.device.HostMachineDeviceManager;
@@ -47,9 +47,9 @@ public final class AppiumParallelTestListener extends Helpers
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
-        atdHost = Optional.ofNullable(CapabilityManager.getInstance()
+        atdHost = Optional.ofNullable(Capabilities.getInstance()
             .getMongoDbHostAndPort().get("atdHost"));
-        atdPort = Optional.ofNullable(CapabilityManager.getInstance()
+        atdPort = Optional.ofNullable(Capabilities.getInstance()
             .getMongoDbHostAndPort().get("atdPort"));
         iTestNGListeners = initialiseListeners();
     }

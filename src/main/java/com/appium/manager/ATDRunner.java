@@ -1,7 +1,7 @@
 package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
@@ -35,14 +35,14 @@ public class ATDRunner {
     private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
     private ATDExecutor ATDExecutor;
-    private CapabilityManager capabilityManager;
+    private Capabilities capabilities;
     private HostMachineDeviceManager hostMachineDeviceManager;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
 
     public ATDRunner() {
-        capabilityManager = CapabilityManager.getInstance();
+        capabilities = Capabilities.getInstance();
         new CapabilitySchemaValidator()
-                .validateCapabilitySchema(capabilityManager.getCapabilities());
+                .validateCapabilitySchema(capabilities.getCapabilities());
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
@@ -92,7 +92,7 @@ public class ATDRunner {
         String platform = System.getenv("Platform");
         if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
-            if (!capabilityManager.getCapabilityObjectFromKey("android").has("automationName")) {
+            if (!capabilities.getCapabilityObjectFromKey("android").has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName "
                         + "as UIAutomator2 or Espresso to create Android driver");
             }

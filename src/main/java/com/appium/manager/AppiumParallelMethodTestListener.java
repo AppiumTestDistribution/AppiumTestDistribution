@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.device.GenyMotionManager;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
@@ -46,9 +46,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
-        atdHost = Optional.ofNullable(CapabilityManager.getInstance()
+        atdHost = Optional.ofNullable(Capabilities.getInstance()
             .getMongoDbHostAndPort().get("atdHost"));
-        atdPort = Optional.ofNullable(CapabilityManager.getInstance()
+        atdPort = Optional.ofNullable(Capabilities.getInstance()
             .getMongoDbHostAndPort().get("atdPort"));
         listeners = initialiseListeners();
     }
@@ -169,7 +169,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void onFinish(ISuite iSuite) {
-        if (CapabilityManager.getInstance()
+        if (Capabilities.getInstance()
             .getCapabilityObjectFromKey("genycloud") != null) {
             try {
                 new GenyMotionManager().stopAllGenymotionInstances();

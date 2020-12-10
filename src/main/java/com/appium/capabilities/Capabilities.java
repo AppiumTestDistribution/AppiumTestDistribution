@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class CapabilityManager {
-    private static CapabilityManager instance;
+public class Capabilities {
+    private static Capabilities instance;
     private JSONObject capabilities;
 
-    private CapabilityManager() {
+    private Capabilities() {
         String capabilitiesFilePath = getCapabilityLocation();
         JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
         StringBuilder varParsing = new StringBuilder(200);
@@ -28,9 +28,9 @@ public class CapabilityManager {
             varParsing);
     }
 
-    public static CapabilityManager getInstance() {
+    public static Capabilities getInstance() {
         if (instance == null) {
-            instance = new CapabilityManager();
+            instance = new Capabilities();
         }
         return instance;
     }
@@ -220,7 +220,7 @@ public class CapabilityManager {
     }
 
     private <T> T appiumServerProp(String host, String arg) throws Exception {
-        JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
+        JSONArray hostMachineObject = Capabilities.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
         Object machineIP = hostIP.stream().filter(object -> ((Map) object).get("machineIP")
             .toString().equalsIgnoreCase(host)
