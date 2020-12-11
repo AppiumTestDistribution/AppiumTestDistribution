@@ -30,14 +30,10 @@ public class HostMachineDeviceManager {
     protected Capabilities capabilities;
     private DevicesByHost devicesByHost;
     private static HostMachineDeviceManager instance;
-    private String atdHost = null;
-    private String atdPort = null;
 
     protected HostMachineDeviceManager() {
         try {
             capabilities = Capabilities.getInstance();
-            atdHost = Capabilities.getInstance().getMongoDbHostAndPort().get("atdHost");
-            atdPort = Capabilities.getInstance().getMongoDbHostAndPort().get("atdPort");
             initializeDevicesByHost();
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,11 +43,9 @@ public class HostMachineDeviceManager {
     protected HostMachineDeviceManager(Capabilities capabilities) {
         try {
             this.capabilities = capabilities;
-            atdHost = Capabilities.getInstance().getMongoDbHostAndPort().get("atdHost");
-            atdPort = Capabilities.getInstance().getMongoDbHostAndPort().get("atdPort");
             initializeDevicesByHost();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -73,6 +67,8 @@ public class HostMachineDeviceManager {
         Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                 = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
         devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
+        String atdHost = Capabilities.getInstance().getMongoDbHostAndPort().get("atdHost");
+        String atdPort = Capabilities.getInstance().getMongoDbHostAndPort().get("atdPort");
         if (atdHost != null && atdPort != null) {
             Api api = new Api();
             api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
