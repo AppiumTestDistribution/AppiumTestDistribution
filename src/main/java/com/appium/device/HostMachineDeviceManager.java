@@ -27,25 +27,29 @@ public class HostMachineDeviceManager {
 
     private static final String PLATFORM = "Platform";
     private static final String UNIQUE_DEVICE_IDENTIFIERS = "udids";
+    private final AppiumManagerFactory appiumManagerFactory;
     protected Capabilities capabilities;
     private DevicesByHost devicesByHost;
     private AtdEnvironment atdEnvironment;
     private static HostMachineDeviceManager instance;
 
     protected HostMachineDeviceManager() {
+        appiumManagerFactory = new AppiumManagerFactory();
+        atdEnvironment = new AtdEnvironment();
+        capabilities = Capabilities.getInstance();
         try {
-            atdEnvironment = AtdEnvironment.getInstance();
-            capabilities = Capabilities.getInstance();
             initializeDevicesByHost();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    protected HostMachineDeviceManager(Capabilities capabilities, AtdEnvironment atdEnvironment) {
+    protected HostMachineDeviceManager(
+            AppiumManagerFactory appiumManagerFactory, Capabilities capabilities, AtdEnvironment atdEnvironment) {
+        this.appiumManagerFactory = appiumManagerFactory;
+        this.atdEnvironment = atdEnvironment;
+        this.capabilities = capabilities;
         try {
-            this.atdEnvironment = atdEnvironment;
-            this.capabilities = capabilities;
             initializeDevicesByHost();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -133,7 +137,7 @@ public class HostMachineDeviceManager {
 
     private List<AppiumDevice> getDevicesByIP(String ip, String platform,
                                               JSONObject hostMachineJson) {
-        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(ip);
+        IAppiumManager appiumManager = appiumManagerFactory.getAppiumManagerFor(ip);
         List<Device> devices = appiumManager.getDevices(ip, platform);
         bootIOSSimulators(ip, platform, hostMachineJson, devices);
         return getAppiumDevices(ip, devices);
@@ -296,7 +300,7 @@ public class HostMachineDeviceManager {
             JSONObject simulatorJson = (JSONObject) simulator;
             String deviceName = simulatorJson.getString("deviceName");
             String os = simulatorJson.getString("OS");
-            IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(machineIP);
+            IAppiumManager appiumManager = appiumManagerFactory.getAppiumManagerFor(machineIP);
             Device device = appiumManager.getSimulator(machineIP, deviceName, os);
             if (!device.getState().equals("Booted")) {
                 devices.add(device);
