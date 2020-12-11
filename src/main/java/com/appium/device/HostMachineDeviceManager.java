@@ -29,10 +29,12 @@ public class HostMachineDeviceManager {
     private static final String UNIQUE_DEVICE_IDENTIFIERS = "udids";
     protected Capabilities capabilities;
     private DevicesByHost devicesByHost;
+    private AtdEnvironment atdEnvironment;
     private static HostMachineDeviceManager instance;
 
     protected HostMachineDeviceManager() {
         try {
+            atdEnvironment = AtdEnvironment.getInstance();
             capabilities = Capabilities.getInstance();
             initializeDevicesByHost();
         } catch (Exception e) {
@@ -40,8 +42,9 @@ public class HostMachineDeviceManager {
         }
     }
 
-    protected HostMachineDeviceManager(Capabilities capabilities) {
+    protected HostMachineDeviceManager(Capabilities capabilities, AtdEnvironment atdEnvironment) {
         try {
+            this.atdEnvironment = atdEnvironment;
             this.capabilities = capabilities;
             initializeDevicesByHost();
         } catch (Exception e) {
@@ -86,7 +89,7 @@ public class HostMachineDeviceManager {
 
     private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(
             Map<String, List<AppiumDevice>> devicesByHost) {
-        String uniqueDeviceIdentifiersString = System.getenv(UNIQUE_DEVICE_IDENTIFIERS);
+        String uniqueDeviceIdentifiersString = atdEnvironment.getEnv(UNIQUE_DEVICE_IDENTIFIERS);
         List<String> uniqueDeviceIdentifiers = uniqueDeviceIdentifiersString == null
                 ? Collections.emptyList() : Arrays.asList(uniqueDeviceIdentifiersString.split(","));
 
@@ -107,7 +110,7 @@ public class HostMachineDeviceManager {
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(
             Map<String, List<AppiumDevice>> devicesByHost) {
-        String platform = System.getenv(PLATFORM);
+        String platform = atdEnvironment.getEnv(PLATFORM);
         if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
         } else {
@@ -154,7 +157,7 @@ public class HostMachineDeviceManager {
 
 
     private Map<String, List<AppiumDevice>> getDevices() {
-        String platform = System.getenv(PLATFORM);
+        String platform = atdEnvironment.getEnv(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
 
         if (!capabilities.hasHostMachines()) {

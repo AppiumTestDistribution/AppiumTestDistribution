@@ -23,9 +23,19 @@ public class Capabilities {
         StringBuilder varParsing = new StringBuilder(200);
         varParsing.append("atd").append("_");
         capabilities = loadAndOverrideFromEnvVars(jsonParser.getObjectFromJSON(),
-            new JSONObject(),
-            getAllATDOverrideEnvVars(),
-            varParsing);
+                new JSONObject(),
+                getAllATDOverrideEnvVars(),
+                varParsing);
+    }
+
+    public Capabilities(String capabilitiesJson) {
+        StringBuilder varParsing = new StringBuilder(200);
+        varParsing.append("atd").append("_");
+        capabilities = loadAndOverrideFromEnvVars(
+                new JsonParser().getObjectFromJSONString(capabilitiesJson),
+                new JSONObject(),
+                getAllATDOverrideEnvVars(),
+                varParsing);
     }
 
     public static Capabilities getInstance() {
@@ -54,21 +64,21 @@ public class Capabilities {
             Object keyvalue = originalObject.get(keyStr);
             if (keyvalue instanceof JSONObject) {
                 processJSONObject(objectToUpdate,
-                    allATDOverrideEnvVars,
-                    currentPath,
-                    keyStr,
-                    (JSONObject) keyvalue);
+                        allATDOverrideEnvVars,
+                        currentPath,
+                        keyStr,
+                        (JSONObject) keyvalue);
             } else if (keyvalue instanceof JSONArray) {
                 processJSONArray(objectToUpdate,
-                    allATDOverrideEnvVars,
-                    currentPath,
-                    keyStr,
-                    (JSONArray) keyvalue);
+                        allATDOverrideEnvVars,
+                        currentPath,
+                        keyStr,
+                        (JSONArray) keyvalue);
             } else {
                 processJSONObject(objectToUpdate,
-                    currentPath,
-                    keyStr,
-                    keyvalue);
+                        currentPath,
+                        keyStr,
+                        keyvalue);
             }
         });
         return objectToUpdate;
@@ -95,10 +105,10 @@ public class Capabilities {
         currentPath.append(keyStr).append("_");
         for (int arrIndex = 0; arrIndex < keyvalue.length(); arrIndex++) {
             processJSONArrayItem(allATDOverrideEnvVars,
-                currentPath,
-                jsonArray,
-                keyvalue,
-                arrIndex);
+                    currentPath,
+                    jsonArray,
+                    keyvalue,
+                    arrIndex);
         }
         currentPath.delete(currentPath.lastIndexOf(keyStr), currentPath.length());
     }
@@ -113,9 +123,9 @@ public class Capabilities {
         jsonArray.put(jsonObject);
         currentPath.append(arrIndex).append("_");
         loadAndOverrideFromEnvVars((JSONObject) arrayItem,
-            jsonObject,
-            allATDOverrideEnvVars,
-            currentPath);
+                jsonObject,
+                allATDOverrideEnvVars,
+                currentPath);
         currentPath.delete(currentPath.lastIndexOf(String.valueOf(arrIndex)), currentPath.length());
     }
 
@@ -133,13 +143,13 @@ public class Capabilities {
 
     private String getCapabilityLocation() {
         String path = System.getProperty("user.dir") + "/caps/"
-            + "capabilities.json";
+                + "capabilities.json";
         String caps = CAPS.get();
         if (caps != null) {
             Path userDefinedCapsPath = FileSystems.getDefault().getPath(caps);
             if (!userDefinedCapsPath.getParent().isAbsolute()) {
                 path = userDefinedCapsPath.normalize()
-                    .toAbsolutePath().toString();
+                        .toAbsolutePath().toString();
             } else {
                 path = userDefinedCapsPath.toString();
             }
@@ -170,7 +180,7 @@ public class Capabilities {
     public HashMap<String, String> getMongoDbHostAndPort() {
         HashMap<String, String> params = new HashMap<>();
         if (capabilities.has("ATDServiceHost")
-            && capabilities.has("ATDServicePort")) {
+                && capabilities.has("ATDServicePort")) {
             params.put("atdHost", (String) capabilities.get("ATDServiceHost"));
             params.put("atdPort", (String) capabilities.get("ATDServicePort"));
         }
@@ -223,9 +233,9 @@ public class Capabilities {
         JSONArray hostMachineObject = Capabilities.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
         Object machineIP = hostIP.stream().filter(object -> ((Map) object).get("machineIP")
-            .toString().equalsIgnoreCase(host)
-            && ((Map) object).get(arg) != null)
-            .findFirst().orElse(null);
+                .toString().equalsIgnoreCase(host)
+                && ((Map) object).get(arg) != null)
+                .findFirst().orElse(null);
         return (T) ((Map) machineIP).get(arg);
     }
 
