@@ -3,9 +3,8 @@ package com.appium.device;
 import com.appium.capabilities.Capabilities;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
-import com.appium.manager.LocalAppiumManager;
 import com.github.device.Device;
-import org.mockito.Mock;
+import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -44,8 +43,12 @@ public class HostMachineDeviceManagerTest {
     )
     public void shouldThrowErrorWhenHostMachineIsNotDefinedInCapabilities() {
         Capabilities capabilities = Mockito.mock(Capabilities.class);
+        AtdEnvironment atdEnvironment = Mockito.mock(AtdEnvironment.class);
+
         when(capabilities.hasHostMachines()).thenReturn(false);
-        new HostMachineDeviceManager(null, capabilities, null);
+        when(atdEnvironment.getEnv("Platform")).thenReturn("android");
+
+        new HostMachineDeviceManager(null, capabilities, atdEnvironment);
     }
 
     @Test
@@ -54,13 +57,11 @@ public class HostMachineDeviceManagerTest {
         AtdEnvironment atdEnvironment = Mockito.mock(AtdEnvironment.class);
         AppiumManagerFactory appiumManagerFactory = Mockito.mock(AppiumManagerFactory.class);
         IAppiumManager appiumManager = Mockito.mock(IAppiumManager.class);
-        Device androidDevice = new Device();
-        androidDevice.setName("Pixel_3a_API_30_x86");
-        androidDevice.setAvailable(true);
-        androidDevice.setOs("android");
+        Device androidDevice = androidDevice();
 
         when(atdEnvironment.getEnv("Platform")).thenReturn("android");
-        when(appiumManager.getDevices("127.0.0.1", "android")).thenReturn(Arrays.asList(androidDevice));
+        when(appiumManager.getDevices("127.0.0.1", "android"))
+                .thenReturn(Arrays.asList(androidDevice));
         when(appiumManagerFactory.getAppiumManagerFor("127.0.0.1")).thenReturn(appiumManager);
 
         HostMachineDeviceManager hostMachineDeviceManager = new HostMachineDeviceManager(
@@ -68,6 +69,15 @@ public class HostMachineDeviceManagerTest {
         DevicesByHost devicesByHost = hostMachineDeviceManager.getDevicesByHost();
 
         Assert.assertEquals(devicesByHost.getAllDevices().size(), 1);
+    }
+
+    @NotNull
+    public Device androidDevice() {
+        Device androidDevice = new Device();
+        androidDevice.setName("Pixel_3a_API_30_x86");
+        androidDevice.setAvailable(true);
+        androidDevice.setOs("android");
+        return androidDevice;
     }
 }
 

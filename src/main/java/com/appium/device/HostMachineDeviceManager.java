@@ -45,7 +45,9 @@ public class HostMachineDeviceManager {
     }
 
     protected HostMachineDeviceManager(
-            AppiumManagerFactory appiumManagerFactory, Capabilities capabilities, AtdEnvironment atdEnvironment) {
+            AppiumManagerFactory appiumManagerFactory,
+            Capabilities capabilities,
+            AtdEnvironment atdEnvironment) {
         this.appiumManagerFactory = appiumManagerFactory;
         this.atdEnvironment = atdEnvironment;
         this.capabilities = capabilities;
