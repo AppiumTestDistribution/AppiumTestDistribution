@@ -29,6 +29,12 @@ public class HostMachineDeviceManagerTest {
             + "    \"deviceName\": \"Pixel_3a_API_30_x86\",\n"
             + "    \"noSign\": true\n"
             + "  },\n"
+            + "  \"windows\": {\n"
+            + "    \"platformName\": \"windows\",\n"
+            + "    \"app\": {\n"
+            + "      \"local\": \"C:\\\\Windows\\\\System32\\\\notepad.exe\"\n"
+            + "    }\n"
+            + "  },"
             + "  \"hostMachines\": [\n"
             + "    {\n"
             + "      \"machineIP\": \"127.0.0.1\"\n"
@@ -69,6 +75,34 @@ public class HostMachineDeviceManagerTest {
         DevicesByHost devicesByHost = hostMachineDeviceManager.getDevicesByHost();
 
         Assert.assertEquals(devicesByHost.getAllDevices().size(), 1);
+    }
+
+    @Test
+    public void shouldIncludeWindowsDevices() throws IOException {
+        Capabilities capabilities = new Capabilities(CAPABILITIES_JSON);
+        AtdEnvironment atdEnvironment = Mockito.mock(AtdEnvironment.class);
+        AppiumManagerFactory appiumManagerFactory = Mockito.mock(AppiumManagerFactory.class);
+        IAppiumManager appiumManager = Mockito.mock(IAppiumManager.class);
+        Device windowsDevice = windowsDevice();
+
+        when(atdEnvironment.getEnv("Platform")).thenReturn("windows");
+        when(appiumManager.getDevices("127.0.0.1", "windows"))
+                .thenReturn(Arrays.asList(windowsDevice));
+        when(appiumManagerFactory.getAppiumManagerFor("127.0.0.1")).thenReturn(appiumManager);
+
+        HostMachineDeviceManager hostMachineDeviceManager = new HostMachineDeviceManager(
+                appiumManagerFactory, capabilities, atdEnvironment);
+        DevicesByHost devicesByHost = hostMachineDeviceManager.getDevicesByHost();
+
+        Assert.assertEquals(devicesByHost.getAllDevices().size(), 1);
+    }
+
+    @NotNull
+    public Device windowsDevice() {
+        Device windowsDevice = new Device();
+        windowsDevice.setName("windows");
+        windowsDevice.setOs("windows");
+        return windowsDevice;
     }
 
     @NotNull
