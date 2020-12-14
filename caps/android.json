@@ -1,0 +1,19 @@
+{
+  "android": {
+    "platformName": "android",
+    "platformVersion": "7.0",
+    "automationName": "UiAutomator2",
+    "uiautomator2ServerInstallTimeout": 50000,
+    "adbExecTimeout": 60000,
+    "app": {
+      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
+    },
+    "deviceName": "Pixel_3a_API_30_x86",
+    "noSign": true
+  },
+  "hostMachines": [
+    {
+      "machineIP": "127.0.0.1"
+    }
+  ]
+}
