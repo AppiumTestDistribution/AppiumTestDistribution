@@ -76,8 +76,8 @@ public class HostMachineDeviceManager {
         Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                 = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
         devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
-        String atdHost = Capabilities.getInstance().getMongoDbHostAndPort().get("atdHost");
-        String atdPort = Capabilities.getInstance().getMongoDbHostAndPort().get("atdPort");
+        String atdHost = capabilities.getMongoDbHostAndPort().get("atdHost");
+        String atdPort = capabilities.getMongoDbHostAndPort().get("atdPort");
         if (atdHost != null && atdPort != null) {
             Api api = new Api();
             api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
@@ -181,7 +181,7 @@ public class HostMachineDeviceManager {
                 }
             } else if (machineIPs instanceof String) {
                 String ip = hostMachineJson.getString("machineIP");
-                if (Capabilities.getInstance().isCloud(ip)) {
+                if (capabilities.isCloud(ip)) {
                     List<Device> cloudDevices = new ArrayList<>();
                     JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
                     cloud.toMap().forEach((devicePlatform, devices) -> {
@@ -222,7 +222,7 @@ public class HostMachineDeviceManager {
                     hostMachineJson, (JSONArray) machineIPs);
         } else if (machineIPs instanceof String) {
             String machineIP = hostMachineJson.getString("machineIP");
-            if (Capabilities.getInstance().isCloud(machineIP)) {
+            if (capabilities.isCloud(machineIP)) {
                 addDevicesFromCloud(devicesByHost, machineIP);
             } else {
                 getDevicesFromGenyCloud(platform, devicesByHost,
