@@ -92,11 +92,11 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
         List<Device> devices = new ArrayList<>();
 
         if (platform.equalsIgnoreCase(OSType.ANDROID.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
+                || platform.equalsIgnoreCase(OSType.ALL.name())) {
             getListOfRemoteDevices(machineIP, mapper, devices, "/devices/android");
         }
         if (platform.equalsIgnoreCase(OSType.iOS.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
+                || platform.equalsIgnoreCase(OSType.ALL.name())) {
             if (Capabilities.getInstance().isApp()) {
                 getSimulators(machineIP, mapper, devices);
                 getRealDevices(machineIP, mapper, devices);

@@ -97,6 +97,26 @@ public class HostMachineDeviceManagerTest {
         Assert.assertEquals(devicesByHost.getAllDevices().size(), 1);
     }
 
+    @Test
+    public void shouldIncludeAllDevices() throws IOException {
+        Capabilities capabilities = new Capabilities(CAPABILITIES_JSON);
+        AtdEnvironment atdEnvironment = Mockito.mock(AtdEnvironment.class);
+        AppiumManagerFactory appiumManagerFactory = Mockito.mock(AppiumManagerFactory.class);
+        IAppiumManager appiumManager = Mockito.mock(IAppiumManager.class);
+        Device windowsDevice = windowsDevice();
+
+        when(atdEnvironment.getEnv("Platform")).thenReturn("all");
+        when(appiumManager.getDevices("127.0.0.1", "all"))
+                .thenReturn(Arrays.asList(androidDevice(), windowsDevice));
+        when(appiumManagerFactory.getAppiumManagerFor("127.0.0.1")).thenReturn(appiumManager);
+
+        HostMachineDeviceManager hostMachineDeviceManager = new HostMachineDeviceManager(
+                appiumManagerFactory, capabilities, atdEnvironment);
+        DevicesByHost devicesByHost = hostMachineDeviceManager.getDevicesByHost();
+
+        Assert.assertEquals(devicesByHost.getAllDevices().size(), 2);
+    }
+
     @NotNull
     public Device windowsDevice() {
         Device windowsDevice = new Device();

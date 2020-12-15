@@ -117,7 +117,7 @@ public class HostMachineDeviceManager {
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(
             Map<String, List<AppiumDevice>> devicesByHost) {
         String platform = atdEnvironment.getEnv(PLATFORM);
-        if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
+        if (platform.equalsIgnoreCase(OSType.ALL.name())) {
             return devicesByHost;
         } else {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
