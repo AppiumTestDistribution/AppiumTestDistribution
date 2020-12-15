@@ -12,5 +12,6 @@ public interface FileLocations {
 
     String APPIUM_LOGS_DIRECTORY = OUTPUT_DIRECTORY + "appiumlogs/";
     String ADB_LOGS_DIRECTORY = OUTPUT_DIRECTORY + "adblogs/";
+    String DEVICE_LOGS_DIRECTORY =OUTPUT_DIRECTORY + "reports/";
     String DERIVED_DATA = OUTPUT_DIRECTORY + "derivedData/";
 }
