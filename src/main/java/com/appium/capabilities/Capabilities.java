@@ -2,6 +2,7 @@ package com.appium.capabilities;
 
 import static com.appium.utils.ConfigFileManager.CAPS;
 
+import com.appium.schema.CapabilitySchemaValidator;
 import com.appium.utils.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,6 +27,8 @@ public class Capabilities {
                 new JSONObject(),
                 getAllATDOverrideEnvVars(),
                 varParsing);
+        new CapabilitySchemaValidator()
+                .validateCapabilitySchema(getCapabilities());
     }
 
     public Capabilities(String capabilitiesJson) {

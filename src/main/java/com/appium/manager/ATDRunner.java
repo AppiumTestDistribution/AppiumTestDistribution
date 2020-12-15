@@ -42,8 +42,6 @@ public class ATDRunner {
 
     public ATDRunner() {
         capabilities = Capabilities.getInstance();
-        new CapabilitySchemaValidator()
-                .validateCapabilitySchema(capabilities.getCapabilities());
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         iosDevice = new IOSDeviceConfiguration();
         androidDevice = new AndroidDeviceConfiguration();
