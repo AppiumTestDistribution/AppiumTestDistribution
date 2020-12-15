@@ -1,44 +1,57 @@
 package com.appium.capabilities;
 
-import static com.appium.utils.ConfigFileManager.CAPS;
-
-import com.appium.schema.CapabilitySchemaValidator;
+import com.appium.device.AtdEnvironment;
+import com.appium.manager.RemoteAppiumManager;
+import com.appium.utils.FigletHelper;
 import com.appium.utils.JsonParser;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.InetAddress;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
+
+import static com.appium.utils.ConfigFileManager.CAPS;
 
 public class Capabilities {
+    private static final Logger LOGGER = Logger.getLogger(RemoteAppiumManager.class.getName());
+
     private static Capabilities instance;
     private JSONObject capabilities;
+    private final AtdEnvironment atdEnvironment;
 
     private Capabilities() {
+        atdEnvironment = new AtdEnvironment();
         String capabilitiesFilePath = getCapabilityLocation();
         JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
-        StringBuilder varParsing = new StringBuilder(200);
-        varParsing.append("atd").append("_");
-        capabilities = loadAndOverrideFromEnvVars(jsonParser.getObjectFromJSON(),
-                new JSONObject(),
-                getAllATDOverrideEnvVars(),
-                varParsing);
-        new CapabilitySchemaValidator()
-                .validateCapabilitySchema(getCapabilities());
+        createInstance(jsonParser.getObjectFromJSON());
     }
 
-    public Capabilities(String capabilitiesJson) {
+    public Capabilities(String capabilitiesJson, AtdEnvironment atdEnvironment) {
+        this.atdEnvironment = atdEnvironment;
+        createInstance(new JsonParser().getObjectFromJSONString(capabilitiesJson));
+    }
+
+    private void createInstance(JSONObject capabilitiesJsonObject) {
         StringBuilder varParsing = new StringBuilder(200);
         varParsing.append("atd").append("_");
         capabilities = loadAndOverrideFromEnvVars(
-                new JsonParser().getObjectFromJSONString(capabilitiesJson),
+                capabilitiesJsonObject,
                 new JSONObject(),
                 getAllATDOverrideEnvVars(),
                 varParsing);
+        validateCapabilitySchema();
     }
 
     public static Capabilities getInstance() {
@@ -260,5 +273,82 @@ public class Capabilities {
 
     public boolean hasHostMachines() {
         return getCapabilities().has("hostMachines");
+    }
+
+    public void validateCapabilitySchema() {
+        try {
+            isPlatformInEnv();
+            InputStream inputStream = getClass().getResourceAsStream(getPlatform());
+            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
+            Schema schema = SchemaLoader.load(rawSchema);
+            schema.validate(new JSONObject(getCapabilities().toString()));
+            validateRemoteHosts();
+        } catch (ValidationException e) {
+            if (e.getCausingExceptions().size() > 1) {
+                e.getCausingExceptions().stream()
+                        .map(ValidationException::getMessage)
+                        .forEach(System.out::println);
+            } else {
+                LOGGER.info(e.getErrorMessage());
+            }
+
+            throw new ValidationException("Capability json provided is missing the above schema");
+        }
+    }
+
+    private String getPlatform() {
+        String platform = atdEnvironment.getEnv("Platform");
+        String schema = null;
+        switch (platform.toLowerCase()) {
+            case "all":
+                schema = "/androidAndiOSSchema.json";
+                break;
+            case "android":
+                schema = "/androidSchema.json";
+                break;
+            case "ios":
+                schema = "/iOSSchema.json";
+                break;
+            case "windows":
+                schema = "/windowsSchema.json";
+                break;
+            default:
+                System.out.println("Just for codacy!!");
+                break;
+
+        }
+        return schema;
+    }
+
+    private void isPlatformInEnv() {
+        if (atdEnvironment.getEnv("Platform") == null) {
+            throw new IllegalArgumentException("Please execute with Platform environment"
+                    + ":: Platform=android/ios/all mvn clean -Dtest=Runner test");
+        }
+    }
+
+    private void validateRemoteHosts() {
+        try {
+            if (getCapabilities().has("hostMachines")) {
+                JSONArray hostMachines = getHostMachineObject();
+                for (Object hostMachine : hostMachines) {
+                    JSONObject hostMachineJson = ((JSONObject) hostMachine);
+                    boolean isCloud = hostMachineJson.has("isCloud");
+                    if (isCloud) {
+                        isCloud = hostMachineJson.getBoolean("isCloud");
+                    }
+                    String machineIP = (String) hostMachineJson.get("machineIP");
+                    if (isCloud
+                            || InetAddress.getByName(machineIP).isReachable(5000)) {
+                        LOGGER.info("ATD is Running on " + machineIP);
+                    } else {
+                        FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
+                        throw new ConnectException();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
