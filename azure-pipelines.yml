@@ -57,7 +57,7 @@ jobs:
         displayName: "start Android emulator"
 
       - script: |
-          Platform='both' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+          Platform='all' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: "Run Distribute on iOS and Android"
 
@@ -100,7 +100,7 @@ jobs:
         displayName: "start Android emulator"
 
       - script: |
-          Platform='both' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+          Platform='all' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: "Run Parallel on iOS and Android"
 
@@ -114,7 +114,7 @@ jobs:
           versionSpec: "12.18.1"
 
       - script: |
-          Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+          Platform='all' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: "Run Test on Sauce on iOS and Android"
 

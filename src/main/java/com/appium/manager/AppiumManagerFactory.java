@@ -3,6 +3,10 @@ package com.appium.manager;
 import com.appium.capabilities.Capabilities;
 
 public class AppiumManagerFactory {
+    public IAppiumManager getAppiumManagerFor(String host) {
+        return AppiumManagerFactory.getAppiumManager(host);
+    }
+
     public static IAppiumManager getAppiumManager(String host) {
         if (Capabilities.getInstance().isCloud(host)) {
             return new CloudAppiumManager();

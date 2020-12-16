@@ -1,13 +1,9 @@
 package com.appium.manager;
 
-import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.capabilities.Capabilities;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
-import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.schema.CapabilitySchemaValidator;
-import com.appium.windows.WindowsDeviceConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,23 +14,13 @@ import static com.appium.utils.ConfigFileManager.FRAMEWORK;
 import static com.appium.utils.ConfigFileManager.RUNNER;
 import static com.appium.utils.FigletHelper.figlet;
 
-/*
- * This class picks the devices connected
- * and distributes across multiple thread.
- *
- * Thanks to @Thote_Gowda(thotegowda.gr@gmail.com)
- */
 public class ATDRunner {
     private static final String ANDROID = "android";
-    private static final String BOTH = "Both";
+    private static final String ALL = "all";
     private static final String IOS = "iOS";
-    private static final String WINDOWS = "windows";
     public static final String USER_DIR = "user.dir";
-    private WindowsDeviceConfiguration windowsDevice;
 
     private DeviceAllocationManager deviceAllocationManager;
-    private AndroidDeviceConfiguration androidDevice;
-    private IOSDeviceConfiguration iosDevice;
     private ATDExecutor ATDExecutor;
     private Capabilities capabilities;
     private HostMachineDeviceManager hostMachineDeviceManager;
@@ -42,13 +28,8 @@ public class ATDRunner {
 
     public ATDRunner() {
         capabilities = Capabilities.getInstance();
-        new CapabilitySchemaValidator()
-                .validateCapabilitySchema(capabilities.getCapabilities());
         deviceAllocationManager = DeviceAllocationManager.getInstance();
-        iosDevice = new IOSDeviceConfiguration();
-        androidDevice = new AndroidDeviceConfiguration();
         ATDExecutor = new ATDExecutor(deviceAllocationManager);
-        windowsDevice = new WindowsDeviceConfiguration();
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }
@@ -58,14 +39,6 @@ public class ATDRunner {
         if (!file.exists()) {
             file.mkdirs();
         }
-    }
-
-    @Deprecated
-    //Use system property udids to send list of valid device ids
-    public ATDRunner(List<String> validDeviceIds) throws Exception {
-        this();
-        androidDevice.setValidDevices(validDeviceIds);
-        iosDevice.setValidDevices(validDeviceIds);
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
@@ -92,7 +65,7 @@ public class ATDRunner {
         createSnapshotDirectoryFor();
         String platform = System.getenv("Platform");
         if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
-                || platform.equalsIgnoreCase(BOTH)) {
+                || platform.equalsIgnoreCase(ALL)) {
             if (!capabilities.getCapabilityObjectFromKey("android").has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName "
                         + "as UIAutomator2 or Espresso to create Android driver");
