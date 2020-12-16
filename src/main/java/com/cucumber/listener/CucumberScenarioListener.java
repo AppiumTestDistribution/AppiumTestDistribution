@@ -1,18 +1,13 @@
 package com.cucumber.listener;
 
 import com.appium.capabilities.Capabilities;
-import com.appium.manager.ATDRunner;
-import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumDriverManager;
-import com.appium.manager.AppiumServerManager;
-import com.appium.manager.DeviceAllocationManager;
+import com.appium.manager.*;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
 import io.cucumber.java.Scenario;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.*;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -28,6 +23,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private final Optional<String> atdHost;
     private final Optional<String> atdPort;
     private TestLogger testLogger;
+    private int count;
 
     public CucumberScenarioListener() {
         System.out.printf("ThreadID: %d: CucumberScenarioListener%n",
@@ -43,11 +39,17 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 Optional.ofNullable(Capabilities.getInstance()
                         .getMongoDbHostAndPort().get("atdPort"));
         testLogger = new TestLogger();
+        count=0;
+    }
+
+    @BeforeMethod
+    public void beforeHook(Scenario scenario) {
+        scenario.getId();
+        System.out.println("In Cucumber Beforehook: " + scenario.getId());
     }
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
-
         System.out.printf(" WWWWWWWWWW ThreadID: %d: beforeSuite: %n", Thread.currentThread().getId());
     }
 
@@ -106,7 +108,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 Thread.currentThread().getId(), scenarioName);
         allocateDeviceAndStartDriver();
             try {
-                testLogger.startLogging(scenarioName);
+                testLogger.startLogging(++count+"-"+scenarioName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -116,7 +118,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
             }
         }
-        new TestExecutionContext(scenarioName);
+        new TestExecutionContext(scenarioName); //TODO: add the log dirctory to the context
     }
 
     private void caseFinishedHandler(TestCaseFinished event) {

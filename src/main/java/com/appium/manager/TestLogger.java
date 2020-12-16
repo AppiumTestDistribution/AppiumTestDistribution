@@ -7,6 +7,7 @@ import com.appium.utils.Helpers;
 import com.epam.reportportal.service.ReportPortal;
 import com.video.recorder.AppiumScreenRecordFactory;
 import com.video.recorder.IScreenRecord;
+import io.cucumber.java.Scenario;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 
@@ -22,7 +23,7 @@ import java.util.logging.Level;
 /**
  * Created by saikrisv on 24/01/17.
  */
-class TestLogger extends Helpers {
+public class TestLogger extends Helpers {
 
     private File logFile;
     private ThreadLocal<List<LogEntry>> logEntries = new ThreadLocal<>();
@@ -38,8 +39,22 @@ class TestLogger extends Helpers {
         this.videoPath = videoPath;
     }
 
-    TestLogger() {
+    public TestLogger() {
         screenShotManager = new ScreenShotManager();
+    }
+
+    private File createLogsDir(String dirName, String fileName){
+        logFile = new File(System.getProperty("user.dir") + FileLocations.DEVICE_LOGS_DIRECTORY + dirName
+                + fileName + ".txt");
+        if(!logFile.exists()){
+            try {
+                logFile.getParentFile().mkdirs();
+                logFile.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return logFile;
     }
 
     protected void startLogging(ITestResult iTestResult)
@@ -62,6 +77,29 @@ class TestLogger extends Helpers {
             videoRecording.startVideoRecording(className, methodName, methodName);
         }
         setDescription(iTestResult);
+    }
+
+    public void startLogging(String testName) throws IOException {
+        String scenarioName = testName.replaceAll(" ", "_");
+        if (isNativeAndroid()) {
+            String udid = AppiumDeviceManager
+                    .getAppiumDevice()
+                    .getDevice()
+                    .getUdid();
+            List<LogEntry> logcat = AppiumDriverManager
+                    .getDriver()
+                    .manage()
+                    .logs()
+                    .get("logcat").filter(Level.ALL);
+            logEntries.set(logcat);
+            createLogsDir(scenarioName,"/" + udid + "__" + scenarioName);
+            log_file_writer.set(new PrintWriter(logFile));
+        }
+//        if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
+//            IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
+//            videoRecording.startVideoRecording(testName, testName, testName);
+//        }
+        //setDescription(testName);
     }
 
     private void setDescription(ITestResult iTestResult) {
@@ -88,6 +126,7 @@ class TestLogger extends Helpers {
             iTestResult.getMethod().setDescription(description);
         }
     }
+
 
     protected HashMap<String, String> endLogging(ITestResult result, String deviceModel)
             throws Exception {
@@ -151,6 +190,24 @@ class TestLogger extends Helpers {
                     logs.put("screenShotFailure", screenShotFailure);
                 }
             }
+        }
+        return logs;
+    }
+
+    public HashMap<String, String> endLogging(String testName, String testResult)
+            throws Exception {
+        HashMap<String, String> logs = new HashMap<>();
+        //stopViewRecording(result, className);
+        if (isNativeAndroid()) {
+            String adbPath = System.getProperty("user.dir") + FileLocations.DEVICE_LOGS_DIRECTORY
+                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                    + "__" + testName + ".txt";
+            logs.put("adbLogs", adbPath);
+            logEntries.get().forEach(logEntry -> {
+                log_file_writer.get().println(logEntry);
+            });
+            log_file_writer.get().close();
+            ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(adbPath));
         }
         return logs;
     }

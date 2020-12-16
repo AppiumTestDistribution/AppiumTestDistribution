@@ -1,10 +1,9 @@
+package com.test.cucumber;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.remote.RemoteWebElement;
-import org.testng.Assert;
-
-import static com.appium.manager.AppiumDriverManager.getDriver;
 
 
 public class MyStepdefs {
