@@ -20,17 +20,18 @@ public class SampleSteps extends UserBaseTest {
     @Given("^I have the this useless scenario$")
     public void uselessScenario() {
         System.out.println("Passed");
-        System.out.println(
-            "*****DriverSession***" + Thread.currentThread().getName() + getDriver().toString());
+        System.out.println("*****DriverSession***"
+                + Thread.currentThread().getName()
+                + getDriver().toString());
     }
 
-//    @When("^I click on (\\d+) number")
-//    public void I_sleep_for_seconds(int arg1) throws InterruptedException {
-//        System.out.println("sleep for " + arg1 + " sec");
-//        Thread.sleep(arg1 * 1000);
-//        //    getDriver().findElementByXPath(".//*[@text=" + arg1 + "]").click();
-//        System.out.println("Passed");
-//    }
+    //    @When("^I click on (\\d+) number")
+    //    public void I_sleep_for_seconds(int arg1) throws InterruptedException {
+    //        System.out.println("sleep for " + arg1 + " sec");
+    //        Thread.sleep(arg1 * 1000);
+    //        getDriver().findElementByXPath(".//*[@text=" + arg1 + "]").click();
+    //        System.out.println("Passed");
+    //    }
 
     @Then("^It should finnish$")
     public void It_should_finnish() {
@@ -52,9 +53,9 @@ public class SampleSteps extends UserBaseTest {
 
     @Then("drag and drop should have worked")
     public void dragAndDropShouldHaveWorked() {
-//        new WebDriverWait(driver, 30)
-//                .until(ExpectedConditions
-//                        .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
+        //new WebDriverWait(driver, 30)
+        //        .until(ExpectedConditions
+        //                .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
         System.out.println("The user has draggen and dropped successfullly - dummy");
     }
 }

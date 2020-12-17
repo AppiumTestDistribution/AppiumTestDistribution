@@ -1,6 +1,19 @@
 package com.appium.manager;
 
+import com.appium.entities.MobilePlatform;
+import com.appium.filelocations.FileLocations;
 import com.github.device.Device;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class AppiumDevice {
 
@@ -66,5 +79,41 @@ public class AppiumDevice {
 
     public void setWebkitProcessID(String webkitProcessID) {
         this.webkitProcessID = webkitProcessID;
+    }
+
+    private boolean isNativeAndroid() {
+        return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
+                && AppiumDriverManager.getDriver().getCapabilities()
+                .getCapability("browserName") == null;
+    }
+
+    public void startDataCapture(String specName, Integer scenarioRunCount)
+            throws FileNotFoundException {
+        String scenarioName = specName.replaceAll(" ", "_");
+        if (isNativeAndroid()) {
+            String udid = this.getDevice().getUdid();
+            String fileName = String.format("/%s-run-%s", udid, scenarioRunCount);
+            File logFile = createLogFile(scenarioName, fileName);
+            PrintStream logFileStream = new PrintStream(logFile);
+            LogEntries logcatOutput = AppiumDriverManager.getDriver().manage().logs().get("logcat");
+            StreamSupport.stream(logcatOutput.spliterator(), false).forEach(logFileStream::println);
+        }
+    }
+
+    private File createLogFile(String dirName, String fileName) {
+        File logFile = new File(System.getProperty("user.dir")
+                + FileLocations.DEVICE_LOGS_DIRECTORY + dirName
+                + fileName + ".txt");
+        if (logFile.exists()) {
+            return logFile;
+        }
+
+        try {
+            logFile.getParentFile().mkdirs();
+            logFile.createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return logFile;
     }
 }
