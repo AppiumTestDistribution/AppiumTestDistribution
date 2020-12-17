@@ -1,11 +1,13 @@
 package com.appium.manager;
 
 import com.appium.capabilities.Capabilities;
+import com.appium.device.DevicesByHost;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -59,7 +61,7 @@ public class ATDRunner {
         }
 
         LOGGER.info(LOGGER.getName()
-            + "Total Number of devices detected::" + deviceCount + "\n");
+                + "Total Number of devices detected::" + deviceCount + "\n");
 
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();
@@ -132,4 +134,5 @@ public class ATDRunner {
             platformDirectory.mkdirs();
         }
     }
+
 }

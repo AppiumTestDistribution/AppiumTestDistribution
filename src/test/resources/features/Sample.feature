@@ -5,12 +5,12 @@ Feature: Sample Feature
   It is not meant to do anything, but sleep
   So we can prove that it runs in parallel
 
-  Scenario: Scenario 1 Sample
+  Scenario: As a user I want to login
     Given I login
     When I drag & drop
     Then drag and drop should have worked
 
-  Scenario: Scenario 2 Sample
+  Scenario: As a user I should be able to edit myprofile page
     Given I login
     When I drag & drop
     Then drag and drop should have worked

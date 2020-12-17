@@ -1,7 +1,9 @@
 package com.appium.device;
 
 import com.appium.capabilities.Capabilities;
+import com.appium.filelocations.FileLocations;
 import com.appium.manager.AppiumDevice;
+import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.appium.utils.Api;
@@ -13,6 +15,8 @@ import com.report.factory.TestStatusManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -310,6 +314,7 @@ public class HostMachineDeviceManager {
         }
         return devices;
     }
+
 }
 
 

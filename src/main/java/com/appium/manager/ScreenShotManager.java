@@ -55,7 +55,7 @@ public class ScreenShotManager extends Helpers {
         this.capturedScreen = capturedScreen;
     }
 
-    protected String getFramedFailedScreen() {
+    public String getFramedFailedScreen() {
         return framedFailedScreen;
     }
 
@@ -63,7 +63,7 @@ public class ScreenShotManager extends Helpers {
         this.framedFailedScreen = framedFailedScreen;
     }
 
-    protected String getFailedScreen() {
+    public String getFailedScreen() {
         return failedScreen;
     }
 
@@ -76,7 +76,7 @@ public class ScreenShotManager extends Helpers {
         imageUtils = new ImageUtils();
     }
 
-    protected String captureScreenShot(int status, String className, String screenShotName,
+    public String captureScreenShot(int status, String className, String screenShotName,
                                     String methodName, String deviceModel) {
         String getDeviceModel = null;
         if (AppiumDriverManager.getDriver().getSessionId() != null) {
