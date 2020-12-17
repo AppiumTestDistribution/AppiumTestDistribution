@@ -14,10 +14,7 @@ import org.testng.ITestResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -30,6 +27,8 @@ public class TestLogger extends Helpers {
     private ThreadLocal<PrintWriter> log_file_writer = new ThreadLocal<>();
     private ScreenShotManager screenShotManager;
     private String videoPath;
+    private Map<String, Integer> scenarios = new HashMap<String,Integer>();
+
 
     private String getVideoPath() {
         return videoPath;
@@ -81,6 +80,12 @@ public class TestLogger extends Helpers {
 
     public void startLogging(String testName) throws IOException {
         String scenarioName = testName.replaceAll(" ", "_");
+        if(scenarios.containsKey(scenarioName)) {
+            scenarios.put(scenarioName, scenarios.get(scenarioName)+1);
+        }else{
+            scenarios.put(scenarioName,1);
+        }
+        int runCounter = scenarios.get(scenarioName);
         if (isNativeAndroid()) {
             String udid = AppiumDeviceManager
                     .getAppiumDevice()
@@ -92,7 +97,7 @@ public class TestLogger extends Helpers {
                     .logs()
                     .get("logcat").filter(Level.ALL);
             logEntries.set(logcat);
-            createLogsDir(scenarioName,"/" + udid + "__" + scenarioName);
+            createLogsDir(scenarioName,"/" + udid + "-run-" + runCounter);
             log_file_writer.set(new PrintWriter(logFile));
         }
 //        if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {

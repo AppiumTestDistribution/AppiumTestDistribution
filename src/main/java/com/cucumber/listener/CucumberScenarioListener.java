@@ -23,7 +23,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private final Optional<String> atdHost;
     private final Optional<String> atdPort;
     private TestLogger testLogger;
-    private int count;
 
     public CucumberScenarioListener() {
         System.out.printf("ThreadID: %d: CucumberScenarioListener%n",
@@ -39,7 +38,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 Optional.ofNullable(Capabilities.getInstance()
                         .getMongoDbHostAndPort().get("atdPort"));
         testLogger = new TestLogger();
-        count=0;
     }
 
     @BeforeMethod
@@ -50,7 +48,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
-        System.out.printf(" WWWWWWWWWW ThreadID: %d: beforeSuite: %n", Thread.currentThread().getId());
+        System.out.printf("ThreadID: %d: beforeSuite: %n", Thread.currentThread().getId());
     }
 
     @AfterSuite
@@ -77,7 +75,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(EventPublisher eventPublisher){
-        eventPublisher.registerHandlerFor(TestSourceRead.class, this::testSourceRead);
+        eventPublisher.registerHandlerFor(TestSourceRead.class, this::featureFileRead);
         eventPublisher.registerHandlerFor(TestRunStarted.class, this::runStartedHandler);
         eventPublisher.registerHandlerFor(TestCaseStarted.class, this::caseStartedHandler);
         eventPublisher.registerHandlerFor(TestCaseFinished.class, this::caseFinishedHandler);
@@ -94,8 +92,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         }
     }
 
-    //TODO: rename method name
-    private void testSourceRead(TestSourceRead event) {
+    private void featureFileRead(TestSourceRead event) {
         String featureName = event.getSource();
         System.out.println("The feature file read is: "+ featureName);
     }
@@ -108,7 +105,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 Thread.currentThread().getId(), scenarioName);
         allocateDeviceAndStartDriver();
             try {
-                testLogger.startLogging(++count+"-"+scenarioName);
+                testLogger.startLogging(scenarioName);
             } catch (IOException e) {
                 e.printStackTrace();
             }

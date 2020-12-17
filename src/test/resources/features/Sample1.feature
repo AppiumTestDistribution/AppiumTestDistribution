@@ -5,7 +5,7 @@ Feature: Sample1 Feature
   It is not meant to do anything, but sleep
   So we can prove that it runs in parallel
 
-  Scenario Outline: Scenario 4
+  Scenario Outline: As a user I should be able to register
     Given I accept the tip screen
     When I click on <t1> number
     And I click on <t2> number
@@ -15,7 +15,7 @@ Feature: Sample1 Feature
       | 4  | 3  |
       | 1  | 2  |
 
-  Scenario: Scenario 3
+  Scenario: As a user I should be able to verify my email
     Given I login
     When I drag & drop
     Then drag and drop should have worked
