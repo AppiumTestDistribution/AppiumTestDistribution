@@ -3,6 +3,7 @@ package com.appium.device;
 import com.appium.capabilities.Capabilities;
 import com.appium.filelocations.FileLocations;
 import com.appium.manager.AppiumDevice;
+import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.appium.utils.Api;
@@ -318,7 +319,10 @@ public class HostMachineDeviceManager {
             throws FileNotFoundException {
         List<AppiumDevice> allDevices = getDevicesByHost().getAllDevices();
         for (AppiumDevice appiumDevice : allDevices) {
-            appiumDevice.startDataCapture(specName, scenarioRunCount);
+            String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+            if(udid.equals(appiumDevice.getDevice().getUdid())) {
+                appiumDevice.startDataCapture(specName, scenarioRunCount);
+            }
         }
     }
 }
