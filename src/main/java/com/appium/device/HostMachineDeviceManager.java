@@ -315,16 +315,6 @@ public class HostMachineDeviceManager {
         return devices;
     }
 
-    public void startDeviceDataCapture(String specName, Integer scenarioRunCount)
-            throws FileNotFoundException {
-        List<AppiumDevice> allDevices = getDevicesByHost().getAllDevices();
-        for (AppiumDevice appiumDevice : allDevices) {
-            String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
-            if (udid.equals(appiumDevice.getDevice().getUdid())) {
-                appiumDevice.startDataCapture(specName, scenarioRunCount);
-            }
-        }
-    }
 }
 
 

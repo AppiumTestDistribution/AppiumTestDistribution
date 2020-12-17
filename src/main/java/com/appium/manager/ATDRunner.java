@@ -135,8 +135,4 @@ public class ATDRunner {
         }
     }
 
-    public void startDeviceDataCapture(String specName, Integer scenarioRunCount)
-            throws FileNotFoundException {
-        hostMachineDeviceManager.startDeviceDataCapture(specName, scenarioRunCount);
-    }
 }

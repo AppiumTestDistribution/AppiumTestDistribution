@@ -1,12 +1,7 @@
 package com.cucumber.listener;
 
 import com.appium.capabilities.Capabilities;
-import com.appium.manager.ATDRunner;
-import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumDriverManager;
-import com.appium.manager.AppiumServerManager;
-import com.appium.manager.DeviceAllocationManager;
-import com.appium.manager.TestLogger;
+import com.appium.manager.*;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
@@ -69,16 +64,19 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         System.out.printf("ThreadID: %d: afterSuite: %n", Thread.currentThread().getId());
     }
 
-    private void allocateDeviceAndStartDriver() {
+    private AppiumDevice allocateDeviceAndStartDriver() {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
-            if (driver == null || driver.getSessionId() == null) {
-                deviceAllocationManager.allocateDevice(
-                        deviceAllocationManager.getNextAvailableDevice());
-                appiumDriverManager.startAppiumDriverInstance();
+            if (driver != null && driver.getSessionId() != null) {
+                return null;
             }
+            AppiumDevice availableDevice = deviceAllocationManager.getNextAvailableDevice();
+            deviceAllocationManager.allocateDevice(availableDevice);
+            appiumDriverManager.startAppiumDriverInstance();
+            return availableDevice;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -119,9 +117,9 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         System.out.printf(
                 "ThreadID: %d: beforeScenario: for scenario: %s%n",
                 Thread.currentThread().getId(), scenarioName);
-        allocateDeviceAndStartDriver();
+        AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
         try {
-            atdRunner.startDeviceDataCapture(scenarioName, scenarioRunCount);
+            allocatedDevice.startDataCapture(scenarioName, scenarioRunCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
