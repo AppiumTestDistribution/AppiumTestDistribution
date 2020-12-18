@@ -100,7 +100,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
     private void getIOSDevices(String platform, List<Device> devices) {
         if (platform.equalsIgnoreCase(OSType.iOS.name())
-                || platform.equalsIgnoreCase(OSType.ALL.name())) {
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             if (Capabilities.getInstance().isApp()) {
                 if (Capabilities.getInstance().isSimulatorAppPresentInCapsJson()) {
                     try {
@@ -122,7 +122,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
     private void getAndroidDevices(String platform, List<Device> devices) {
         if (platform.equalsIgnoreCase(OSType.ANDROID.name())
-                || platform.equalsIgnoreCase(OSType.ALL.name())) {
+                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
             try {
                 devices.addAll(new AndroidManager().getDevices());
             } catch (Exception e) {
