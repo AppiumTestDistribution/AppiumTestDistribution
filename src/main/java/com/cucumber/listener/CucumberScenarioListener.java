@@ -54,22 +54,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         testLogger = new TestLogger();
     }
 
-    @BeforeMethod
-    public void beforeHook(Scenario scenario) {
-        scenario.getId();
-        System.out.println("In Cucumber Beforehook: " + scenario.getId());
-    }
-
-    @BeforeSuite(alwaysRun = true)
-    public void beforeSuite() {
-        System.out.printf("ThreadID: %d: beforeSuite: %n", Thread.currentThread().getId());
-    }
-
-    @AfterSuite
-    public void afterSuite() {
-        System.out.printf("ThreadID: %d: afterSuite: %n", Thread.currentThread().getId());
-    }
-
     private AppiumDevice allocateDeviceAndStartDriver() {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
