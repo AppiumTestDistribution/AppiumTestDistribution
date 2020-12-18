@@ -300,7 +300,7 @@ public class Capabilities {
         String platform = atdEnvironment.getEnv("Platform");
         String schema = null;
         switch (platform.toLowerCase()) {
-            case "all":
+            case "both":
                 schema = "/androidAndiOSSchema.json";
                 break;
             case "android":
@@ -323,7 +323,7 @@ public class Capabilities {
     private void isPlatformInEnv() {
         if (atdEnvironment.getEnv("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
-                    + ":: Platform=android/ios/all mvn clean -Dtest=Runner test");
+                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
         }
     }
 
