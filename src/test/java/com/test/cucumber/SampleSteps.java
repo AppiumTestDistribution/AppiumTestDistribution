@@ -25,13 +25,13 @@ public class SampleSteps extends UserBaseTest {
                 + getDriver().toString());
     }
 
-    //    @When("^I click on (\\d+) number")
-    //    public void I_sleep_for_seconds(int arg1) throws InterruptedException {
-    //        System.out.println("sleep for " + arg1 + " sec");
-    //        Thread.sleep(arg1 * 1000);
-    //        getDriver().findElementByXPath(".//*[@text=" + arg1 + "]").click();
-    //        System.out.println("Passed");
-    //    }
+        @When("^I click on (\\d+) number")
+        public void I_sleep_for_seconds(int arg1) throws InterruptedException {
+            System.out.println("sleep for " + arg1 + " sec");
+            Thread.sleep(arg1 * 1000);
+            getDriver().findElementByXPath(".//*[@text=" + arg1 + "]").click();
+            System.out.println("Passed");
+        }
 
     @Then("^It should finnish$")
     public void It_should_finnish() {
@@ -40,22 +40,18 @@ public class SampleSteps extends UserBaseTest {
 
     @Given("I login")
     public void iLogin() {
-        //login("login").click();
-        System.out.println("The user clicks on the login button - dummy");
+        login("login").click();
     }
 
     @When("I drag & drop")
     public void iDragDrop() {
-        //waitForElement("dragAndDrop").click();
-        System.out.println("The user drags and drops - dummy");
-
+        waitForElement("dragAndDrop").click();
     }
 
     @Then("drag and drop should have worked")
     public void dragAndDropShouldHaveWorked() {
-        //new WebDriverWait(driver, 30)
-        //        .until(ExpectedConditions
-        //                .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
-        System.out.println("The user has draggen and dropped successfullly - dummy");
+        new WebDriverWait(driver, 30)
+                .until(ExpectedConditions
+                        .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
     }
 }

@@ -13,14 +13,12 @@ public class MyStepdefs {
     @When("I click on {int} number")
     public void iClickOnNumber(int arg0) {
         System.out.println("I click on {int} number : " + arg0);
-        //edit = (RemoteWebElement) getDriver().findElementByClassName("Edit");
+        edit = (RemoteWebElement) getDriver().findElementByClassName("Edit");
     }
 
     @Then("It should finish")
     public void itShouldFinnish() {
-        //Assert.assertNotNull(edit);
-        System.out.println("It should finish");
-
+        Assert.assertNotNull(edit);
     }
 
     @Given("I accept the tip screen")

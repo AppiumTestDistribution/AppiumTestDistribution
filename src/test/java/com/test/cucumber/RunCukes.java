@@ -13,8 +13,14 @@ import org.testng.annotations.Test;
                 "html:target/results.html",
                 "message:target/results.json",
                 "timeline:target/timeline"
-        }, features = { "classpath:features/Sample.feature", "classpath:features/Sample1.feature"})
+        },
+        features = {
+                "classpath:features/Sample.feature",
+                "classpath:features/Sample1.feature"
+        }
+        )
 public class RunCukes extends AbstractTestNGCucumberTests {
+
     public RunCukes() {
         System.out.printf("ThreadID: %d: RunCucumberTest%n", Thread.currentThread().getId());
     }
