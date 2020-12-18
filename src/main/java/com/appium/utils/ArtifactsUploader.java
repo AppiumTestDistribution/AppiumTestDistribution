@@ -74,7 +74,7 @@ public class ArtifactsUploader {
                 .getCapabilityObjectFromKey("windows");
         if (android != null && android.has(app)
             && (platform.equalsIgnoreCase("android")
-            || platform.equalsIgnoreCase("all"))) {
+            || platform.equalsIgnoreCase("both"))) {
             JSONObject androidApp = android.getJSONObject("app");
             String appPath = androidApp.getString("local");
             if (isCloud(hostMachine) && androidApp.has("cloud")) {
@@ -84,7 +84,7 @@ public class ArtifactsUploader {
         }
         if (iOSAppPath != null && iOSAppPath.has("app")
             && (platform.equalsIgnoreCase("ios")
-            || platform.equalsIgnoreCase("all"))) {
+            || platform.equalsIgnoreCase("both"))) {
             if (iOSAppPath.get("app") instanceof JSONObject) {
                 JSONObject iOSApp = iOSAppPath.getJSONObject("app");
                 if (iOSApp.has("simulator")) {
