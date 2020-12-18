@@ -7,7 +7,6 @@ import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
 import com.appium.manager.DeviceAllocationManager;
-import com.appium.manager.TestLogger;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
@@ -27,21 +26,21 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class CucumberScenarioListener implements ConcurrentEventListener {
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private final AppiumDriverManager appiumDriverManager;
     private final DeviceAllocationManager deviceAllocationManager;
     private final AppiumServerManager appiumServerManager;
     private final Optional<String> atdHost;
     private final Optional<String> atdPort;
-    private TestLogger testLogger;
-    private final ATDRunner atdRunner;
     private Map<String, Integer> scenarioRunCounts = new HashMap<String, Integer>();
 
     public CucumberScenarioListener() {
         System.out.printf("ThreadID: %d: CucumberScenarioListener%n",
                 Thread.currentThread().getId());
-        atdRunner = new ATDRunner();
+        new ATDRunner();
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
@@ -51,7 +50,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         atdPort =
                 Optional.ofNullable(Capabilities.getInstance()
                         .getMongoDbHostAndPort().get("atdPort"));
-        testLogger = new TestLogger();
     }
 
     private AppiumDevice allocateDeviceAndStartDriver() {
@@ -84,7 +82,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     }
 
     private void runStartedHandler(TestRunStarted event) {
-        System.out.println("runStartedHandler");
+        LOGGER.info("runStartedHandler");
         System.out.printf("ThreadID: %d: beforeSuite: %n", Thread.currentThread().getId());
         try {
             appiumServerManager.startAppiumServer();
@@ -95,12 +93,12 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void featureFileRead(TestSourceRead event) {
         String featureName = event.getSource();
-        System.out.println("The feature file read is: " + featureName);
+        LOGGER.info("The feature file read is: " + featureName);
     }
 
     private void caseStartedHandler(TestCaseStarted event) {
         String scenarioName = event.getTestCase().getName();
-        System.out.println("caseStartedHandler: " + scenarioName);
+        LOGGER.info("caseStartedHandler: " + scenarioName);
 
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
 
@@ -135,8 +133,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private void caseFinishedHandler(TestCaseFinished event) {
         String testCaseName = event.getTestCase().getName();
         String testResult = event.getResult().toString();
-        System.out.println("caseFinishedHandler Name: " + testCaseName);
-        System.out.println("caseFinishedHandler Result: " + testResult);
+        LOGGER.info("caseFinishedHandler Name: " + testCaseName);
+        LOGGER.info("caseFinishedHandler Result: " + testResult);
         System.out.printf(
                 "ThreadID: %d: afterScenario: for scenario: %s%n",
                 Thread.currentThread().getId(), testCaseName);
@@ -150,7 +148,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     }
 
     private void runFinishedHandler(TestRunFinished event) {
-        System.out.println("runFinishedHandler: " + event.getResult().toString());
+        LOGGER.info("runFinishedHandler: " + event.getResult().toString());
         System.out.printf("ThreadID: %d: afterSuite: %n", Thread.currentThread().getId());
         try {
             appiumServerManager.stopAppiumServer();
