@@ -297,7 +297,7 @@ public class Capabilities {
     }
 
     private String getPlatform() {
-        String platform = atdEnvironment.getEnv("Platform");
+        String platform = atdEnvironment.get("Platform");
         String schema = null;
         switch (platform.toLowerCase()) {
             case "both":
@@ -321,7 +321,7 @@ public class Capabilities {
     }
 
     private void isPlatformInEnv() {
-        if (atdEnvironment.getEnv("Platform") == null) {
+        if (atdEnvironment.get("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
                     + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
         }
@@ -329,26 +329,27 @@ public class Capabilities {
 
     private void validateRemoteHosts() {
         try {
-            if (getCapabilities().has("hostMachines")) {
-                JSONArray hostMachines = getHostMachineObject();
-                for (Object hostMachine : hostMachines) {
-                    JSONObject hostMachineJson = ((JSONObject) hostMachine);
-                    boolean isCloud = hostMachineJson.has("isCloud");
-                    if (isCloud) {
-                        isCloud = hostMachineJson.getBoolean("isCloud");
-                    }
-                    String machineIP = (String) hostMachineJson.get("machineIP");
-                    if (isCloud
-                            || InetAddress.getByName(machineIP).isReachable(5000)) {
-                        LOGGER.info("ATD is Running on " + machineIP);
-                    } else {
-                        FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
-                        throw new ConnectException();
-                    }
+            if (!hasHostMachines()) {
+                return;
+            }
+            JSONArray hostMachines = getHostMachineObject();
+            for (Object hostMachine : hostMachines) {
+                JSONObject hostMachineJson = ((JSONObject) hostMachine);
+                boolean isCloud = hostMachineJson.has("isCloud");
+                if (isCloud) {
+                    isCloud = hostMachineJson.getBoolean("isCloud");
+                }
+                String machineIP = (String) hostMachineJson.get("machineIP");
+                if (isCloud
+                        || InetAddress.getByName(machineIP).isReachable(5000)) {
+                    LOGGER.info("ATD is Running on " + machineIP);
+                } else {
+                    FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
+                    throw new ConnectException();
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Provide hostMachine in Caps.json for execution");
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.appium.device;
 
 public class AtdEnvironment {
-    public String getEnv(String environmentVariableName) {
+    public String get(String environmentVariableName) {
         return System.getenv(environmentVariableName);
     }
 }

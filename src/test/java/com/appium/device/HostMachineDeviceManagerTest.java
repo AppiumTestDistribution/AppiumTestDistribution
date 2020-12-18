@@ -52,7 +52,7 @@ public class HostMachineDeviceManagerTest {
         AtdEnvironment atdEnvironment = Mockito.mock(AtdEnvironment.class);
 
         when(capabilities.hasHostMachines()).thenReturn(false);
-        when(atdEnvironment.getEnv("Platform")).thenReturn("android");
+        when(atdEnvironment.get("Platform")).thenReturn("android");
 
         new HostMachineDeviceManager(null, capabilities, atdEnvironment);
     }
@@ -64,7 +64,7 @@ public class HostMachineDeviceManagerTest {
         IAppiumManager appiumManager = Mockito.mock(IAppiumManager.class);
         Device androidDevice = androidDevice();
 
-        when(atdEnvironment.getEnv("Platform")).thenReturn("android");
+        when(atdEnvironment.get("Platform")).thenReturn("android");
         Capabilities capabilities = new Capabilities(CAPABILITIES_JSON, atdEnvironment);
         when(appiumManager.getDevices("127.0.0.1", "android"))
                 .thenReturn(Arrays.asList(androidDevice));
@@ -84,7 +84,7 @@ public class HostMachineDeviceManagerTest {
         IAppiumManager appiumManager = Mockito.mock(IAppiumManager.class);
         Device windowsDevice = windowsDevice();
 
-        when(atdEnvironment.getEnv("Platform")).thenReturn("windows");
+        when(atdEnvironment.get("Platform")).thenReturn("windows");
         Capabilities capabilities = new Capabilities(CAPABILITIES_JSON, atdEnvironment);
         when(appiumManager.getDevices("127.0.0.1", "windows"))
                 .thenReturn(Arrays.asList(windowsDevice));

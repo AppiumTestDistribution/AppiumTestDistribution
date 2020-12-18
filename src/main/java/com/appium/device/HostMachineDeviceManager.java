@@ -1,9 +1,7 @@
 package com.appium.device;
 
 import com.appium.capabilities.Capabilities;
-import com.appium.filelocations.FileLocations;
 import com.appium.manager.AppiumDevice;
-import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.appium.utils.Api;
@@ -15,8 +13,6 @@ import com.report.factory.TestStatusManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +95,7 @@ public class HostMachineDeviceManager {
 
     private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(
             Map<String, List<AppiumDevice>> devicesByHost) {
-        String uniqueDeviceIdentifiersString = atdEnvironment.getEnv(UNIQUE_DEVICE_IDENTIFIERS);
+        String uniqueDeviceIdentifiersString = atdEnvironment.get(UNIQUE_DEVICE_IDENTIFIERS);
         List<String> uniqueDeviceIdentifiers = uniqueDeviceIdentifiersString == null
                 ? Collections.emptyList() : Arrays.asList(uniqueDeviceIdentifiersString.split(","));
 
@@ -120,7 +116,7 @@ public class HostMachineDeviceManager {
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(
             Map<String, List<AppiumDevice>> devicesByHost) {
-        String platform = atdEnvironment.getEnv(PLATFORM);
+        String platform = atdEnvironment.get(PLATFORM);
         if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
         } else {
@@ -167,7 +163,7 @@ public class HostMachineDeviceManager {
 
 
     private Map<String, List<AppiumDevice>> getDevices() {
-        String platform = atdEnvironment.getEnv(PLATFORM);
+        String platform = atdEnvironment.get(PLATFORM);
         Map<String, List<AppiumDevice>> devicesByHost = new HashMap<>();
 
         if (!capabilities.hasHostMachines()) {
