@@ -16,7 +16,7 @@ import static com.appium.utils.FigletHelper.figlet;
 
 public class ATDRunner {
     private static final String ANDROID = "android";
-    private static final String ALL = "both";
+    private static final String BOTH = "both";
     private static final String IOS = "iOS";
     public static final String USER_DIR = "user.dir";
 
@@ -65,7 +65,7 @@ public class ATDRunner {
         createSnapshotDirectoryFor();
         String platform = System.getenv("Platform");
         if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
-                || platform.equalsIgnoreCase(ALL)) {
+                || platform.equalsIgnoreCase(BOTH)) {
             if (!capabilities.getCapabilityObjectFromKey("android").has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName "
                         + "as UIAutomator2 or Espresso to create Android driver");

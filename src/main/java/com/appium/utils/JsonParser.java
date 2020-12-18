@@ -21,7 +21,6 @@ public class JsonParser {
     }
 
     public JsonParser() {
-
     }
 
     public JSONArray getJsonParsedObjectAsJsonArray() {
