@@ -10,7 +10,6 @@ import com.appium.manager.DeviceAllocationManager;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
-import io.cucumber.java.Scenario;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -18,9 +17,6 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,8 +34,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private Map<String, Integer> scenarioRunCounts = new HashMap<String, Integer>();
 
     public CucumberScenarioListener() {
-        System.out.printf("ThreadID: %d: CucumberScenarioListener%n",
-                Thread.currentThread().getId());
+        LOGGER.info(String.format("ThreadID: %d: CucumberScenarioListener\n",
+                Thread.currentThread().getId()));
         new ATDRunner();
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
@@ -74,7 +70,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(EventPublisher eventPublisher) {
-        eventPublisher.registerHandlerFor(TestSourceRead.class, this::featureFileRead);
         eventPublisher.registerHandlerFor(TestRunStarted.class, this::runStartedHandler);
         eventPublisher.registerHandlerFor(TestCaseStarted.class, this::caseStartedHandler);
         eventPublisher.registerHandlerFor(TestCaseFinished.class, this::caseFinishedHandler);
@@ -83,17 +78,12 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void runStartedHandler(TestRunStarted event) {
         LOGGER.info("runStartedHandler");
-        System.out.printf("ThreadID: %d: beforeSuite: %n", Thread.currentThread().getId());
+        LOGGER.info(String.format("ThreadID: %d: beforeSuite: \n", Thread.currentThread().getId()));
         try {
             appiumServerManager.startAppiumServer();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void featureFileRead(TestSourceRead event) {
-        String featureName = event.getSource();
-        LOGGER.info("The feature file read is: " + featureName);
     }
 
     private void caseStartedHandler(TestCaseStarted event) {
@@ -102,9 +92,9 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
 
-        System.out.printf(
-                "ThreadID: %d: beforeScenario: for scenario: %s%n",
-                Thread.currentThread().getId(), scenarioName);
+        LOGGER.info(
+                String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
+                        Thread.currentThread().getId(), scenarioName));
         AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
         try {
             allocatedDevice.startDataCapture(scenarioName, scenarioRunCount);
@@ -135,9 +125,9 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         String testResult = event.getResult().toString();
         LOGGER.info("caseFinishedHandler Name: " + testCaseName);
         LOGGER.info("caseFinishedHandler Result: " + testResult);
-        System.out.printf(
-                "ThreadID: %d: afterScenario: for scenario: %s%n",
-                Thread.currentThread().getId(), testCaseName);
+        LOGGER.info(
+                String.format("ThreadID: %d: afterScenario: for scenario: %s\n",
+                        Thread.currentThread().getId(), testCaseName));
         deviceAllocationManager.freeDevice();
         try {
             appiumDriverManager.stopAppiumDriver();
@@ -149,7 +139,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void runFinishedHandler(TestRunFinished event) {
         LOGGER.info("runFinishedHandler: " + event.getResult().toString());
-        System.out.printf("ThreadID: %d: afterSuite: %n", Thread.currentThread().getId());
+        LOGGER.info(String.format("ThreadID: %d: afterSuite: \n", Thread.currentThread().getId()));
         try {
             appiumServerManager.stopAppiumServer();
         } catch (Exception e) {

@@ -29,12 +29,11 @@ public class SampleSteps extends UserBaseTest {
     public void I_sleep_for_seconds(int arg1) throws InterruptedException {
         System.out.println("sleep for " + arg1 + " sec");
         Thread.sleep(arg1 * 1000);
-        getDriver().findElementByXPath(".//*[@text=" + arg1 + "]").click();
         System.out.println("Passed");
     }
 
-    @Then("^It should finnish$")
-    public void It_should_finnish() {
+    @Then("^It should finish$")
+    public void It_should_finish() {
         System.out.println("Passed");
     }
 

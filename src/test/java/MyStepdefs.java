@@ -16,16 +16,9 @@ public class MyStepdefs {
         edit = (RemoteWebElement) getDriver().findElementByClassName("Edit");
     }
 
-    @Then("It should finish")
-    public void itShouldFinnish() {
-        Assert.assertNotNull(edit);
-    }
-
     @Given("I accept the tip screen")
     public void i_accept_the_tip_screen() {
         // Write code here that turns the phrase above into concrete actions
         System.out.println("I accept the tip screen step executed ");
     }
-
-
 }
