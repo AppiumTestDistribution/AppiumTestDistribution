@@ -1,13 +1,11 @@
 package com.appium.manager;
 
 import com.appium.capabilities.Capabilities;
-import com.appium.device.DevicesByHost;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,7 +16,7 @@ import static com.appium.utils.FigletHelper.figlet;
 
 public class ATDRunner {
     private static final String ANDROID = "android";
-    private static final String ALL = "all";
+    private static final String ALL = "both";
     private static final String IOS = "iOS";
     public static final String USER_DIR = "user.dir";
 
