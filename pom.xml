@@ -189,17 +189,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*RunCukes.java</exclude>
-                        <exclude>**/WindowsTest.java</exclude>
-                        <exclude>**/DragnDropTest.java</exclude>
-                        <exclude>**/SliderTest.java</exclude>
-                        <exclude>**/LoginTest.java</exclude>
-                        <exclude>**/AtdServiceTest.java</exclude>
-                        <exclude>**/LoginFailureTest.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

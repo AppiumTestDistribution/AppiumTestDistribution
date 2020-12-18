@@ -7,7 +7,6 @@ import com.github.device.Device;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 import org.testng.Assert;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -96,27 +95,6 @@ public class HostMachineDeviceManagerTest {
         DevicesByHost devicesByHost = hostMachineDeviceManager.getDevicesByHost();
 
         Assert.assertEquals(devicesByHost.getAllDevices().size(), 1);
-    }
-
-    @Ignore
-    @Test
-    public void shouldIncludeAllDevices() throws IOException {
-        AtdEnvironment atdEnvironment = Mockito.mock(AtdEnvironment.class);
-        AppiumManagerFactory appiumManagerFactory = Mockito.mock(AppiumManagerFactory.class);
-        IAppiumManager appiumManager = Mockito.mock(IAppiumManager.class);
-        Device windowsDevice = windowsDevice();
-
-        when(atdEnvironment.getEnv("Platform")).thenReturn("all");
-        Capabilities capabilities = new Capabilities(CAPABILITIES_JSON, atdEnvironment);
-        when(appiumManager.getDevices("127.0.0.1", "all"))
-                .thenReturn(Arrays.asList(androidDevice(), windowsDevice));
-        when(appiumManagerFactory.getAppiumManagerFor("127.0.0.1")).thenReturn(appiumManager);
-
-        HostMachineDeviceManager hostMachineDeviceManager = new HostMachineDeviceManager(
-                appiumManagerFactory, capabilities, atdEnvironment);
-        DevicesByHost devicesByHost = hostMachineDeviceManager.getDevicesByHost();
-
-        Assert.assertEquals(devicesByHost.getAllDevices().size(), 2);
     }
 
     @NotNull

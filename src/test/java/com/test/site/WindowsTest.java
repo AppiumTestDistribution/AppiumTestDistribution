@@ -4,6 +4,7 @@ import org.openqa.selenium.remote.RemoteWebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@Test(groups = { "end-to-end-test" })
 public class WindowsTest extends UserBaseTest {
 
     @Test
