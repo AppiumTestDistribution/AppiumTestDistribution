@@ -1,7 +1,13 @@
 package com.cucumber.listener;
 
 import com.appium.capabilities.Capabilities;
-import com.appium.manager.*;
+import com.appium.manager.ATDRunner;
+import com.appium.manager.AppiumDevice;
+import com.appium.manager.AppiumDeviceManager;
+import com.appium.manager.AppiumDriverManager;
+import com.appium.manager.AppiumServerManager;
+import com.appium.manager.DeviceAllocationManager;
+import com.appium.manager.TestLogger;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
