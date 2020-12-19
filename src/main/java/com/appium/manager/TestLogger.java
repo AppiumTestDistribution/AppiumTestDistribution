@@ -22,13 +22,14 @@ import java.util.logging.Level;
 /**
  * Created by saikrisv on 24/01/17.
  */
-class TestLogger extends Helpers {
+public class TestLogger extends Helpers {
 
     private File logFile;
     private ThreadLocal<List<LogEntry>> logEntries = new ThreadLocal<>();
     private ThreadLocal<PrintWriter> log_file_writer = new ThreadLocal<>();
     private ScreenShotManager screenShotManager;
     private String videoPath;
+
 
     private String getVideoPath() {
         return videoPath;
@@ -38,7 +39,7 @@ class TestLogger extends Helpers {
         this.videoPath = videoPath;
     }
 
-    TestLogger() {
+    public TestLogger() {
         screenShotManager = new ScreenShotManager();
     }
 
@@ -46,12 +47,12 @@ class TestLogger extends Helpers {
             throws IOException, InterruptedException {
         String methodName = iTestResult.getMethod().getMethodName();
         String className = iTestResult.getTestClass()
-            .getRealClass().getSimpleName();
+                .getRealClass().getSimpleName();
 
         if (isNativeAndroid()) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
             List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
-                .logs().get("logcat").filter(Level.ALL);
+                    .logs().get("logcat").filter(Level.ALL);
             logEntries.set(logcat);
             logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
                     + udid + "__" + methodName + ".txt");
@@ -66,28 +67,29 @@ class TestLogger extends Helpers {
 
     private void setDescription(ITestResult iTestResult) {
         Optional<String> originalDescription = Optional.ofNullable(iTestResult
-            .getMethod().getDescription());
+                .getMethod().getDescription());
         String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-            + " UDID: " + AppiumDeviceManager.getAppiumDevice()
-            .getDevice().getUdid()
-            + " Name: " + AppiumDeviceManager.getAppiumDevice()
-            .getDevice().getName()
-            + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
+                + " UDID: " + AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getUdid()
+                + " Name: " + AppiumDeviceManager.getAppiumDevice()
+                .getDevice().getName()
+                + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
         Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
-            .getAnnotation(Author.class);
+                .getAnnotation(Author.class);
         if (annotation != null) {
             description += "\nAuthor: " + annotation.name();
         }
         if (originalDescription.isPresent()
-            && !originalDescription.get()
-            .contains(AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getUdid())) {
+                && !originalDescription.get()
+                .contains(AppiumDeviceManager.getAppiumDevice()
+                        .getDevice().getUdid())) {
             iTestResult.getMethod().setDescription(originalDescription.get()
-                + "\n" + description);
+                    + "\n" + description);
         } else {
             iTestResult.getMethod().setDescription(description);
         }
     }
+
 
     protected HashMap<String, String> endLogging(ITestResult result, String deviceModel)
             throws Exception {
@@ -157,8 +159,8 @@ class TestLogger extends Helpers {
 
     private boolean isNativeAndroid() {
         return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-            && AppiumDriverManager.getDriver().getCapabilities()
-            .getCapability("browserName") == null;
+                && AppiumDriverManager.getDriver().getCapabilities()
+                .getCapability("browserName") == null;
     }
 
     private void stopViewRecording(ITestResult result, String className)
@@ -217,6 +219,5 @@ class TestLogger extends Helpers {
             }
         }
     }
-
 
 }

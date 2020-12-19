@@ -2,7 +2,7 @@ package com.appium.manager;
 
 import com.appium.exceptions.LocalConnectionException;
 import com.appium.filelocations.FileLocations;
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.utils.OSType;
 import com.github.android.AndroidManager;
 import com.github.device.Device;
@@ -85,7 +85,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
     private void getWindowsDevice(String platform, List<Device> devices) {
         if (platform.equalsIgnoreCase(OSType.WINDOWS.name())
-                && CapabilityManager.getInstance().isWindowsApp()) {
+                && Capabilities.getInstance().isWindowsApp()) {
             Device device = new Device();
             device.setName("windows");
             device.setOs("windows");
@@ -101,8 +101,8 @@ public class LocalAppiumManager implements IAppiumManager {
     private void getIOSDevices(String platform, List<Device> devices) {
         if (platform.equalsIgnoreCase(OSType.iOS.name())
                 || platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            if (CapabilityManager.getInstance().isApp()) {
-                if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
+            if (Capabilities.getInstance().isApp()) {
+                if (Capabilities.getInstance().isSimulatorAppPresentInCapsJson()) {
                     try {
                         devices.addAll(new SimulatorManager()
                                 .getAllBootedSimulators(OSType.iOS.name()));
@@ -111,7 +111,7 @@ public class LocalAppiumManager implements IAppiumManager {
                                 "Exception getting booted simulators", e);
                     }
                 }
-                if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
+                if (Capabilities.getInstance().isRealDeviceAppPresentInCapsJson()) {
                     devices.addAll(new IOSManager().getDevices());
                 }
             } else {
@@ -172,7 +172,7 @@ public class LocalAppiumManager implements IAppiumManager {
     }
 
     private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {
-        if (CapabilityManager.getInstance().getAppiumServerPath(host) == null) {
+        if (Capabilities.getInstance().getAppiumServerPath(host) == null) {
             System.out.println("Picking Default Path for AppiumServiceBuilder");
             return getAppiumServiceBuilderWithDefaultPath();
         } else {
@@ -184,7 +184,7 @@ public class LocalAppiumManager implements IAppiumManager {
     private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host)
             throws Exception {
         return new AppiumServiceBuilder().withAppiumJS(
-                new File(CapabilityManager.getInstance().getAppiumServerPath(host)));
+                new File(Capabilities.getInstance().getAppiumServerPath(host)));
     }
 
     private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath() {

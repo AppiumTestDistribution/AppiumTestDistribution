@@ -1,36 +1,62 @@
 package com.appium.capabilities;
 
-import static com.appium.utils.ConfigFileManager.CAPS;
-
+import com.appium.device.AtdEnvironment;
+import com.appium.manager.RemoteAppiumManager;
+import com.appium.utils.FigletHelper;
 import com.appium.utils.JsonParser;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.InetAddress;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
-public class CapabilityManager {
-    private static CapabilityManager instance;
+import static com.appium.utils.ConfigFileManager.CAPS;
+
+public class Capabilities {
+    private static final Logger LOGGER = Logger.getLogger(RemoteAppiumManager.class.getName());
+
+    private static Capabilities instance;
     private JSONObject capabilities;
+    private final AtdEnvironment atdEnvironment;
 
-    private CapabilityManager() {
+    private Capabilities() {
+        atdEnvironment = new AtdEnvironment();
         String capabilitiesFilePath = getCapabilityLocation();
         JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
-        StringBuilder varParsing = new StringBuilder(200);
-        varParsing.append("atd").append("_");
-        capabilities = loadAndOverrideFromEnvVars(jsonParser.getObjectFromJSON(),
-            new JSONObject(),
-            getAllATDOverrideEnvVars(),
-            varParsing);
+        createInstance(jsonParser.getObjectFromJSON());
     }
 
-    public static CapabilityManager getInstance() {
+    public Capabilities(String capabilitiesJson, AtdEnvironment atdEnvironment) {
+        this.atdEnvironment = atdEnvironment;
+        createInstance(new JsonParser().getObjectFromJSONString(capabilitiesJson));
+    }
+
+    private void createInstance(JSONObject capabilitiesJsonObject) {
+        StringBuilder varParsing = new StringBuilder(200);
+        varParsing.append("atd").append("_");
+        capabilities = loadAndOverrideFromEnvVars(
+                capabilitiesJsonObject,
+                new JSONObject(),
+                getAllATDOverrideEnvVars(),
+                varParsing);
+        validateCapabilitySchema();
+    }
+
+    public static Capabilities getInstance() {
         if (instance == null) {
-            instance = new CapabilityManager();
+            instance = new Capabilities();
         }
         return instance;
     }
@@ -54,21 +80,21 @@ public class CapabilityManager {
             Object keyvalue = originalObject.get(keyStr);
             if (keyvalue instanceof JSONObject) {
                 processJSONObject(objectToUpdate,
-                    allATDOverrideEnvVars,
-                    currentPath,
-                    keyStr,
-                    (JSONObject) keyvalue);
+                        allATDOverrideEnvVars,
+                        currentPath,
+                        keyStr,
+                        (JSONObject) keyvalue);
             } else if (keyvalue instanceof JSONArray) {
                 processJSONArray(objectToUpdate,
-                    allATDOverrideEnvVars,
-                    currentPath,
-                    keyStr,
-                    (JSONArray) keyvalue);
+                        allATDOverrideEnvVars,
+                        currentPath,
+                        keyStr,
+                        (JSONArray) keyvalue);
             } else {
                 processJSONObject(objectToUpdate,
-                    currentPath,
-                    keyStr,
-                    keyvalue);
+                        currentPath,
+                        keyStr,
+                        keyvalue);
             }
         });
         return objectToUpdate;
@@ -95,10 +121,10 @@ public class CapabilityManager {
         currentPath.append(keyStr).append("_");
         for (int arrIndex = 0; arrIndex < keyvalue.length(); arrIndex++) {
             processJSONArrayItem(allATDOverrideEnvVars,
-                currentPath,
-                jsonArray,
-                keyvalue,
-                arrIndex);
+                    currentPath,
+                    jsonArray,
+                    keyvalue,
+                    arrIndex);
         }
         currentPath.delete(currentPath.lastIndexOf(keyStr), currentPath.length());
     }
@@ -113,9 +139,9 @@ public class CapabilityManager {
         jsonArray.put(jsonObject);
         currentPath.append(arrIndex).append("_");
         loadAndOverrideFromEnvVars((JSONObject) arrayItem,
-            jsonObject,
-            allATDOverrideEnvVars,
-            currentPath);
+                jsonObject,
+                allATDOverrideEnvVars,
+                currentPath);
         currentPath.delete(currentPath.lastIndexOf(String.valueOf(arrIndex)), currentPath.length());
     }
 
@@ -133,13 +159,13 @@ public class CapabilityManager {
 
     private String getCapabilityLocation() {
         String path = System.getProperty("user.dir") + "/caps/"
-            + "capabilities.json";
+                + "capabilities.json";
         String caps = CAPS.get();
         if (caps != null) {
             Path userDefinedCapsPath = FileSystems.getDefault().getPath(caps);
             if (!userDefinedCapsPath.getParent().isAbsolute()) {
                 path = userDefinedCapsPath.normalize()
-                    .toAbsolutePath().toString();
+                        .toAbsolutePath().toString();
             } else {
                 path = userDefinedCapsPath.toString();
             }
@@ -170,7 +196,7 @@ public class CapabilityManager {
     public HashMap<String, String> getMongoDbHostAndPort() {
         HashMap<String, String> params = new HashMap<>();
         if (capabilities.has("ATDServiceHost")
-            && capabilities.has("ATDServicePort")) {
+                && capabilities.has("ATDServicePort")) {
             params.put("atdHost", (String) capabilities.get("ATDServiceHost"));
             params.put("atdPort", (String) capabilities.get("ATDServicePort"));
         }
@@ -220,12 +246,12 @@ public class CapabilityManager {
     }
 
     private <T> T appiumServerProp(String host, String arg) throws Exception {
-        JSONArray hostMachineObject = CapabilityManager.getInstance().getHostMachineObject();
+        JSONArray hostMachineObject = Capabilities.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
         Object machineIP = hostIP.stream().filter(object -> ((Map) object).get("machineIP")
-            .toString().equalsIgnoreCase(host)
-            && ((Map) object).get(arg) != null)
-            .findFirst().orElse(null);
+                .toString().equalsIgnoreCase(host)
+                && ((Map) object).get(arg) != null)
+                .findFirst().orElse(null);
         return (T) ((Map) machineIP).get(arg);
     }
 
@@ -243,5 +269,87 @@ public class CapabilityManager {
 
     public JSONObject getCapabilities() {
         return capabilities;
+    }
+
+    public boolean hasHostMachines() {
+        return getCapabilities().has("hostMachines");
+    }
+
+    public void validateCapabilitySchema() {
+        try {
+            isPlatformInEnv();
+            InputStream inputStream = getClass().getResourceAsStream(getPlatform());
+            JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
+            Schema schema = SchemaLoader.load(rawSchema);
+            schema.validate(new JSONObject(getCapabilities().toString()));
+            validateRemoteHosts();
+        } catch (ValidationException e) {
+            if (e.getCausingExceptions().size() > 1) {
+                e.getCausingExceptions().stream()
+                        .map(ValidationException::getMessage)
+                        .forEach(System.out::println);
+            } else {
+                LOGGER.info(e.getErrorMessage());
+            }
+
+            throw new ValidationException("Capability json provided is missing the above schema");
+        }
+    }
+
+    private String getPlatform() {
+        String platform = atdEnvironment.get("Platform");
+        String schema = null;
+        switch (platform.toLowerCase()) {
+            case "both":
+                schema = "/androidAndiOSSchema.json";
+                break;
+            case "android":
+                schema = "/androidSchema.json";
+                break;
+            case "ios":
+                schema = "/iOSSchema.json";
+                break;
+            case "windows":
+                schema = "/windowsSchema.json";
+                break;
+            default:
+                System.out.println("Just for codacy!!");
+                break;
+
+        }
+        return schema;
+    }
+
+    private void isPlatformInEnv() {
+        if (atdEnvironment.get("Platform") == null) {
+            throw new IllegalArgumentException("Please execute with Platform environment"
+                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
+        }
+    }
+
+    private void validateRemoteHosts() {
+        try {
+            if (!hasHostMachines()) {
+                return;
+            }
+            JSONArray hostMachines = getHostMachineObject();
+            for (Object hostMachine : hostMachines) {
+                JSONObject hostMachineJson = ((JSONObject) hostMachine);
+                boolean isCloud = hostMachineJson.has("isCloud");
+                if (isCloud) {
+                    isCloud = hostMachineJson.getBoolean("isCloud");
+                }
+                String machineIP = (String) hostMachineJson.get("machineIP");
+                if (isCloud
+                        || InetAddress.getByName(machineIP).isReachable(5000)) {
+                    LOGGER.info("ATD is Running on " + machineIP);
+                } else {
+                    FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
+                    throw new ConnectException();
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Provide hostMachine in Caps.json for execution");
+        }
     }
 }

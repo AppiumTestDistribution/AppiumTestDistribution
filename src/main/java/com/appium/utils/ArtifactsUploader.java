@@ -1,6 +1,6 @@
 package com.appium.utils;
 
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.device.HostMachineDeviceManager;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONObject;
@@ -14,14 +14,14 @@ import java.util.List;
 public class ArtifactsUploader {
 
     private static ArtifactsUploader instance;
-    private CapabilityManager capabilityManager;
+    private Capabilities capabilities;
     private Api api = new Api();
     private List<HostArtifact> hostArtifacts;
 
 
     protected ArtifactsUploader() {
         try {
-            capabilityManager = CapabilityManager.getInstance();
+            capabilities = Capabilities.getInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,7 +49,7 @@ public class ArtifactsUploader {
     }
 
     private boolean isCloud(String hostMachine) {
-        return CapabilityManager.getInstance().isCloud(hostMachine);
+        return Capabilities.getInstance().isCloud(hostMachine);
     }
 
     public List<HostArtifact> getHostArtifacts() {
@@ -66,11 +66,11 @@ public class ArtifactsUploader {
         String platform = System.getenv("Platform");
         String app = "app";
         HashMap<String, String> artifactPaths = new HashMap<>();
-        JSONObject android = capabilityManager
+        JSONObject android = capabilities
             .getCapabilityObjectFromKey("android");
-        JSONObject iOSAppPath = capabilityManager
+        JSONObject iOSAppPath = capabilities
             .getCapabilityObjectFromKey("iOS");
-        JSONObject windowsAppPath = capabilityManager
+        JSONObject windowsAppPath = capabilities
                 .getCapabilityObjectFromKey("windows");
         if (android != null && android.has(app)
             && (platform.equalsIgnoreCase("android")

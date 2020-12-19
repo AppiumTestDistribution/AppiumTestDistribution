@@ -1,13 +1,9 @@
 package com.appium.manager;
 
-import com.appium.android.AndroidDeviceConfiguration;
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
-import com.appium.ios.IOSDeviceConfiguration;
-import com.appium.schema.CapabilitySchemaValidator;
-import com.appium.windows.WindowsDeviceConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,53 +14,31 @@ import static com.appium.utils.ConfigFileManager.FRAMEWORK;
 import static com.appium.utils.ConfigFileManager.RUNNER;
 import static com.appium.utils.FigletHelper.figlet;
 
-/*
- * This class picks the devices connected
- * and distributes across multiple thread.
- *
- * Thanks to @Thote_Gowda(thotegowda.gr@gmail.com)
- */
 public class ATDRunner {
     private static final String ANDROID = "android";
-    private static final String BOTH = "Both";
+    private static final String BOTH = "both";
     private static final String IOS = "iOS";
-    private static final String WINDOWS = "windows";
-    private WindowsDeviceConfiguration windowsDevice;
+    public static final String USER_DIR = "user.dir";
 
     private DeviceAllocationManager deviceAllocationManager;
-    private AndroidDeviceConfiguration androidDevice;
-    private IOSDeviceConfiguration iosDevice;
     private ATDExecutor ATDExecutor;
-    private CapabilityManager capabilityManager;
+    private Capabilities capabilities;
     private HostMachineDeviceManager hostMachineDeviceManager;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
 
     public ATDRunner() {
-        capabilityManager = CapabilityManager.getInstance();
-        new CapabilitySchemaValidator()
-                .validateCapabilitySchema(capabilityManager.getCapabilities());
+        capabilities = Capabilities.getInstance();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
-        iosDevice = new IOSDeviceConfiguration();
-        androidDevice = new AndroidDeviceConfiguration();
         ATDExecutor = new ATDExecutor(deviceAllocationManager);
-        windowsDevice = new WindowsDeviceConfiguration();
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }
 
     private void createOutputDirectoryIfNotExist() {
-        File file = new File(System.getProperty("user.dir"), FileLocations.OUTPUT_DIRECTORY);
+        File file = new File(System.getProperty(USER_DIR), FileLocations.OUTPUT_DIRECTORY);
         if (!file.exists()) {
             file.mkdirs();
         }
-    }
-
-    @Deprecated
-    //Use system property udids to send list of valid device ids
-    public ATDRunner(List<String> validDeviceIds) throws Exception {
-        this();
-        androidDevice.setValidDevices(validDeviceIds);
-        iosDevice.setValidDevices(validDeviceIds);
     }
 
     public boolean runner(String pack, List<String> tests) throws Exception {
@@ -85,14 +59,14 @@ public class ATDRunner {
         }
 
         LOGGER.info(LOGGER.getName()
-            + "Total Number of devices detected::" + deviceCount + "\n");
+                + "Total Number of devices detected::" + deviceCount + "\n");
 
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();
         String platform = System.getenv("Platform");
         if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
-            if (!capabilityManager.getCapabilityObjectFromKey("android").has("automationName")) {
+            if (!capabilities.getCapabilityObjectFromKey("android").has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName "
                         + "as UIAutomator2 or Espresso to create Android driver");
             }
@@ -113,7 +87,7 @@ public class ATDRunner {
     }
 
     private void generateDirectoryForAdbLogs() {
-        File adb_logs = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY);
+        File adb_logs = new File(System.getProperty(USER_DIR) + FileLocations.ADB_LOGS_DIRECTORY);
         if (!adb_logs.exists()) {
             try {
                 adb_logs.mkdir();
@@ -124,7 +98,7 @@ public class ATDRunner {
     }
 
     private void createAppiumLogsFolder() {
-        File f = new File(System.getProperty("user.dir") + FileLocations.APPIUM_LOGS_DIRECTORY);
+        File f = new File(System.getProperty(USER_DIR) + FileLocations.APPIUM_LOGS_DIRECTORY);
         if (!f.exists()) {
             try {
                 f.mkdir();
@@ -142,7 +116,7 @@ public class ATDRunner {
             createPlatformDirectory(os);
             String deviceId = udid.getDevice().getUdid();
             File file = new File(
-                    System.getProperty("user.dir")
+                    System.getProperty(USER_DIR)
                             + FileLocations.SCREENSHOTS_DIRECTORY + os + "/"
                             + deviceId);
             if (!file.exists()) {
@@ -152,10 +126,11 @@ public class ATDRunner {
     }
 
     private void createPlatformDirectory(String platform) {
-        File platformDirectory = new File(System.getProperty("user.dir")
+        File platformDirectory = new File(System.getProperty(USER_DIR)
                 + FileLocations.SCREENSHOTS_DIRECTORY + platform);
         if (!platformDirectory.exists()) {
             platformDirectory.mkdirs();
         }
     }
+
 }

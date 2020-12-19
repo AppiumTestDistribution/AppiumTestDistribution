@@ -1,6 +1,6 @@
 package com.appium.manager;
 
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.exceptions.CloudConnectionException;
 import com.appium.utils.Api;
 import com.appium.utils.Helpers;
@@ -45,8 +45,8 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     @Override
     public void startAppiumServer(String host) throws Exception {
         LOGGER.info(LOGGER.getName() + "Starting Appium Server on host " + host);
-        String serverPath = CapabilityManager.getInstance().getAppiumServerPath(host);
-        String serverPort = CapabilityManager.getInstance().getAppiumServerPort(host);
+        String serverPath = Capabilities.getInstance().getAppiumServerPath(host);
+        String serverPort = Capabilities.getInstance().getAppiumServerPort(host);
         if (serverPath == null
                 && serverPort == null) {
             LOGGER.info(LOGGER.getName()
@@ -97,7 +97,7 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
         }
         if (platform.equalsIgnoreCase(OSType.iOS.name())
                 || platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            if (CapabilityManager.getInstance().isApp()) {
+            if (Capabilities.getInstance().isApp()) {
                 getSimulators(machineIP, mapper, devices);
                 getRealDevices(machineIP, mapper, devices);
             } else {
@@ -108,13 +108,13 @@ public class RemoteAppiumManager extends Helpers implements IAppiumManager {
     }
 
     private void getRealDevices(String machineIP, ObjectMapper mapper, List<Device> devices) {
-        if (CapabilityManager.getInstance().isRealDeviceAppPresentInCapsJson()) {
+        if (Capabilities.getInstance().isRealDeviceAppPresentInCapsJson()) {
             getListOfRemoteDevices(machineIP, mapper, devices, "/devices/ios/realDevices");
         }
     }
 
     private void getSimulators(String machineIP, ObjectMapper mapper, List<Device> devices) {
-        if (CapabilityManager.getInstance().isSimulatorAppPresentInCapsJson()) {
+        if (Capabilities.getInstance().isSimulatorAppPresentInCapsJson()) {
             getListOfRemoteDevices(machineIP, mapper, devices, "/devices/ios/bootedSims");
         }
     }

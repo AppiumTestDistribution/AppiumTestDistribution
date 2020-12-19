@@ -6,10 +6,9 @@ Feature: Sample1 Feature
   So we can prove that it runs in parallel
 
   Scenario Outline: Scenario 1 Sample 1
-#    Given I accept the tip screen
     When I click on <t1> number
     And I click on <t2> number
-    Then It should finnish
+    Then It should finish
     Examples:
       | t1 | t2 |
       | 4  | 3  |

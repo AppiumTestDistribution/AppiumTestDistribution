@@ -2,6 +2,7 @@ package com.test.cucumber;
 
 import com.test.site.UserBaseTest;
 import io.appium.java_client.MobileBy;
+import io.cucumber.core.runtime.CucumberExecutionContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -19,20 +20,20 @@ public class SampleSteps extends UserBaseTest {
     @Given("^I have the this useless scenario$")
     public void uselessScenario() {
         System.out.println("Passed");
-        System.out.println(
-            "*****DriverSession***" + Thread.currentThread().getName() + getDriver().toString());
+        System.out.println("*****DriverSession***"
+                + Thread.currentThread().getName()
+                + getDriver().toString());
     }
 
     @When("^I click on (\\d+) number")
     public void I_sleep_for_seconds(int arg1) throws InterruptedException {
         System.out.println("sleep for " + arg1 + " sec");
         Thread.sleep(arg1 * 1000);
-        //    getDriver().findElementByXPath(".//*[@text=" + arg1 + "]").click();
         System.out.println("Passed");
     }
 
-    @Then("^It should finnish$")
-    public void It_should_finnish() {
+    @Then("^It should finish$")
+    public void It_should_finish() {
         System.out.println("Passed");
     }
 

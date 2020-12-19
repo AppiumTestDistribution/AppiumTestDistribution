@@ -2,7 +2,7 @@ package com.appium.utils;
 
 import static com.appium.utils.ConfigFileManager.RUNNER;
 
-import com.appium.capabilities.CapabilityManager;
+import com.appium.capabilities.Capabilities;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.manager.AppiumParallelTestListener;
@@ -28,7 +28,7 @@ public class Helpers {
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     protected String getRemoteAppiumManagerPort(String host) {
-        String serverPort = CapabilityManager.getInstance()
+        String serverPort = Capabilities.getInstance()
             .getRemoteAppiumManangerPort(host);
         if (serverPort == null) {
             return "4567";

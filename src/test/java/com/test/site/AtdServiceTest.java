@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
+@Test(groups = { "end-to-end-test" })
 public class AtdServiceTest {
     private static final ApiHelper API = new ApiHelper();
     private static final String URL = "http://localhost:8888";

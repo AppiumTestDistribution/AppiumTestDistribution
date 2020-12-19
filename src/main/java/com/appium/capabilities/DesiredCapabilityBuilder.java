@@ -32,6 +32,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  */
 public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
+    public static final String APP_PACKAGE = "APP_PACKAGE";
     private AvailablePorts availablePorts;
 
     public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
@@ -204,17 +205,17 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     }
 
     private void appPackage(DesiredCapabilities desiredCapabilities) {
-        if (System.getenv("APP_PACKAGE") != null) {
+        if (System.getenv(APP_PACKAGE) != null) {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-                System.getenv("APP_PACKAGE"));
+                System.getenv(APP_PACKAGE));
         }
     }
 
     private void appPackageBundle(DesiredCapabilities iOSCapabilities) {
-        if (System.getenv("APP_PACKAGE") != null) {
+        if (System.getenv(APP_PACKAGE) != null) {
             iOSCapabilities
                 .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
-                    System.getenv("APP_PACKAGE"));
+                    System.getenv(APP_PACKAGE));
         }
     }
 }

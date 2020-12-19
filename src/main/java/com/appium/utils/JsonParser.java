@@ -20,6 +20,9 @@ public class JsonParser {
         this.filePath = filePath;
     }
 
+    public JsonParser() {
+    }
+
     public JSONArray getJsonParsedObjectAsJsonArray() {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(filePath)));
@@ -35,10 +38,14 @@ public class JsonParser {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(filePath)));
             String jsonContent = IOUtils.toString(bufferedReader);
-            return new JSONObject(jsonContent);
+            return getObjectFromJSONString(jsonContent);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public JSONObject getObjectFromJSONString(String json) {
+        return new JSONObject(json);
     }
 }
