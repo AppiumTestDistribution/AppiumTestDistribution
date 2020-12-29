@@ -1,6 +1,7 @@
 package com.cucumber.listener;
 
 import com.appium.capabilities.Capabilities;
+import com.appium.filelocations.FileLocations;
 import com.appium.manager.ATDRunner;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
@@ -89,16 +90,14 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private void caseStartedHandler(TestCaseStarted event) {
         String scenarioName = event.getTestCase().getName();
         LOGGER.info("caseStartedHandler: " + scenarioName);
-
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
-
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
         AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
         try {
             allocatedDevice.startDataCapture(scenarioName, scenarioRunCount);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         if (!isCloudExecution()) {
@@ -107,8 +106,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
             }
         }
-        new TestExecutionContext(scenarioName);
-        //TODO: add the log directory to the context
+        TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
+        testExecutionContext.addTestState("scenarioDirectory", FileLocations.SCREENSHOTS_DIRECTORY + scenarioName.replaceAll(" ", "_"));
     }
 
     private Integer getScenarioRunCount(String scenarioName) {
@@ -121,13 +120,11 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     }
 
     private void caseFinishedHandler(TestCaseFinished event) {
-        String testCaseName = event.getTestCase().getName();
-        String testResult = event.getResult().toString();
-        LOGGER.info("caseFinishedHandler Name: " + testCaseName);
-        LOGGER.info("caseFinishedHandler Result: " + testResult);
+        LOGGER.info("caseFinishedHandler Name: " + event.getTestCase().toString());
+        LOGGER.info("caseFinishedHandler Result: " + event.getResult().getStatus().toString());
         LOGGER.info(
                 String.format("ThreadID: %d: afterScenario: for scenario: %s\n",
-                        Thread.currentThread().getId(), testCaseName));
+                        Thread.currentThread().getId(), event.getTestCase().toString()));
         deviceAllocationManager.freeDevice();
         try {
             appiumDriverManager.stopAppiumDriver();
@@ -142,7 +139,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(String.format("ThreadID: %d: afterSuite: \n", Thread.currentThread().getId()));
         try {
             appiumServerManager.stopAppiumServer();
-        } catch (Exception e) {
+        }  catch (Exception e) {
             e.printStackTrace();
         }
     }
