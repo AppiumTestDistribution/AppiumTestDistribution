@@ -90,7 +90,6 @@ public class TestLogger extends Helpers {
         }
     }
 
-
     protected HashMap<String, String> endLogging(ITestResult result, String deviceModel)
             throws Exception {
         HashMap<String, String> logs = new HashMap<>();

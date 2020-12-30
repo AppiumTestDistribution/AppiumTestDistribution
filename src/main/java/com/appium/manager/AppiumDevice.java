@@ -3,16 +3,12 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.github.device.Device;
+import com.video.recorder.AppiumScreenRecordFactory;
+import com.video.recorder.IScreenRecord;
 import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.stream.StreamSupport;
 
 public class AppiumDevice {
@@ -88,26 +84,29 @@ public class AppiumDevice {
     }
 
     public void startDataCapture(String specName, Integer scenarioRunCount)
-            throws FileNotFoundException {
+            throws IOException, InterruptedException {
         String scenarioName = specName.replaceAll(" ", "_");
         if (isNativeAndroid()) {
             String udid = this.getDevice().getUdid();
             String fileName = String.format("/%s-run-%s", udid, scenarioRunCount);
-            File logFile = createLogFile(scenarioName, fileName);
+            File logFile = createFile( FileLocations.REPORTS_DIRECTORY
+                    + scenarioName
+                    + File.separator
+                    + FileLocations.DEVICE_LOGS_DIRECTORY,
+                    fileName);
             PrintStream logFileStream = new PrintStream(logFile);
             LogEntries logcatOutput = AppiumDriverManager.getDriver().manage().logs().get("logcat");
             StreamSupport.stream(logcatOutput.spliterator(), false).forEach(logFileStream::println);
         }
     }
 
-    private File createLogFile(String dirName, String fileName) {
+    private File createFile(String dirName, String fileName) {
         File logFile = new File(System.getProperty("user.dir")
-                + FileLocations.DEVICE_LOGS_DIRECTORY + dirName
+                 + dirName
                 + fileName + ".txt");
         if (logFile.exists()) {
             return logFile;
         }
-
         try {
             logFile.getParentFile().mkdirs();
             logFile.createNewFile();
