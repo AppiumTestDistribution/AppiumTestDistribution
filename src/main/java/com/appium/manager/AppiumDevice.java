@@ -98,10 +98,6 @@ public class AppiumDevice {
             LogEntries logcatOutput = AppiumDriverManager.getDriver().manage().logs().get("logcat");
             StreamSupport.stream(logcatOutput.spliterator(), false).forEach(logFileStream::println);
         }
-        if ("true".equalsIgnoreCase(System.getenv("VIDEO_LOGS"))) {
-            IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
-            videoRecording.startVideoRecording(scenarioName, scenarioName, scenarioName);
-        }
     }
 
     private File createFile(String dirName, String fileName) {
