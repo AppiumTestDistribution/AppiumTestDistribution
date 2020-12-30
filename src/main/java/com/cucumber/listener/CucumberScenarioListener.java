@@ -19,6 +19,7 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,7 +108,10 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             }
         }
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
-        testExecutionContext.addTestState("scenarioDirectory", FileLocations.SCREENSHOTS_DIRECTORY + scenarioName.replaceAll(" ", "_"));
+        testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY
+                + scenarioName.replaceAll(" ", "_")
+                + File.separator
+                + FileLocations.SCREENSHOTS_DIRECTORY );
     }
 
     private Integer getScenarioRunCount(String scenarioName) {

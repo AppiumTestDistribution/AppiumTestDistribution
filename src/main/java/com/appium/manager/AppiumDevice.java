@@ -88,7 +88,11 @@ public class AppiumDevice {
         if (isNativeAndroid()) {
             String udid = this.getDevice().getUdid();
             String fileName = String.format("/%s-run-%s", udid, scenarioRunCount);
-            File logFile = createFile(FileLocations.DEVICE_LOGS_DIRECTORY + scenarioName, fileName);
+            File logFile = createFile( FileLocations.REPORTS_DIRECTORY
+                    + scenarioName
+                    + File.separator
+                    + FileLocations.DEVICE_LOGS_DIRECTORY,
+                    fileName);
             PrintStream logFileStream = new PrintStream(logFile);
             LogEntries logcatOutput = AppiumDriverManager.getDriver().manage().logs().get("logcat");
             StreamSupport.stream(logcatOutput.spliterator(), false).forEach(logFileStream::println);
