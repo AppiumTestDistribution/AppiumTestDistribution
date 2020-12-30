@@ -5,7 +5,7 @@ public interface FileLocations {
             ? "/" + System.getenv("OUTPUT_DIRECTORY") + "/" : "/target/";
 
     String PARALLEL_XML_LOCATION = OUTPUT_DIRECTORY + "parallel.xml";
-    String REPORTS_DIRECTORY = OUTPUT_DIRECTORY +"reports/";
+    String REPORTS_DIRECTORY = OUTPUT_DIRECTORY + "reports/";
 
     String SCREENSHOTS_DIRECTORY = "screenshot/";
     String ANDROID_SCREENSHOTS_DIRECTORY = SCREENSHOTS_DIRECTORY + "android/";

@@ -6,8 +6,9 @@ import com.github.device.Device;
 import com.video.recorder.AppiumScreenRecordFactory;
 import com.video.recorder.IScreenRecord;
 import org.openqa.selenium.logging.LogEntries;
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.stream.StreamSupport;
 
 public class AppiumDevice {

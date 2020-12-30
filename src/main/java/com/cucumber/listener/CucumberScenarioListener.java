@@ -109,6 +109,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         }
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY
+                + scenarioName.replaceAll(" ", "_"));
+        testExecutionContext.addTestState("scenarioScreenshotsDirectory", FileLocations.REPORTS_DIRECTORY
                 + scenarioName.replaceAll(" ", "_")
                 + File.separator
                 + FileLocations.SCREENSHOTS_DIRECTORY );
