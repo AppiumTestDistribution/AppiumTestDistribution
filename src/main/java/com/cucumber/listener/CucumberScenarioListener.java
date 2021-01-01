@@ -10,6 +10,7 @@ import com.appium.manager.AppiumServerManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
+import com.epam.reportportal.service.ReportPortal;
 import io.appium.java_client.AppiumDriver;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -17,10 +18,10 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -96,8 +97,9 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
         AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
+        String deviceLogFileName = null;
         try {
-            allocatedDevice.startDataCapture(scenarioName, scenarioRunCount);
+            deviceLogFileName = allocatedDevice.startDataCapture(scenarioName, scenarioRunCount);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -108,13 +110,14 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             }
         }
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
+        testExecutionContext.addTestState("deviceLog", deviceLogFileName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY
                 + scenarioName.replaceAll(" ", "_"));
         testExecutionContext.addTestState("scenarioScreenshotsDirectory",
                 FileLocations.REPORTS_DIRECTORY
                         + scenarioName.replaceAll(" ", "_")
                         + File.separator
-                        + FileLocations.SCREENSHOTS_DIRECTORY );
+                        + FileLocations.SCREENSHOTS_DIRECTORY);
     }
 
     private Integer getScenarioRunCount(String scenarioName) {
@@ -129,16 +132,22 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private void caseFinishedHandler(TestCaseFinished event) {
         LOGGER.info("caseFinishedHandler Name: " + event.getTestCase().toString());
         LOGGER.info("caseFinishedHandler Result: " + event.getResult().getStatus().toString());
+        long threadId = Thread.currentThread().getId();
         LOGGER.info(
                 String.format("ThreadID: %d: afterScenario: for scenario: %s\n",
-                        Thread.currentThread().getId(), event.getTestCase().toString()));
+                        threadId, event.getTestCase().toString()));
         deviceAllocationManager.freeDevice();
         try {
             appiumDriverManager.stopAppiumDriver();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        SessionContext.remove(Thread.currentThread().getId());
+        TestExecutionContext testExecutionContext =
+                SessionContext.getTestExecutionContext(threadId);
+        String deviceLogFileName = testExecutionContext.getTestStateAsString("deviceLog");
+        LOGGER.info("deviceLogFileName: " + deviceLogFileName);
+        ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(deviceLogFileName));
+        SessionContext.remove(threadId);
     }
 
     private void runFinishedHandler(TestRunFinished event) {
@@ -146,7 +155,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(String.format("ThreadID: %d: afterSuite: \n", Thread.currentThread().getId()));
         try {
             appiumServerManager.stopAppiumServer();
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

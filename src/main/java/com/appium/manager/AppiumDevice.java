@@ -83,13 +83,19 @@ public class AppiumDevice {
                 .getCapability("browserName") == null;
     }
 
-    public void startDataCapture(String specName, Integer scenarioRunCount)
+    private String normaliseScenarioName(String scenarioName) {
+        return scenarioName.replaceAll("[`~ !@#$%^&*()\\-=+\\[\\]{}\\\\|;:'\",<.>/?]", "_");
+    }
+
+    public String startDataCapture(String specName, Integer scenarioRunCount)
             throws IOException, InterruptedException {
-        String scenarioName = specName.replaceAll(" ", "_");
+        String scenarioName = normaliseScenarioName(specName);
+        String fileName = String.format("/run-%s", scenarioRunCount);
+        File logFile = null;
         if (isNativeAndroid()) {
             String udid = this.getDevice().getUdid();
-            String fileName = String.format("/%s-run-%s", udid, scenarioRunCount);
-            File logFile = createFile( FileLocations.REPORTS_DIRECTORY
+            fileName = String.format("/%s-run-%s", udid, scenarioRunCount);
+            logFile = createFile( FileLocations.REPORTS_DIRECTORY
                     + scenarioName
                     + File.separator
                     + FileLocations.DEVICE_LOGS_DIRECTORY,
@@ -98,6 +104,7 @@ public class AppiumDevice {
             LogEntries logcatOutput = AppiumDriverManager.getDriver().manage().logs().get("logcat");
             StreamSupport.stream(logcatOutput.spliterator(), false).forEach(logFileStream::println);
         }
+        return logFile.getAbsolutePath();
     }
 
     private File createFile(String dirName, String fileName) {
