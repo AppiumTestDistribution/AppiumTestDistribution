@@ -21,3 +21,5 @@ webContent/app/src/data/Report.json
 .classpath
 .project
 .settings/
+apps
+temp
