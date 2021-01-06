@@ -83,13 +83,8 @@ public class AppiumDevice {
                 .getCapability("browserName") == null;
     }
 
-    private String normaliseScenarioName(String scenarioName) {
-        return scenarioName.replaceAll("[`~ !@#$%^&*()\\-=+\\[\\]{}\\\\|;:'\",<.>/?]", "_");
-    }
-
-    public String startDataCapture(String specName, Integer scenarioRunCount)
+    public String startDataCapture(String scenarioName, Integer scenarioRunCount)
             throws IOException, InterruptedException {
-        String scenarioName = normaliseScenarioName(specName);
         String fileName = String.format("/run-%s", scenarioRunCount);
         File logFile = null;
         if (isNativeAndroid()) {

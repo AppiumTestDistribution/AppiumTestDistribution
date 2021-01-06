@@ -98,8 +98,10 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                         Thread.currentThread().getId(), scenarioName));
         AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
         String deviceLogFileName = null;
+        String normalisedScenarioName = normaliseScenarioName(scenarioName);
         try {
-            deviceLogFileName = allocatedDevice.startDataCapture(scenarioName, scenarioRunCount);
+            deviceLogFileName =
+                    allocatedDevice.startDataCapture(normalisedScenarioName, scenarioRunCount);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -112,12 +114,16 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
         testExecutionContext.addTestState("deviceLog", deviceLogFileName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY
-                + scenarioName.replaceAll(" ", "_"));
+                + normalisedScenarioName);
         testExecutionContext.addTestState("scenarioScreenshotsDirectory",
                 FileLocations.REPORTS_DIRECTORY
-                        + scenarioName.replaceAll(" ", "_")
+                        + normalisedScenarioName
                         + File.separator
                         + FileLocations.SCREENSHOTS_DIRECTORY);
+    }
+
+    private String normaliseScenarioName(String scenarioName) {
+        return scenarioName.replaceAll("[`~ !@#$%^&*()\\-=+\\[\\]{}\\\\|;:'\",<.>/?]", "_");
     }
 
     private Integer getScenarioRunCount(String scenarioName) {
