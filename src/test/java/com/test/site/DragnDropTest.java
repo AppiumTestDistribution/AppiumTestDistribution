@@ -25,7 +25,6 @@ public class DragnDropTest extends UserBaseTest {
         waitForElement("dragAndDrop").click();
         new WebDriverWait(driver, 30)
             .until(ExpectedConditions
-                .elementToBeClickable(MobileBy.AccessibilityId("dragAndDrop")));
-
+                .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
     }
 }
