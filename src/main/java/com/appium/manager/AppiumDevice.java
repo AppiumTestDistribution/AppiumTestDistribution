@@ -86,11 +86,10 @@ public class AppiumDevice {
     public String startDataCapture(String scenarioName, Integer scenarioRunCount)
             throws IOException, InterruptedException {
         String fileName = String.format("/run-%s", scenarioRunCount);
-        File logFile = null;
         if (isNativeAndroid()) {
             String udid = this.getDevice().getUdid();
             fileName = String.format("/%s-run-%s", udid, scenarioRunCount);
-            logFile = createFile( FileLocations.REPORTS_DIRECTORY
+            File logFile = createFile( FileLocations.REPORTS_DIRECTORY
                     + scenarioName
                     + File.separator
                     + FileLocations.DEVICE_LOGS_DIRECTORY,
@@ -98,8 +97,9 @@ public class AppiumDevice {
             PrintStream logFileStream = new PrintStream(logFile);
             LogEntries logcatOutput = AppiumDriverManager.getDriver().manage().logs().get("logcat");
             StreamSupport.stream(logcatOutput.spliterator(), false).forEach(logFileStream::println);
+            fileName = logFile.getAbsolutePath();
         }
-        return logFile.getAbsolutePath();
+        return fileName;
     }
 
     private File createFile(String dirName, String fileName) {
