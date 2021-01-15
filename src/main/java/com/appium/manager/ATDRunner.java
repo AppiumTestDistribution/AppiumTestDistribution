@@ -119,7 +119,7 @@ public class ATDRunner {
                     System.getProperty(USER_DIR)
                             + FileLocations.SCREENSHOTS_DIRECTORY
                             + os
-                            + File.pathSeparator
+                            + File.separator
                             + deviceId);
             if (!file.exists()) {
                 file.mkdir();
