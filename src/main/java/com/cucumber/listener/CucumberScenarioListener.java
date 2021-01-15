@@ -152,8 +152,11 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         TestExecutionContext testExecutionContext =
                 SessionContext.getTestExecutionContext(threadId);
         String deviceLogFileName = testExecutionContext.getTestStateAsString("deviceLog");
-        LOGGER.info("deviceLogFileName: " + deviceLogFileName);
-        ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(deviceLogFileName));
+        if (null != deviceLogFileName) {
+            // deviceLogFileName may be null for non-Native Android tests
+            LOGGER.info("deviceLogFileName: " + deviceLogFileName);
+            ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(deviceLogFileName));
+        }
         SessionContext.remove(threadId);
     }
 
