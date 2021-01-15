@@ -119,7 +119,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 FileLocations.REPORTS_DIRECTORY
                         + normalisedScenarioName
                         + File.separator
-                        + FileLocations.SCREENSHOTS_DIRECTORY);
+                        + "screenshot"
+                        + File.separator);
     }
 
     private String normaliseScenarioName(String scenarioName) {
