@@ -117,7 +117,9 @@ public class ATDRunner {
             String deviceId = udid.getDevice().getUdid();
             File file = new File(
                     System.getProperty(USER_DIR)
-                            + FileLocations.SCREENSHOTS_DIRECTORY + os + "/"
+                            + FileLocations.SCREENSHOTS_DIRECTORY
+                            + os
+                            + File.separator
                             + deviceId);
             if (!file.exists()) {
                 file.mkdir();

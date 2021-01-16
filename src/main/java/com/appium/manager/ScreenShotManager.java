@@ -112,8 +112,10 @@ public class ScreenShotManager extends Helpers {
                 deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
                 break;
             case WINDOWS:
-                deviceModel = AppiumDeviceManager.getAppiumDevice()
-                                      .getDevice().getDeviceModel();
+                deviceModel = AppiumDeviceManager
+                        .getAppiumDevice()
+                        .getDevice()
+                        .getDeviceModel();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + mobilePlatform);

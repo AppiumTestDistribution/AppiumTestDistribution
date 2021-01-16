@@ -3,8 +3,6 @@ package com.appium.manager;
 import com.appium.device.DevicesByHost;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.utils.ArtifactsUploader;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
