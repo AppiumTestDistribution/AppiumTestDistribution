@@ -10,7 +10,7 @@ public interface FileLocations {
     String PARALLEL_XML_LOCATION = OUTPUT_DIRECTORY + "parallel.xml";
     String REPORTS_DIRECTORY = OUTPUT_DIRECTORY + "reports" + File.separator;
 
-    String SCREENSHOTS_DIRECTORY = REPORTS_DIRECTORY + "screenshot" + File.separator;
+    String SCREENSHOTS_DIRECTORY = OUTPUT_DIRECTORY + "screenshot" + File.separator;
     String ANDROID_SCREENSHOTS_DIRECTORY = SCREENSHOTS_DIRECTORY + "android" + File.separator;
     String IOS_SCREENSHOTS_DIRECTORY = SCREENSHOTS_DIRECTORY + "iOS" + File.separator;
 
