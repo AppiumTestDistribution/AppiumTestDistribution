@@ -1,12 +1,9 @@
 package com.appium.manager;
 
-import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
-import static com.appium.manager.AppiumDeviceManager.isPlatform;
-import static com.appium.utils.ConfigFileManager.CAPS;
-
 import com.appium.capabilities.DesiredCapabilityBuilder;
 import com.appium.entities.MobilePlatform;
 import com.appium.utils.CommandPrompt;
+import com.github.device.Device;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -28,6 +25,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
 
 public class AppiumDriverManager {
@@ -50,7 +48,7 @@ public class AppiumDriverManager {
 
     private AppiumDriver<MobileElement> initialiseDriver(DesiredCapabilities desiredCapabilities)
             throws Exception {
-        LOGGER.info("Capabilities: " + desiredCapabilities.toString());
+        LOGGER.info("Initialise Driver with Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
         if (isRunningInCloud()) {
             return getRemoteAppiumDriver(desiredCapabilities, remoteWDHubIP);
@@ -64,8 +62,12 @@ public class AppiumDriverManager {
                                                String remoteWDHubIP)
             throws MalformedURLException {
         AppiumDriver currentDriverSession;
-        currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP),
-                desiredCapabilities);
+        LOGGER.info(String.format("Create RemoteAppiumDriver: remote host url: '%s', "
+                        + "with capabilities: '%s'", remoteWDHubIP, desiredCapabilities));
+
+        // TODO - create AppiumDriver once pCloudy fixes the issue on their side
+        currentDriverSession = new AndroidDriver<>(new URL(remoteWDHubIP), desiredCapabilities);
+
         LOGGER.info("Remote AppiumDriver Session Created ---- "
                             + currentDriverSession.getSessionId() + "---"
                             + currentDriverSession.getRemoteAddress().getHost() + "---"

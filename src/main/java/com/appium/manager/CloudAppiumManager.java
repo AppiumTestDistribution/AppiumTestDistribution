@@ -8,6 +8,16 @@ import static java.lang.System.getenv;
 import static java.text.MessageFormat.format;
 
 public class CloudAppiumManager implements IAppiumManager {
+    private final String url;
+
+    public CloudAppiumManager(String cloudName) {
+        url = "https://{2}/wd/hub";
+    }
+
+    public CloudAppiumManager() {
+        url = "https://{0}:{1}@{2}/wd/hub";
+    }
+
     @Override
     public void destroyAppiumNode(String host) {
 
@@ -15,8 +25,9 @@ public class CloudAppiumManager implements IAppiumManager {
 
     @Override
     public String getRemoteWDHubIP(String host) {
-        String url = "https://{0}:{1}@{2}/wd/hub";
-        return format(url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"), host);
+        String format = format(url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"), host);
+        System.out.println("getRemoteWDHubIP: " + format);
+        return format;
     }
 
     @Override

@@ -245,6 +245,14 @@ public class Capabilities {
         }
     }
 
+    public String getCloudName(String host) {
+        try {
+            return appiumServerProp(host, "cloudName");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private <T> T appiumServerProp(String host, String arg) throws Exception {
         JSONArray hostMachineObject = Capabilities.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();

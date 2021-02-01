@@ -9,6 +9,7 @@ import com.appium.utils.AvailablePorts;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
+import com.puppycrawl.tools.checkstyle.utils.ScopeUtil;
 import com.report.factory.TestStatusManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class HostMachineDeviceManager {
@@ -184,16 +186,32 @@ public class HostMachineDeviceManager {
                 if (capabilities.isCloud(ip)) {
                     List<Device> cloudDevices = new ArrayList<>();
                     JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
-                    cloud.toMap().forEach((devicePlatform, devices) -> {
-                        ((List) devices).forEach(o -> {
-                            Device d = new Device();
-                            d.setOs(devicePlatform);
-                            d.setOsVersion(((Map) o).get("osVersion").toString());
-                            d.setName(((Map) o).get("deviceName").toString());
-                            d.setCloud(true);
-                            cloudDevices.add(d);
+
+                    String cloudName = capabilities.getCloudName(ip);
+                    if (cloudName.equalsIgnoreCase("pCloudy")) {
+                        cloud.toMap().forEach((devicePlatform, devices) -> {
+                            ((List) devices).forEach(o -> {
+                                Device d = new Device();
+                                d.setOs(devicePlatform);
+                                d.setOsVersion(((Map) o).get("osVersion").toString());
+                                d.setCloud(true);
+                                System.out.println("Device: " + d);
+                                cloudDevices.add(d);
+                            });
                         });
-                    });
+                    } else {
+                        cloud.toMap().forEach((devicePlatform, devices) -> {
+                            ((List) devices).forEach(o -> {
+                                Device d = new Device();
+                                d.setOs(devicePlatform);
+                                d.setOsVersion(((Map) o).get("osVersion").toString());
+                                d.setName(((Map) o).get("deviceName").toString());
+                                d.setCloud(true);
+                                System.out.println("Device: " + d);
+                                cloudDevices.add(d);
+                            });
+                        });
+                    }
                     devicesByHost.put(ip, getAppiumDevices(ip, cloudDevices));
                 } else {
                     if (capabilities.getCapabilityObjectFromKey("genycloud") != null) {
