@@ -29,6 +29,13 @@ public class AppiumDevice {
         chromeDriverPort = 0; //Setting as Zero initially
     }
 
+    @Override
+    public String toString() {
+        String deviceInfo = "Device: " + device;
+        deviceInfo += " :: Is Available? : " + isAvailable();
+        return deviceInfo;
+    }
+
     public int getChromeDriverPort() {
         return chromeDriverPort;
     }
