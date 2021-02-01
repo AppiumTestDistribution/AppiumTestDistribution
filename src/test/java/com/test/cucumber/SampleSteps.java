@@ -26,10 +26,10 @@ public class SampleSteps extends UserBaseTest {
                 + getDriver().toString());
     }
 
-    @And("I click on <t{int}> number")
-    public void iClickOnTNumber(int arg0) throws InterruptedException {
-        System.out.println("sleep for " + arg0 + " sec");
-        Thread.sleep(arg0 * 1000);
+    @When("^I click on (\\d+) number")
+    public void I_sleep_for_seconds(int arg1) throws InterruptedException {
+        System.out.println("sleep for " + arg1 + " sec");
+        Thread.sleep(arg1 * 1000);
         System.out.println("Passed");
     }
 

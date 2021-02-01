@@ -11,10 +11,9 @@ public class MyStepdefs {
     RemoteWebElement edit;
 
     @When("I click on {int} number")
-    public void iClickOnNumber(int arg0) throws InterruptedException {
-        System.out.println("sleep for " + arg0 + " sec");
-        Thread.sleep(arg0 * 1000);
-        System.out.println("Passed");
+    public void iClickOnNumber(int arg0) {
+        System.out.println("I click on {int} number : " + arg0);
+        edit = (RemoteWebElement) getDriver().findElementByClassName("Edit");
     }
 
     @Given("I accept the tip screen")
