@@ -54,12 +54,11 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private AppiumDevice allocateDeviceAndStartDriver() {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
-            if (driver != null && driver.getSessionId() != null) {
-                return null;
-            }
             AppiumDevice availableDevice = deviceAllocationManager.getNextAvailableDevice();
             deviceAllocationManager.allocateDevice(availableDevice);
-            appiumDriverManager.startAppiumDriverInstance();
+            if (driver == null || driver.getSessionId() == null) {
+                appiumDriverManager.startAppiumDriverInstance();
+            }
             return availableDevice;
         } catch (Exception e) {
             e.printStackTrace();
