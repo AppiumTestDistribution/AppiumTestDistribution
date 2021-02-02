@@ -11,6 +11,7 @@ import com.appium.manager.DeviceAllocationManager;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import com.epam.reportportal.service.ReportPortal;
+import com.github.device.Device;
 import io.appium.java_client.AppiumDriver;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -59,11 +60,37 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             if (driver == null || driver.getSessionId() == null) {
                 appiumDriverManager.startAppiumDriverInstance();
             }
+            updateAvailableDeviceInformation(availableDevice);
             return availableDevice;
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    private void updateAvailableDeviceInformation(AppiumDevice availableDevice) {
+        org.openqa.selenium.Capabilities capabilities = AppiumDriverManager.getDriver()
+                .getCapabilities();
+        System.out.println("allocateDeviceAndStartDriver: "
+                + capabilities);
+        String udid = capabilities
+                .getCapability("udid").toString();
+        Device device = availableDevice.getDevice();
+        device.setUdid(udid);
+        device.setDeviceManufacturer(
+                capabilities.getCapability("deviceManufacturer").toString());
+        device.setDeviceModel(
+                capabilities.getCapability("deviceModel").toString());
+        device.setName(
+                capabilities.getCapability("deviceName").toString()
+                        + " "
+                        + capabilities.getCapability("deviceModel").toString());
+        device.setApiLevel(
+                capabilities.getCapability("deviceApiLevel").toString());
+        device.setDeviceType(
+                capabilities.getCapability("platformName").toString());
+        device.setScreenSize(
+                capabilities.getCapability("deviceScreenSize").toString());
     }
 
     private boolean isCloudExecution() {
