@@ -31,7 +31,7 @@ public class AppiumDevice {
 
     @Override
     public String toString() {
-        String deviceInfo = "Device: " + device;
+        String deviceInfo = device.toString();
         deviceInfo += " :: Is Available? : " + isAvailable();
         return deviceInfo;
     }

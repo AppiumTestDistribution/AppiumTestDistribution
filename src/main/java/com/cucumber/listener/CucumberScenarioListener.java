@@ -60,15 +60,14 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             if (driver == null || driver.getSessionId() == null) {
                 appiumDriverManager.startAppiumDriverInstance();
             }
-            updateAvailableDeviceInformation(availableDevice);
-            return availableDevice;
+            return updateAvailableDeviceInformation(availableDevice);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
-    private void updateAvailableDeviceInformation(AppiumDevice availableDevice) {
+    private AppiumDevice updateAvailableDeviceInformation(AppiumDevice availableDevice) {
         org.openqa.selenium.Capabilities capabilities = AppiumDriverManager.getDriver()
                 .getCapabilities();
         System.out.println("allocateDeviceAndStartDriver: "
@@ -91,6 +90,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 capabilities.getCapability("platformName").toString());
         device.setScreenSize(
                 capabilities.getCapability("deviceScreenSize").toString());
+        return availableDevice;
     }
 
     private boolean isCloudExecution() {
@@ -138,6 +138,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             }
         }
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
+        testExecutionContext.addTestState("deviceInfo", allocatedDevice);
         testExecutionContext.addTestState("deviceLog", deviceLogFileName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY
                 + normalisedScenarioName);
