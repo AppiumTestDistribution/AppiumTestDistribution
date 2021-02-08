@@ -72,8 +72,10 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 .getCapabilities();
         System.out.println("allocateDeviceAndStartDriver: "
                 + capabilities);
-        String udid = capabilities
-                .getCapability("udid").toString();
+
+        String udid = capabilities.is("udid") ? capabilities
+                .getCapability("udid").toString() : capabilities
+                .getCapability("deviceUDID").toString();
         Device device = availableDevice.getDevice();
         device.setUdid(udid);
         device.setDeviceManufacturer(
