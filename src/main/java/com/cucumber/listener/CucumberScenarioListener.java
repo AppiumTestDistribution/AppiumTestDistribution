@@ -141,7 +141,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         }
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
         testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
-        testExecutionContext.addTestState("deviceId", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+        testExecutionContext.addTestState("deviceId",
+                AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         testExecutionContext.addTestState("deviceInfo", allocatedDevice);
         testExecutionContext.addTestState("deviceLog", deviceLogFileName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY

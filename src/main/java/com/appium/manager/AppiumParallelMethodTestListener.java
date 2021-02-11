@@ -106,9 +106,11 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     + annotation.platform());
             }
         }
-        TestExecutionContext testExecutionContext = new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
+        TestExecutionContext testExecutionContext =
+                new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
         testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
-        testExecutionContext.addTestState("deviceId", AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+        testExecutionContext.addTestState("deviceId",
+                AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
 
         queueBeforeInvocationListeners(iInvokedMethod, iTestResult, listeners);
     }
