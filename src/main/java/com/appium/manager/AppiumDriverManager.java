@@ -65,8 +65,7 @@ public class AppiumDriverManager {
         LOGGER.info(String.format("Create RemoteAppiumDriver: remote host url: '%s', "
                         + "with capabilities: '%s'", remoteWDHubIP, desiredCapabilities));
 
-        // TODO - create AppiumDriver once pCloudy fixes the issue on their side
-        currentDriverSession = new AndroidDriver<>(new URL(remoteWDHubIP), desiredCapabilities);
+        currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP), desiredCapabilities);
 
         LOGGER.info("Remote AppiumDriver Session Created ---- "
                             + currentDriverSession.getSessionId() + "---"
