@@ -131,6 +131,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             deviceLogFileName =
                     allocatedDevice.startDataCapture(normalisedScenarioName, scenarioRunCount);
         } catch (IOException | InterruptedException e) {
+            LOGGER.info("Error in starting data capture: " + e.getMessage());
             e.printStackTrace();
         }
         if (!isCloudExecution()) {
