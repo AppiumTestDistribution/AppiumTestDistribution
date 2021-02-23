@@ -90,7 +90,8 @@ public class AppiumDevice {
                 .getCapability("browserName") == null;
     }
 
-    public String startDataCapture(String scenarioName, Integer scenarioRunCount)
+    public String startDataCapture(String scenarioName,
+                                   Integer scenarioRunCount)
             throws IOException, InterruptedException {
         String fileName = String.format("/run-%s", scenarioRunCount);
         if (isNativeAndroid()) {
@@ -101,10 +102,16 @@ public class AppiumDevice {
                     + File.separator
                     + FileLocations.DEVICE_LOGS_DIRECTORY,
                     fileName);
-            PrintStream logFileStream = new PrintStream(logFile);
-            LogEntries logcatOutput = AppiumDriverManager.getDriver().manage().logs().get("logcat");
-            StreamSupport.stream(logcatOutput.spliterator(), false).forEach(logFileStream::println);
             fileName = logFile.getAbsolutePath();
+            PrintStream logFileStream = new PrintStream(logFile);
+            try {
+                LogEntries logcatOutput = AppiumDriverManager.getDriver()
+                        .manage().logs().get("logcat");
+                StreamSupport.stream(logcatOutput.spliterator(), false)
+                        .forEach(logFileStream::println);
+            } catch (Exception e) {
+                System.out.println("ERROR in getting logcat. Skipping logcat capture");
+            }
         }
         return fileName;
     }
