@@ -13,6 +13,7 @@ import io.appium.java_client.windows.WindowsDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
@@ -42,6 +43,11 @@ public class AppiumDriverManager {
     }
 
     protected static void setDriver(AppiumDriver driver) {
+        LOGGER.info("AppiumDriverManager: Created AppiumDriver with capabilities: ");
+        Capabilities capabilities = driver.getCapabilities();
+        capabilities.getCapabilityNames().forEach(key -> {
+            LOGGER.info("\t" + key + ":: " + capabilities.getCapability(key));
+        });
         appiumDriver.set(driver);
     }
 
