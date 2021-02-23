@@ -156,6 +156,13 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                         + File.separator);
     }
 
+    private boolean isRunningOnpCloudy(AppiumDevice allocatedDevice) {
+        boolean isPCloudy = Capabilities.getInstance()
+                .getCloudName(allocatedDevice.getHostName()) == null ? false : true;
+        LOGGER.info(allocatedDevice.getDevice().getName() + " running on pCloudy? " + isPCloudy);
+        return isPCloudy;
+    }
+
     private String normaliseScenarioName(String scenarioName) {
         return scenarioName.replaceAll("[`~ !@#$%^&*()\\-=+\\[\\]{}\\\\|;:'\",<.>/?]", "_");
     }
@@ -176,14 +183,26 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(
                 String.format("ThreadID: %d: afterScenario: for scenario: %s\n",
                         threadId, event.getTestCase().toString()));
+
+        TestExecutionContext testExecutionContext =
+                SessionContext.getTestExecutionContext(threadId);
+
+        AppiumDriver driver = (AppiumDriver) testExecutionContext.getTestState("appiumDriver");
+        AppiumDevice allocatedDevice = (AppiumDevice) testExecutionContext
+                .getTestState("deviceInfo");
+        if (isRunningOnpCloudy(allocatedDevice)) {
+            String link = (String) driver.executeScript("pCloudy_getReportLink");
+            String message = "pCloudy Mobilab Report link available here: " + link;
+            LOGGER.info(message);
+            ReportPortal.emitLog(message, "DEBUG", new Date());
+        }
+
         deviceAllocationManager.freeDevice();
         try {
             appiumDriverManager.stopAppiumDriver();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        TestExecutionContext testExecutionContext =
-                SessionContext.getTestExecutionContext(threadId);
         String deviceLogFileName = testExecutionContext.getTestStateAsString("deviceLog");
         if (null != deviceLogFileName) {
             // deviceLogFileName may be null for non-Native Android tests
