@@ -2,6 +2,7 @@ package com.appium.capabilities;
 
 import com.appium.device.AtdEnvironment;
 import com.appium.manager.RemoteAppiumManager;
+import com.appium.utils.Variable;
 import com.appium.utils.FigletHelper;
 import com.appium.utils.JsonParser;
 import org.everit.json.schema.Schema;
@@ -105,7 +106,7 @@ public class Capabilities {
                                    String keyStr,
                                    Object keyvalue) {
         currentPath.append(keyStr);
-        String getFromEnv = System.getenv(currentPath.toString());
+        String getFromEnv = Variable.getOverriddenStringValue(currentPath.toString());
         Object updatedValue = (null == getFromEnv) ? keyvalue : getFromEnv;
         objectToUpdate.put(keyStr, updatedValue);
         currentPath.delete(currentPath.lastIndexOf("_") + 1, currentPath.length());

@@ -7,6 +7,7 @@ import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.utils.ArtifactsUploader;
 import com.appium.utils.AvailablePorts;
+import com.appium.utils.Variable;
 import com.appium.utils.HostArtifact;
 import com.appium.utils.JsonParser;
 import com.github.device.Device;
@@ -207,17 +208,17 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     }
 
     private void appPackage(DesiredCapabilities desiredCapabilities) {
-        if (System.getenv(APP_PACKAGE) != null) {
+        if (Variable.getOverriddenStringValue(APP_PACKAGE) != null) {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-                System.getenv(APP_PACKAGE));
+                Variable.getOverriddenStringValue(APP_PACKAGE));
         }
     }
 
     private void appPackageBundle(DesiredCapabilities iOSCapabilities) {
-        if (System.getenv(APP_PACKAGE) != null) {
+        if (Variable.getOverriddenStringValue(APP_PACKAGE) != null) {
             iOSCapabilities
                 .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
-                    System.getenv(APP_PACKAGE));
+                    Variable.getOverriddenStringValue(APP_PACKAGE));
         }
     }
 }

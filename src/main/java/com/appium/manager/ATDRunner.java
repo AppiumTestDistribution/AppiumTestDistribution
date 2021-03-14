@@ -4,6 +4,7 @@ import com.appium.capabilities.Capabilities;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
+import com.appium.utils.Variable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class ATDRunner {
 
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();
-        String platform = System.getenv("Platform");
+        String platform = Variable.getOverriddenStringValue("Platform");
         if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
                 || platform.equalsIgnoreCase(BOTH)) {
             if (!capabilities.getCapabilityObjectFromKey("android").has("automationName")) {

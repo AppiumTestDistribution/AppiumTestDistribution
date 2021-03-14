@@ -1,10 +1,14 @@
 package com.appium.filelocations;
 
+import com.appium.utils.Variable;
+
 import java.io.File;
 
 public interface FileLocations {
-    String OUTPUT_DIRECTORY = System.getenv("OUTPUT_DIRECTORY") != null
-            ? File.separator + System.getenv("OUTPUT_DIRECTORY") + File.separator
+    String OUTPUT_DIRECTORY =
+            Variable.getOverriddenStringValue("OUTPUT_DIRECTORY") != null
+            ? File.separator + Variable.getOverriddenStringValue("OUTPUT_DIRECTORY")
+                    + File.separator
             : File.separator + "target" + File.separator;
 
     String PARALLEL_XML_LOCATION = OUTPUT_DIRECTORY + "parallel.xml";

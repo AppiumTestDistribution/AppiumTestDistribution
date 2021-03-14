@@ -63,7 +63,7 @@ public class ArtifactsUploader {
     }
 
     private HashMap<String, String> getArtifactForHost(String hostMachine) throws Exception {
-        String platform = System.getenv("Platform");
+        String platform = Variable.getOverriddenStringValue("Platform");
         String app = "app";
         HashMap<String, String> artifactPaths = new HashMap<>();
         JSONObject android = capabilities

@@ -1,11 +1,10 @@
 package com.appium.utils;
 
+import static com.appium.utils.Variable.getOverriddenStringValue;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.getenv;
 import static java.text.MessageFormat.format;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +31,7 @@ public enum ConfigFileManager {
 
     static {
         PROPERTIES = new Properties();
-        String configFile = ofNullable(getenv("CONFIG_FILE")).orElse("./configs/config.properties");
+        String configFile = getOverriddenStringValue("CONFIG_FILE", "./configs/config.properties");
         LOGGER.info(format("Using config file from [{0}]", configFile));
         try (FileInputStream inputStream = new FileInputStream(configFile)) {
             PROPERTIES.load(inputStream);
@@ -48,7 +47,7 @@ public enum ConfigFileManager {
     }
 
     public String get() {
-        return ofNullable(getenv(name())).orElse(PROPERTIES.getProperty(name(), defaultValue));
+        return getOverriddenStringValue(name(), defaultValue);
     }
 
     public boolean isTrue() {
