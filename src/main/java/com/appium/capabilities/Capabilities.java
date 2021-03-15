@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -67,6 +68,12 @@ public class Capabilities {
         System.getenv().forEach((key, value) -> {
             if (key.startsWith("atd")) {
                 atdOverrideEnv.put(key, value);
+            }
+        });
+        Properties properties = System.getProperties();
+        properties.keySet().forEach(key -> {
+            if (key.toString().startsWith("atd")) {
+                atdOverrideEnv.put(key.toString(), properties.getProperty(key.toString()));
             }
         });
         return atdOverrideEnv;

@@ -1,6 +1,7 @@
 package com.context;
 
 
+import com.appium.utils.Variable;
 import org.testng.ITestContext;
 
 import java.io.File;
@@ -45,9 +46,7 @@ public class SessionContext {
         Properties properties = new Properties();
         try {
             String reportPortalPropertiesFile = "src/test/resources/reportportal.properties";
-            if (System.getenv().containsKey("REPORT_PORTAL_FILE")) {
-                reportPortalPropertiesFile = System.getenv().get("REPORT_PORTAL_FILE");
-            }
+            Variable.getOverriddenStringValue("REPORT_PORTAL_FILE", reportPortalPropertiesFile);
             LOGGER.info("Using reportportal.properties file from "
                     + reportPortalPropertiesFile);
             File reportPortalFile = new File(reportPortalPropertiesFile);
