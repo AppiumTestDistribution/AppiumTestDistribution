@@ -7,8 +7,8 @@ public class Variable {
 
     public static String getOverriddenStringValue(String key, String defaultValue) {
         return (isKeyProvidedInEnvOrProperty(key))
-                ? defaultValue
-                : getValueFromEnvOrProperty(key);
+                ? getValueFromEnvOrProperty(key)
+                : defaultValue;
     }
 
     public static int getOverriddenIntValue(String key) {
@@ -17,8 +17,8 @@ public class Variable {
 
     public static int getOverriddenIntValue(String key, int defaultValue) {
         return isKeyProvidedInEnvOrProperty(key)
-                ? defaultValue
-                : Integer.parseInt(getValueFromEnvOrProperty(key));
+                ? Integer.parseInt(getValueFromEnvOrProperty(key))
+                : defaultValue;
     }
 
     public static boolean getOverriddenBooleanValue(String key) {
@@ -27,12 +27,12 @@ public class Variable {
 
     public static boolean getOverriddenBooleanValue(String key, boolean defaultValue) {
         return isKeyProvidedInEnvOrProperty(key)
-                ? defaultValue
-                : Boolean.parseBoolean(getValueFromEnvOrProperty(key));
+                ? Boolean.parseBoolean(getValueFromEnvOrProperty(key))
+                : defaultValue;
     }
 
     private static boolean isKeyProvidedInEnvOrProperty(String key) {
-        return null == System.getenv(key) && null == System.getProperty(key);
+        return (null != System.getenv(key)) || (null != System.getProperty(key));
     }
 
     private static String getValueFromEnvOrProperty(String key) {
