@@ -132,8 +132,8 @@ public class AppiumDriverManager {
                 + " on device: " + id;
             LOGGER.info(message);
             WebDriverManager.chromedriver()
-                .version(String.valueOf(highestChromeVersion)).setup();
-            return WebDriverManager.chromedriver().getBinaryPath();
+                .browserVersion(String.valueOf(highestChromeVersion)).setup();
+            return WebDriverManager.chromedriver().getDownloadedDriverPath();
         } else {
             return null;
         }
