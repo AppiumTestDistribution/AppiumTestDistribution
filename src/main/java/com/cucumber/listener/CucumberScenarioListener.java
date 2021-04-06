@@ -19,6 +19,7 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 public class CucumberScenarioListener implements ConcurrentEventListener {
     private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
@@ -70,7 +70,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private AppiumDevice updateAvailableDeviceInformation(AppiumDevice availableDevice) {
         org.openqa.selenium.Capabilities capabilities = AppiumDriverManager.getDriver()
                 .getCapabilities();
-        System.out.println("allocateDeviceAndStartDriver: "
+        LOGGER.info("allocateDeviceAndStartDriver: "
                 + capabilities);
 
         String udid = capabilities.is("udid") ? capabilities
@@ -120,6 +120,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private void caseStartedHandler(TestCaseStarted event) {
         String scenarioName = event.getTestCase().getName();
         LOGGER.info("caseStartedHandler: " + scenarioName);
+        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Test case  -- "+ scenarioName +"  started   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
@@ -140,12 +141,19 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
             }
         }
+        String testLogFileName= FileLocations.REPORTS_DIRECTORY
+                        + normalisedScenarioName
+                        + File.separator
+                        + FileLocations.TEST_LOGS_DIRECTORY
+                        + "/run-"+ scenarioRunCount;
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
         testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         testExecutionContext.addTestState("deviceInfo", allocatedDevice);
         testExecutionContext.addTestState("deviceLog", deviceLogFileName);
+        testExecutionContext.addTestState("testLog", testLogFileName);
+        System.setProperty("log_dir", testLogFileName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY
                 + normalisedScenarioName);
         testExecutionContext.addTestState("scenarioScreenshotsDirectory",
@@ -177,7 +185,8 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     }
 
     private void caseFinishedHandler(TestCaseFinished event) {
-        LOGGER.info("caseFinishedHandler Name: " + event.getTestCase().toString());
+        String scenarioName = event.getTestCase().getName();
+        LOGGER.info("caseFinishedHandler Name: " + scenarioName);
         LOGGER.info("caseFinishedHandler Result: " + event.getResult().getStatus().toString());
         long threadId = Thread.currentThread().getId();
         LOGGER.info(
@@ -210,6 +219,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(deviceLogFileName));
         }
         SessionContext.remove(threadId);
+        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Test case  -- "+ scenarioName +"  started   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     }
 
     private void runFinishedHandler(TestRunFinished event) {

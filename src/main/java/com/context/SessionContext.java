@@ -2,6 +2,7 @@ package com.context;
 
 
 import com.appium.utils.Variable;
+import org.apache.log4j.Logger;
 import org.testng.ITestContext;
 
 import java.io.File;
@@ -11,12 +12,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public class SessionContext {
     static final String TEST_RUNNER = "testrunner";
     private static final HashMap<String, TestExecutionContext> allTestsExecutionContext;
-    private static final Logger LOGGER = Logger.getLogger(SessionContext.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private static final Properties reportPortalProperties;
     private static String reportPortalLaunchURL = "";
 
@@ -59,7 +59,7 @@ public class SessionContext {
             }
 
         } catch (IOException e) {
-            LOGGER.severe("ERROR in loading reportportal.properties file\n" + e.getMessage());
+            LOGGER.info("ERROR in loading reportportal.properties file\n" + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
         return properties;

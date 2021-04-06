@@ -5,6 +5,7 @@ import com.appium.manager.RemoteAppiumManager;
 import com.appium.utils.Variable;
 import com.appium.utils.FigletHelper;
 import com.appium.utils.JsonParser;
+import org.apache.log4j.Logger;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -22,12 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import static com.appium.utils.ConfigFileManager.CAPS;
 
 public class Capabilities {
-    private static final Logger LOGGER = Logger.getLogger(RemoteAppiumManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     private static Capabilities instance;
     private JSONObject capabilities;
@@ -329,7 +329,7 @@ public class Capabilities {
                 schema = "/windowsSchema.json";
                 break;
             default:
-                System.out.println("Just for codacy!!");
+                LOGGER.info("Just for codacy!!");
                 break;
 
         }

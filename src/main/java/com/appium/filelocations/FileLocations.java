@@ -21,5 +21,6 @@ public interface FileLocations {
     String APPIUM_LOGS_DIRECTORY = OUTPUT_DIRECTORY + "appiumlogs" + File.separator;
     String ADB_LOGS_DIRECTORY = OUTPUT_DIRECTORY + "adblogs" + File.separator;
     String DEVICE_LOGS_DIRECTORY = "deviceLogs" + File.separator;
+    String TEST_LOGS_DIRECTORY = "applicationTestLogs" + File.separator;
     String DERIVED_DATA = OUTPUT_DIRECTORY + "derivedData" + File.separator;
 }

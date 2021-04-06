@@ -1,5 +1,7 @@
 package com.appium.utils;
 
+import org.apache.log4j.Logger;
+
 import static com.appium.utils.Variable.getOverriddenStringValue;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
@@ -9,7 +11,6 @@ import static java.text.MessageFormat.format;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * ConfigFileManager - Read config file statically into configFileMap
@@ -27,7 +28,7 @@ public enum ConfigFileManager {
     RUNNER("distribute");
 
     private static final Properties PROPERTIES;
-    private static final Logger LOGGER = Logger.getLogger(ConfigFileManager.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     static {
         PROPERTIES = new Properties();
@@ -36,7 +37,7 @@ public enum ConfigFileManager {
         try (FileInputStream inputStream = new FileInputStream(configFile)) {
             PROPERTIES.load(inputStream);
         } catch (IOException e) {
-            LOGGER.severe(format("Error while loading config file: {0}", e.getMessage()));
+            LOGGER.info(format("Error while loading config file: {0}", e.getMessage()));
         }
     }
 

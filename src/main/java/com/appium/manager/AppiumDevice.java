@@ -5,6 +5,7 @@ import com.appium.filelocations.FileLocations;
 import com.github.device.Device;
 import com.video.recorder.AppiumScreenRecordFactory;
 import com.video.recorder.IScreenRecord;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.logging.LogEntries;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.stream.StreamSupport;
 
 public class AppiumDevice {
 
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
     private static final String AVAILABLE = "AVAILABLE";
     private static final String BUSY = "BUSY";
     private final Device device;
@@ -110,13 +112,13 @@ public class AppiumDevice {
                 StreamSupport.stream(logcatOutput.spliterator(), false)
                         .forEach(logFileStream::println);
             } catch (Exception e) {
-                System.out.println("ERROR in getting logcat. Skipping logcat capture");
+                LOGGER.info("ERROR in getting logcat. Skipping logcat capture");
             }
         }
         return fileName;
     }
 
-    private File createFile(String dirName, String fileName) {
+    public static File createFile(String dirName, String fileName) {
         File logFile = new File(System.getProperty("user.dir")
                  + dirName
                 + fileName + ".txt");
