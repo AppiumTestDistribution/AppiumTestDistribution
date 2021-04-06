@@ -6,10 +6,13 @@ import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.appium.utils.Api;
 import com.appium.utils.AvailablePorts;
+import com.appium.utils.CommandPrompt;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
 import com.report.factory.TestStatusManager;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -21,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class HostMachineDeviceManager {
@@ -32,6 +36,7 @@ public class HostMachineDeviceManager {
     private DevicesByHost devicesByHost;
     private AtdEnvironment atdEnvironment;
     private static HostMachineDeviceManager instance;
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     protected HostMachineDeviceManager() {
         appiumManagerFactory = new AppiumManagerFactory();
@@ -45,9 +50,9 @@ public class HostMachineDeviceManager {
     }
 
     protected HostMachineDeviceManager(
-            AppiumManagerFactory appiumManagerFactory,
-            Capabilities capabilities,
-            AtdEnvironment atdEnvironment) {
+        AppiumManagerFactory appiumManagerFactory,
+        Capabilities capabilities,
+        AtdEnvironment atdEnvironment) {
         this.appiumManagerFactory = appiumManagerFactory;
         this.atdEnvironment = atdEnvironment;
         this.capabilities = capabilities;
@@ -72,9 +77,9 @@ public class HostMachineDeviceManager {
 
         Map<String, List<AppiumDevice>> allDevices = getDevices();
         Map<String, List<AppiumDevice>> devicesFilteredByPlatform
-                = filterByDevicePlatform(allDevices);
+            = filterByDevicePlatform(allDevices);
         Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
-                = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
+            = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
         devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
         String atdHost = capabilities.getMongoDbHostAndPort().get("atdHost");
         String atdPort = capabilities.getMongoDbHostAndPort().get("atdPort");
@@ -82,22 +87,22 @@ public class HostMachineDeviceManager {
             Api api = new Api();
             api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
             api.post("http://" + atdHost + ":" + atdPort + "/devices",
-                    new ObjectMapper().writerWithDefaultPrettyPrinter()
-                            .writeValueAsString(devicesByHost));
+                new ObjectMapper().writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(devicesByHost));
             api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
-                    new TestStatusManager()
-                            .envInfo(devicesByHost.getAllDevices().size()));
+                new TestStatusManager()
+                    .envInfo(devicesByHost.getAllDevices().size()));
             api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
-                    new TestStatusManager()
-                            .appiumLogs(devicesByHost));
+                new TestStatusManager()
+                    .appiumLogs(devicesByHost));
         }
     }
 
     private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(
-            Map<String, List<AppiumDevice>> devicesByHost) {
+        Map<String, List<AppiumDevice>> devicesByHost) {
         String uniqueDeviceIdentifiersString = atdEnvironment.get(UNIQUE_DEVICE_IDENTIFIERS);
         List<String> uniqueDeviceIdentifiers = uniqueDeviceIdentifiersString == null
-                ? Collections.emptyList() : Arrays.asList(uniqueDeviceIdentifiersString.split(","));
+            ? Collections.emptyList() : Arrays.asList(uniqueDeviceIdentifiersString.split(","));
 
         if (uniqueDeviceIdentifiers.size() == 0) {
             return devicesByHost;
@@ -105,8 +110,8 @@ public class HostMachineDeviceManager {
         HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
         devicesByHost.forEach((hostName, appiumDevices) -> {
             List<AppiumDevice> filteredDevices = appiumDevices.stream()
-                    .filter(appiumDevice -> uniqueDeviceIdentifiers.contains(appiumDevice
-                            .getDevice().getUdid())).collect(Collectors.toList());
+                .filter(appiumDevice -> uniqueDeviceIdentifiers.contains(appiumDevice
+                    .getDevice().getUdid())).collect(Collectors.toList());
             if (!filteredDevices.isEmpty()) {
                 filteredDevicesHostName.put(hostName, filteredDevices);
             }
@@ -115,7 +120,7 @@ public class HostMachineDeviceManager {
     }
 
     private Map<String, List<AppiumDevice>> filterByDevicePlatform(
-            Map<String, List<AppiumDevice>> devicesByHost) {
+        Map<String, List<AppiumDevice>> devicesByHost) {
         String platform = atdEnvironment.get(PLATFORM);
         if (platform.equalsIgnoreCase(OSType.BOTH.name())) {
             return devicesByHost;
@@ -123,8 +128,8 @@ public class HostMachineDeviceManager {
             HashMap<String, List<AppiumDevice>> filteredDevicesHostName = new HashMap<>();
             devicesByHost.forEach((hostName, appiumDevices) -> {
                 List<AppiumDevice> filteredDevices = appiumDevices.stream().filter(appiumDevice ->
-                        appiumDevice.getDevice().getOs()
-                                .equalsIgnoreCase(platform)).collect(Collectors.toList());
+                    appiumDevice.getDevice().getOs()
+                        .equalsIgnoreCase(platform)).collect(Collectors.toList());
                 if (!filteredDevices.isEmpty()) {
                     filteredDevicesHostName.put(hostName, filteredDevices);
                 }
@@ -150,13 +155,13 @@ public class HostMachineDeviceManager {
                                    JSONObject hostMachineJson,
                                    List<Device> devices) {
         if ((platform.equalsIgnoreCase("iOS")
-                && capabilities.isSimulatorAppPresentInCapsJson()
-                && hostMachineJson.has("simulators"))
-                && !capabilities.getCapabilityObjectFromKey("iOS")
-                .has("browserName")) {
+            && capabilities.isSimulatorAppPresentInCapsJson()
+            && hostMachineJson.has("simulators"))
+            && !capabilities.getCapabilityObjectFromKey("iOS")
+            .has("browserName")) {
             JSONArray simulators = hostMachineJson.getJSONArray("simulators");
             List<Device> simulatorsToBoot = getSimulatorsToBoot(
-                    ip, simulators);
+                ip, simulators);
             devices.addAll(simulatorsToBoot);
         }
     }
@@ -287,6 +292,8 @@ public class HostMachineDeviceManager {
                     appiumDevice.setPort(8543); //need to make sure for specific cloud
                 } else {
                     appiumDevice.setPort(new AvailablePorts().getAvailablePort(machineIP));
+                    String pathForChromeDriver = getPathForChromeDriver(appiumDevice.getDevice().getUdid());
+                    appiumDevice.setChromeDriverExecutable(pathForChromeDriver);
                 }
 
             } catch (Exception e) {
@@ -294,6 +301,37 @@ public class HostMachineDeviceManager {
             }
             return appiumDevice;
         };
+    }
+
+    private int[] getChromeVersionsFor(String id) throws IOException {
+        CommandPrompt cmd = new CommandPrompt();
+        String resultStdOut = cmd.runCommandThruProcess("adb -s " + id
+            + " shell dumpsys package com.android.chrome | grep versionName");
+        int[] versionNamesArr = {};
+        if (resultStdOut.contains("versionName=")) {
+            String[] foundVersions = resultStdOut.split("\n");
+            for (String foundVersion : foundVersions) {
+                String version = foundVersion.split("=")[1].split("\\.")[0];
+                String format = String.format("Found Chrome version - '%s' on - '%s'", version, id);
+                LOGGER.info(format);
+                versionNamesArr = ArrayUtils.add(versionNamesArr, Integer.parseInt(version));
+            }
+        } else {
+            LOGGER.info(String.format("Chrome not found on device - '%s'", id));
+        }
+        return versionNamesArr;
+    }
+
+    private String getPathForChromeDriver(String id) throws IOException {
+        int[] versionNamesArr = getChromeVersionsFor(id);
+        int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
+        WebDriverManager.chromedriver()
+            .browserVersion(String.valueOf(highestChromeVersion)).setup();
+        String message = "ChromeDriver for Chrome version " + highestChromeVersion
+            + " on device: " + id;
+        String downloadedDriverPath = WebDriverManager.chromedriver().getDownloadedDriverPath();
+        LOGGER.info(message + downloadedDriverPath);
+        return downloadedDriverPath;
     }
 
     private List<Device> getSimulatorsToBoot(String machineIP, JSONArray simulators) {
