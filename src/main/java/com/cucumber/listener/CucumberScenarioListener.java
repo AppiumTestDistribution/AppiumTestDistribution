@@ -120,7 +120,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private void caseStartedHandler(TestCaseStarted event) {
         String scenarioName = event.getTestCase().getName();
         LOGGER.info("caseStartedHandler: " + scenarioName);
-        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Test case  -- "+ scenarioName +"  started   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
@@ -219,7 +218,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(deviceLogFileName));
         }
         SessionContext.remove(threadId);
-        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   Test case  -- "+ scenarioName +"  started   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     }
 
     private void runFinishedHandler(TestRunFinished event) {
