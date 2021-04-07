@@ -292,7 +292,8 @@ public class HostMachineDeviceManager {
                     appiumDevice.setPort(8543); //need to make sure for specific cloud
                 } else {
                     appiumDevice.setPort(new AvailablePorts().getAvailablePort(machineIP));
-                    String pathForChromeDriver = getPathForChromeDriver(appiumDevice.getDevice().getUdid());
+                    String pathForChromeDriver = getPathForChromeDriver(appiumDevice
+                        .getDevice().getUdid());
                     appiumDevice.setChromeDriverExecutable(pathForChromeDriver);
                 }
 
