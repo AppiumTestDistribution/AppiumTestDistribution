@@ -20,7 +20,7 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import org.apache.log4j.Logger;
-
+import org.apache.log4j.PropertyConfigurator;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -119,14 +119,24 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void caseStartedHandler(TestCaseStarted event) {
         String scenarioName = event.getTestCase().getName();
+        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   TEST-CASE  -- "+ scenarioName +"  STARTED   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
         LOGGER.info("caseStartedHandler: " + scenarioName);
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
+        String normalisedScenarioName = normaliseScenarioName(scenarioName);
+        String testLogFileName= FileLocations.REPORTS_DIRECTORY
+                + normalisedScenarioName
+                + File.separator
+                + FileLocations.TEST_LOGS_DIRECTORY
+                + "/run-"+ scenarioRunCount;
+        testExecutionContext.addTestState("testLog", testLogFileName);
+        System.setProperty("log_dir", testLogFileName);
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
         AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
         String deviceLogFileName = null;
-        String normalisedScenarioName = normaliseScenarioName(scenarioName);
+
         try {
             deviceLogFileName =
                     allocatedDevice.startDataCapture(normalisedScenarioName, scenarioRunCount);
@@ -140,19 +150,12 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
             }
         }
-        String testLogFileName= FileLocations.REPORTS_DIRECTORY
-                        + normalisedScenarioName
-                        + File.separator
-                        + FileLocations.TEST_LOGS_DIRECTORY
-                        + "/run-"+ scenarioRunCount;
-        TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
+
         testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
         testExecutionContext.addTestState("deviceInfo", allocatedDevice);
         testExecutionContext.addTestState("deviceLog", deviceLogFileName);
-        testExecutionContext.addTestState("testLog", testLogFileName);
-        System.setProperty("log_dir", testLogFileName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY
                 + normalisedScenarioName);
         testExecutionContext.addTestState("scenarioScreenshotsDirectory",
@@ -218,6 +221,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(deviceLogFileName));
         }
         SessionContext.remove(threadId);
+        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   TEST-CASE  -- "+ scenarioName +"  ENDED   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     }
 
     private void runFinishedHandler(TestRunFinished event) {
