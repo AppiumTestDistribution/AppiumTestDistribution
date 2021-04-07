@@ -10,7 +10,7 @@ import static com.appium.manager.AppiumDriverManager.getDriver;
 
 public class MyStepdefs {
     RemoteWebElement edit;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MyStepdefs.class.getName());
 
     @When("I click on {int} number")
     public void iClickOnNumber(int arg0) {

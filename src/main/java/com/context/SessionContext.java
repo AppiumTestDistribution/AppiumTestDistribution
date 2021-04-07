@@ -16,7 +16,7 @@ import java.util.Properties;
 public class SessionContext {
     static final String TEST_RUNNER = "testrunner";
     private static final HashMap<String, TestExecutionContext> allTestsExecutionContext;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SessionContext.class.getName());
     private static final Properties reportPortalProperties;
     private static String reportPortalLaunchURL = "";
 

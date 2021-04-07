@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class GenyMotionManager {
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GenyMotionManager.class.getName());
     private static String cloud_user = Variable.getOverriddenStringValue("CLOUD_USER");
     private static String cloud_key = Variable.getOverriddenStringValue("CLOUD_KEY");
 

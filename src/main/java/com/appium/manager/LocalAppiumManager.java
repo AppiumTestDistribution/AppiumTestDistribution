@@ -28,7 +28,7 @@ public class LocalAppiumManager implements IAppiumManager {
         return appiumDriverLocalService;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LocalAppiumManager.class.getName());
 
     private static void setAppiumDriverLocalService(
             AppiumDriverLocalService appiumDriverLocalService) {

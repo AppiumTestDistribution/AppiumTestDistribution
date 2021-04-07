@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 public class AppiumDevice {
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AppiumDevice.class.getName());
     private static final String AVAILABLE = "AVAILABLE";
     private static final String BUSY = "BUSY";
     private final Device device;

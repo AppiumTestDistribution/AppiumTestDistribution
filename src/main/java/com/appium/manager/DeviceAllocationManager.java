@@ -14,7 +14,7 @@ import java.util.List;
 public class DeviceAllocationManager extends ArtifactsUploader {
 
     private static DeviceAllocationManager instance;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DeviceAllocationManager.class.getName());
     private HostMachineDeviceManager hostMachineDeviceManager;
     private List<AppiumDevice> allDevices;
     private List<Thread> suspendedThreads;

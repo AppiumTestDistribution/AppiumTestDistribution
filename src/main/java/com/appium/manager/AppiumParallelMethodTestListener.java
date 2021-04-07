@@ -32,7 +32,7 @@ import java.util.Optional;
 public final class AppiumParallelMethodTestListener extends Helpers
     implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AppiumParallelMethodTestListener.class.getName());
     private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;

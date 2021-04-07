@@ -28,7 +28,7 @@ public enum ConfigFileManager {
     RUNNER("distribute");
 
     private static final Properties PROPERTIES;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConfigFileManager.class.getName());
 
     static {
         PROPERTIES = new Properties();

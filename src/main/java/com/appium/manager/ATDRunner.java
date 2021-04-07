@@ -6,7 +6,6 @@ import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.Variable;
 import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class ATDRunner {
     private ATDExecutor ATDExecutor;
     private Capabilities capabilities;
     private HostMachineDeviceManager hostMachineDeviceManager;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
 
     public ATDRunner() {
         capabilities = Capabilities.getInstance();

@@ -32,7 +32,7 @@ import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
  * Created by saikrisv on 26/04/17.
  */
 public class ScreenShotManager extends Helpers {
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ScreenShotManager.class.getName());
     private String screenShotNameWithTimeStamp;
     private ImageUtils imageUtils;
     private String capturedScreen;

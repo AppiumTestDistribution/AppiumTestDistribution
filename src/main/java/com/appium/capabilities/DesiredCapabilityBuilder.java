@@ -34,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  */
 public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DesiredCapabilityBuilder.class.getName());
     public static final String APP_PACKAGE = "APP_PACKAGE";
     private AvailablePorts availablePorts;
 

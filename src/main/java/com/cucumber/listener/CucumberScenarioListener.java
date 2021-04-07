@@ -20,7 +20,6 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -29,7 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class CucumberScenarioListener implements ConcurrentEventListener {
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CucumberScenarioListener.class.getName());
     private final AppiumDriverManager appiumDriverManager;
     private final DeviceAllocationManager deviceAllocationManager;
     private final AppiumServerManager appiumServerManager;

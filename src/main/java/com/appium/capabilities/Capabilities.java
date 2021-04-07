@@ -1,7 +1,6 @@
 package com.appium.capabilities;
 
 import com.appium.device.AtdEnvironment;
-import com.appium.manager.RemoteAppiumManager;
 import com.appium.utils.Variable;
 import com.appium.utils.FigletHelper;
 import com.appium.utils.JsonParser;
@@ -27,7 +26,7 @@ import java.util.Set;
 import static com.appium.utils.ConfigFileManager.CAPS;
 
 public class Capabilities {
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Capabilities.class.getName());
 
     private static Capabilities instance;
     private JSONObject capabilities;

@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by saikrisv on 2016/09/23.
  */
 public class Flick extends CommandPrompt implements IScreenRecord {
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Flick.class.getName());
 
     /**
      * @param className     - Current test class name

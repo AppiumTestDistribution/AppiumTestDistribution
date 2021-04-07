@@ -24,7 +24,7 @@ import java.util.Optional;
 
 public class RemoteAppiumManager extends Helpers implements IAppiumManager {
 
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RemoteAppiumManager.class.getName());
 
     @Override
     public void destroyAppiumNode(String host) throws Exception {

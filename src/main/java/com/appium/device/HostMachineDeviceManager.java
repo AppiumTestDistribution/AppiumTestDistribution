@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class HostMachineDeviceManager {
 
-    private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(HostMachineDeviceManager.class.getName());
     private static final String PLATFORM = "Platform";
     private static final String UNIQUE_DEVICE_IDENTIFIERS = "udids";
     private final AppiumManagerFactory appiumManagerFactory;

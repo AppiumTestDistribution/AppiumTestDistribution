@@ -31,7 +31,7 @@ import static com.appium.utils.ConfigFileManager.CAPS;
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver = new ThreadLocal<>();
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AppiumDriverManager.class.getName());
 
     public AppiumDriverManager() {
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();

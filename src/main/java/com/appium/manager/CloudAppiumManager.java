@@ -10,7 +10,7 @@ import static java.text.MessageFormat.format;
 
 public class CloudAppiumManager implements IAppiumManager {
     private final String url;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CloudAppiumManager.class.getName());
 
     public CloudAppiumManager(String cloudName) {
         url = "https://{2}/wd/hub";
