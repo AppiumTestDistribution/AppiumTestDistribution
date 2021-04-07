@@ -123,13 +123,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info("caseStartedHandler: " + scenarioName);
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
         String normalisedScenarioName = normaliseScenarioName(scenarioName);
-        String testLogFileName= FileLocations.REPORTS_DIRECTORY
-                + normalisedScenarioName
-                + File.separator
-                + FileLocations.TEST_LOGS_DIRECTORY
-                + "/run-"+ scenarioRunCount;
-        testExecutionContext.addTestState("testLog", testLogFileName);
-        System.setProperty("log_dir", testLogFileName);
+
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
