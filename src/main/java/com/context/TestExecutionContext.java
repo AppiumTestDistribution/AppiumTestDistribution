@@ -1,13 +1,14 @@
 package com.context;
 
+import org.apache.log4j.Logger;
+
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 public class TestExecutionContext {
     private final String testName;
     private final HashMap<String, Object> testExecutionState;
     private final String NOT_SET = "NOT-YET-SET";
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(TestExecutionContext.class.getSimpleName());
 
     public TestExecutionContext(String testName) {
         SessionContext.addContext(Thread.currentThread().getId(), this);

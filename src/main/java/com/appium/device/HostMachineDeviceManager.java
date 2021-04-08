@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
 import com.puppycrawl.tools.checkstyle.utils.ScopeUtil;
 import com.report.factory.TestStatusManager;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,11 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class HostMachineDeviceManager {
 
+    private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(HostMachineDeviceManager.class.getName());
     private static final String PLATFORM = "Platform";
     private static final String UNIQUE_DEVICE_IDENTIFIERS = "udids";
     private final AppiumManagerFactory appiumManagerFactory;
@@ -195,7 +196,7 @@ public class HostMachineDeviceManager {
                                 d.setOs(devicePlatform);
                                 d.setOsVersion(((Map) o).get("osVersion").toString());
                                 d.setCloud(true);
-                                System.out.println("Device: " + d);
+                                LOGGER.info("Device: " + d);
                                 cloudDevices.add(d);
                             });
                         });
@@ -207,7 +208,7 @@ public class HostMachineDeviceManager {
                                 d.setOsVersion(((Map) o).get("osVersion").toString());
                                 d.setName(((Map) o).get("deviceName").toString());
                                 d.setCloud(true);
-                                System.out.println("Device: " + d);
+                                LOGGER.info("Device: " + d);
                                 cloudDevices.add(d);
                             });
                         });

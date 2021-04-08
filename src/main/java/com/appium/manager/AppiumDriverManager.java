@@ -3,7 +3,6 @@ package com.appium.manager;
 import com.appium.capabilities.DesiredCapabilityBuilder;
 import com.appium.entities.MobilePlatform;
 import com.appium.utils.CommandPrompt;
-import com.github.device.Device;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
@@ -12,6 +11,7 @@ import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.windows.WindowsDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -24,7 +24,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
@@ -32,7 +31,7 @@ import static com.appium.utils.ConfigFileManager.CAPS;
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver = new ThreadLocal<>();
     private DesiredCapabilityBuilder desiredCapabilityBuilder;
-    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AppiumDriverManager.class.getName());
 
     public AppiumDriverManager() {
         desiredCapabilityBuilder = new DesiredCapabilityBuilder();

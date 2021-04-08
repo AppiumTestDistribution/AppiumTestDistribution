@@ -5,6 +5,7 @@ import com.appium.utils.Api;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.Variable;
 import okhttp3.Response;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -13,12 +14,10 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 public class GenyMotionManager {
 
-    private static final Logger LOGGER = Logger
-        .getLogger(GenyMotionManager.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(GenyMotionManager.class.getName());
     private static String cloud_user = Variable.getOverriddenStringValue("CLOUD_USER");
     private static String cloud_key = Variable.getOverriddenStringValue("CLOUD_KEY");
 
@@ -84,7 +83,7 @@ public class GenyMotionManager {
             String recipe_uuid = null;
             recipe_uuid = api.postWithNoBody("https://api.geny.io/cloud/v1/instances/" + uuid
                 + "/stop-disposable", token.toString());
-            System.out.println(recipe_uuid);
+            LOGGER.info(recipe_uuid);
         });
     }
 }

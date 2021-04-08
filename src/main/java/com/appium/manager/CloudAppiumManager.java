@@ -1,6 +1,7 @@
 package com.appium.manager;
 
 import com.github.device.Device;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import static java.text.MessageFormat.format;
 
 public class CloudAppiumManager implements IAppiumManager {
     private final String url;
+    private static final Logger LOGGER = Logger.getLogger(CloudAppiumManager.class.getName());
 
     public CloudAppiumManager(String cloudName) {
         url = "https://{2}/wd/hub";
@@ -26,7 +28,7 @@ public class CloudAppiumManager implements IAppiumManager {
     @Override
     public String getRemoteWDHubIP(String host) {
         String format = format(url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"), host);
-        System.out.println("getRemoteWDHubIP: " + format);
+        LOGGER.info("getRemoteWDHubIP: " + format);
         return format;
     }
 

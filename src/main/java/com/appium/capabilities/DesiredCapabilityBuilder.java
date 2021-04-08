@@ -15,6 +15,7 @@ import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -33,6 +34,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  */
 public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
+    private static final Logger LOGGER = Logger.getLogger(DesiredCapabilityBuilder.class.getName());
     public static final String APP_PACKAGE = "APP_PACKAGE";
     private AvailablePorts availablePorts;
 
@@ -80,7 +82,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
                     deviceProperty.getDevice().getOsVersion());
         }
-        System.out.println("desiredCapabilityForCloud: " + desiredCapabilities);
+        LOGGER.info("desiredCapabilityForCloud: " + desiredCapabilities);
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 

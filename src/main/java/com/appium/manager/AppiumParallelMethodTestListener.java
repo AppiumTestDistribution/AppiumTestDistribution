@@ -11,6 +11,7 @@ import com.appium.utils.Helpers;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
+import org.apache.log4j.Logger;
 import org.json.simple.parser.ParseException;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -31,6 +32,7 @@ import java.util.Optional;
 public final class AppiumParallelMethodTestListener extends Helpers
     implements ITestListener, IInvokedMethodListener, ISuiteListener {
 
+    private static final Logger LOGGER = Logger.getLogger(AppiumParallelMethodTestListener.class.getName());
     private TestLogger testLogger;
     private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
@@ -210,7 +212,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         if (!isCloudExecution()) {
-            System.out.println("In Skipped...");
+            LOGGER.info("In Skipped...");
             RetryCount retryCount = iTestResult.getMethod().getConstructorOrMethod()
                 .getMethod().getAnnotation(RetryCount.class);
             if (retryCount == null && (atdHost.isPresent() && atdPort.isPresent())) {
