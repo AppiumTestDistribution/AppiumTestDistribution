@@ -173,6 +173,7 @@ public class AppiumDriverManager {
 
     private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
+        LOGGER.info("startAppiumDriverInstance: capabilities: " + desiredCapabilities);
         AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
@@ -180,6 +181,7 @@ public class AppiumDriverManager {
 
     // Should be used by Cucumber as well
     public void startAppiumDriverInstance() throws Exception {
+        LOGGER.info("startAppiumDriverInstance");
         startAppiumDriverInstance(Optional.ofNullable(buildDesiredCapabilities(CAPS.get())));
     }
 
