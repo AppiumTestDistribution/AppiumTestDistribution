@@ -7,6 +7,7 @@ import java.io.IOException;
 
 public class FigletHelper {
     private static final Logger LOGGER = Logger.getLogger(FigletHelper.class.getName());
+
     public static void figlet(String text) {
         String asciiArt1 = null;
         try {

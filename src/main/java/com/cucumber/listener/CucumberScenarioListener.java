@@ -118,12 +118,10 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void caseStartedHandler(TestCaseStarted event) {
         String scenarioName = event.getTestCase().getName();
-        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   TEST-CASE  -- "+ scenarioName +"  STARTED   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
+        LOGGER.info("$$$$$   TEST-CASE  -- " + scenarioName + "  STARTED   $$$$$");
         LOGGER.info("caseStartedHandler: " + scenarioName);
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
         String normalisedScenarioName = normaliseScenarioName(scenarioName);
-
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
@@ -144,6 +142,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             }
         }
 
+        TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
         testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
@@ -214,7 +213,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(deviceLogFileName));
         }
         SessionContext.remove(threadId);
-        LOGGER.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   TEST-CASE  -- "+ scenarioName +"  ENDED   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        LOGGER.info("$$$$$   TEST-CASE  -- " + scenarioName + "  ENDED   $$$$$");
     }
 
     private void runFinishedHandler(TestRunFinished event) {

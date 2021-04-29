@@ -25,7 +25,8 @@ import java.util.Map;
 
 public class CucumberScenarioReporterListener extends ScenarioReporter {
 
-    private static final Logger LOGGER = Logger.getLogger(CucumberScenarioReporterListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(
+            CucumberScenarioReporterListener.class.getName());
     private WindowsDeviceConfiguration windowsDevice;
     private DeviceAllocationManager deviceAllocationManager;
     public AppiumServerManager appiumServerManager;

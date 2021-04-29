@@ -18,7 +18,8 @@ public class AndroidDeviceConfiguration {
     private CommandPrompt cmd = new CommandPrompt();
     public static List<String> validDeviceIds = new ArrayList<>();
     private DevicesByHost devicesByHost;
-    private static final Logger LOGGER = Logger.getLogger(AndroidDeviceConfiguration.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(
+            AndroidDeviceConfiguration.class.getName());
 
     public AndroidDeviceConfiguration() {
         devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
