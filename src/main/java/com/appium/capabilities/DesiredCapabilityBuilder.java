@@ -116,21 +116,23 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             .getJSONObject(platform);
 
         platFormCapabilities.keySet().forEach(key -> {
-            if ("browserName".equals(key) && "chrome".equals(platFormCapabilities.getString(key))) {
-                try {
-                    AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(
-                        availablePorts.getAvailablePort(AppiumDeviceManager
-                            .getAppiumDevice().getHostName()));
-                    desiredCapabilities.setCapability("chromeDriverPort",
-                        AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
-                } catch (Exception e) {
-                    throw new RuntimeException("Unable to allocate chromedriver with unique port");
-                }
-            }
             capabilityObject(desiredCapabilities, platFormCapabilities, key);
         });
 
         if (isPlatform(MobilePlatform.ANDROID)) {
+            try {
+                AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(
+                        availablePorts.getAvailablePort(AppiumDeviceManager
+                                .getAppiumDevice().getHostName()));
+                desiredCapabilities.setCapability(AndroidMobileCapabilityType
+                    .CHROMEDRIVER_PORT,
+                        AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
+                desiredCapabilities.setCapability(AndroidMobileCapabilityType
+                            .CHROMEDRIVER_EXECUTABLE,
+                    AppiumDeviceManager.getAppiumDevice().getChromeDriverExecutable());
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to allocate chromedriver with unique port");
+            }
             desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "android");
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
                 port);

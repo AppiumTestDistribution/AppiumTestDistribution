@@ -20,6 +20,7 @@ public class AppiumDevice {
     private final Device device;
     private int port;
     private int chromeDriverPort;
+    private String chromeDriverExecutable;
     private String webkitProcessID;
     private String deviceState;
     private final String ipAddress;
@@ -40,6 +41,14 @@ public class AppiumDevice {
 
     public int getChromeDriverPort() {
         return chromeDriverPort;
+    }
+
+    public String getChromeDriverExecutable() {
+        return chromeDriverExecutable;
+    }
+
+    public void setChromeDriverExecutable(String chromeDriverExecutable) {
+        this.chromeDriverExecutable = chromeDriverExecutable;
     }
 
     public void setChromeDriverPort(int chromeDriverPort) {

@@ -6,12 +6,15 @@ import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
 import com.appium.utils.Api;
 import com.appium.utils.AvailablePorts;
+import com.appium.utils.CommandPrompt;
 import com.appium.utils.OSType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
 import com.puppycrawl.tools.checkstyle.utils.ScopeUtil;
 import com.report.factory.TestStatusManager;
 import org.apache.log4j.Logger;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class HostMachineDeviceManager {
 
-    private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(HostMachineDeviceManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(HostMachineDeviceManager.class.getName());
     private static final String PLATFORM = "Platform";
     private static final String UNIQUE_DEVICE_IDENTIFIERS = "udids";
     private final AppiumManagerFactory appiumManagerFactory;
@@ -306,6 +309,9 @@ public class HostMachineDeviceManager {
                     appiumDevice.setPort(8543); //need to make sure for specific cloud
                 } else {
                     appiumDevice.setPort(new AvailablePorts().getAvailablePort(machineIP));
+                    String pathForChromeDriver = getPathForChromeDriver(appiumDevice
+                        .getDevice().getUdid());
+                    appiumDevice.setChromeDriverExecutable(pathForChromeDriver);
                 }
 
             } catch (Exception e) {
@@ -313,6 +319,37 @@ public class HostMachineDeviceManager {
             }
             return appiumDevice;
         };
+    }
+
+    private int[] getChromeVersionsFor(String id) throws IOException {
+        CommandPrompt cmd = new CommandPrompt();
+        String resultStdOut = cmd.runCommandThruProcess("adb -s " + id
+            + " shell dumpsys package com.android.chrome | grep versionName");
+        int[] versionNamesArr = {};
+        if (resultStdOut.contains("versionName=")) {
+            String[] foundVersions = resultStdOut.split("\n");
+            for (String foundVersion : foundVersions) {
+                String version = foundVersion.split("=")[1].split("\\.")[0];
+                String format = String.format("Found Chrome version - '%s' on - '%s'", version, id);
+                LOGGER.info(format);
+                versionNamesArr = ArrayUtils.add(versionNamesArr, Integer.parseInt(version));
+            }
+        } else {
+            LOGGER.info(String.format("Chrome not found on device - '%s'", id));
+        }
+        return versionNamesArr;
+    }
+
+    private String getPathForChromeDriver(String id) throws IOException {
+        int[] versionNamesArr = getChromeVersionsFor(id);
+        int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
+        WebDriverManager.chromedriver()
+            .browserVersion(String.valueOf(highestChromeVersion)).setup();
+        String message = "ChromeDriver for Chrome version " + highestChromeVersion
+            + " on device: " + id;
+        String downloadedDriverPath = WebDriverManager.chromedriver().getDownloadedDriverPath();
+        LOGGER.info(message + downloadedDriverPath);
+        return downloadedDriverPath;
     }
 
     private List<Device> getSimulatorsToBoot(String machineIP, JSONArray simulators) {
