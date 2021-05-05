@@ -306,11 +306,11 @@ public class HostMachineDeviceManager {
 
     private int[] getChromeVersionsFor(String id) throws IOException {
         CommandPrompt cmd = new CommandPrompt();
-         if (System.getProperty("os.name").toLowerCase().contains("win")) {
+        String resultStdOut = null;
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
             resultStdOut = cmd.runCommandThruProcess("adb -s " + id
                     + " shell \"dumpsys package com.android.chrome | grep versionName\"");
-        }
-        else{
+        } else {
             resultStdOut = cmd.runCommandThruProcess("adb -s " + id
                     + " shell dumpsys package com.android.chrome | grep versionName");
         }
