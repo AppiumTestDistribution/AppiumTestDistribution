@@ -309,9 +309,12 @@ public class HostMachineDeviceManager {
                     appiumDevice.setPort(8543); //need to make sure for specific cloud
                 } else {
                     appiumDevice.setPort(new AvailablePorts().getAvailablePort(machineIP));
-                    String pathForChromeDriver = getPathForChromeDriver(appiumDevice
-                        .getDevice().getUdid());
-                    appiumDevice.setChromeDriverExecutable(pathForChromeDriver);
+                    if (appiumDevice.getDevice().getOs()
+                            .equalsIgnoreCase("android")) {
+                        String pathForChromeDriver = getPathForChromeDriver(appiumDevice
+                            .getDevice().getUdid());
+                        appiumDevice.setChromeDriverExecutable(pathForChromeDriver);
+                    }
                 }
 
             } catch (Exception e) {
@@ -323,8 +326,14 @@ public class HostMachineDeviceManager {
 
     private int[] getChromeVersionsFor(String id) throws IOException {
         CommandPrompt cmd = new CommandPrompt();
-        String resultStdOut = cmd.runCommandThruProcess("adb -s " + id
-            + " shell dumpsys package com.android.chrome | grep versionName");
+        String resultStdOut = null;
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            resultStdOut = cmd.runCommandThruProcess("adb -s " + id
+                    + " shell \"dumpsys package com.android.chrome | grep versionName\"");
+        } else {
+            resultStdOut = cmd.runCommandThruProcess("adb -s " + id
+                    + " shell dumpsys package com.android.chrome | grep versionName");
+        }
         int[] versionNamesArr = {};
         if (resultStdOut.contains("versionName=")) {
             String[] foundVersions = resultStdOut.split("\n");
