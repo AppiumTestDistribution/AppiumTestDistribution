@@ -1,7 +1,6 @@
 package com.appium.capabilities;
 
 import com.appium.device.AtdEnvironment;
-import com.appium.utils.Variable;
 import com.appium.utils.FigletHelper;
 import com.appium.utils.JsonParser;
 import org.apache.log4j.Logger;
@@ -24,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import static com.appium.utils.ConfigFileManager.CAPS;
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
 public class Capabilities {
     private static final Logger LOGGER = Logger.getLogger(Capabilities.class.getName());
@@ -112,7 +112,7 @@ public class Capabilities {
                                    String keyStr,
                                    Object keyvalue) {
         currentPath.append(keyStr);
-        String getFromEnv = Variable.getOverriddenStringValue(currentPath.toString());
+        String getFromEnv = getOverriddenStringValue(currentPath.toString());
         Object updatedValue = (null == getFromEnv) ? keyvalue : getFromEnv;
         objectToUpdate.put(keyStr, updatedValue);
         currentPath.delete(currentPath.lastIndexOf("_") + 1, currentPath.length());

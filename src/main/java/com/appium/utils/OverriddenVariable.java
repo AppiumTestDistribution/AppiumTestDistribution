@@ -1,6 +1,6 @@
 package com.appium.utils;
 
-public class Variable {
+public class OverriddenVariable {
     public static String getOverriddenStringValue(String key) {
         return getValueFromEnvOrProperty(key);
     }

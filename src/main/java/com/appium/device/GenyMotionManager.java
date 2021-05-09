@@ -3,7 +3,6 @@ package com.appium.device;
 import com.appium.exceptions.CloudConnectionException;
 import com.appium.utils.Api;
 import com.appium.utils.CommandPrompt;
-import com.appium.utils.Variable;
 import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -15,11 +14,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
+
 public class GenyMotionManager {
 
     private static final Logger LOGGER = Logger.getLogger(GenyMotionManager.class.getName());
-    private static String cloud_user = Variable.getOverriddenStringValue("CLOUD_USER");
-    private static String cloud_key = Variable.getOverriddenStringValue("CLOUD_KEY");
+    private static String cloud_user = getOverriddenStringValue("CLOUD_USER");
+    private static String cloud_key = getOverriddenStringValue("CLOUD_KEY");
 
     protected  static void connectToGenyCloud(String udid, Object devices) {
 

@@ -7,7 +7,6 @@ import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.utils.ArtifactsUploader;
 import com.appium.utils.AvailablePorts;
-import com.appium.utils.Variable;
 import com.appium.utils.HostArtifact;
 import com.appium.utils.JsonParser;
 import com.github.device.Device;
@@ -26,6 +25,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static com.appium.manager.AppiumDeviceManager.isPlatform;
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -212,17 +212,17 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     }
 
     private void appPackage(DesiredCapabilities desiredCapabilities) {
-        if (Variable.getOverriddenStringValue(APP_PACKAGE) != null) {
+        if (getOverriddenStringValue(APP_PACKAGE) != null) {
             desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE,
-                Variable.getOverriddenStringValue(APP_PACKAGE));
+                getOverriddenStringValue(APP_PACKAGE));
         }
     }
 
     private void appPackageBundle(DesiredCapabilities iOSCapabilities) {
-        if (Variable.getOverriddenStringValue(APP_PACKAGE) != null) {
+        if (getOverriddenStringValue(APP_PACKAGE) != null) {
             iOSCapabilities
                 .setCapability(IOSMobileCapabilityType.BUNDLE_ID,
-                    Variable.getOverriddenStringValue(APP_PACKAGE));
+                    getOverriddenStringValue(APP_PACKAGE));
         }
     }
 }

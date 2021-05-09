@@ -1,13 +1,13 @@
 package com.appium.filelocations;
 
-import com.appium.utils.Variable;
-
 import java.io.File;
+
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
 public interface FileLocations {
     String OUTPUT_DIRECTORY =
-            Variable.getOverriddenStringValue("OUTPUT_DIRECTORY") != null
-            ? File.separator + Variable.getOverriddenStringValue("OUTPUT_DIRECTORY")
+            getOverriddenStringValue("OUTPUT_DIRECTORY") != null
+            ? File.separator + getOverriddenStringValue("OUTPUT_DIRECTORY")
                     + File.separator
             : File.separator + "target" + File.separator;
 

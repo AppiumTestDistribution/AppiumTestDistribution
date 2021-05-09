@@ -1,7 +1,5 @@
 package com.context;
 
-
-import com.appium.utils.Variable;
 import org.apache.log4j.Logger;
 import org.testng.ITestContext;
 
@@ -12,6 +10,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Properties;
+
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
 public class SessionContext {
     static final String TEST_RUNNER = "testrunner";
@@ -46,7 +46,7 @@ public class SessionContext {
         Properties properties = new Properties();
         try {
             String reportPortalPropertiesFile = "src/test/resources/reportportal.properties";
-            Variable.getOverriddenStringValue("REPORT_PORTAL_FILE", reportPortalPropertiesFile);
+            getOverriddenStringValue("REPORT_PORTAL_FILE", reportPortalPropertiesFile);
             LOGGER.info("Using reportportal.properties file from "
                     + reportPortalPropertiesFile);
             File reportPortalFile = new File(reportPortalPropertiesFile);

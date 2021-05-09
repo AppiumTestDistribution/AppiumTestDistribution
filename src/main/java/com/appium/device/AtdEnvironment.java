@@ -1,9 +1,9 @@
 package com.appium.device;
 
-import com.appium.utils.Variable;
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
 public class AtdEnvironment {
     public String get(String environmentVariableName) {
-        return Variable.getOverriddenStringValue(environmentVariableName);
+        return getOverriddenStringValue(environmentVariableName);
     }
 }

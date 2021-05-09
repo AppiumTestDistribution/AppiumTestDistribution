@@ -2,10 +2,9 @@ package com.appium.utils;
 
 import org.apache.log4j.Logger;
 
-import static com.appium.utils.Variable.getOverriddenStringValue;
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
-import static java.lang.System.getenv;
 import static java.text.MessageFormat.format;
 
 import java.io.FileInputStream;
