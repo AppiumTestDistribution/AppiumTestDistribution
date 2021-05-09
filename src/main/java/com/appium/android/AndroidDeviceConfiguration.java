@@ -77,7 +77,6 @@ public class AndroidDeviceConfiguration {
         Process pc = pb.start();
         pc.waitFor();
         LOGGER.info("Exited with Code::" + pc.exitValue());
-        LOGGER.info("Done");
         Thread.sleep(5000);
         return new AndroidDeviceConfiguration();
     }
