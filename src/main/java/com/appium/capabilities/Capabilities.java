@@ -338,7 +338,7 @@ public class Capabilities {
     private void isPlatformInEnv() {
         if (atdEnvironment.get("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
-                    + ":: Platform=android/ios/both mvn clean -Dtest=Runner test");
+                    + ":: Platform=android/ios/both/windows mvn clean -Dtest=Runner test");
         }
     }
 
