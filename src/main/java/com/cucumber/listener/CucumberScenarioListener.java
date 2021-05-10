@@ -72,26 +72,31 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info("allocateDeviceAndStartDriver: "
                 + capabilities);
 
-        String udid = capabilities.is("udid") ? capabilities
-                .getCapability("udid").toString() : capabilities
-                .getCapability("deviceUDID").toString();
+        String udid = capabilities.is("udid")
+                              ? getCapabilityFor(capabilities, "udid")
+                              : getCapabilityFor(capabilities, "deviceUDID");
         Device device = availableDevice.getDevice();
         device.setUdid(udid);
         device.setDeviceManufacturer(
-                capabilities.getCapability("deviceManufacturer").toString());
+                getCapabilityFor(capabilities, "deviceManufacturer"));
         device.setDeviceModel(
-                capabilities.getCapability("deviceModel").toString());
+                getCapabilityFor(capabilities, "deviceModel"));
         device.setName(
-                capabilities.getCapability("deviceName").toString()
+                getCapabilityFor(capabilities, "deviceName")
                         + " "
-                        + capabilities.getCapability("deviceModel").toString());
+                        + getCapabilityFor(capabilities, "deviceModel"));
         device.setApiLevel(
-                capabilities.getCapability("deviceApiLevel").toString());
+                getCapabilityFor(capabilities, "deviceApiLevel"));
         device.setDeviceType(
-                capabilities.getCapability("platformName").toString());
+                getCapabilityFor(capabilities, "platformName"));
         device.setScreenSize(
-                capabilities.getCapability("deviceScreenSize").toString());
+                getCapabilityFor(capabilities, "deviceScreenSize"));
         return availableDevice;
+    }
+
+    private String getCapabilityFor(org.openqa.selenium.Capabilities capabilities, String name) {
+        Object capability = capabilities.getCapability(name);
+        return null == capability ? "" : capability.toString();
     }
 
     private boolean isCloudExecution() {
