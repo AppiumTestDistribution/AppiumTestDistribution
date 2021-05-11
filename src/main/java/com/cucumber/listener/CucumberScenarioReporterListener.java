@@ -15,6 +15,7 @@ import com.video.recorder.XpathXML;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.cucumber.core.gherkin.Step;
+import org.apache.log4j.Logger;
 import rp.com.google.common.base.Suppliers;
 
 import java.util.Calendar;
@@ -24,6 +25,8 @@ import java.util.Map;
 
 public class CucumberScenarioReporterListener extends ScenarioReporter {
 
+    private static final Logger LOGGER = Logger.getLogger(
+            CucumberScenarioReporterListener.class.getName());
     private WindowsDeviceConfiguration windowsDevice;
     private DeviceAllocationManager deviceAllocationManager;
     public AppiumServerManager appiumServerManager;
@@ -51,7 +54,7 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
         };
 
     public CucumberScenarioReporterListener() throws Exception {
-        System.out.println("CucumberScenarioReporterListener");
+        LOGGER.info("CucumberScenarioReporterListener");
         appiumServerManager = new AppiumServerManager();
         appiumDriverManager = new AppiumDriverManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
