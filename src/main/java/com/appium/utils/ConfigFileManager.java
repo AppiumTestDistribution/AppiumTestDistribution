@@ -6,6 +6,8 @@ import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 import static java.text.MessageFormat.format;
+import static java.util.Optional.ofNullable;
+import static java.lang.System.getenv;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -47,7 +49,8 @@ public enum ConfigFileManager {
     }
 
     public String get() {
-        return getOverriddenStringValue(name(), defaultValue);
+        return ofNullable(getenv(name()))
+            .orElse(PROPERTIES.getProperty(name(), defaultValue));
     }
 
     public boolean isTrue() {
