@@ -7,10 +7,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.windows.WindowsDriver;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Capabilities;
@@ -118,18 +115,20 @@ public class AppiumDriverManager {
     }
 
 
-    private void startAppiumDriverInstance(Optional<DesiredCapabilities> desiredCapabilities)
+    private AppiumDriver<MobileElement> startAppiumDriverInstance(
+            Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
         LOGGER.info("startAppiumDriverInstance: capabilities: " + desiredCapabilities);
         AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
+        return currentDriverSession;
     }
 
     // Should be used by Cucumber as well
-    public void startAppiumDriverInstance() throws Exception {
+    public AppiumDriver<MobileElement> startAppiumDriverInstance() throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-        startAppiumDriverInstance(Optional.ofNullable(buildDesiredCapabilities(CAPS.get())));
+        return startAppiumDriverInstance(Optional.ofNullable(buildDesiredCapabilities(CAPS.get())));
     }
 
     private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath)
