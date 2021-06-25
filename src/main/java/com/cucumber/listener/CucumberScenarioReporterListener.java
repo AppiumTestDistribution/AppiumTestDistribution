@@ -10,6 +10,7 @@ import com.appium.utils.ImageUtils;
 import com.appium.windows.WindowsDeviceConfiguration;
 import com.epam.reportportal.cucumber.ScenarioReporter;
 import com.epam.reportportal.service.Launch;
+import com.epam.reportportal.utils.MemoizingSupplier;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.video.recorder.XpathXML;
 import io.appium.java_client.AppiumDriver;
@@ -27,6 +28,8 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
 
     private static final Logger LOGGER = Logger.getLogger(
             CucumberScenarioReporterListener.class.getName());
+    private static final String DUMMY_ROOT_SUITE_NAME = "My Tests";
+    private static final String RP_STORY_TYPE = "SUITE";
     private WindowsDeviceConfiguration windowsDevice;
     private DeviceAllocationManager deviceAllocationManager;
     public AppiumServerManager appiumServerManager;
@@ -67,13 +70,13 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
     @Override
     protected void startRootItem() {
         this.rootSuiteId =
-            Suppliers.memoize(
-                () -> {
-                    StartTestItemRQ rq = new StartTestItemRQ();
-                    rq.setName("My Tests");
-                    rq.setStartTime(Calendar.getInstance().getTime());
-                    rq.setType("SUITE");
-                    return ((Launch) this.launch.get()).startTestItem(rq);
-                });
+                this.rootSuiteId =
+                        rootSuiteId = new MemoizingSupplier<>(() -> {
+                            StartTestItemRQ rq = new StartTestItemRQ();
+                            rq.setName(DUMMY_ROOT_SUITE_NAME);
+                            rq.setStartTime(Calendar.getInstance().getTime());
+                            rq.setType(RP_STORY_TYPE);
+                            return launch.get().startTestItem(rq);
+                        });
     }
 }
