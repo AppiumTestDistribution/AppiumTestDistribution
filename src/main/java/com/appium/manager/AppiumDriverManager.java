@@ -51,28 +51,13 @@ public class AppiumDriverManager {
             throws Exception {
         LOGGER.info("Initialise Driver with Capabilities: " + desiredCapabilities.toString());
         String remoteWDHubIP = getRemoteWDHubIP();
-        if (isRunningInCloud()) {
-            return getRemoteAppiumDriver(desiredCapabilities, remoteWDHubIP);
-        } else {
-            return getLocalAppiumDriver(desiredCapabilities, remoteWDHubIP);
-        }
+        return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
 
     @NotNull
-    private AppiumDriver getRemoteAppiumDriver(DesiredCapabilities desiredCapabilities,
-                                               String remoteWDHubIP)
+    private AppiumDriver createAppiumDriver(DesiredCapabilities desiredCapabilities,
+                                             String remoteWDHubIP)
             throws MalformedURLException {
-//        AppiumDriver currentDriverSession;
-//        LOGGER.info(String.format("Create RemoteAppiumDriver: remote host url: '%s', "
-//                        + "with capabilities: '%s'", remoteWDHubIP, desiredCapabilities));
-//
-//        currentDriverSession = new AppiumDriver<>(new URL(remoteWDHubIP), desiredCapabilities);
-//
-//        LOGGER.info("Remote AppiumDriver Session Created ---- "
-//                            + currentDriverSession.getSessionId() + "---"
-//                            + currentDriverSession.getRemoteAddress().getHost() + "---"
-//                            + currentDriverSession.getSessionDetail("udid"));
-//        return currentDriverSession;
         AppiumDriver currentDriverSession;
         MobilePlatform mobilePlatform = getMobilePlatform();
         switch (mobilePlatform) {
@@ -97,39 +82,6 @@ public class AppiumDriverManager {
                 + currentDriverSession.getSessionId() + "---"
                 + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
-    }
-
-    @NotNull
-    private AppiumDriver getLocalAppiumDriver(DesiredCapabilities desiredCapabilities,
-                                              String remoteWDHubIP) throws IOException {
-        AppiumDriver currentDriverSession;
-        MobilePlatform mobilePlatform = getMobilePlatform();
-        switch (mobilePlatform) {
-            case IOS:
-                currentDriverSession = new IOSDriver(new URL(remoteWDHubIP),
-                        desiredCapabilities);
-                break;
-            case ANDROID:
-                currentDriverSession = new AndroidDriver(new URL(remoteWDHubIP),
-                        desiredCapabilities);
-                break;
-            case WINDOWS:
-                currentDriverSession = new WindowsDriver(new URL(remoteWDHubIP),
-                        desiredCapabilities);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + mobilePlatform);
-        }
-        LOGGER.info("Session Created for "
-                            + AppiumDeviceManager.getMobilePlatform().name()
-                            + " ---- "
-                            + currentDriverSession.getSessionId() + "---"
-                            + currentDriverSession.getSessionDetail("udid"));
-        return currentDriverSession;
-    }
-
-    private boolean isRunningInCloud() {
-        return AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
     }
 
     private String getRemoteWDHubIP() throws Exception {
