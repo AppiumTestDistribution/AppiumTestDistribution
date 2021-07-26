@@ -192,7 +192,8 @@ public class HostMachineDeviceManager {
                     JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
 
                     String cloudName = capabilities.getCloudName(ip);
-                    if (cloudName.equalsIgnoreCase("pCloudy")) {
+                    if (cloudName.equalsIgnoreCase("pCloudy")
+                            || cloudName.equalsIgnoreCase("headspin")) {
                         cloud.toMap().forEach((devicePlatform, devices) -> {
                             ((List) devices).forEach(o -> {
                                 Device d = new Device();
