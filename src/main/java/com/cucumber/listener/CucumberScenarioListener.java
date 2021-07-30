@@ -164,9 +164,9 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     }
 
     private boolean isRunningOnpCloudy(AppiumDevice allocatedDevice) {
-        boolean isPCloudy = Capabilities.getInstance()
-                .getCloudName(allocatedDevice.getHostName()) == null ? false : true;
-        LOGGER.info(allocatedDevice.getDevice().getName() + " running on pCloudy? " + isPCloudy);
+        boolean isPCloudy = allocatedDevice.getDeviceOn().equalsIgnoreCase("pCloudy");
+        LOGGER.info(allocatedDevice.getDevice().getName() + ": running on: "
+                + allocatedDevice.getDeviceOn());
         return isPCloudy;
     }
 

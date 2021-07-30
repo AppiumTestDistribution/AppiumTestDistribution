@@ -3,8 +3,6 @@ package com.appium.manager;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.github.device.Device;
-import com.video.recorder.AppiumScreenRecordFactory;
-import com.video.recorder.IScreenRecord;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.logging.LogEntries;
 import java.io.File;
@@ -18,6 +16,7 @@ public class AppiumDevice {
     private static final String AVAILABLE = "AVAILABLE";
     private static final String BUSY = "BUSY";
     private final Device device;
+    private final String deviceOn;
     private int port;
     private int chromeDriverPort;
     private String chromeDriverExecutable;
@@ -25,9 +24,10 @@ public class AppiumDevice {
     private String deviceState;
     private final String ipAddress;
 
-    public AppiumDevice(Device device, String ipAddress) {
+    public AppiumDevice(Device device, String ipAddress, String deviceOn) {
         this.device = device;
         this.ipAddress = ipAddress;
+        this.deviceOn = deviceOn;
         deviceState = AVAILABLE;
         chromeDriverPort = 0; //Setting as Zero initially
     }
@@ -141,5 +141,9 @@ public class AppiumDevice {
             e.printStackTrace();
         }
         return logFile;
+    }
+
+    public String getDeviceOn() {
+        return deviceOn;
     }
 }

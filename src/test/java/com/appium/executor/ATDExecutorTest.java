@@ -39,10 +39,11 @@ public class ATDExecutorTest {
     @BeforeSuite
     public void setUp() {
         appiumDeviceList = new ArrayList<>();
-        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10"));
-        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10"));
-        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10"));
-        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10"));
+        String cloudName = "Local";
+        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
+        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
+        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
+        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
 
         deviceAllocationManager = Mockito.mock(DeviceAllocationManager.class);
         when(deviceAllocationManager.getDevices()).thenReturn(appiumDeviceList);
