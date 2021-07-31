@@ -22,7 +22,8 @@ public class AppiumManagerFactory {
 
     @NotNull
     private static CloudAppiumManager createCloudAppiumManagerForCloud(String cloudName) {
-        if (cloudName.equalsIgnoreCase("pCloudy")) {
+        if (cloudName.equalsIgnoreCase("pCloudy")
+                || cloudName.equalsIgnoreCase("headspin")) {
             return new CloudAppiumManager(cloudName);
         } else {
             return new CloudAppiumManager();

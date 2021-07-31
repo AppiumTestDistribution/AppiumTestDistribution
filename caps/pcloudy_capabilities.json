@@ -14,7 +14,7 @@
     "pCloudy_EnablePerformanceData": "true",
     "pCloudy_EnableDeviceLogs": "true",
     "app": {
-      "local": "VodQA.apk"
+      "local": "./apps/TheApp-VR-v1.apk"
     }
   },
   "cloud": {
