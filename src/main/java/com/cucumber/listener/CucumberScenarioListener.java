@@ -236,7 +236,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void runFinishedHandler(TestRunFinished event) {
         LOGGER.info("runFinishedHandler: " + event.getResult().toString());
-        LOGGER.info(String.format("ThreadID: %d: afterSuite: \n", Thread.currentThread().getId()));
+        LOGGER.info(String.format("ThreadID: %d: afterSuite: %n", Thread.currentThread().getId()));
         try {
             appiumServerManager.stopAppiumServer();
         } catch (Exception e) {
