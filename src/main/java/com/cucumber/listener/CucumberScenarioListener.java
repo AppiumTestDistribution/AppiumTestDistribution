@@ -170,6 +170,13 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         return isPCloudy;
     }
 
+    private boolean isRunningOnHeadspin(AppiumDevice allocatedDevice) {
+        boolean isHeadspin = allocatedDevice.getDeviceOn().equalsIgnoreCase("headspin");
+        LOGGER.info(allocatedDevice.getDevice().getName() + ": running on: "
+                + allocatedDevice.getDeviceOn());
+        return isHeadspin;
+    }
+
     private String normaliseScenarioName(String scenarioName) {
         return scenarioName.replaceAll("[`~ !@#$%^&*()\\-=+\\[\\]{}\\\\|;:'\",<.>/?]", "_");
     }
@@ -200,7 +207,13 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 .getTestState("deviceInfo");
         if (isRunningOnpCloudy(allocatedDevice)) {
             String link = (String) driver.executeScript("pCloudy_getReportLink");
-            String message = "pCloudy Mobilab Report link available here: " + link;
+            String message = "pCloudy Report link available here: " + link;
+            LOGGER.info(message);
+            ReportPortal.emitLog(message, "DEBUG", new Date());
+        } else if (isRunningOnHeadspin(allocatedDevice)) {
+            String sessionId = driver.getSessionId().toString();
+            String link = "https://ui-dev.headspin.io/sessions/" + sessionId + "/waterfall";
+            String message = "Headspin Report link available here: " + link;
             LOGGER.info(message);
             ReportPortal.emitLog(message, "DEBUG", new Date());
         }
@@ -223,7 +236,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void runFinishedHandler(TestRunFinished event) {
         LOGGER.info("runFinishedHandler: " + event.getResult().toString());
-        LOGGER.info(String.format("ThreadID: %d: afterSuite: \n", Thread.currentThread().getId()));
+        LOGGER.info(String.format("ThreadID: %d: afterSuite: %n", Thread.currentThread().getId()));
         try {
             appiumServerManager.stopAppiumServer();
         } catch (Exception e) {
