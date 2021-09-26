@@ -47,7 +47,8 @@ public enum ConfigFileManager {
     }
 
     public String get() {
-        return getOverriddenStringValue(name(), defaultValue);
+        //return getOverriddenStringValue(name(), defaultValue);
+        return getOverriddenStringValue(name(), PROPERTIES.getProperty(name(), defaultValue));
     }
 
     public boolean isTrue() {
