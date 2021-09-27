@@ -85,8 +85,6 @@ public class ATDExecutor {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.appium.manager.AppiumParallelTestListener");
         listeners.add("com.appium.utils.RetryListener");
-        //listeners.add("com.deesite.config.DeeListeners"); // Dee
-        //listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener"); // Dee
         include(listeners, LISTENERS);
         include(groupsInclude, INCLUDE_GROUPS);
         include(groupsExclude, EXCLUDE_GROUPS);
@@ -123,8 +121,6 @@ public class ATDExecutor {
         suite.setVerbose(2);
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
-        //listeners.add("com.deesite.config.DeeListeners"); // Dee
-        //listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener"); // Dee
         include(listeners, LISTENERS);
         suite.setListeners(listeners);
         XmlTest test = new XmlTest(suite);
@@ -153,8 +149,6 @@ public class ATDExecutor {
         suite.setParallel(ParallelMode.METHODS);
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         listeners.add("com.appium.utils.RetryListener");
-        //listeners.add("com.deesite.config.DeeListeners"); // Dee
-        //listeners.add("com.epam.reportportal.testng.ReportPortalTestNGListener"); // Dee
         include(listeners, LISTENERS);
         suite.setListeners(listeners);
         CreateGroups createGroups = new CreateGroups(tests, methods, category, suite).invoke();
