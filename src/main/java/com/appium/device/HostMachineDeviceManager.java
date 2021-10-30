@@ -191,13 +191,38 @@ public class HostMachineDeviceManager {
                     JSONObject cloud = capabilities.getCapabilityObjectFromKey("cloud");
 
                     String cloudName = capabilities.getCloudName(ip).toLowerCase();
-                    if (cloudName.equalsIgnoreCase("pCloudy")
-                            || cloudName.equalsIgnoreCase("headspin")) {
+                    if (cloudName.equalsIgnoreCase("pCloudy")) {
                         cloud.toMap().forEach((devicePlatform, devices) -> {
                             ((List) devices).forEach(o -> {
                                 Device d = new Device();
                                 d.setOs(devicePlatform);
                                 d.setOsVersion(((Map) o).get("osVersion").toString());
+                                d.setCloud(true);
+                                LOGGER.info("Device: " + d);
+                                cloudDevices.add(d);
+                            });
+                        });
+                    } else if (cloudName.equalsIgnoreCase("headspin")) {
+                        cloud.toMap().forEach((devicePlatform, devices) -> {
+                            ((List) devices).forEach(o -> {
+                                Device d = new Device();
+                                d.setOs(devicePlatform);
+
+                                String osVersion = String.valueOf(((Map) o).get("osVersion"));
+                                if (osVersion != null) {
+                                    d.setOsVersion(osVersion);
+                                }
+
+                                String deviceName = String.valueOf(((Map) o).get("deviceName"));
+                                if (deviceName != null) {
+                                    d.setName(deviceName);
+                                }
+
+                                String udid = String.valueOf(((Map) o).get("udid"));
+                                if (udid != null) {
+                                    d.setUdid(udid);
+                                }
+
                                 d.setCloud(true);
                                 LOGGER.info("Device: " + d);
                                 cloudDevices.add(d);
