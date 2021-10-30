@@ -208,19 +208,16 @@ public class HostMachineDeviceManager {
                                 Device d = new Device();
                                 d.setOs(devicePlatform);
 
-                                String osVersion = String.valueOf(((Map) o).get("osVersion"));
-                                if (osVersion != null) {
-                                    d.setOsVersion(osVersion);
+                                if (((Map) o).get("osVersion") != null) {
+                                    d.setOsVersion(String.valueOf(((Map) o).get("osVersion")));
                                 }
 
-                                String deviceName = String.valueOf(((Map) o).get("deviceName"));
-                                if (deviceName != null) {
-                                    d.setName(deviceName);
+                                if (((Map) o).get("deviceName") != null) {
+                                    d.setName(String.valueOf(((Map) o).get("deviceName")));
                                 }
 
-                                String udid = String.valueOf(((Map) o).get("udid"));
-                                if (udid != null) {
-                                    d.setUdid(udid);
+                                if (((Map) o).get("udid") != null) {
+                                    d.setUdid(String.valueOf(((Map) o).get("udid")));
                                 }
 
                                 d.setCloud(true);

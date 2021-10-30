@@ -73,13 +73,13 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         AppiumDevice deviceProperty = AppiumDeviceManager.getAppiumDevice();
 
         String deviceName = deviceProperty.getDevice().getName();
-        if (!deviceName.equals("null")) {
+        if (deviceName != null) {
             desiredCapabilities.setCapability("device", deviceName);
             desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
         }
 
         String udid = deviceProperty.getDevice().getUdid();
-        if (!udid.equals("null")) {
+        if (udid != null) {
             desiredCapabilities.setCapability(MobileCapabilityType.UDID, udid);
         }
 
@@ -87,7 +87,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         if (null == pCloudyApiKey) {
             desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
             String osVersion = deviceProperty.getDevice().getOsVersion();
-            if (!osVersion.equals("null")) {
+
+            if (osVersion != null) {
                 desiredCapabilities.setCapability(CapabilityType.VERSION, osVersion);
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, osVersion);
             }

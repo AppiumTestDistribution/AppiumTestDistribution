@@ -74,6 +74,10 @@ Add the below dependencies in your pom.xml (Master)
 
 ## [Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
+## [Configure-tests-for-HeadSpin](caps/headspin_capabilities.json)
+
+No changes required. `Platform='android' CONFIG_FILE='./configs/headspin_config.properties' mvn clean -Dtest=Runner test`
+
 ## [Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
 
 ## Video log Prerequisites
