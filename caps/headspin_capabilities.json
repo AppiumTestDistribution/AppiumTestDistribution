@@ -1,0 +1,33 @@
+{
+  "android": {
+    "automationName": "UiAutomator2",
+    "newCommandTimeout": 600,
+    "platformName": "Android",
+    "headspin:capture": false,
+    "app": {
+      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
+    },
+  },
+  "iOS": {
+    "platformName": "iOS",
+    "automationName": "XCUITest",
+    "bundleId": "com.apple.Preferences"
+  },
+  "cloud": {
+    "android": [
+      {
+        "udid": "ZY223P3W32"
+      },
+      {
+        "udid": "os_version:>=10"
+      }
+    ]
+  },
+  "hostMachines": [
+    {
+      "isCloud": true,
+      "machineIP": "appium-dev.headspin.io:443/v0/<api token>",
+      "cloudName": "headspin"
+    }
+  ]
+}
