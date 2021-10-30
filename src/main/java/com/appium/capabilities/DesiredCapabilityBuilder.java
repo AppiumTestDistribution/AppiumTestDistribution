@@ -86,8 +86,8 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         Object pCloudyApiKey = desiredCapabilities.getCapability("pCloudy_ApiKey");
         if (null == pCloudyApiKey) {
             desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-            String osVersion = deviceProperty.getDevice().getOsVersion();
 
+            String osVersion = deviceProperty.getDevice().getOsVersion();
             if (osVersion != null) {
                 desiredCapabilities.setCapability(CapabilityType.VERSION, osVersion);
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, osVersion);
