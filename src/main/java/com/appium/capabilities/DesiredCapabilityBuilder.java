@@ -71,17 +71,27 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             capabilityObject(desiredCapabilities, platFormCapabilities, key);
         });
         AppiumDevice deviceProperty = AppiumDeviceManager.getAppiumDevice();
-        desiredCapabilities.setCapability("device",
-            deviceProperty.getDevice().getName());
-        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-            deviceProperty.getDevice().getName());
+
+        String deviceName = deviceProperty.getDevice().getName();
+        if (deviceName != null) {
+            desiredCapabilities.setCapability("device", deviceName);
+            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+        }
+
+        String udid = deviceProperty.getDevice().getUdid();
+        if (udid != null) {
+            desiredCapabilities.setCapability(MobileCapabilityType.UDID, udid);
+        }
+
         Object pCloudyApiKey = desiredCapabilities.getCapability("pCloudy_ApiKey");
         if (null == pCloudyApiKey) {
             desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-            desiredCapabilities.setCapability(CapabilityType.VERSION,
-                    deviceProperty.getDevice().getOsVersion());
-            desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                    deviceProperty.getDevice().getOsVersion());
+
+            String osVersion = deviceProperty.getDevice().getOsVersion();
+            if (osVersion != null) {
+                desiredCapabilities.setCapability(CapabilityType.VERSION, osVersion);
+                desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, osVersion);
+            }
         }
         LOGGER.info("desiredCapabilityForCloud: " + desiredCapabilities);
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);

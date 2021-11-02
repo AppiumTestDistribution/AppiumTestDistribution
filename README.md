@@ -72,6 +72,8 @@ Add the below dependencies in your pom.xml (Master)
 
 ## [Configure-tests-for-GenyMotionCloud](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-Genymotion-cloud)
 
+## [Configure-tests-for-HeadSpin](caps/headspin_capabilities.json)
+
 ## [Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
 ## [Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
