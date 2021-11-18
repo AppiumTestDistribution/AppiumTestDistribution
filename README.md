@@ -111,7 +111,7 @@ A. With XCUITest framework, that is available from iOS version 9.3, it's possibl
 
 In order to get information about bundle id of pre-installed application:
 * connect device with application installed;
-* run ideviceinstaller -l or ideviceinstaller -l -u {udid of the device} in case more then one device connected to the host;
+* run ideviceinstaller -l or ideviceinstaller -l -u {udid of the device} in case more than one device connected to the host;
 * in the list - find name of the application followed by its bundle id.
 
 After that, instead of `app` capability `bundleId` should be used with application's bundle id as a value.
