@@ -1,10 +1,12 @@
 package com.appium.manager;
 
+import com.appium.utils.OverriddenVariable;
 import com.github.device.Device;
 import org.apache.log4j.Logger;
 
 import java.util.List;
 
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 import static java.lang.System.getenv;
 import static java.text.MessageFormat.format;
 
@@ -27,7 +29,8 @@ public class CloudAppiumManager implements IAppiumManager {
 
     @Override
     public String getRemoteWDHubIP(String host) {
-        String format = format(url, getenv("CLOUD_USER"), getenv("CLOUD_KEY"), host);
+        String format = format(url, getOverriddenStringValue("CLOUD_USER"),
+                getOverriddenStringValue("CLOUD_KEY"), host);
         LOGGER.info("getRemoteWDHubIP: " + format);
         return format;
     }

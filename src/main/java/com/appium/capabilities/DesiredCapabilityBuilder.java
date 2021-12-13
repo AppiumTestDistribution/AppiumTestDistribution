@@ -71,7 +71,6 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             capabilityObject(desiredCapabilities, platFormCapabilities, key);
         });
         AppiumDevice deviceProperty = AppiumDeviceManager.getAppiumDevice();
-
         String deviceName = deviceProperty.getDevice().getName();
         if (deviceName != null) {
             desiredCapabilities.setCapability("device", deviceName);
