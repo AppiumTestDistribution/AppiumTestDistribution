@@ -10,7 +10,7 @@
     "autoAcceptAlerts": true,
     "headspin:capture": false,
     "app": {
-      "local": "./apps/TheApp-VR-v1.apk"
+      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
     }
   },
   "iOS": {
