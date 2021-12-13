@@ -8,9 +8,15 @@
     "autoGrantPermissions": true,
     "noReset": true,
     "autoAcceptAlerts": true,
+    "headspin:capture": false,
     "app": {
       "local": "./apps/TheApp-VR-v1.apk"
     }
+  },
+  "iOS": {
+    "platformName": "iOS",
+    "automationName": "XCUITest",
+    "bundleId": "com.apple.Preferences"
   },
   "cloud": {
     "android": [
