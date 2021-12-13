@@ -48,7 +48,7 @@ Add the below dependencies in your pom.xml (Master)
     <dependency>
       <groupId>com.github.saikrishna321</groupId>
       <artifactId>AppiumTestDistribution</artifactId>
-      <version>11.0.1</version>
+      <version>12.0.3</version>
     </dependency>
    ```
 
@@ -60,7 +60,7 @@ Add the below dependencies in your pom.xml (Master)
  Clone the project (https://github.com/saikrishna321/PageObjectPatternAppium)
  If your application is cross-platform and you end up  building a PageObjectPattern Framework. Then you can also run those tests across Android and iOS devices connected to the same Mac OSX Host.
  
- (e.g. If you have 3 Android and 3 iOS devices connected to the same machine, you will be able to execute these test parallel on both platforms)
+ (e.g. If you have 3 Android and 3 iOS devices connected to the same machine, you will be able to execute these tests parallel on both platforms)
 
 ## [Configure-tests-for-TestNG](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-tests-for-TestNG)
 
@@ -71,6 +71,8 @@ Add the below dependencies in your pom.xml (Master)
 ## [Configure-tests-for-Browserstack](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-BrowserStack-cloud)
 
 ## [Configure-tests-for-GenyMotionCloud](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-Genymotion-cloud)
+
+## [Configure-tests-for-HeadSpin](caps/headspin_capabilities.json)
 
 ## [Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
@@ -98,34 +100,30 @@ Thanks to
 * [@SrinivasanTarget](https://github.com/SrinivasanTarget) for contributing on iOS parallel.
 * [@anandbagmar](https://github.com/anandbagmar) for fixing cucumber support.
 
-### Reports
-
-Your should see report file generated as ExtentReport.html under the target folder.
-
 ### Parallel Run
 [![ScreenShot](image/run.png)](https://www.youtube.com/watch?v=X2OaLAqikMI&t=57s)
 
 
 ## FAQ
-**Q. Can I automate application which I already have installed/ downloaded from App store?**
+**Q. Can I automate application which I already have installed/downloaded from App store?**
 
-A. With XCUITest framework, that is available from ios version 9.3, it's possible to execute Native (WebViews content would not be reachable) application using it's bundle id.
+A. With XCUITest framework, that is available from iOS version 9.3, it's possible to execute Native (WebViews content would not be reachable) application using its bundle id.
 
 In order to get information about bundle id of pre-installed application:
 * connect device with application installed;
-* run ideviceinstaller -l or ideviceinstaller -l -u {udid of the device} in case if more then one device connected to the host;
+* run ideviceinstaller -l or ideviceinstaller -l -u {udid of the device} in case more than one device connected to the host;
 * in the list - find name of the application followed by its bundle id.
 
 After that, instead of `app` capability `bundleId` should be used with application's bundle id as a value.
 Since Appium still needs WDA to be built and deployed on the real device - valid certificate and provisioning profile will be needed. More information could be found [here](https://github.com/imurchie/appium-xcuitest-driver/blob/isaac-rs/docs/real-device-config.md)
 
-In case if test need to interact with WebViews and/or ios version has no support of XCUITest - Appium would need instruments application which is in debug mode, it will not work with any application which is not in debug mode. Read more about it [here](https://discuss.appium.io/t/appium-ios-app-testing/105/8)
+In case the tests need to interact with WebViews and/or iOS version has no support of XCUITest - Appium would need instruments application which is in debug mode. It will not work with any application which is not in debug mode. Read more about it [here](https://discuss.appium.io/t/appium-ios-app-testing/105/8)
 
-**Q. Is this framework supports to run multiple IOS simulators?**
+**Q. Does this framework support running multiple iOS simulators?**
 
-A. Yes, Currently Appium does support multiple simulators with latest 1.6.6.beta with Xcode9-beta.
+A. Yes, currently Appium does support multiple simulators with latest 1.6.6.beta with Xcode9-beta.
 
-**Q. Unable to instruments application or instruments crashed on start up?**
+**Q. Unable to instrument application or instruments crashed on start up?**
 
 A. Below are few possible causes
 * (app/ipa) is not on debug mode.
@@ -134,11 +132,11 @@ A. Below are few possible causes
 
 **Q. Unable to install application during automation?**
 
-A. A quick solution would try to install the application using "ideviceinstaller -i ipa_name", if that does not work, check app is built with the valid provisioning profile.
+A. A quick solution would be to try to install the application using "ideviceinstaller -i ipa_name". If that does not work, check app is built with a valid provisioning profile.
 
 **Q. Can I run tests on iOS app for which I have source code**(e.g:"[Wordpress](https://github.com/wordpress-mobile/WordPress-iOS.git)") **on real devices?**
 
-A. Yes, with a Valid provisioning profile this app can be installed on your device.
+A. Yes, with a valid provisioning profile, this app can be installed on your device.
 (Note: The application must be signed with a valid developer certificate and your device should be added to the provisioning profile)
 
 
