@@ -8,6 +8,7 @@ import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
 import com.appium.manager.DeviceAllocationManager;
+import com.appium.utils.CommandPrompt;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import com.epam.reportportal.service.ReportPortal;
@@ -20,12 +21,16 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
 public class CucumberScenarioListener implements ConcurrentEventListener {
     private static final Logger LOGGER = Logger.getLogger(CucumberScenarioListener.class.getName());
@@ -168,6 +173,13 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         return isPCloudy;
     }
 
+    private boolean isRunningOnBrowserStack(AppiumDevice allocatedDevice) {
+        boolean isBrowserStack = allocatedDevice.getDeviceOn().equalsIgnoreCase("browserstack");
+        LOGGER.info(allocatedDevice.getDevice().getName() + ": running on: "
+                + allocatedDevice.getDeviceOn());
+        return isBrowserStack;
+    }
+
     private boolean isRunningOnHeadspin(AppiumDevice allocatedDevice) {
         boolean isHeadspin = allocatedDevice.getDeviceOn().equalsIgnoreCase("headspin");
         LOGGER.info(allocatedDevice.getDevice().getName() + ": running on: "
@@ -214,6 +226,12 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             String message = "Headspin Report link available here: " + link;
             LOGGER.info(message);
             ReportPortal.emitLog(message, "DEBUG", new Date());
+        } else if (isRunningOnBrowserStack(allocatedDevice)) {
+            String sessionId = driver.getSessionId().toString();
+            String link = getReportLinkFromBrowserStack(sessionId);
+            String message = "BrowserStack Report link available here: " + link;
+            LOGGER.info(message);
+            ReportPortal.emitLog(message, "DEBUG", new Date());
         }
 
         deviceAllocationManager.freeDevice();
@@ -230,6 +248,28 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         }
         SessionContext.remove(threadId);
         LOGGER.info("$$$$$   TEST-CASE  -- " + scenarioName + "  ENDED   $$$$$");
+    }
+
+    private static String getReportLinkFromBrowserStack(String sessionId) {
+        String reportLink = "";
+        String cloudUser = getOverriddenStringValue("CLOUD_USER");
+        String cloudPassword = getOverriddenStringValue("CLOUD_KEY");
+        String curlCommand = "curl --insecure -u \"" + cloudUser + ":" + cloudPassword + "\" -X GET \"https://api-cloud.browserstack.com/app-automate/sessions/" + sessionId + ".json\"";
+        LOGGER.debug(String.format("Curl command: '%s'", curlCommand));
+        CommandPrompt cmd = new CommandPrompt();
+        String resultStdOut = null;
+        try {
+            resultStdOut = cmd.runCommandThruProcess(curlCommand);
+            LOGGER.debug(String.format("Response from BrowserStack - '%s'", resultStdOut));
+            JSONObject pr = new JSONObject(resultStdOut);
+            JSONObject automation_session = pr.getJSONObject("automation_session");
+            reportLink = automation_session.getString("browser_url");
+            LOGGER.debug("reportLink: " + reportLink);
+        } catch (IOException e) {
+            LOGGER.debug("Unable to get report link from BrowserStack: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return reportLink;
     }
 
     private void runFinishedHandler(TestRunFinished event) {
