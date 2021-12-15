@@ -26,7 +26,7 @@ public class AndroidDeviceConfiguration {
     }
 
     /*
-     * This method gets the device model name
+     * This method gets the device model name..
      */
     public String getDeviceModel() {
         AppiumDevice getModel = getDevice();
