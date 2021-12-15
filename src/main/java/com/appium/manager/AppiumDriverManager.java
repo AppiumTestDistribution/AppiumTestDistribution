@@ -95,6 +95,7 @@ public class AppiumDriverManager {
     private AppiumDriver<MobileElement> startAppiumDriverInstance(
             Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
+                System.out.println("inside ATD:beforeInvocation");
         LOGGER.info("startAppiumDriverInstance: capabilities: " + desiredCapabilities);
         AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
