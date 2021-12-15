@@ -58,6 +58,7 @@ public class AppiumDriverManager {
     private AppiumDriver createAppiumDriver(DesiredCapabilities desiredCapabilities,
                                              String remoteWDHubIP)
             throws MalformedURLException {
+                System.out.println("inside createAppiumDriver");
         AppiumDriver currentDriverSession;
         MobilePlatform mobilePlatform = getMobilePlatform();
         switch (mobilePlatform) {
@@ -104,6 +105,7 @@ public class AppiumDriverManager {
     // Should be used by Cucumber as well
     public AppiumDriver<MobileElement> startAppiumDriverInstance() throws Exception {
         LOGGER.info("startAppiumDriverInstance");
+                System.out.println("inside startAppiumDriverInstance");
         return startAppiumDriverInstance(Optional.ofNullable(buildDesiredCapabilities(CAPS.get())));
     }
 
