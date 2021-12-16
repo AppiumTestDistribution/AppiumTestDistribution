@@ -92,7 +92,9 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, osVersion);
             }
         }
-        LOGGER.info("desiredCapabilityForCloud: " + desiredCapabilities);
+        LOGGER.info("desiredCapabilityForCloud: ");
+        desiredCapabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + desiredCapabilities.getCapability(key)));
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 

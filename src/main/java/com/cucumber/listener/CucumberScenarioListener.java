@@ -74,8 +74,9 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private AppiumDevice updateAvailableDeviceInformation(AppiumDevice availableDevice) {
         org.openqa.selenium.Capabilities capabilities = AppiumDriverManager.getDriver()
                 .getCapabilities();
-        LOGGER.info("allocateDeviceAndStartDriver: "
-                + capabilities);
+        LOGGER.info("updateAvailableDeviceInformation");
+        capabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + capabilities.getCapability(key)));
 
         String udid = capabilities.is("udid")
                               ? getCapabilityFor(capabilities, "udid")

@@ -40,16 +40,17 @@ public class AppiumDriverManager {
     protected static void setDriver(AppiumDriver driver) {
         LOGGER.info("AppiumDriverManager: Created AppiumDriver with capabilities: ");
         Capabilities capabilities = driver.getCapabilities();
-        capabilities.getCapabilityNames().forEach(key -> {
-            LOGGER.info("\t" + key + ":: " + capabilities.getCapability(key));
-        });
+        capabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + capabilities.getCapability(key)));
         appiumDriver.set(driver);
     }
 
 
     private AppiumDriver<MobileElement> initialiseDriver(DesiredCapabilities desiredCapabilities)
             throws Exception {
-        LOGGER.info("Initialise Driver with Capabilities: " + desiredCapabilities.toString());
+        LOGGER.info("Initialise Driver with Capabilities: ");
+        desiredCapabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + desiredCapabilities.getCapability(key)));
         String remoteWDHubIP = getRemoteWDHubIP();
         return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
@@ -78,9 +79,8 @@ public class AppiumDriverManager {
         }
         LOGGER.info("Session Created for "
                 + AppiumDeviceManager.getMobilePlatform().name()
-                + " ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+                + "\n\tSession Id: " + currentDriverSession.getSessionId()
+                + "\n\tUDID: " + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 
@@ -94,7 +94,7 @@ public class AppiumDriverManager {
     private AppiumDriver<MobileElement> startAppiumDriverInstance(
             Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
-        LOGGER.info("startAppiumDriverInstance: capabilities: " + desiredCapabilities);
+        LOGGER.info("startAppiumDriverInstance");
         AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
