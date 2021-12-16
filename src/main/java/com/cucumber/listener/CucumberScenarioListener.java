@@ -88,7 +88,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         device.setDeviceModel(
                 getCapabilityFor(capabilities, "deviceModel"));
         device.setName(
-                getCapabilityFor(capabilities, "deviceName"));
+                getCapabilityFor(capabilities, "device"));
         device.setApiLevel(
                 getCapabilityFor(capabilities, "deviceApiLevel"));
         device.setDeviceType(
