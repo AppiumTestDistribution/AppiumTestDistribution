@@ -93,7 +93,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        allocateDeviceAndStartDriver(iTestResult);
+        String testMethodName = iInvokedMethod.getTestMethod().getMethodName();
+        allocateDeviceAndStartDriver(testMethodName, iTestResult);
         if (!isCloudExecution()) {
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
@@ -110,7 +111,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             }
         }
         TestExecutionContext testExecutionContext =
-                new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
+                new TestExecutionContext(testMethodName);
         testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
                 AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
@@ -118,13 +119,13 @@ public final class AppiumParallelMethodTestListener extends Helpers
         queueBeforeInvocationListeners(iInvokedMethod, iTestResult, listeners);
     }
 
-    private void allocateDeviceAndStartDriver(ITestResult iTestResult) {
+    private void allocateDeviceAndStartDriver(String testMethodName, ITestResult iTestResult) {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
             if (driver == null || driver.getSessionId() == null) {
                 deviceAllocationManager.allocateDevice(deviceAllocationManager
                     .getNextAvailableDevice());
-                appiumDriverManager.startAppiumDriverInstance();
+                appiumDriverManager.startAppiumDriverInstance(testMethodName);
                 if (!isCloudExecution()) {
                     startReportLogging(iTestResult);
                 }

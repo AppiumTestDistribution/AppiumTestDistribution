@@ -56,13 +56,13 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                         .getMongoDbHostAndPort().get("atdPort"));
     }
 
-    private AppiumDevice allocateDeviceAndStartDriver() {
+    private AppiumDevice allocateDeviceAndStartDriver(String testMethodName) {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
             AppiumDevice availableDevice = deviceAllocationManager.getNextAvailableDevice();
             deviceAllocationManager.allocateDevice(availableDevice);
             if (driver == null || driver.getSessionId() == null) {
-                appiumDriverManager.startAppiumDriverInstance();
+                appiumDriverManager.startAppiumDriverInstance(testMethodName);
             }
             return updateAvailableDeviceInformation(availableDevice);
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
-        AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
+        AppiumDevice allocatedDevice = allocateDeviceAndStartDriver(scenarioName);
         String deviceLogFileName = null;
 
         try {

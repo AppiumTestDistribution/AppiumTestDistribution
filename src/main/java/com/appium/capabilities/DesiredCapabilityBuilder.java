@@ -50,20 +50,20 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         return desiredCapabilitiesThreadLocal.get();
     }
 
-    public void buildDesiredCapability(String jsonPath) throws Exception {
+    public void buildDesiredCapability(String testMethodName, String jsonPath) throws Exception {
         int port = AppiumDeviceManager.getAppiumDevice().getPort();
         String platform = AppiumDeviceManager.getAppiumDevice().getDevice().getOs();
         boolean isCloud = AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (isCloud) {
-            desiredCapabilityForCloud(platform, jsonPath, desiredCapabilities);
+            desiredCapabilityForCloud(testMethodName, platform, jsonPath, desiredCapabilities);
         } else {
             desiredCapabilityForLocalAndRemoteATD(platform, jsonPath, port, desiredCapabilities);
 
         }
     }
 
-    private void desiredCapabilityForCloud(String platform, String jsonPath,
+    private void desiredCapabilityForCloud(String testMethodName, String platform, String jsonPath,
                                            DesiredCapabilities desiredCapabilities) {
         JSONObject platFormCapabilities = new JsonParser(jsonPath).getObjectFromJSON()
             .getJSONObject(platform);
@@ -80,6 +80,10 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         String udid = deviceProperty.getDevice().getUdid();
         if (udid != null) {
             desiredCapabilities.setCapability(MobileCapabilityType.UDID, udid);
+        }
+
+        if (!desiredCapabilities.getCapabilityNames().contains("name")) {
+            desiredCapabilities.setCapability("name", testMethodName);
         }
 
         Object pCloudyApiKey = desiredCapabilities.getCapability("pCloudy_ApiKey");

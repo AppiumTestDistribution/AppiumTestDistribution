@@ -102,12 +102,15 @@ public class AppiumDriverManager {
     }
 
     // Should be used by Cucumber as well
-    public AppiumDriver<MobileElement> startAppiumDriverInstance() throws Exception {
+    public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName)
+            throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-        return startAppiumDriverInstance(Optional.ofNullable(buildDesiredCapabilities(CAPS.get())));
+        return startAppiumDriverInstance(
+                Optional.ofNullable(buildDesiredCapabilities(testMethodName, CAPS.get())));
     }
 
-    private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath)
+    private DesiredCapabilities buildDesiredCapabilities(String testMethodName,
+                                                         String capabilityFilePath)
         throws Exception {
         String absolutePathToCapabilities = capabilityFilePath;
         if (new File(capabilityFilePath).exists()) {
@@ -117,7 +120,7 @@ public class AppiumDriverManager {
                     .toAbsolutePath().toString();
             }
             desiredCapabilityBuilder
-                .buildDesiredCapability(absolutePathToCapabilities);
+                .buildDesiredCapability(testMethodName, absolutePathToCapabilities);
             return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
             throw new RuntimeException("Capability file not found");
