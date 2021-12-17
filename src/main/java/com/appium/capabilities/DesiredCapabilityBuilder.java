@@ -110,11 +110,11 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
                 .getHostArtifacts();
             String hostAppPath = hostAppPath(values, hostArtifacts);
-            Path path = FileSystems.getDefault().getPath(hostAppPath);
             if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
                 || new UrlValidator().isValid(hostAppPath)) {
                 desiredCapabilities.setCapability(appCapability, hostAppPath);
             } else {
+                Path path = FileSystems.getDefault().getPath(hostAppPath);
                 desiredCapabilities.setCapability(appCapability,
                     path.normalize().toAbsolutePath().toString());
             }
