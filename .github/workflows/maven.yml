@@ -66,3 +66,17 @@ jobs:
       - name: 'Run Test on Android'
         run:  Platform='android' CLOUD_USER=${{secrets.BROWSERSTACK_USERNAME}} CLOUD_KEY=${{secrets.BROWSERSTACK_ACCESS_KEY}} CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
+  saucelabs:
+    name: SauceLabs test for Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Sauce Step
+        uses: moatazeldebsy/sauce-labs-app-automate-action@V1.0.1
+        id: sauceLabs Test
+        env:
+          SAUCELABS_ACCESS_KEY: ${{ secrets.SAUCELABS_ACCESS_KEY }}
+          SAUCELABS_USERNAME: ${{ secrets.SAUCELABS_USERNAME }}
+      - name: 'Run Tests on Android'
+        run: Platform='android' CLOUD_USER=${{secrets.SAUCELABS_USERNAME}} CLOUD_KEY=${{secrets.SAUCELABS_ACCESS_KEY}} CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
