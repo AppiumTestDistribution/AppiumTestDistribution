@@ -9,16 +9,6 @@ import org.testng.annotations.Test;
 
 @Test(groups = { "end-to-end-test" })
 public class SliderTest extends UserBaseTest {
-    @BeforeMethod
-    public void beforeMethod() {
-        System.out.println("Before method in SliderTest.");
-    }
-
-    @AfterMethod
-    public void afterMethod() {
-        System.out.println("After method in SliderTest.");
-    }
-
     @Test
     public void dragNDrop() {
         login("login").click();
