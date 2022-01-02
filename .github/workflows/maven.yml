@@ -40,3 +40,29 @@ jobs:
           xcrun simctl list
       - name: Execute tests
         run: mvn clean compile
+
+  browserstack:
+    name: Browser Stack test for Android
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
+        uses: browserstack/github-actions/setup-env@master
+        with:
+          username: ${{ secrets.BROWSERSTACK_USERNAME }}
+          access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+
+      - name: 'BrowserStack Local Tunnel Setup'  # Invokes the setup-local action
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: start
+          local-identifier: random
+
+      # The next 3 steps are for building the web application to be tested and starting the web server on the runner environment
+
+      - name: 'Checkout the repository'
+        uses: actions/checkout@v2
+
+      - name: 'Run Test on Android'
+        run:  Platform='android' CLOUD_USER=${{secrets.BROWSERSTACK_USERNAME}} CLOUD_KEY=${{secrets.BROWSERSTACK_ACCESS_KEY}} CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+
