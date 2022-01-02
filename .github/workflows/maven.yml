@@ -74,7 +74,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Sauce Step
         uses: moatazeldebsy/sauce-labs-app-automate-action@V1.0.1
-        id: sauceLabs Test
         env:
           SAUCELABS_ACCESS_KEY: ${{ secrets.SAUCELABS_ACCESS_KEY }}
           SAUCELABS_USERNAME: ${{ secrets.SAUCELABS_USERNAME }}
