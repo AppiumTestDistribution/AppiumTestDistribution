@@ -23,7 +23,7 @@
   "cloud": {
     "android": [
       {
-        "deviceName": "GalaxyS7FHDGoogleAPI",
+        "deviceName": "Google Pixel.*",
         "osVersion": "8.1"
       }
     ],
