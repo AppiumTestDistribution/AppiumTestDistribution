@@ -23,7 +23,7 @@
   "cloud": {
     "android": [
       {
-        "deviceName": "Google Pixel.*",
+        "deviceName": "Samsung Galaxy S9 Plus FHD GoogleAPI Emulator",
         "osVersion": "8.1"
       }
     ],
