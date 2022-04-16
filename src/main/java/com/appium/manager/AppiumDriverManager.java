@@ -112,15 +112,9 @@ public class AppiumDriverManager {
     private DesiredCapabilities buildDesiredCapabilities(String testMethodName,
                                                          String capabilityFilePath)
         throws Exception {
-        String absolutePathToCapabilities = capabilityFilePath;
         if (new File(capabilityFilePath).exists()) {
-            Path path = FileSystems.getDefault().getPath(capabilityFilePath);
-            if (!path.getParent().isAbsolute()) {
-                absolutePathToCapabilities = path.normalize()
-                    .toAbsolutePath().toString();
-            }
             desiredCapabilityBuilder
-                .buildDesiredCapability(testMethodName, absolutePathToCapabilities);
+                .buildDesiredCapability(testMethodName);
             return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
             throw new RuntimeException("Capability file not found");
