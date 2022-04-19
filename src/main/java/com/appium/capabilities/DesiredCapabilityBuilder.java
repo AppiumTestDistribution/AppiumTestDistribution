@@ -5,7 +5,6 @@ import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
-import com.appium.utils.ArtifactsUploader;
 import com.appium.utils.AvailablePorts;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -24,7 +23,7 @@ import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 /**
  * Created by saikrisv on 20/05/17.
  */
-public class DesiredCapabilityBuilder extends ArtifactsUploader {
+public class DesiredCapabilityBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(DesiredCapabilityBuilder.class.getName());
     public static final String APP_PACKAGE = "APP_PACKAGE";
