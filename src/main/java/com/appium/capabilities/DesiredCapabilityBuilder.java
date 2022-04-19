@@ -30,9 +30,6 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
     public static final String APP_PACKAGE = "APP_PACKAGE";
     private AvailablePorts availablePorts;
 
-    public static ThreadLocal<DesiredCapabilities> desiredCapabilitiesThreadLocal
-        = new ThreadLocal<>();
-
     public DesiredCapabilityBuilder() {
         super();
         availablePorts = new AvailablePorts();
@@ -188,7 +185,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             appPath = platFormCapabilities.getJSONObject("app").getString("cloud");
         } else {
             appPath = new File(platFormCapabilities.getJSONObject("app")
-                    .getString("local")).getAbsolutePath();
+                    .getString("local")).getPath();
         }
         return appPath;
     }

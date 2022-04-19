@@ -26,12 +26,7 @@ import static com.appium.utils.ConfigFileManager.CAPS;
 
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver = new ThreadLocal<>();
-    private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private static final Logger LOGGER = Logger.getLogger(AppiumDriverManager.class.getName());
-
-    public AppiumDriverManager() {
-        desiredCapabilityBuilder = new DesiredCapabilityBuilder();
-    }
 
     public static AppiumDriver getDriver() {
         return appiumDriver.get();
@@ -121,7 +116,7 @@ public class AppiumDriverManager {
                                                          String capabilityFilePath)
         throws Exception {
         if (new File(capabilityFilePath).exists()) {
-            return desiredCapabilityBuilder
+            return new DesiredCapabilityBuilder()
                 .buildDesiredCapability(testMethodName, capabilityFilePath);
         } else {
             throw new RuntimeException("Capability file not found");
