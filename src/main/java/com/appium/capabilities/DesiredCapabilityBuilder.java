@@ -167,34 +167,37 @@ public class DesiredCapabilityBuilder {
                                     String capabilityFilePath) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject platFormCapabilities;
+        JSONObject fullCapabilities;
         if (CAPS.get().equalsIgnoreCase(capabilityFilePath)) {
             LOGGER.info("Capabilities file is not specified. Using default capabilities file");
-            platFormCapabilities = Capabilities.getInstance()
-                    .getCapabilities()
+            fullCapabilities = Capabilities.getInstance()
+                    .getCapabilities();
+            platFormCapabilities = fullCapabilities
                     .getJSONObject(platform);
         } else {
             LOGGER.info("Capabilities file is specified. Using specified capabilities file: "
                                 + capabilityFilePath);
-            JSONObject capabilitiesForAnotherApp = Capabilities.getInstance()
+            fullCapabilities = Capabilities.getInstance()
                     .createInstance(capabilityFilePath);
-            platFormCapabilities = capabilitiesForAnotherApp.getJSONObject(platform);
+            platFormCapabilities = fullCapabilities.getJSONObject(platform);
         }
-        JSONObject finalPlatFormCapabilities = platFormCapabilities;
+        JSONObject finalPlatformCapabilities = platFormCapabilities;
         platFormCapabilities.keySet().forEach(key -> {
-            desiredCapabilities.setCapability(key, finalPlatFormCapabilities.get(key));
+            desiredCapabilities.setCapability(key, finalPlatformCapabilities.get(key));
         });
-        desiredCapabilities.setCapability("app", getAppPathInCapabilities(platFormCapabilities));
+        desiredCapabilities.setCapability("app",
+                getAppPathInCapabilities(platform, fullCapabilities));
         return desiredCapabilities;
     }
 
-    private String getAppPathInCapabilities(JSONObject platFormCapabilities) {
+    private String getAppPathInCapabilities(String platform, JSONObject fullCapabilities) {
+        ArtifactsUploader artifactsUploader = new ArtifactsUploader(fullCapabilities);
+        artifactsUploader.initializeArtifacts();
         String appPath = null;
-        if (platFormCapabilities.has("app")) {
-            ArtifactsUploader artifactsUploader = new ArtifactsUploader(platFormCapabilities);
-            artifactsUploader.initializeArtifacts();
-            JSONObject app = platFormCapabilities.getJSONObject("app");
+        if (fullCapabilities.getJSONObject(platform).has("app")) {
+            JSONObject app = fullCapabilities.getJSONObject(platform).getJSONObject("app");
             List<HostArtifact> hostArtifacts = artifactsUploader.getHostArtifacts();
-            Object values = platFormCapabilities.get("app");
+            Object values = fullCapabilities.getJSONObject(platform).get("app");
             String hostAppPath = this.hostAppPath(values, hostArtifacts);
             if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
                     && !(new UrlValidator()).isValid(hostAppPath)) {
