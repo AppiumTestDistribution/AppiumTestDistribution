@@ -5,16 +5,25 @@ import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.utils.ArtifactsUploader;
 import com.appium.utils.AvailablePorts;
+import com.appium.utils.HostArtifact;
+import com.github.device.Device;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.appium.manager.AppiumDeviceManager.isPlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
@@ -180,12 +189,49 @@ public class DesiredCapabilityBuilder {
 
     private String getAppPathInCapabilities(JSONObject platFormCapabilities) {
         String appPath = null;
-        if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()) {
-            appPath = platFormCapabilities.getJSONObject("app").getString("cloud");
-        } else {
-            appPath = new File(platFormCapabilities.getJSONObject("app")
-                    .getString("local")).getPath();
+        if (platFormCapabilities.has("app")) {
+            ArtifactsUploader artifactsUploader = new ArtifactsUploader(platFormCapabilities);
+            artifactsUploader.initializeArtifacts();
+            JSONObject app = platFormCapabilities.getJSONObject("app");
+            List<HostArtifact> hostArtifacts = artifactsUploader.getHostArtifacts();
+            Object values = platFormCapabilities.get("app");
+            String hostAppPath = this.hostAppPath(values, hostArtifacts);
+            if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
+                    && !(new UrlValidator()).isValid(hostAppPath)) {
+                Path path = FileSystems.getDefault().getPath(hostAppPath);
+                appPath = path.normalize().toAbsolutePath().toString();
+            } else {
+                appPath = hostAppPath;
+            }
         }
+        return appPath;
+    }
+
+    private String hostAppPath(Object values, List<HostArtifact> hostArtifacts) {
+        HostArtifact hostArtifact = (HostArtifact)((List)hostArtifacts.stream().filter((s) -> {
+            return s.getHost().equalsIgnoreCase(AppiumDeviceManager.getAppiumDevice()
+                    .getHostName());
+        }).collect(Collectors.toList())).parallelStream().findFirst().get();
+        String appPath = hostArtifact.getArtifactPath("APK");
+        if (values instanceof JSONObject) {
+            Device device = AppiumDeviceManager.getAppiumDevice().getDevice();
+            if (!device.isCloud()) {
+                String deviceOS = device.getOs();
+                if (deviceOS.equalsIgnoreCase("iOS") && !device.isDevice()) {
+                    appPath = hostArtifact.getArtifactPath("APP");
+                } else if (deviceOS.equals("iOS") && device.isDevice()) {
+                    appPath = hostArtifact.getArtifactPath("IPA");
+                } else if (deviceOS.equals("windows") && device.isDevice()) {
+                    appPath = hostArtifact.getArtifactPath("EXE");
+                }
+            } else if (StringUtils.isEmpty(appPath)
+                    || ((JSONObject)values).has("simulator")
+                    || ((JSONObject)values).has("device")) {
+                appPath = hostArtifact.getArtifactPath(((JSONObject)values).has("simulator")
+                        ? "APP" : "IPA");
+            }
+        }
+
         return appPath;
     }
 
