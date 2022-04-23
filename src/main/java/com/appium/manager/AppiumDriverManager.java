@@ -26,12 +26,7 @@ import static com.appium.utils.ConfigFileManager.CAPS;
 
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver = new ThreadLocal<>();
-    private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private static final Logger LOGGER = Logger.getLogger(AppiumDriverManager.class.getName());
-
-    public AppiumDriverManager() {
-        desiredCapabilityBuilder = new DesiredCapabilityBuilder();
-    }
 
     public static AppiumDriver getDriver() {
         return appiumDriver.get();
@@ -104,18 +99,25 @@ public class AppiumDriverManager {
     // Should be used by Cucumber as well
     public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName)
             throws Exception {
-        LOGGER.info("startAppiumDriverInstance");
+        return startAppiumDriverInstance(testMethodName, CAPS.get());
+    }
+
+    // Should be used by Cucumber as well
+    public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName,
+                                                                 String capabilityFilePath)
+            throws Exception {
+        LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
+                testMethodName, capabilityFilePath));
         return startAppiumDriverInstance(
-                Optional.ofNullable(buildDesiredCapabilities(testMethodName, CAPS.get())));
+                Optional.ofNullable(buildDesiredCapabilities(testMethodName, capabilityFilePath)));
     }
 
     private DesiredCapabilities buildDesiredCapabilities(String testMethodName,
                                                          String capabilityFilePath)
         throws Exception {
         if (new File(capabilityFilePath).exists()) {
-            desiredCapabilityBuilder
-                .buildDesiredCapability(testMethodName);
-            return DesiredCapabilityBuilder.getDesiredCapability();
+            return new DesiredCapabilityBuilder()
+                .buildDesiredCapability(testMethodName, capabilityFilePath);
         } else {
             throw new RuntimeException("Capability file not found");
         }

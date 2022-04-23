@@ -14,31 +14,18 @@ import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
 public class ArtifactsUploader {
 
-    private static ArtifactsUploader instance;
-    private Capabilities capabilities;
+    private final JSONObject capabilities;
     private Api api = new Api();
     private List<HostArtifact> hostArtifacts;
 
-
-    protected ArtifactsUploader() {
-        try {
-            capabilities = Capabilities.getInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public ArtifactsUploader(JSONObject capabilities) {
+        this.capabilities = capabilities;
         hostArtifacts = new ArrayList<>();
     }
 
-    protected static ArtifactsUploader getInstance() {
-        if (instance == null) {
-            instance = new ArtifactsUploader();
-        }
-        return instance;
-    }
-
-    public void initializeArtifacts() throws Exception {
+    public void initializeArtifacts() {
         for (String hostMachine : HostMachineDeviceManager.getInstance()
-            .getDevicesByHost().getAllHosts()) {
+                .getDevicesByHost().getAllHosts()) {
             HashMap<String, String> artifactPaths = getArtifactForHost(hostMachine);
             HostArtifact hostArtifact = new HostArtifact(hostMachine, artifactPaths);
             hostArtifacts.add(hostArtifact);
@@ -57,25 +44,33 @@ public class ArtifactsUploader {
         return hostArtifacts;
     }
 
-    private String uploadFile(String hostMachine, String appPath) throws Exception {
-        JSONObject jsonObject = new JSONObject(api.uploadMultiPartFile(
-            new File(appPath).getCanonicalFile(), hostMachine));
+    private String uploadFile(String hostMachine, String appPath) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(api.uploadMultiPartFile(
+                    new File(appPath).getCanonicalFile(), hostMachine));
+        } catch (Exception e) {
+            throw new RuntimeException("Error in uploading file: " + appPath, e);
+        }
         return jsonObject.getString("filePath");
     }
 
-    private HashMap<String, String> getArtifactForHost(String hostMachine) throws Exception {
+    private HashMap<String, String> getArtifactForHost(String hostMachine) {
         String platform = getOverriddenStringValue("Platform");
         String app = "app";
         HashMap<String, String> artifactPaths = new HashMap<>();
-        JSONObject android = capabilities
-            .getCapabilityObjectFromKey("android");
-        JSONObject iOSAppPath = capabilities
-            .getCapabilityObjectFromKey("iOS");
-        JSONObject windowsAppPath = capabilities
-                .getCapabilityObjectFromKey("windows");
+        JSONObject android = capabilities.has("android")
+                ? capabilities.getJSONObject("android")
+                : null;
+        JSONObject iOSAppPath = capabilities.has("iOS")
+                ? capabilities.getJSONObject("iOS")
+                : null;
+        JSONObject windowsAppPath = capabilities.has("windows")
+                ? capabilities.getJSONObject("windows")
+                : null;
         if (android != null && android.has(app)
-            && (platform.equalsIgnoreCase("android")
-            || platform.equalsIgnoreCase("both"))) {
+                && (platform.equalsIgnoreCase("android")
+                || platform.equalsIgnoreCase("both"))) {
             JSONObject androidApp = android.getJSONObject("app");
             String appPath = androidApp.getString("local");
             if (isCloud(hostMachine) && androidApp.has("cloud")) {
@@ -84,8 +79,8 @@ public class ArtifactsUploader {
             artifactPaths.put("APK", getArtifactPath(hostMachine, appPath));
         }
         if (iOSAppPath != null && iOSAppPath.has("app")
-            && (platform.equalsIgnoreCase("ios")
-            || platform.equalsIgnoreCase("both"))) {
+                && (platform.equalsIgnoreCase("ios")
+                || platform.equalsIgnoreCase("both"))) {
             if (iOSAppPath.get("app") instanceof JSONObject) {
                 JSONObject iOSApp = iOSAppPath.getJSONObject("app");
                 if (iOSApp.has("simulator")) {
@@ -110,7 +105,7 @@ public class ArtifactsUploader {
         return artifactPaths;
     }
 
-    private String getArtifactPath(String hostMachine, String artifact) throws Exception {
+    private String getArtifactPath(String hostMachine, String artifact) {
         String path;
         if (!isCloud(hostMachine) && !isLocalhost(hostMachine)
                 && !new UrlValidator().isValid(artifact)) {
