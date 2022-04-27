@@ -91,7 +91,7 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             if (desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME) == null ) {
                 desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
             } else {
-                 desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME,
+                desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME,
                          desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME));
             }
             String osVersion = deviceProperty.getDevice().getOsVersion();
