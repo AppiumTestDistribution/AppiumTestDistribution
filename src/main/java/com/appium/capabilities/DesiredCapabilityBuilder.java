@@ -88,12 +88,12 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
 
         Object pCloudyApiKey = desiredCapabilities.getCapability("pCloudy_ApiKey");
         if (null == pCloudyApiKey) {
-            if(desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME) == null ){
+            if (desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME) == null ) {
                 desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-            }else{
-                 desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME));
+            } else {
+                 desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME,
+                         desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME));
             }
-         
             String osVersion = deviceProperty.getDevice().getOsVersion();
             if (osVersion != null) {
                 desiredCapabilities.setCapability(CapabilityType.VERSION, osVersion);
