@@ -280,6 +280,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(String.format("ThreadID: %d: afterSuite: %n", Thread.currentThread().getId()));
         try {
             appiumServerManager.stopAppiumServer();
+            SessionContext.setReportPortalLaunchURL();
         } catch (Exception e) {
             e.printStackTrace();
         }
