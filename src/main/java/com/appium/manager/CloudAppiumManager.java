@@ -31,7 +31,6 @@ public class CloudAppiumManager implements IAppiumManager {
     public String getRemoteWDHubIP(String host) {
         String format = format(url, getOverriddenStringValue("CLOUD_USER"),
                 getOverriddenStringValue("CLOUD_KEY"), host);
-        LOGGER.info("getRemoteWDHubIP: " + format);
         return format;
     }
 

@@ -46,8 +46,7 @@ public class AppiumDriverManager {
         LOGGER.info("Initialise Driver with Capabilities: ");
         desiredCapabilities.getCapabilityNames().forEach(
             key -> LOGGER.info("\t" + key + ":: " + desiredCapabilities.getCapability(key)));
-        String remoteWDHubIP = getRemoteWDHubIP();
-        return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
+        return createAppiumDriver(desiredCapabilities, getRemoteWDHubIP());
     }
 
     @NotNull
@@ -82,7 +81,9 @@ public class AppiumDriverManager {
     private String getRemoteWDHubIP() throws Exception {
         String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
         IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(hostName);
-        return appiumManager.getRemoteWDHubIP(hostName);
+        String remoteWDHubIP = appiumManager.getRemoteWDHubIP(hostName);
+        LOGGER.info("getRemoteWDHubIP: " + remoteWDHubIP);
+        return remoteWDHubIP;
     }
 
 
