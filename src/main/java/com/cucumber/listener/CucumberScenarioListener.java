@@ -66,7 +66,11 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             }
             return updateAvailableDeviceInformation(availableDevice);
         } catch (Exception e) {
+            LOGGER.error(String.format("Error creating / allocating a driver for test: '%s'%n%s",
+                                       testMethodName, e));
             e.printStackTrace();
+            LOGGER.info("Releasing the device that was allocated");
+            deviceAllocationManager.freeDevice();
             throw new RuntimeException(e);
         }
     }
