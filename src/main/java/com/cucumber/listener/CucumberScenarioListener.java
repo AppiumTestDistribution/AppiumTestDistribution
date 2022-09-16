@@ -272,7 +272,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             JSONObject automation_session = pr.getJSONObject("automation_session");
             reportLink = automation_session.getString("browser_url");
             LOGGER.debug("reportLink: " + reportLink);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.debug("Unable to get report link from BrowserStack: " + e.getMessage());
             e.printStackTrace();
         }
