@@ -9,6 +9,7 @@ import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.CommandPrompt;
+import com.appium.utils.OverriddenVariable;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import com.epam.reportportal.service.ReportPortal;
@@ -21,6 +22,7 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -261,7 +263,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         String reportLink = "";
         String cloudUser = getOverriddenStringValue("CLOUD_USER");
         String cloudPassword = getOverriddenStringValue("CLOUD_KEY");
-        String curlCommand = "curl --insecure -u \"" + cloudUser + ":" + cloudPassword + "\" -X GET \"https://api-cloud.browserstack.com/app-automate/sessions/" + sessionId + ".json\"";
+        String curlCommand = "curl --insecure " + getCurlProxyCommand() + " -u \"" + cloudUser + ":" + cloudPassword + "\" -X GET \"https://api-cloud.browserstack.com/app-automate/sessions/" + sessionId + ".json\"";
         LOGGER.debug(String.format("Curl command: '%s'", curlCommand));
         CommandPrompt cmd = new CommandPrompt();
         String resultStdOut = null;
@@ -277,6 +279,15 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             e.printStackTrace();
         }
         return reportLink;
+    }
+
+    @NotNull
+    static String getCurlProxyCommand() {
+        String curlProxyCommand = "";
+        if (null != OverriddenVariable.getOverriddenStringValue("PROXY_URL")) {
+            curlProxyCommand = " --proxy " + System.getProperty("PROXY_URL");
+        }
+        return curlProxyCommand;
     }
 
     private void runFinishedHandler(TestRunFinished event) {
