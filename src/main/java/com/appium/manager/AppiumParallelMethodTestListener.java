@@ -99,7 +99,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
-            if (annotation != null && AppiumDriverManager.getDriver().getCapabilities().getCapability("platformName")
+            if (annotation != null && AppiumDriverManager.getDriver().getCapabilities()
+                    .getCapability("platformName")
                     .toString().equalsIgnoreCase(annotation.platform())) {
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     HashMap<String, String> logs = new HashMap<>();
