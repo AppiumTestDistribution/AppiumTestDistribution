@@ -33,11 +33,8 @@ jobs:
 
       - script: |
           node -v
-          npm install -g appium@next
+          npm install -g appium
           appium -v
-          appium driver install uiautomator2
-          appium driver install xcuitest
-          appium driver list
         displayName: "Install Appium"
 
       - bash: |
