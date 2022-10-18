@@ -4,7 +4,6 @@ import com.appium.capabilities.DesiredCapabilityBuilder;
 import com.appium.entities.MobilePlatform;
 import com.appium.utils.CommandPrompt;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.windows.WindowsDriver;
@@ -41,7 +40,7 @@ public class AppiumDriverManager {
     }
 
 
-    private AppiumDriver<MobileElement> initialiseDriver(DesiredCapabilities desiredCapabilities)
+    private AppiumDriver initialiseDriver(DesiredCapabilities desiredCapabilities)
             throws Exception {
         LOGGER.info("Initialise Driver with Capabilities: ");
         desiredCapabilities.getCapabilityNames().forEach(
@@ -74,7 +73,7 @@ public class AppiumDriverManager {
         LOGGER.info("Session Created for "
                 + AppiumDeviceManager.getMobilePlatform().name()
                 + "\n\tSession Id: " + currentDriverSession.getSessionId()
-                + "\n\tUDID: " + currentDriverSession.getSessionDetail("udid"));
+                + "\n\tUDID: " + currentDriverSession.getCapabilities().getCapability("udid"));
         return currentDriverSession;
     }
 
@@ -87,24 +86,24 @@ public class AppiumDriverManager {
     }
 
 
-    private AppiumDriver<MobileElement> startAppiumDriverInstance(
+    private AppiumDriver startAppiumDriverInstance(
             Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-        AppiumDriver<MobileElement> currentDriverSession =
+        AppiumDriver currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
         return currentDriverSession;
     }
 
     // Should be used by Cucumber as well
-    public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName)
+    public AppiumDriver startAppiumDriverInstance(String testMethodName)
             throws Exception {
         return startAppiumDriverInstance(testMethodName, CAPS.get());
     }
 
     // Should be used by Cucumber as well
-    public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName,
+    public AppiumDriver startAppiumDriverInstance(String testMethodName,
                                                                  String capabilityFilePath)
             throws Exception {
         LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
@@ -145,7 +144,7 @@ public class AppiumDriverManager {
             && AppiumDriverManager.getDriver().getSessionId() != null) {
             LOGGER.info("Session Deleting ---- "
                 + AppiumDriverManager.getDriver().getSessionId() + "---"
-                + AppiumDriverManager.getDriver().getSessionDetail("udid"));
+                + AppiumDriverManager.getDriver().getCapabilities().getCapability("udid"));
             AppiumDriverManager.getDriver().quit();
         }
     }

@@ -48,7 +48,7 @@ public class Api extends Helpers {
         MediaType MEDIA_TYPE_PNG = MediaType.parse("multipart/form-data");
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("uploaded_file", filePath.getName(),
-                RequestBody.create(MEDIA_TYPE_PNG, filePath))
+                RequestBody.create(filePath, MEDIA_TYPE_PNG))
             .build();
         Request request = new Request.Builder().url("http://" + hostMachine
             + ":" + getRemoteAppiumManagerPort(hostMachine) + "/artifacts/upload")
