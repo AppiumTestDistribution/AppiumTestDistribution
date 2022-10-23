@@ -136,49 +136,49 @@ jobs:
 
         displayName: "Run Test on Sauce on iOS and Android"
 
-  - job: Windows
-    pool:
-      vmImage: "windows-latest"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "17.5.0"
-
-      - script: |
-          node -v
-          npm install -g appium@next
-          appium -v
-          appium driver install windows
-        displayName: "Install Appium"
-
-      - script: |
-          mvn clean -Dtest=WindowsRunner test -Dcheckstyle.skip -DPlatform="windows"
-    displayName: "Run windows app"
-
-  - job: Windows_Cucumber
-    pool:
-      vmImage: "windows-latest"
-
-    variables:
-      - name: CONFIG_FILE
-        value: "./configs/windowsCucumberConfig.properties"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "17.5.0"
-
-      - script: |
-          node -v
-          npm install -g appium@next
-          appium -v
-          appium driver install windows
-        displayName: "Install Appium"
-
-      - script: |
-          mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip
-    displayName: "Run windows app - Cucumber"
+#  - job: Windows
+#    pool:
+#      vmImage: "windows-latest"
+#
+#    steps:
+#      - task: NodeTool@0
+#        inputs:
+#          versionSpec: "17.5.0"
+#
+#      - script: |
+#          node -v
+#          npm install -g appium@next
+#          appium -v
+#          appium driver install windows
+#        displayName: "Install Appium"
+#
+#      - script: |
+#          mvn clean -Dtest=WindowsRunner test -Dcheckstyle.skip -DPlatform="windows"
+#    displayName: "Run windows app"
+#
+#  - job: Windows_Cucumber
+#    pool:
+#      vmImage: "windows-latest"
+#
+#    variables:
+#      - name: CONFIG_FILE
+#        value: "./configs/windowsCucumberConfig.properties"
+#
+#    steps:
+#      - task: NodeTool@0
+#        inputs:
+#          versionSpec: "17.5.0"
+#
+#      - script: |
+#          node -v
+#          npm install -g appium@next
+#          appium -v
+#          appium driver install windows
+#        displayName: "Install Appium"
+#
+#      - script: |
+#          mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip
+#    displayName: "Run windows app - Cucumber"
 
 #  - job: Genymotion
 #    pool:
