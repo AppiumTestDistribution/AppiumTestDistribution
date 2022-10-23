@@ -149,6 +149,7 @@ jobs:
           node -v
           npm install -g appium@next
           appium -v
+          appium driver install windows
         displayName: "Install Appium"
 
       - script: |
@@ -172,6 +173,7 @@ jobs:
           node -v
           npm install -g appium@next
           appium -v
+          appium driver install windows
         displayName: "Install Appium"
 
       - script: |
