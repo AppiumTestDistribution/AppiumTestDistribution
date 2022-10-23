@@ -34,11 +34,11 @@
       "simulators": [
         {
           "deviceName": "iPhone 11",
-          "OS": "14.0"
+          "OS": "15.2"
         },
         {
           "deviceName": "iPhone 8",
-          "OS": "14.0"
+          "OS": "15.2"
         }
       ]
     }
