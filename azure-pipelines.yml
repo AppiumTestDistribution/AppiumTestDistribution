@@ -6,12 +6,12 @@
 jobs:
   - job: CheckStyle
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           mvn clean install -Dmaven.test.skip=true -Dgpg.skip
@@ -20,12 +20,12 @@ jobs:
 
   - job: Distribute
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
       - script: |
           brew outdated xctool || brew upgrade xctool
           xcrun simctl list
@@ -63,12 +63,12 @@ jobs:
 
   - job: Parallel
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
       - script: |
           brew outdated xctool || brew upgrade xctool
           xcrun simctl list
@@ -106,12 +106,12 @@ jobs:
 
   - job: SauceLabs
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -120,12 +120,12 @@ jobs:
 
   - job: SauceLabs_iOS
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -139,7 +139,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           node -v
@@ -162,7 +162,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           node -v
