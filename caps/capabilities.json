@@ -25,8 +25,7 @@
     "simpleIsVisibleCheck": true,
     "wdaStartupRetries": 10,
     "wdaStartupRetryInterval": 100,
-    "maxTypingFrequency": 10,
-    "showIOSLog":true
+    "maxTypingFrequency": 10
   },
   "hostMachines": [
     {
