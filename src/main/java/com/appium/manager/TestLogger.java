@@ -54,7 +54,7 @@ public class TestLogger extends Helpers {
         if (isNativeAndroid()) {
             String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
             List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
-                    .logs().get("logcat").filter(Level.ALL);
+                    .logs().get("logcat").getAll();
             logEntries.set(logcat);
             logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
                     + udid + "__" + methodName + ".txt");

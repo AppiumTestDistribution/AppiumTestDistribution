@@ -1,3 +1,4 @@
+import io.appium.java_client.AppiumBy;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -15,7 +16,7 @@ public class MyStepdefs {
     @When("I click on {int} number")
     public void iClickOnNumber(int arg0) {
         LOGGER.info("I click on {int} number : " + arg0);
-        edit = (RemoteWebElement) getDriver().findElementByClassName("Edit");
+        edit = (RemoteWebElement) getDriver().findElement(AppiumBy.className("Edit"));
     }
 
     @Given("I accept the tip screen")

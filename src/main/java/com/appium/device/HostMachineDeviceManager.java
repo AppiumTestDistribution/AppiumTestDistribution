@@ -155,6 +155,7 @@ public class HostMachineDeviceManager {
                                    JSONObject hostMachineJson,
                                    List<Device> devices) {
         if ((platform.equalsIgnoreCase("iOS")
+                || platform.equalsIgnoreCase("both")
                 && capabilities.isSimulatorAppPresentInCapsJson()
                 && hostMachineJson.has("simulators"))
                 && !capabilities.getCapabilityObjectFromKey("iOS")

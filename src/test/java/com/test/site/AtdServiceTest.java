@@ -11,7 +11,6 @@ import static org.openqa.selenium.remote.CapabilityType.PLATFORM_NAME;
 import com.jayway.jsonpath.DocumentContext;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.android.AndroidTouchAction;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.touch.TapOptions;
@@ -26,13 +25,14 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.time.Duration;
 
 @Test(groups = { "end-to-end-test" })
 public class AtdServiceTest {
     private static final ApiHelper API = new ApiHelper();
     private static final String URL = "http://localhost:8888";
     private static final String UUID = "emulator-5554";
-    private AndroidDriver<AndroidElement> driver;
+    private AndroidDriver driver;
 
     @BeforeClass
     public void setup() throws IOException {
@@ -47,7 +47,7 @@ public class AtdServiceTest {
             .toString());
         capabilities.setCapability(APP, "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk");
         capabilities.setCapability(AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
-        driver = new AndroidDriver<>(capabilities);
+        driver = new AndroidDriver(capabilities);
     }
 
     @AfterClass
@@ -58,7 +58,7 @@ public class AtdServiceTest {
 
     @Test
     public void testLogin() {
-        WebElement login = new WebDriverWait(driver, 30).until(
+        WebElement login = new WebDriverWait(driver, Duration.ofSeconds(30)).until(
             ExpectedConditions.elementToBeClickable(MobileBy.AccessibilityId("login")));
         AndroidTouchAction touch = new AndroidTouchAction(driver);
         touch.tap(TapOptions.tapOptions()

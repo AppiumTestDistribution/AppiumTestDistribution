@@ -10,6 +10,8 @@ import io.cucumber.java.en.When;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 import static com.appium.manager.AppiumDriverManager.getDriver;
 
 public class SampleSteps extends UserBaseTest {
@@ -50,7 +52,7 @@ public class SampleSteps extends UserBaseTest {
 
     @Then("drag and drop should have worked")
     public void dragAndDropShouldHaveWorked() {
-        new WebDriverWait(driver, 30)
+        new WebDriverWait(driver, Duration.ofSeconds(30))
                 .until(ExpectedConditions
                         .elementToBeClickable(MobileBy.AccessibilityId("dragMe")));
     }

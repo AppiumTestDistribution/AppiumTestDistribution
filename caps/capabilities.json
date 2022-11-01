@@ -4,7 +4,7 @@
     "platformVersion": "7.0",
     "automationName": "UiAutomator2",
     "uiautomator2ServerInstallTimeout": 50000,
-    "adbExecTimeout": 60000,
+    "adbExecTimeout": 120000,
     "app": {
       "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
     },
@@ -25,8 +25,7 @@
     "simpleIsVisibleCheck": true,
     "wdaStartupRetries": 10,
     "wdaStartupRetryInterval": 100,
-    "maxTypingFrequency": 10,
-    "showIOSLog":true
+    "maxTypingFrequency": 10
   },
   "hostMachines": [
     {
@@ -34,11 +33,11 @@
       "simulators": [
         {
           "deviceName": "iPhone 11",
-          "OS": "14.0"
+          "OS": "15.2"
         },
         {
           "deviceName": "iPhone 8",
-          "OS": "14.0"
+          "OS": "15.2"
         }
       ]
     }
