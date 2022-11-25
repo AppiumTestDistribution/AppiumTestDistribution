@@ -48,15 +48,11 @@ public class DeviceAllocationManager extends ArtifactsUploader {
 
     public synchronized AppiumDevice getNextAvailableDevice() {
         int i = 0;
-                System.out.println("inside getNextAvailableDevice");
-
         for (AppiumDevice device : allDevices) {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
             i++;
-            boolean flag =device.isAvailable();
-                        System.out.println("isDevice available : "+flag);
-            if (flag) {
+            if (device.isAvailable()) {
                 device.blockDevice();
                 return device;
             }
