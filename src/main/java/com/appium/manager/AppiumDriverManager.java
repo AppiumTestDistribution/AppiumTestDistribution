@@ -95,7 +95,6 @@ public class AppiumDriverManager {
             Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-        LOGGER.info("startAppiumDriverInstance: capabilities: " + desiredCapabilities);
         AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
@@ -154,3 +153,4 @@ public class AppiumDriverManager {
         }
     }
 }
+
