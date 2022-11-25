@@ -59,7 +59,6 @@ public class AppiumDriverManager {
     private AppiumDriver createAppiumDriver(DesiredCapabilities desiredCapabilities,
                                              String remoteWDHubIP)
             throws MalformedURLException {
-                System.out.println("inside createAppiumDriver");
         AppiumDriver currentDriverSession;
         MobilePlatform mobilePlatform = getMobilePlatform();
         switch (mobilePlatform) {
@@ -96,7 +95,6 @@ public class AppiumDriverManager {
             Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-        System.out.println("inside ATD:beforeInvocation");
         LOGGER.info("startAppiumDriverInstance: capabilities: " + desiredCapabilities);
         AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
@@ -108,7 +106,6 @@ public class AppiumDriverManager {
     public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName)
             throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-        System.out.println("inside startAppiumDriverInstance");
         return startAppiumDriverInstance(
                 Optional.ofNullable(buildDesiredCapabilities(testMethodName, CAPS.get())));
     }
