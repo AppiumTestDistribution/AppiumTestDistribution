@@ -159,8 +159,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     }
                 }
                 if (iInvokedMethod.isTestMethod()) {
-                    AppiumDriverManager.getDriver().quit();
                     deviceAllocationManager.freeDevice();
+                    AppiumDriverManager.getDriver().quit();
                     if (!isCloudExecution()) {
                         appiumDriverManager.stopAppiumDriver();
                     }
