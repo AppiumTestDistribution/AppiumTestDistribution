@@ -76,13 +76,10 @@ public class AppiumDevice {
     }
 
     public boolean isAvailable() {
-                System.out.println("inside isAvailable");
         return deviceState.equalsIgnoreCase(AVAILABLE);
     }
 
     public void blockDevice() {
-                System.out.println("inside blockDevice");
-
         deviceState = BUSY;
     }
 
