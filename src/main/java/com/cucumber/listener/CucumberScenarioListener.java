@@ -56,13 +56,13 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                         .getMongoDbHostAndPort().get("atdPort"));
     }
 
-    private AppiumDevice allocateDeviceAndStartDriver() {
+    private AppiumDevice allocateDeviceAndStartDriver(String testMethodName) {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
             AppiumDevice availableDevice = deviceAllocationManager.getNextAvailableDevice();
             deviceAllocationManager.allocateDevice(availableDevice);
             if (driver == null || driver.getSessionId() == null) {
-                appiumDriverManager.startAppiumDriverInstance();
+                appiumDriverManager.startAppiumDriverInstance(testMethodName);
             }
             return updateAvailableDeviceInformation(availableDevice);
         } catch (Exception e) {
@@ -74,8 +74,9 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private AppiumDevice updateAvailableDeviceInformation(AppiumDevice availableDevice) {
         org.openqa.selenium.Capabilities capabilities = AppiumDriverManager.getDriver()
                 .getCapabilities();
-        LOGGER.info("allocateDeviceAndStartDriver: "
-                + capabilities);
+        LOGGER.info("updateAvailableDeviceInformation");
+        capabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + capabilities.getCapability(key)));
 
         String udid = capabilities.is("udid")
                               ? getCapabilityFor(capabilities, "udid")
@@ -87,7 +88,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         device.setDeviceModel(
                 getCapabilityFor(capabilities, "deviceModel"));
         device.setName(
-                getCapabilityFor(capabilities, "deviceName"));
+                getCapabilityFor(capabilities, "device"));
         device.setApiLevel(
                 getCapabilityFor(capabilities, "deviceApiLevel"));
         device.setDeviceType(
@@ -133,7 +134,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
-        AppiumDevice allocatedDevice = allocateDeviceAndStartDriver();
+        AppiumDevice allocatedDevice = allocateDeviceAndStartDriver(scenarioName);
         String deviceLogFileName = null;
 
         try {

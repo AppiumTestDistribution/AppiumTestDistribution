@@ -40,16 +40,17 @@ public class AppiumDriverManager {
     protected static void setDriver(AppiumDriver driver) {
         LOGGER.info("AppiumDriverManager: Created AppiumDriver with capabilities: ");
         Capabilities capabilities = driver.getCapabilities();
-        capabilities.getCapabilityNames().forEach(key -> {
-            LOGGER.info("\t" + key + ":: " + capabilities.getCapability(key));
-        });
+        capabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + capabilities.getCapability(key)));
         appiumDriver.set(driver);
     }
 
 
     private AppiumDriver<MobileElement> initialiseDriver(DesiredCapabilities desiredCapabilities)
             throws Exception {
-        LOGGER.info("Initialise Driver with Capabilities: " + desiredCapabilities.toString());
+        LOGGER.info("Initialise Driver with Capabilities: ");
+        desiredCapabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + desiredCapabilities.getCapability(key)));
         String remoteWDHubIP = getRemoteWDHubIP();
         return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
@@ -79,9 +80,8 @@ public class AppiumDriverManager {
         }
         LOGGER.info("Session Created for "
                 + AppiumDeviceManager.getMobilePlatform().name()
-                + " ---- "
-                + currentDriverSession.getSessionId() + "---"
-                + currentDriverSession.getSessionDetail("udid"));
+                + "\n\tSession Id: " + currentDriverSession.getSessionId()
+                + "\n\tUDID: " + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 
@@ -95,7 +95,8 @@ public class AppiumDriverManager {
     private AppiumDriver<MobileElement> startAppiumDriverInstance(
             Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
-                System.out.println("inside ATD:beforeInvocation");
+        LOGGER.info("startAppiumDriverInstance");
+        System.out.println("inside ATD:beforeInvocation");
         LOGGER.info("startAppiumDriverInstance: capabilities: " + desiredCapabilities);
         AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
@@ -104,13 +105,16 @@ public class AppiumDriverManager {
     }
 
     // Should be used by Cucumber as well
-    public AppiumDriver<MobileElement> startAppiumDriverInstance() throws Exception {
+    public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName)
+            throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-                System.out.println("inside startAppiumDriverInstance");
-        return startAppiumDriverInstance(Optional.ofNullable(buildDesiredCapabilities(CAPS.get())));
+        System.out.println("inside startAppiumDriverInstance");
+        return startAppiumDriverInstance(
+                Optional.ofNullable(buildDesiredCapabilities(testMethodName, CAPS.get())));
     }
 
-    private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath)
+    private DesiredCapabilities buildDesiredCapabilities(String testMethodName,
+                                                         String capabilityFilePath)
         throws Exception {
         String absolutePathToCapabilities = capabilityFilePath;
         if (new File(capabilityFilePath).exists()) {
@@ -120,7 +124,7 @@ public class AppiumDriverManager {
                     .toAbsolutePath().toString();
             }
             desiredCapabilityBuilder
-                .buildDesiredCapability(absolutePathToCapabilities);
+                .buildDesiredCapability(testMethodName, absolutePathToCapabilities);
             return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
             throw new RuntimeException("Capability file not found");

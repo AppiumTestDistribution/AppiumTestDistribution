@@ -50,20 +50,20 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
         return desiredCapabilitiesThreadLocal.get();
     }
 
-    public void buildDesiredCapability(String jsonPath) throws Exception {
+    public void buildDesiredCapability(String testMethodName, String jsonPath) throws Exception {
         int port = AppiumDeviceManager.getAppiumDevice().getPort();
         String platform = AppiumDeviceManager.getAppiumDevice().getDevice().getOs();
         boolean isCloud = AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (isCloud) {
-            desiredCapabilityForCloud(platform, jsonPath, desiredCapabilities);
+            desiredCapabilityForCloud(testMethodName, platform, jsonPath, desiredCapabilities);
         } else {
             desiredCapabilityForLocalAndRemoteATD(platform, jsonPath, port, desiredCapabilities);
 
         }
     }
 
-    private void desiredCapabilityForCloud(String platform, String jsonPath,
+    private void desiredCapabilityForCloud(String testMethodName, String platform, String jsonPath,
                                            DesiredCapabilities desiredCapabilities) {
         JSONObject platFormCapabilities = new JsonParser(jsonPath).getObjectFromJSON()
             .getJSONObject(platform);
@@ -82,17 +82,27 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             desiredCapabilities.setCapability(MobileCapabilityType.UDID, udid);
         }
 
+        if (!desiredCapabilities.getCapabilityNames().contains("name")) {
+            desiredCapabilities.setCapability("name", testMethodName);
+        }
+
         Object pCloudyApiKey = desiredCapabilities.getCapability("pCloudy_ApiKey");
         if (null == pCloudyApiKey) {
-            desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-
+            if (desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME) == null ) {
+                desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "");
+            } else {
+                desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME,
+                         desiredCapabilities.getCapability(CapabilityType.BROWSER_NAME));
+            }
             String osVersion = deviceProperty.getDevice().getOsVersion();
             if (osVersion != null) {
                 desiredCapabilities.setCapability(CapabilityType.VERSION, osVersion);
                 desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, osVersion);
             }
         }
-        LOGGER.info("desiredCapabilityForCloud: " + desiredCapabilities);
+        LOGGER.info("desiredCapabilityForCloud: ");
+        desiredCapabilities.getCapabilityNames().forEach(
+            key -> LOGGER.info("\t" + key + ":: " + desiredCapabilities.getCapability(key)));
         desiredCapabilitiesThreadLocal.set(desiredCapabilities);
     }
 
@@ -104,11 +114,11 @@ public class DesiredCapabilityBuilder extends ArtifactsUploader {
             List<HostArtifact> hostArtifacts = ArtifactsUploader.getInstance()
                 .getHostArtifacts();
             String hostAppPath = hostAppPath(values, hostArtifacts);
-            Path path = FileSystems.getDefault().getPath(hostAppPath);
             if (AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
                 || new UrlValidator().isValid(hostAppPath)) {
                 desiredCapabilities.setCapability(appCapability, hostAppPath);
             } else {
+                Path path = FileSystems.getDefault().getPath(hostAppPath);
                 desiredCapabilities.setCapability(appCapability,
                     path.normalize().toAbsolutePath().toString());
             }

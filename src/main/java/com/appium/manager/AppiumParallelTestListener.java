@@ -164,7 +164,7 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            appiumDriverManager.startAppiumDriverInstance();
+            appiumDriverManager.startAppiumDriverInstance(iTestResult.getTestName());
             testLogger.startLogging(iTestResult);
         } catch (Exception e) {
             e.printStackTrace();

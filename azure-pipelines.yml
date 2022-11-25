@@ -118,20 +118,6 @@ jobs:
 
         displayName: "Run Test on Sauce on iOS and Android"
 
-  - job: SauceLabs_Android
-    pool:
-      vmImage: "macos-10.15"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "8.12.0"
-
-      - script: |
-          Platform='android' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-        displayName: "Run Test on Sauce on iOS and Android"
-
   - job: SauceLabs_iOS
     pool:
       vmImage: "macos-10.15"
@@ -188,19 +174,6 @@ jobs:
           mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip
     displayName: "Run windows app - Cucumber"
 
-  - job: BrowserStack_Android
-    pool:
-      vmImage: "macos-10.15"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "12.18.1"
-
-      - script: |
-          Platform='android' CLOUD_USER=$(user_bs) CLOUD_KEY=$(pass_bs) CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-        displayName: "Run Test on Sauce on iOS and Android"
 #  - job: Genymotion
 #    pool:
 #      vmImage: 'macos-10.15'
