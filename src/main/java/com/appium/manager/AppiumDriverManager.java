@@ -4,6 +4,7 @@ import com.appium.capabilities.DesiredCapabilityBuilder;
 import com.appium.entities.MobilePlatform;
 import com.appium.utils.CommandPrompt;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.windows.WindowsDriver;
@@ -25,7 +26,12 @@ import static com.appium.utils.ConfigFileManager.CAPS;
 
 public class AppiumDriverManager {
     private static ThreadLocal<AppiumDriver> appiumDriver = new ThreadLocal<>();
+    private DesiredCapabilityBuilder desiredCapabilityBuilder;
     private static final Logger LOGGER = Logger.getLogger(AppiumDriverManager.class.getName());
+
+    public AppiumDriverManager() {
+        desiredCapabilityBuilder = new DesiredCapabilityBuilder();
+    }
 
     public static AppiumDriver getDriver() {
         return appiumDriver.get();
@@ -40,12 +46,13 @@ public class AppiumDriverManager {
     }
 
 
-    private AppiumDriver initialiseDriver(DesiredCapabilities desiredCapabilities)
+    private AppiumDriver<MobileElement> initialiseDriver(DesiredCapabilities desiredCapabilities)
             throws Exception {
         LOGGER.info("Initialise Driver with Capabilities: ");
         desiredCapabilities.getCapabilityNames().forEach(
             key -> LOGGER.info("\t" + key + ":: " + desiredCapabilities.getCapability(key)));
-        return createAppiumDriver(desiredCapabilities, getRemoteWDHubIP());
+        String remoteWDHubIP = getRemoteWDHubIP();
+        return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
 
     @NotNull
@@ -73,51 +80,48 @@ public class AppiumDriverManager {
         LOGGER.info("Session Created for "
                 + AppiumDeviceManager.getMobilePlatform().name()
                 + "\n\tSession Id: " + currentDriverSession.getSessionId()
-                + "\n\tUDID: " + currentDriverSession.getCapabilities().getCapability("udid"));
+                + "\n\tUDID: " + currentDriverSession.getSessionDetail("udid"));
         return currentDriverSession;
     }
 
     private String getRemoteWDHubIP() throws Exception {
         String hostName = AppiumDeviceManager.getAppiumDevice().getHostName();
         IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(hostName);
-        String remoteWDHubIP = appiumManager.getRemoteWDHubIP(hostName);
-        LOGGER.info("getRemoteWDHubIP: " + remoteWDHubIP);
-        return remoteWDHubIP;
+        return appiumManager.getRemoteWDHubIP(hostName);
     }
 
 
-    private AppiumDriver startAppiumDriverInstance(
+    private AppiumDriver<MobileElement> startAppiumDriverInstance(
             Optional<DesiredCapabilities> desiredCapabilities)
         throws Exception {
         LOGGER.info("startAppiumDriverInstance");
-        AppiumDriver currentDriverSession =
+        AppiumDriver<MobileElement> currentDriverSession =
                 initialiseDriver(desiredCapabilities.get());
         AppiumDriverManager.setDriver(currentDriverSession);
         return currentDriverSession;
     }
 
     // Should be used by Cucumber as well
-    public AppiumDriver startAppiumDriverInstance(String testMethodName)
+    public AppiumDriver<MobileElement> startAppiumDriverInstance(String testMethodName)
             throws Exception {
-        return startAppiumDriverInstance(testMethodName, CAPS.get());
-    }
-
-    // Should be used by Cucumber as well
-    public AppiumDriver startAppiumDriverInstance(String testMethodName,
-                                                                 String capabilityFilePath)
-            throws Exception {
-        LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
-                testMethodName, capabilityFilePath));
+        LOGGER.info("startAppiumDriverInstance");
         return startAppiumDriverInstance(
-                Optional.ofNullable(buildDesiredCapabilities(testMethodName, capabilityFilePath)));
+                Optional.ofNullable(buildDesiredCapabilities(testMethodName, CAPS.get())));
     }
 
     private DesiredCapabilities buildDesiredCapabilities(String testMethodName,
                                                          String capabilityFilePath)
         throws Exception {
+        String absolutePathToCapabilities = capabilityFilePath;
         if (new File(capabilityFilePath).exists()) {
-            return new DesiredCapabilityBuilder()
-                .buildDesiredCapability(testMethodName, capabilityFilePath);
+            Path path = FileSystems.getDefault().getPath(capabilityFilePath);
+            if (!path.getParent().isAbsolute()) {
+                absolutePathToCapabilities = path.normalize()
+                    .toAbsolutePath().toString();
+            }
+            desiredCapabilityBuilder
+                .buildDesiredCapability(testMethodName, absolutePathToCapabilities);
+            return DesiredCapabilityBuilder.getDesiredCapability();
         } else {
             throw new RuntimeException("Capability file not found");
         }
@@ -144,7 +148,7 @@ public class AppiumDriverManager {
             && AppiumDriverManager.getDriver().getSessionId() != null) {
             LOGGER.info("Session Deleting ---- "
                 + AppiumDriverManager.getDriver().getSessionId() + "---"
-                + AppiumDriverManager.getDriver().getCapabilities().getCapability("udid"));
+                + AppiumDriverManager.getDriver().getSessionDetail("udid"));
             AppiumDriverManager.getDriver().quit();
         }
     }
