@@ -43,7 +43,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private final Optional<String> atdPort;
     private Map<String, Integer> scenarioRunCounts = new HashMap<String, Integer>();
 
-    public CucumberScenarioListener() {
+    public CucumberScenarioListener() throws Exception {
         LOGGER.info(String.format("ThreadID: %d: CucumberScenarioListener\n",
                 Thread.currentThread().getId()));
         new ATDRunner();

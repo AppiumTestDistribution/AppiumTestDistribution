@@ -26,8 +26,11 @@ public class ATDRunner {
     private HostMachineDeviceManager hostMachineDeviceManager;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
 
-    public ATDRunner() {
+    public ATDRunner() throws Exception {
         capabilities = Capabilities.getInstance();
+        final String host = "127.0.0.1";
+        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
+        appiumManager.startAppiumServer(host);
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         ATDExecutor = new ATDExecutor(deviceAllocationManager);
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();

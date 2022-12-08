@@ -27,6 +27,17 @@
     "wdaStartupRetryInterval": 100,
     "maxTypingFrequency": 10
   },
+  "serverConfig" : {
+    "server": {
+      "port": 31337,
+      "plugin": {
+        "device-farm": {
+          "platform": "android",
+          "skipChromeDownload": false
+        }
+      }
+    }
+  },
   "hostMachines": [
     {
       "machineIP": "127.0.0.1",

@@ -4,13 +4,10 @@ import com.appium.capabilities.Capabilities;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumManagerFactory;
 import com.appium.manager.IAppiumManager;
-import com.appium.utils.Api;
 import com.appium.utils.AvailablePorts;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.OSType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.device.Device;
-import com.report.factory.TestStatusManager;
 import org.apache.log4j.Logger;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.ArrayUtils;
@@ -83,19 +80,7 @@ public class HostMachineDeviceManager {
         devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
         String atdHost = capabilities.getMongoDbHostAndPort().get("atdHost");
         String atdPort = capabilities.getMongoDbHostAndPort().get("atdPort");
-        if (atdHost != null && atdPort != null) {
-            Api api = new Api();
-            api.getResponse("http://" + atdHost + ":" + atdPort + "/drop");
-            api.post("http://" + atdHost + ":" + atdPort + "/devices",
-                    new ObjectMapper().writerWithDefaultPrettyPrinter()
-                            .writeValueAsString(devicesByHost));
-            api.post("http://" + atdHost + ":" + atdPort + "/envInfo",
-                    new TestStatusManager()
-                            .envInfo(devicesByHost.getAllDevices().size()));
-            api.post("http://" + atdHost + ":" + atdPort + "/envInfo/appium/logs",
-                    new TestStatusManager()
-                            .appiumLogs(devicesByHost));
-        }
+
     }
 
     private Map<String, List<AppiumDevice>> filterByUserSpecifiedDevices(

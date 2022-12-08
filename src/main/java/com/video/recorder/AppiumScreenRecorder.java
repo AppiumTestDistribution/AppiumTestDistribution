@@ -23,23 +23,23 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
         String videoPath = System.getProperty("user.dir");
         if (AppiumDeviceManager.getMobilePlatform()
             .equals(MobilePlatform.IOS)) {
-            String videoLocationIOS =
-                videoPath + FileLocations.IOS_SCREENSHOTS_DIRECTORY
-                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                    + "/" + getCurrentTestClassName()
-                    + "/" + getCurrentTestMethodName()
-                    + "/" + getCurrentTestMethodName() + ".mp4";
-            String base64 = ((IOSDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
-            saveVideo(base64, videoLocationIOS);
+//            String videoLocationIOS =
+//                videoPath + FileLocations.IOS_SCREENSHOTS_DIRECTORY
+//                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+//                    + "/" + getCurrentTestClassName()
+//                    + "/" + getCurrentTestMethodName()
+//                    + "/" + getCurrentTestMethodName() + ".mp4";
+//            String base64 = ((IOSDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
+//            saveVideo(base64, videoLocationIOS);
         } else {
-            String videoLocationAndroid =
-                videoPath + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
-                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                    + "/" + getCurrentTestClassName()
-                    + "/" + getCurrentTestMethodName()
-                    + "/" + getCurrentTestMethodName() + ".mp4";
-            String base64 = ((AndroidDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
-            saveVideo(base64, videoLocationAndroid);
+//            String videoLocationAndroid =
+//                videoPath + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
+//                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+//                    + "/" + getCurrentTestClassName()
+//                    + "/" + getCurrentTestMethodName()
+//                    + "/" + getCurrentTestMethodName() + ".mp4";
+//            String base64 = ((AndroidDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
+//            saveVideo(base64, videoLocationAndroid);
         }
     }
 
@@ -54,11 +54,11 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
                                     String videoFileName) {
         if (AppiumDeviceManager.getMobilePlatform()
             .equals(MobilePlatform.IOS)) {
-            ((IOSDriver) AppiumDriverManager.getDriver()).startRecordingScreen();
+//            ((IOSDriver) AppiumDriverManager.getDriver()).startRecordingScreen();
         } else {
-            ((AndroidDriver) AppiumDriverManager.getDriver())
-                .startRecordingScreen(new AndroidStartScreenRecordingOptions()
-                .withTimeLimit(Duration.ofSeconds(1800)));
+//            ((AndroidDriver) AppiumDriverManager.getDriver())
+//                .startRecordingScreen(new AndroidStartScreenRecordingOptions()
+//                .withTimeLimit(Duration.ofSeconds(1800)));
         }
 
     }

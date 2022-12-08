@@ -73,11 +73,6 @@
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-cucumber6</artifactId>
-            <version>5.0.6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-testng</artifactId>
             <version>5.0.7</version>
             <exclusions>

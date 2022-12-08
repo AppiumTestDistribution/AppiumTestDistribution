@@ -15,9 +15,8 @@ public class AppiumManagerFactory {
             return createCloudAppiumManagerForCloud(cloudName);
         } else if ("127.0.0.1".equals(host)) {
             return new LocalAppiumManager();
-        } else {
-            return new RemoteAppiumManager();
         }
+        return null;
     }
 
     @NotNull

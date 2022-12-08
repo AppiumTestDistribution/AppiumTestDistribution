@@ -65,6 +65,7 @@ public class LocalAppiumManager implements IAppiumManager {
                                         + FileLocations.APPIUM_LOGS_DIRECTORY
                                         + "appium_logs.txt"))
                         .withIPAddress(host)
+                        .withArgument(GeneralServerFlag.USE_PLUGINS, "device-farm")
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .usingAnyFreePort();
         appiumDriverLocalService = builder.build();

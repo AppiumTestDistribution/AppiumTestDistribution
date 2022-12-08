@@ -11,11 +11,9 @@ import io.appium.java_client.service.local.flags.ServerArgument;
  */
 public class AppiumServerManager {
 
-    private RemoteAppiumManager remoteAppiumManager;
     private DevicesByHost devicesByHost;
 
     public AppiumServerManager() {
-        remoteAppiumManager = new RemoteAppiumManager();
         devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
     }
 

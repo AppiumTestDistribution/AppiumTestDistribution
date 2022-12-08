@@ -105,7 +105,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     HashMap<String, String> logs = new HashMap<>();
                     String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(iTestResult, "Completed", url, logs);
                 }
                 throw new SkipException("Skipped because property was set to :::"
                     + annotation.platform());
@@ -150,7 +149,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
                             AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
                     if (atdHost.isPresent() && atdPort.isPresent()) {
                         String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                        sendResultsToAtdService(iTestResult, "Completed", url, logs);
                     } else {
                         new FileFilterParser()
                                 .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
@@ -221,7 +219,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
             if (retryCount == null && (atdHost.isPresent() && atdPort.isPresent())) {
                 HashMap<String, String> logs = new HashMap<>();
                 String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                sendResultsToAtdService(iTestResult, "Completed", url, logs);
             }
         }
 

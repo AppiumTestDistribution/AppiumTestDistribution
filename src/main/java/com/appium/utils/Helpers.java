@@ -3,11 +3,8 @@ package com.appium.utils;
 import static com.appium.utils.ConfigFileManager.RUNNER;
 
 import com.appium.capabilities.Capabilities;
-import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.manager.AppiumParallelTestListener;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.report.factory.TestStatusManager;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestNGListener;
@@ -19,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -112,21 +108,6 @@ public class Helpers {
             return (ITestNGListener) clazz.newInstance();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new TestNGException(e);
-        }
-    }
-
-    public void sendResultsToAtdService(ITestResult testResult,
-                                        String testStatus, String url,
-                                        HashMap<String, String> logs) {
-        String reportEventJson;
-        try {
-            reportEventJson = new TestStatusManager()
-                .getReportEventJson(AppiumDeviceManager.getAppiumDevice(),
-                    testStatus,
-                    testResult, logs);
-            new Api().post(url, reportEventJson);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
         }
     }
 

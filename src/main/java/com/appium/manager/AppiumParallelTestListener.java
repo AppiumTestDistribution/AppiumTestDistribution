@@ -96,7 +96,6 @@ public final class AppiumParallelTestListener extends Helpers
                     AppiumDeviceManager.getAppiumDevice().getDevice().getDeviceModel());
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     String postTestResults = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-                    sendResultsToAtdService(testResult, "Completed", postTestResults, logs);
                 }
             }
             if (method.isTestMethod()) {
@@ -195,7 +194,6 @@ public final class AppiumParallelTestListener extends Helpers
     public void onTestSkipped(ITestResult iTestResult) {
         if (atdHost.isPresent() && atdPort.isPresent()) {
             String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-            sendResultsToAtdService(iTestResult, "Skipped", url, new HashMap<>());
         }
     }
 
