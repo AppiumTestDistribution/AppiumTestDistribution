@@ -2,6 +2,9 @@ package com.appium.manager;
 
 import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
+import com.appium.plugin.PluginClI;
+
+import java.io.IOException;
 
 /**
  * Device Manager - Handles all device related information's e.g UDID, Model, etc
@@ -24,12 +27,11 @@ public class AppiumDeviceManager {
     }
 
 
-    public static MobilePlatform getMobilePlatform() {
-        return MobilePlatform.valueOf(AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getOs().toUpperCase());
+    public static MobilePlatform getMobilePlatform() throws IOException {
+        return MobilePlatform.valueOf(PluginClI.getInstance().getPlatFormName().toUpperCase());
     }
 
-    public String getDeviceModel() {
+    public String getDeviceModel() throws IOException {
         if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             return androidDeviceConfiguration.getDeviceModel();
         } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
@@ -38,16 +40,7 @@ public class AppiumDeviceManager {
         throw new IllegalArgumentException("DeviceModel is Empty");
     }
 
-    public static boolean isPlatform(MobilePlatform expectedPlatform) {
+    public static boolean isPlatform(MobilePlatform expectedPlatform) throws IOException {
         return AppiumDeviceManager.getMobilePlatform().equals(expectedPlatform);
-    }
-
-    public String getDeviceVersion() {
-        if (getMobilePlatform().equals(MobilePlatform.ANDROID)) {
-            return androidDeviceConfiguration.getDeviceOS();
-        } else if (getMobilePlatform().equals(MobilePlatform.IOS)) {
-            return AppiumDeviceManager.getAppiumDevice().getDevice().getOsVersion();
-        }
-        throw new IllegalArgumentException("DeviceVersion is Empty");
     }
 }

@@ -232,7 +232,6 @@ public class HostMachineDeviceManager {
                         for (Map.Entry<String, Object> entry : cloud.toMap().entrySet()) {
                             String key = entry.getKey();
                             Object value = entry.getValue();
-                            GenyMotionManager.connectToGenyCloud(key, value);
                         }
                     }
                     devicesByHost.put(ip, getDevicesByIP(ip, platform, hostMachineJson));

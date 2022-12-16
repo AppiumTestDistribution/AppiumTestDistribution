@@ -95,7 +95,7 @@ public class AppiumDevice {
         this.webkitProcessID = webkitProcessID;
     }
 
-    private boolean isNativeAndroid() {
+    private boolean isNativeAndroid() throws IOException {
         return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
                 && AppiumDriverManager.getDriver().getCapabilities()
                 .getCapability("browserName") == null;

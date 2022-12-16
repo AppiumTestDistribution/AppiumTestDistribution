@@ -45,13 +45,15 @@ public class AppiumDriverManager {
         LOGGER.info("Initialise Driver with Capabilities: ");
         desiredCapabilities.getCapabilityNames().forEach(
             key -> LOGGER.info("\t" + key + ":: " + desiredCapabilities.getCapability(key)));
-        return createAppiumDriver(desiredCapabilities, getRemoteWDHubIP());
+        LocalAppiumManager localAppiumManager = new LocalAppiumManager();
+        String remoteWDHubIP = localAppiumManager.getRemoteWDHubIP("127.0.0.1");
+        return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
 
     @NotNull
     private AppiumDriver createAppiumDriver(DesiredCapabilities desiredCapabilities,
                                              String remoteWDHubIP)
-            throws MalformedURLException {
+            throws IOException {
         AppiumDriver currentDriverSession;
         MobilePlatform mobilePlatform = getMobilePlatform();
         switch (mobilePlatform) {

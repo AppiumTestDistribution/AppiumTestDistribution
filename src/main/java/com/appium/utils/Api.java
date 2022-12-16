@@ -31,13 +31,12 @@ public class Api extends Helpers {
 
     }
 
-    public Response requestBuilderWithBearerToken(String url, String userToken) throws IOException {
+    public Response requestBuilderWithBearerToken(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
             .url(url)
             .get()
             .addHeader("Content-Type", "application/json;charset=utf-8")
-            .addHeader("Authorization", "Bearer" + " " + userToken)
             .build();
         return client.newCall(request).execute();
 

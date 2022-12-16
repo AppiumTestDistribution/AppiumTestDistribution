@@ -5,6 +5,7 @@ import com.appium.filelocations.FileLocations;
 import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.AppiumDeviceManager;
+import com.appium.plugin.PluginClI;
 import com.appium.utils.ArtifactsUploader;
 import com.appium.utils.AvailablePorts;
 import com.appium.utils.HostArtifact;
@@ -46,22 +47,10 @@ public class DesiredCapabilityBuilder {
     public DesiredCapabilities buildDesiredCapability(String testMethodName,
                                                       String capabilityFilePath)
         throws Exception {
-        int port = AppiumDeviceManager.getAppiumDevice().getPort();
-        String platform = AppiumDeviceManager.getAppiumDevice().getDevice().getOs();
-        boolean isCloud = AppiumDeviceManager.getAppiumDevice().getDevice().isCloud();
-        DesiredCapabilities desiredCapabilities;
-        if (isCloud) {
-            desiredCapabilities = desiredCapabilityForCloud(
-                    testMethodName,
+        String platform = PluginClI.getInstance().getPlatFormName();
+        return  desiredCapabilityForLocalAndRemoteATD(
                     platform,
                     capabilityFilePath);
-        } else {
-            desiredCapabilities = desiredCapabilityForLocalAndRemoteATD(
-                    platform,
-                    port,
-                    capabilityFilePath);
-        }
-        return desiredCapabilities;
     }
 
     private DesiredCapabilities desiredCapabilityForCloud(String testMethodName,
@@ -105,66 +94,9 @@ public class DesiredCapabilityBuilder {
     }
 
     private DesiredCapabilities desiredCapabilityForLocalAndRemoteATD(String platform,
-                                                                      int port,
                                                                       String capabilityFilePath)
         throws Exception {
-        DesiredCapabilities desiredCapabilities = updateCapabilities(platform, capabilityFilePath);
-        if (isPlatform(MobilePlatform.ANDROID)) {
-            try {
-                AppiumDeviceManager.getAppiumDevice().setChromeDriverPort(
-                        availablePorts.getAvailablePort(AppiumDeviceManager
-                                .getAppiumDevice().getHostName()));
-                desiredCapabilities.setCapability(AndroidMobileCapabilityType
-                    .CHROMEDRIVER_PORT,
-                        AppiumDeviceManager.getAppiumDevice().getChromeDriverPort());
-                desiredCapabilities.setCapability(AndroidMobileCapabilityType
-                            .CHROMEDRIVER_EXECUTABLE,
-                    AppiumDeviceManager.getAppiumDevice().getChromeDriverExecutable());
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to allocate chromedriver with unique port");
-            }
-            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "android");
-            desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT,
-                port);
-            appPackage(desiredCapabilities);
-        } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
-            appPackageBundle(desiredCapabilities);
-            //Check if simulator.json exists and add the deviceName and OS
-            if (AppiumDeviceManager.getAppiumDevice().getDevice().getUdid().length()
-                == IOSDeviceConfiguration.SIM_UDID_LENGTH) {
-
-                AppiumDevice deviceProperty = AppiumDeviceManager.getAppiumDevice();
-                desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,
-                    deviceProperty.getDevice().getName());
-                desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION,
-                    deviceProperty.getDevice().getOsVersion());
-                desiredCapabilities.setCapability("webkitDebugProxyPort",
-                    new AvailablePorts().getAvailablePort(AppiumDeviceManager
-                        .getAppiumDevice().getHostName()));
-            } else {
-                desiredCapabilities.setCapability("webkitDebugProxyPort",
-                    new AvailablePorts().getAvailablePort(AppiumDeviceManager
-                        .getAppiumDevice().getHostName()));
-            }
-
-            desiredCapabilities.setCapability(IOSMobileCapabilityType
-                .WDA_LOCAL_PORT, port);
-            desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,
-                "XCUITest");
-            desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-                AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-            File derivedDataPath = new File(System.getProperty("user.dir")
-                + FileLocations.DERIVED_DATA
-                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-            if (!derivedDataPath.exists()) {
-                derivedDataPath.mkdirs();
-            }
-            desiredCapabilities.setCapability("derivedDataPath",
-                    derivedDataPath.getAbsolutePath());
-        }
-        desiredCapabilities.setCapability(MobileCapabilityType.UDID,
-            AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
-        return desiredCapabilities;
+       return updateCapabilities(platform, capabilityFilePath);
     }
 
     private DesiredCapabilities updateCapabilities(String platform,
@@ -195,20 +127,14 @@ public class DesiredCapabilityBuilder {
     }
 
     private String getAppPathInCapabilities(String platform, JSONObject fullCapabilities) {
-        ArtifactsUploader artifactsUploader = new ArtifactsUploader(fullCapabilities);
-        artifactsUploader.initializeArtifacts();
         String appPath = null;
         if (fullCapabilities.getJSONObject(platform).has("app")) {
-            JSONObject app = fullCapabilities.getJSONObject(platform).getJSONObject("app");
-            List<HostArtifact> hostArtifacts = artifactsUploader.getHostArtifacts();
-            Object values = fullCapabilities.getJSONObject(platform).get("app");
-            String hostAppPath = this.hostAppPath(values, hostArtifacts);
-            if (!AppiumDeviceManager.getAppiumDevice().getDevice().isCloud()
-                    && !(new UrlValidator()).isValid(hostAppPath)) {
-                Path path = FileSystems.getDefault().getPath(hostAppPath);
+            Object app = fullCapabilities.getJSONObject(platform).get("app");
+            if (!(new UrlValidator()).isValid(app.toString())) {
+                Path path = FileSystems.getDefault().getPath(app.toString());
                 appPath = path.normalize().toAbsolutePath().toString();
             } else {
-                appPath = hostAppPath;
+                appPath = app.toString();
             }
         }
         return appPath;

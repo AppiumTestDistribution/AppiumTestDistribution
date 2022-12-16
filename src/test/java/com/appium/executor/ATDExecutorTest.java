@@ -1,7 +1,6 @@
 package com.appium.executor;
 
 import com.appium.manager.AppiumDevice;
-import com.appium.manager.DeviceAllocationManager;
 import com.github.device.Device;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
@@ -29,7 +28,7 @@ import static org.testng.Assert.assertTrue;
 
 public class ATDExecutorTest {
     ATDExecutor ATDExecutor;
-    DeviceAllocationManager deviceAllocationManager;
+    Device deviceAllocationManager;
     List<AppiumDevice> appiumDeviceList;
     DocumentBuilder db;
     Set<Method> methods;
@@ -45,9 +44,9 @@ public class ATDExecutorTest {
         appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
         appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
 
-        deviceAllocationManager = Mockito.mock(DeviceAllocationManager.class);
-        when(deviceAllocationManager.getDevices()).thenReturn(appiumDeviceList);
-        ATDExecutor = new ATDExecutor(deviceAllocationManager);
+        deviceAllocationManager = Mockito.mock(Device.class);
+        when(deviceAllocationManager).thenReturn((Device) appiumDeviceList);
+        // ATDExecutor = new ATDExecutor(deviceAllocationManager);
     }
 
     @BeforeMethod

@@ -78,7 +78,7 @@ public class ScreenShotManager extends Helpers {
     }
 
     public String captureScreenShot(int status, String className, String screenShotName,
-                                    String methodName, String deviceModel) {
+                                    String methodName, String deviceModel) throws IOException {
         String getDeviceModel = null;
         if (AppiumDriverManager.getDriver().getSessionId() != null) {
             LOGGER.info("Current Running Thread Status"
@@ -99,7 +99,7 @@ public class ScreenShotManager extends Helpers {
         return getDeviceModel;
     }
 
-    public void captureScreenShot(String screenShotName) {
+    public void captureScreenShot(String screenShotName) throws IOException {
         String className = getCurrentTestClassName();
         String methodName = getCurrentTestMethodName();
         String deviceModel = null;

@@ -12,6 +12,7 @@ import static java.lang.System.getProperty;
 import static java.util.Collections.addAll;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import com.appium.device.Device;
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.ConfigFileManager;
@@ -42,14 +43,14 @@ import java.util.Map;
 import java.util.Set;
 
 public class ATDExecutor {
-    private final DeviceAllocationManager deviceAllocationManager;
+    private final List<Device> deviceList;
     private final List<String> items = new ArrayList<String>();
     private final List<String> listeners = new ArrayList<>();
     private final List<String> groupsInclude = new ArrayList<>();
     private final List<String> groupsExclude = new ArrayList<>();
 
-    public ATDExecutor(DeviceAllocationManager deviceAllocationManager) {
-        this.deviceAllocationManager = deviceAllocationManager;
+    public ATDExecutor(List<Device> deviceList) {
+        this.deviceList = deviceList;
     }
 
     public boolean constructXMLAndTriggerParallelRunner(List<String> test, String pack,
@@ -99,9 +100,9 @@ public class ATDExecutor {
             XmlTest test = new XmlTest(suite);
             test.setName(categoryName + "-" + i);
             test.setPreserveOrder(false);
-            final AppiumDevice appiumDevice = deviceAllocationManager.getDevices().get(i);
-            test.addParameter("device", appiumDevice.getDevice().getUdid());
-            test.addParameter("hostName", appiumDevice.getHostName());
+            Device device = deviceList.get(i);
+            test.addParameter("device", device.udid);
+            test.addParameter("hostName", device.host);
             test.setIncludedGroups(groupsInclude);
             test.setExcludedGroups(groupsExclude);
             List<XmlClass> xmlClasses = writeXmlClass(tests, methods);

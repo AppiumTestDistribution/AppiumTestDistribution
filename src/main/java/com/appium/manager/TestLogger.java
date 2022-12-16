@@ -67,7 +67,7 @@ public class TestLogger extends Helpers {
         setDescription(iTestResult);
     }
 
-    private void setDescription(ITestResult iTestResult) {
+    private void setDescription(ITestResult iTestResult) throws IOException {
         Optional<String> originalDescription = Optional.ofNullable(iTestResult
                 .getMethod().getDescription());
         String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
@@ -158,7 +158,7 @@ public class TestLogger extends Helpers {
         return logs;
     }
 
-    private boolean isNativeAndroid() {
+    private boolean isNativeAndroid() throws IOException {
         return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
                 && AppiumDriverManager.getDriver().getCapabilities()
                 .getCapability("browserName") == null;
@@ -191,7 +191,7 @@ public class TestLogger extends Helpers {
     }
 
     private void handleTestFailure(ITestResult result, String className,
-                                   String deviceModel) {
+                                   String deviceModel) throws IOException {
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),

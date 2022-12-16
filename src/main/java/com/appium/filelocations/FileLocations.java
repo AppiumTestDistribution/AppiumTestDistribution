@@ -12,6 +12,8 @@ public interface FileLocations {
             : File.separator + "target" + File.separator;
 
     String PARALLEL_XML_LOCATION = OUTPUT_DIRECTORY + "parallel.xml";
+
+    String SERVER_CONFIG = OUTPUT_DIRECTORY + "server.json";
     String REPORTS_DIRECTORY = OUTPUT_DIRECTORY + "reports" + File.separator;
 
     String SCREENSHOTS_DIRECTORY = OUTPUT_DIRECTORY + "screenshot" + File.separator;

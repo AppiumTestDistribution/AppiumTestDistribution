@@ -51,7 +51,7 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
 
     @Override
     public void startVideoRecording(String className, String methodName,
-                                    String videoFileName) {
+                                    String videoFileName) throws IOException {
         if (AppiumDeviceManager.getMobilePlatform()
             .equals(MobilePlatform.IOS)) {
 //            ((IOSDriver) AppiumDriverManager.getDriver()).startRecordingScreen();

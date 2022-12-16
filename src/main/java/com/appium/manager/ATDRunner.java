@@ -1,18 +1,31 @@
 package com.appium.manager;
 
 import com.appium.capabilities.Capabilities;
+import com.appium.device.Device;
+import com.appium.device.Devices;
 import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
+import com.appium.plugin.PluginClI;
+import com.appium.plugin.PluginCliRequest;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.Response;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.appium.filelocations.FileLocations.SERVER_CONFIG;
 import static com.appium.utils.ConfigFileManager.FRAMEWORK;
 import static com.appium.utils.ConfigFileManager.RUNNER;
 import static com.appium.utils.FigletHelper.figlet;
 import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
+import static java.lang.System.getProperty;
 
 public class ATDRunner {
     private static final String ANDROID = "android";
@@ -25,16 +38,35 @@ public class ATDRunner {
     private Capabilities capabilities;
     private HostMachineDeviceManager hostMachineDeviceManager;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
+    private FileWriter file;
 
+    List<Device> deviceList;
     public ATDRunner() throws Exception {
         capabilities = Capabilities.getInstance();
-        final String host = "127.0.0.1";
-        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
-        appiumManager.startAppiumServer(host);
+        writeServiceConfig();
+        LocalAppiumManager localAppiumManager = new LocalAppiumManager();
+        localAppiumManager.startAppiumServer("127.0.0.1"); //Needs to be removed
+        Devices devices = new Devices();
+        Response connectedDevices = devices.getDevices();
+        ObjectMapper mapper = new ObjectMapper();
+        deviceList = mapper.readValue(connectedDevices.body().string(),
+                new TypeReference<List<Device>>() {
+                });
         deviceAllocationManager = DeviceAllocationManager.getInstance();
-        ATDExecutor = new ATDExecutor(deviceAllocationManager);
+        ATDExecutor = new ATDExecutor(deviceList);
         hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
+    }
+
+    private void writeServiceConfig() {
+        JSONObject serverConfig = Capabilities.getInstance().getCapabilityObjectFromKey("serverConfig");
+        try (FileWriter writer = new FileWriter(new File(
+                getProperty("user.dir") + SERVER_CONFIG))) {
+            writer.write(serverConfig.toString());
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createOutputDirectoryIfNotExist() {
@@ -54,7 +86,7 @@ public class ATDRunner {
     }
 
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
-        int deviceCount = hostMachineDeviceManager.getDevicesByHost().getAllDevices().size();
+        int deviceCount = deviceList.size();
 
         if (deviceCount == 0) {
             figlet("No Devices Connected");
