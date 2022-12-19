@@ -1,14 +1,8 @@
 package com.video.recorder;
 
 import com.appium.entities.MobilePlatform;
-import com.appium.filelocations.FileLocations;
 import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumDriverManager;
 import com.appium.utils.Helpers;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidStartScreenRecordingOptions;
-import io.appium.java_client.ios.IOSDriver;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,8 +39,8 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
 
     private void saveVideo(String base64, String videoLocation) throws IOException {
         byte[] decode = Base64.getDecoder().decode(base64);
-        FileUtils.writeByteArrayToFile(new File(videoLocation),
-            decode);
+//        FileUtils.writeByteArrayToFile(new File(videoLocation),
+//            decode);
     }
 
     @Override

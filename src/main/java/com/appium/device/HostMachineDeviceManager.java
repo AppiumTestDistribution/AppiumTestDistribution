@@ -9,7 +9,6 @@ import com.appium.utils.CommandPrompt;
 import com.appium.utils.OSType;
 import com.github.device.Device;
 import org.apache.log4j.Logger;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -78,8 +77,6 @@ public class HostMachineDeviceManager {
         Map<String, List<AppiumDevice>> devicesFilteredByUserSpecified
                 = filterByUserSpecifiedDevices(devicesFilteredByPlatform);
         devicesByHost = new DevicesByHost(devicesFilteredByUserSpecified);
-        String atdHost = capabilities.getMongoDbHostAndPort().get("atdHost");
-        String atdPort = capabilities.getMongoDbHostAndPort().get("atdPort");
 
     }
 
@@ -298,15 +295,16 @@ public class HostMachineDeviceManager {
     }
 
     private String getPathForChromeDriver(String id) throws IOException {
-        int[] versionNamesArr = getChromeVersionsFor(id);
-        int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
-        WebDriverManager.chromedriver()
-            .browserVersion(String.valueOf(highestChromeVersion)).setup();
-        String message = "ChromeDriver for Chrome version " + highestChromeVersion
-            + " on device: " + id;
-        String downloadedDriverPath = WebDriverManager.chromedriver().getDownloadedDriverPath();
-        LOGGER.info(message + downloadedDriverPath);
-        return downloadedDriverPath;
+//        int[] versionNamesArr = getChromeVersionsFor(id);
+//        int highestChromeVersion = Arrays.stream(versionNamesArr).max().getAsInt();
+//        WebDriverManager.chromedriver()
+//            .browserVersion(String.valueOf(highestChromeVersion)).setup();
+//        String message = "ChromeDriver for Chrome version " + highestChromeVersion
+//            + " on device: " + id;
+//        String downloadedDriverPath = WebDriverManager.chromedriver().getDownloadedDriverPath();
+//        LOGGER.info(message + downloadedDriverPath);
+//        return downloadedDriverPath;
+        return "";
     }
 
     private List<Device> getSimulatorsToBoot(String machineIP, JSONArray simulators) {

@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.Capabilities;
+import com.appium.plugin.PluginClI;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
 import com.context.SessionContext;
@@ -65,7 +66,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     }
 
     private boolean isCloudExecution() {
-        return true; //Needs a fix
+        return PluginClI.getInstance().isCloud();
     }
 
     private void startReportLogging(ITestResult iTestResult) throws IOException,
@@ -91,7 +92,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
             }
         TestExecutionContext testExecutionContext =
                 new TestExecutionContext(testMethodName);
-        System.out.println( AppiumDriverManager.getDriver().getCapabilities());
+        System.out.println("9*****" + AppiumDriverManager.getDriver().getCapabilities().toString());
         testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
                 AppiumDriverManager.getDriver().getCapabilities().getCapability("deviceUDID"));
@@ -131,8 +132,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
                         testResults.set(logs);
                 }
                 if (iInvokedMethod.isTestMethod()) {
-                    //deviceAllocationManager.freeDevice();
-                    AppiumDriverManager.getDriver().quit();
+                    if (AppiumDriverManager.getDriver() != null) {
+                        AppiumDriverManager.getDriver().quit();
+                    }
                     if (!isCloudExecution()) {
                         appiumDriverManager.stopAppiumDriver();
                     }

@@ -1,12 +1,13 @@
 {
   "android": {
     "automationName": "UIAutomator2",
-    "project": "ATD",
-    "app": {
-      "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
-      "cloud": "bs://b82b336385049a9aab8ae3f994ee01e7645282ac"
-    },
-    "noSign": true
+    "app": "bs://2bbe609559cd2c93f3a9d2cffc6dfa218c98091a",
+    "noSign": true,
+    "browserstack.appium_version": "2.0.0",
+    "project": "First TestNg Android Project",
+    "build": "browserstack-1111",
+    "name": "first_test",
+    "browserstack.debug": true
   },
   "iOS": {
     "platformName": "iOS",
@@ -22,23 +23,38 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10
   },
-  "cloud": {
-    "android": [
-      {
-        "deviceName": "Google Pixel 3 XL",
-        "osVersion": "9.0"
-      },
-      {
-        "deviceName": "Samsung Galaxy S9 Plus",
-        "osVersion": "9.0"
+  "serverConfig" : {
+    "server": {
+      "port": 31337,
+      "plugin": {
+        "device-farm": {
+          "platform": "android",
+          "skipChromeDownload": true,
+          "remote": [
+            {
+              "cloudName": "browserstack",
+              "url": "http://hub-cloud.browserstack.com",
+              "devices": [
+                {
+                  "device": "Samsung Galaxy S22",
+                  "os_version": "12.0",
+                  "platform": "android"
+                },
+                {
+                  "device": "iPhone 11 Pro",
+                  "os_version": "15",
+                  "platform": "ios"
+                }
+              ]
+            }
+          ]
+        }
       }
-    ]
+    }
   },
   "hostMachines": [
     {
-      "isCloud": true,
-      "machineIP": "hub-cloud.browserstack.com",
-      "cloudName": "browserstack"
+      "machineIP": "127.0.0.1"
     }
   ]
 }

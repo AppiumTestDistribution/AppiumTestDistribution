@@ -42,6 +42,7 @@ public class LocalAppiumManager implements IAppiumManager {
 
     @Override
     public void destroyAppiumNode(String host) {
+        LOGGER.info("Shutting down Appium Server");
         getAppiumDriverLocalService().stop();
         if (getAppiumDriverLocalService().isRunning()) {
             LOGGER.info("AppiumServer didn't shut... Trying to quit again....");
@@ -65,6 +66,7 @@ public class LocalAppiumManager implements IAppiumManager {
                                         + FileLocations.APPIUM_LOGS_DIRECTORY
                                         + "appium_logs.txt"))
                         .withIPAddress(host)
+                        .withArgument(GeneralServerFlag.BASEPATH, "/wd/hub")
                         .withArgument(() -> "--config", System.getProperty("user.dir") + FileLocations.SERVER_CONFIG)
                         .withArgument(GeneralServerFlag.USE_PLUGINS, "device-farm")
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)

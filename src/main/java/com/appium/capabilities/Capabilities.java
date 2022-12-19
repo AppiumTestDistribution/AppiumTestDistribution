@@ -313,7 +313,7 @@ public class Capabilities {
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
             schema.validate(loadedCapabilities);
-            validateRemoteHosts(loadedCapabilities);
+            //validateRemoteHosts(loadedCapabilities);
         } catch (ValidationException e) {
             if (e.getCausingExceptions().size() > 1) {
                 e.getCausingExceptions().stream()

@@ -3,21 +3,24 @@ package com.appium.plugin;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import okhttp3.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
 public class PluginClI {
     public String subcommand;
     public String address;
     public String basePath;
     public int port;
     public ArrayList<String> usePlugins;
-    @Getter
     public Plugin plugin;
     public ArrayList<Object> extraArgs;
     public boolean allowCors;
@@ -44,7 +47,7 @@ public class PluginClI {
     public static class DeviceFarm{
         public String platform;
         public String deviceTypes;
-        public ArrayList<String> remote;
+        public JsonNode remote;
         public boolean skipChromeDownload;
     }
 
@@ -64,8 +67,13 @@ public class PluginClI {
         return getPlugin().getDeviceFarm().getPlatform();
     }
 
+    public boolean isCloud() {
+        return getPlugin().getDeviceFarm().getRemote().get(0).has("cloudName");
+    }
+
     private static PluginClI instance;
-    public static PluginClI getInstance() throws IOException {
+    @SneakyThrows
+    public static PluginClI getInstance() {
         if (instance == null) {
             PluginCliRequest plugin = new PluginCliRequest();
             Response cliArgs = plugin.getCliArgs();

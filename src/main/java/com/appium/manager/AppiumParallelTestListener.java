@@ -122,6 +122,8 @@ public final class AppiumParallelTestListener extends Helpers
             String device = testClass.getXmlClass().getAllParameters().get("device");
             String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
             DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
+            AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
+            deviceAllocationManager.allocateDevice(appiumDevice);
         } catch (Exception e) {
             e.printStackTrace();
         }

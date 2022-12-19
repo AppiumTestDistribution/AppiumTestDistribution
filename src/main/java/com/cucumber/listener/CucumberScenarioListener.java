@@ -90,17 +90,17 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         Device device = availableDevice.getDevice();
         device.setUdid(udid);
         device.setDeviceManufacturer(
-                getCapabilityFor(capabilities, "deviceManufacturer"));
+                getCapabilityFor(capabilities, "appium:deviceManufacturer"));
         device.setDeviceModel(
-                getCapabilityFor(capabilities, "deviceModel"));
+                getCapabilityFor(capabilities, "appium:deviceModel"));
         device.setName(
-                getCapabilityFor(capabilities, "device"));
+                getCapabilityFor(capabilities, "appium:device"));
         device.setApiLevel(
-                getCapabilityFor(capabilities, "deviceApiLevel"));
+                getCapabilityFor(capabilities, "appium:deviceApiLevel"));
         device.setDeviceType(
-                getCapabilityFor(capabilities, "platformName"));
+                getCapabilityFor(capabilities, "appium:platformName"));
         device.setScreenSize(
-                getCapabilityFor(capabilities, "deviceScreenSize"));
+                getCapabilityFor(capabilities, "appium:deviceScreenSize"));
         return availableDevice;
     }
 
@@ -149,12 +149,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         } catch (IOException | InterruptedException e) {
             LOGGER.info("Error in starting data capture: " + e.getMessage());
             e.printStackTrace();
-        }
-        if (!isCloudExecution()) {
-            if (atdHost.isPresent() && atdPort.isPresent()) {
-                HashMap<String, String> logs = new HashMap<>();
-                String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-            }
         }
 
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);

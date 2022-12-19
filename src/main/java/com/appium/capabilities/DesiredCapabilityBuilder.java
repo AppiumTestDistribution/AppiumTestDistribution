@@ -20,13 +20,11 @@ import org.json.JSONObject;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.appium.manager.AppiumDeviceManager.isPlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
 import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
@@ -126,11 +124,12 @@ public class DesiredCapabilityBuilder {
         return desiredCapabilities;
     }
 
-    private String getAppPathInCapabilities(String platform, JSONObject fullCapabilities) {
+    private String getAppPathInCapabilities(String platform, JSONObject fullCapabilities)  {
         String appPath = null;
         if (fullCapabilities.getJSONObject(platform).has("app")) {
             Object app = fullCapabilities.getJSONObject(platform).get("app");
-            if (!(new UrlValidator()).isValid(app.toString())) {
+            if (!(PluginClI.getInstance().isCloud())
+                    && !(new UrlValidator()).isValid(app.toString())) {
                 Path path = FileSystems.getDefault().getPath(app.toString());
                 appPath = path.normalize().toAbsolutePath().toString();
             } else {
