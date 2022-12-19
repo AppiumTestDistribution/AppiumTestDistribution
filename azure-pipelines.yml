@@ -18,7 +18,7 @@ jobs:
 
         displayName: "Checkstyle"
 
-  - job: Distribute between Android Devices
+  - job: Distribute_between_Android_Devices
     pool:
       vmImage: "macos-latest"
 
@@ -69,7 +69,7 @@ jobs:
 
         displayName: "Run Distribute on Android"
 
-  - job: Distribute on BrowserStack
+  - job: Distribute_on_BrowserStack
     pool:
       vmImage: "macos-latest"
 
