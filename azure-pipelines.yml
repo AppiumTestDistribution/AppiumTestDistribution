@@ -37,7 +37,7 @@ jobs:
           appium -v
           appium driver install uiautomator2
           appium driver install xcuitest
-          appium plugin install appium-device-farm
+          appium plugin install --source npm appium-device-farm
         displayName: "Install Appium"
 
       - bash: |
@@ -83,7 +83,7 @@ jobs:
           appium -v
           appium driver install uiautomator2
           appium driver install xcuitest
-          appium plugin install appium-device-farm
+          appium plugin install --source npm appium-device-farm
         displayName: "Install Appium"
 
       - script: |
