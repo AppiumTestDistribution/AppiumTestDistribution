@@ -25,7 +25,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "17.5.0"
+          versionSpec: "18.12.1"
       - task: JavaToolInstaller@0
         inputs:
           versionSpec: '8'
@@ -82,7 +82,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "17.5.0"
+          versionSpec: "18.12.1"
       - task: JavaToolInstaller@0
         inputs:
           versionSpec: '8'
