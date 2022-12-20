@@ -52,7 +52,8 @@ public class TestLogger extends Helpers {
                 .getRealClass().getSimpleName();
 
         if (isNativeAndroid()) {
-            String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+            String udid = AppiumDriverManager.getDriver().getCapabilities()
+                            .getCapability("appium:udid").toString();
             List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
                     .logs().get("logcat").getAll();
             logEntries.set(logcat);

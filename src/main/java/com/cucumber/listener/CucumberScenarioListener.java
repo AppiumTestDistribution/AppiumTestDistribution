@@ -39,8 +39,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private final AppiumDriverManager appiumDriverManager;
     private final DeviceAllocationManager deviceAllocationManager;
     private final AppiumServerManager appiumServerManager;
-    private final Optional<String> atdHost;
-    private final Optional<String> atdPort;
     private Map<String, Integer> scenarioRunCounts = new HashMap<String, Integer>();
 
     public CucumberScenarioListener() throws Exception {
@@ -50,12 +48,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         appiumServerManager = new AppiumServerManager();
         deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
-        atdHost =
-                Optional.ofNullable(Capabilities.getInstance()
-                        .getMongoDbHostAndPort().get("atdHost"));
-        atdPort =
-                Optional.ofNullable(Capabilities.getInstance()
-                        .getMongoDbHostAndPort().get("atdPort"));
     }
 
     private AppiumDevice allocateDeviceAndStartDriver(String testMethodName) {

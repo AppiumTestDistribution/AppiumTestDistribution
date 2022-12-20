@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class LocalAppiumManager implements IAppiumManager {
                                         + FileLocations.APPIUM_LOGS_DIRECTORY
                                         + "appium_logs.txt"))
                         .withIPAddress(host)
+                        .withTimeout(Duration.ofSeconds(60))
                         .withArgument(GeneralServerFlag.BASEPATH, "/wd/hub")
                         .withArgument(() -> "--config", System.getProperty("user.dir") + FileLocations.SERVER_CONFIG)
                         .withArgument(GeneralServerFlag.USE_PLUGINS, "device-farm")
