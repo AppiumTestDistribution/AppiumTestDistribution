@@ -26,6 +26,11 @@ jobs:
       - task: NodeTool@0
         inputs:
           versionSpec: "17.5.0"
+      - task: JavaToolInstaller@0
+        inputs:
+          versionSpec: '17'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
       - script: |
           brew outdated xctool || brew upgrade xctool
           xcrun simctl list
@@ -33,6 +38,7 @@ jobs:
 
       - script: |
           node -v
+          java -version
           npm install -g appium@next
           appium -v
           appium driver install uiautomator2
@@ -77,8 +83,14 @@ jobs:
       - task: NodeTool@0
         inputs:
           versionSpec: "17.5.0"
+      - task: JavaToolInstaller@0
+        inputs:
+          versionSpec: '17'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
       - script: |
           node -v
+          java -version
           npm install -g appium@next
           appium -v
           appium driver install uiautomator2
