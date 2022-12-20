@@ -28,7 +28,7 @@ jobs:
           versionSpec: "17.5.0"
       - task: JavaToolInstaller@0
         inputs:
-          versionSpec: '11'
+          versionSpec: '8'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
       - script: |
@@ -85,7 +85,7 @@ jobs:
           versionSpec: "17.5.0"
       - task: JavaToolInstaller@0
         inputs:
-          versionSpec: '11'
+          versionSpec: '8'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
       - script: |
