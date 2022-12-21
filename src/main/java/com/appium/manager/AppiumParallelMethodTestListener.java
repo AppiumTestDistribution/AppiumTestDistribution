@@ -2,9 +2,7 @@ package com.appium.manager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.annotation.values.RetryCount;
 import com.annotation.values.SkipIf;
-import com.appium.capabilities.Capabilities;
 import com.appium.plugin.PluginClI;
 import com.appium.utils.FileFilterParser;
 import com.appium.utils.Helpers;
@@ -12,7 +10,6 @@ import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
 import org.apache.log4j.Logger;
-import org.json.simple.parser.ParseException;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
@@ -90,7 +87,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 new TestExecutionContext(testMethodName);
         testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
-                AppiumDriverManager.getDriver().getCapabilities().getCapability("deviceUDID"));
+                AppiumDeviceManager.getAppiumDevice().getUdid());
 
         queueBeforeInvocationListeners(iInvokedMethod, iTestResult, listeners);
     }
