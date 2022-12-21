@@ -5,12 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import okhttp3.Response;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -44,19 +42,20 @@ public class PluginClI {
     public int $loki;
 
     @Getter
-    public static class DeviceFarm{
+    public static class DeviceFarm {
         public String platform;
         public String deviceTypes;
         public JsonNode remote;
         public boolean skipChromeDownload;
     }
 
-    public static class Meta{
+    public static class Meta {
         public int revision;
         public long created;
         public int version;
     }
-    public static class Plugin{
+
+    public static class Plugin {
         @JsonProperty("device-farm")
         @JsonAlias("deviceFarm")
         @Getter
@@ -72,6 +71,7 @@ public class PluginClI {
     }
 
     private static PluginClI instance;
+
     @SneakyThrows
     public static PluginClI getInstance() {
         if (instance == null) {

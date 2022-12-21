@@ -69,7 +69,8 @@ public class LocalAppiumManager implements IAppiumManager {
                         .withIPAddress(host)
                         .withTimeout(Duration.ofSeconds(60))
                         .withArgument(GeneralServerFlag.BASEPATH, "/wd/hub")
-                        .withArgument(() -> "--config", System.getProperty("user.dir") + FileLocations.SERVER_CONFIG)
+                        .withArgument(() -> "--config", System.getProperty("user.dir")
+                                + FileLocations.SERVER_CONFIG)
                         .withArgument(GeneralServerFlag.USE_PLUGINS, "device-farm")
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .usingAnyFreePort();
@@ -153,28 +154,6 @@ public class LocalAppiumManager implements IAppiumManager {
         int port = socket.getLocalPort();
         socket.close();
         return port;
-    }
-
-    @Override
-    public int startIOSWebKitProxy(String host) throws Exception {
-        int port = getAvailablePort(host);
-        String webkitRunner = "ios_webkit_debug_proxy -c "
-                + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
-                + ":" + port;
-        String process = Runtime.getRuntime().exec(webkitRunner).toString();
-        AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(process);
-        return port;
-    }
-
-    @Override
-    public void destoryIOSWebKitProxy(String host) throws Exception {
-        if (AppiumDeviceManager.getAppiumDevice().getWebkitProcessID() != null) {
-            String command = "kill -9 " + AppiumDeviceManager
-                    .getAppiumDevice().getWebkitProcessID();
-            LOGGER.info("Kills webkit proxy" + "******************" + command);
-            Runtime.getRuntime().exec(command);
-            AppiumDeviceManager.getAppiumDevice().setWebkitProcessID(null);
-        }
     }
 
     private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {

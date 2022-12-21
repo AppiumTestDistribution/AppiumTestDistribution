@@ -1,8 +1,13 @@
 package com.appium.device;
 
+import com.appium.capabilities.DriverSession;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
 public class Device {
     public String name;
     public String udid;
@@ -20,7 +25,6 @@ public class Device {
     public String derivedDataPath;
     public boolean offline;
     public int sessionStartTime;
-
 
     public static class Meta {
         public int revision;

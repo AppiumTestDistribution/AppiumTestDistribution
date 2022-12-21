@@ -65,18 +65,16 @@ public class TestLogger extends Helpers {
             IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
             videoRecording.startVideoRecording(className, methodName, methodName);
         }
-        setDescription(iTestResult);
+        // setDescription(iTestResult); Needs a fix
     }
 
     private void setDescription(ITestResult iTestResult) throws IOException {
         Optional<String> originalDescription = Optional.ofNullable(iTestResult
                 .getMethod().getDescription());
         String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
-                + " UDID: " + AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getUdid()
-                + " Name: " + AppiumDeviceManager.getAppiumDevice()
-                .getDevice().getName()
-                + " Host: " + AppiumDeviceManager.getAppiumDevice().getHostName();
+                + " UDID: " + AppiumDeviceManager.getAppiumDevice().getUdid()
+                + " Name: " + AppiumDeviceManager.getAppiumDevice().getDeviceName();
+        // + " Host: " + AppiumDeviceManager.getAppiumDevice().get(); // Needs a fix
         Author annotation = iTestResult.getMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(Author.class);
         if (annotation != null) {
@@ -84,8 +82,7 @@ public class TestLogger extends Helpers {
         }
         if (originalDescription.isPresent()
                 && !originalDescription.get()
-                .contains(AppiumDeviceManager.getAppiumDevice()
-                        .getDevice().getUdid())) {
+                .contains(AppiumDeviceManager.getAppiumDevice().getUdid())) {
             iTestResult.getMethod().setDescription(originalDescription.get()
                     + "\n" + description);
         } else {
@@ -100,7 +97,8 @@ public class TestLogger extends Helpers {
         stopViewRecording(result, className);
         if (isNativeAndroid()) {
             String adbPath = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
-                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                    + AppiumDriverManager.getDriver().getCapabilities()
+                        .getCapability("appium:udid").toString()
                     + "__" + result.getMethod().getMethodName() + ".txt";
             logs.put("adbLogs", adbPath);
             logEntries.get().forEach(logEntry -> {
@@ -114,12 +112,11 @@ public class TestLogger extends Helpers {
          */
         handleTestFailure(result, className, deviceModel);
         String baseHostUrl = "http://" + getHostMachineIpAddress() + ":"
-                + getRemoteAppiumManagerPort(AppiumDeviceManager
-                .getAppiumDevice().getHostName());
+                + getRemoteAppiumManagerPort("127.0.0.1");
         if ("true".equalsIgnoreCase(getOverriddenStringValue("VIDEO_LOGS"))) {
             setVideoPath("screenshot/" + AppiumDeviceManager.getMobilePlatform()
                     .toString().toLowerCase()
-                    + "/" + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                    + "/" + AppiumDeviceManager.getAppiumDevice().getUdid()
                     + "/" + className + "/" + result.getMethod()
                     .getMethodName() + "/" + result.getMethod().getMethodName() + ".mp4");
 
@@ -182,7 +179,7 @@ public class TestLogger extends Helpers {
                 .equalsIgnoreCase("true"))) {
             File videoFile = new File(System.getProperty("user.dir")
                     + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
-                    + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid() + "/"
+                    + AppiumDeviceManager.getAppiumDevice().getUdid() + "/"
                     + className + "/" + result.getMethod().getMethodName()
                     + "/" + result.getMethod().getMethodName() + ".mp4");
             if (videoFile.exists()) {
@@ -203,7 +200,7 @@ public class TestLogger extends Helpers {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
                 String imagePath = System.getProperty("user.dir")
                         + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
-                        + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                        + AppiumDeviceManager.getAppiumDevice().getUdid()
                         + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp
                         + "-" + result.getMethod().getMethodName() + "_failed.jpeg";
@@ -213,7 +210,7 @@ public class TestLogger extends Helpers {
             if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.IOS)) {
                 String imagePath = System.getProperty("user.dir")
                         + FileLocations.IOS_SCREENSHOTS_DIRECTORY
-                        + AppiumDeviceManager.getAppiumDevice().getDevice().getUdid()
+                        + AppiumDeviceManager.getAppiumDevice().getUdid()
                         + "/" + className + "/" + result.getMethod()
                         .getMethodName() + "/" + screenShotNameWithTimeStamp
                         + "-" + result.getMethod().getMethodName() + "_failed.jpeg";

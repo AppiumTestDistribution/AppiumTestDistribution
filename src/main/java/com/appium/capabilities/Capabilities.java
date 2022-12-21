@@ -276,8 +276,8 @@ public class Capabilities {
         JSONArray hostMachineObject = Capabilities.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
         Object machineIP = hostIP.stream().filter(object -> ((Map) object).get("machineIP")
-                .toString().equalsIgnoreCase(host)
-                && ((Map) object).get(arg) != null)
+                        .toString().equalsIgnoreCase(host)
+                        && ((Map) object).get(arg) != null)
                 .findFirst().orElse(null);
         return (T) ((Map) machineIP).get(arg);
     }

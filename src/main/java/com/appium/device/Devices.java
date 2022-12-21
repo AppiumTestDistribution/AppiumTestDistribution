@@ -9,6 +9,7 @@ import java.net.URL;
 
 public class Devices {
     Api api;
+
     public Devices() {
         api = new Api();
     }
@@ -17,6 +18,7 @@ public class Devices {
         LocalAppiumManager localAppiumManager = new LocalAppiumManager();
         String remoteWDHubIP = localAppiumManager.getRemoteWDHubIP("127.0.0.1");
         URL url = new URL(remoteWDHubIP);
-        return api.requestBuilderWithBearerToken(url.getProtocol()+ "://" + url.getHost() + ":"+ url.getPort() + "/device-farm/api/devices");
+        return api.requestBuilderWithBearerToken(url.getProtocol()
+                + "://" + url.getHost() + ":" + url.getPort() + "/device-farm/api/devices");
     }
 }

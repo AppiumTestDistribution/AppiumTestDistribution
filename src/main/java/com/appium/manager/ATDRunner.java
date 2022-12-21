@@ -3,11 +3,8 @@ package com.appium.manager;
 import com.appium.capabilities.Capabilities;
 import com.appium.device.Device;
 import com.appium.device.Devices;
-import com.appium.device.HostMachineDeviceManager;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
-import com.appium.plugin.PluginClI;
-import com.appium.plugin.PluginCliRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Response;
@@ -33,14 +30,13 @@ public class ATDRunner {
     private static final String IOS = "iOS";
     public static final String USER_DIR = "user.dir";
 
-    private DeviceAllocationManager deviceAllocationManager;
-    private ATDExecutor ATDExecutor;
-    private Capabilities capabilities;
-    private HostMachineDeviceManager hostMachineDeviceManager;
+    private final ATDExecutor ATDExecutor;
+    private final Capabilities capabilities;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
     private FileWriter file;
 
     List<Device> deviceList;
+
     public ATDRunner() throws Exception {
         capabilities = Capabilities.getInstance();
         writeServiceConfig();
@@ -52,14 +48,13 @@ public class ATDRunner {
         deviceList = mapper.readValue(connectedDevices.body().string(),
                 new TypeReference<List<Device>>() {
                 });
-        deviceAllocationManager = DeviceAllocationManager.getInstance();
         ATDExecutor = new ATDExecutor(deviceList);
-        hostMachineDeviceManager = HostMachineDeviceManager.getInstance();
         createOutputDirectoryIfNotExist();
     }
 
     private void writeServiceConfig() {
-        JSONObject serverConfig = Capabilities.getInstance().getCapabilityObjectFromKey("serverConfig");
+        JSONObject serverConfig = Capabilities.getInstance()
+                .getCapabilityObjectFromKey("serverConfig");
         try (FileWriter writer = new FileWriter(new File(
                 getProperty("user.dir") + SERVER_CONFIG))) {
             writer.write(serverConfig.toString());
@@ -99,8 +94,7 @@ public class ATDRunner {
         createAppiumLogsFolder();
         createSnapshotDirectoryFor();
         String platform = getOverriddenStringValue("Platform");
-        if (deviceAllocationManager.getDevices() != null && platform.equalsIgnoreCase(ANDROID)
-                || platform.equalsIgnoreCase(BOTH)) {
+        if (platform.equalsIgnoreCase("android")) {
             if (!capabilities.getCapabilityObjectFromKey("android").has("automationName")) {
                 throw new IllegalArgumentException("Please set automationName "
                         + "as UIAutomator2 or Espresso to create Android driver");
@@ -144,12 +138,11 @@ public class ATDRunner {
     }
 
     private void createSnapshotDirectoryFor() {
-        List<AppiumDevice> udids = hostMachineDeviceManager.getDevicesByHost().getAllDevices();
-        for (AppiumDevice udid : udids) {
-            String os = udid.getDevice()
-                    .getOs().equalsIgnoreCase(IOS) ? "iOS" : "Android";
+        List<Device> udids = deviceList;
+        for (Device udid : udids) {
+            String os = udid.getPlatform().equalsIgnoreCase(IOS) ? "iOS" : "Android";
             createPlatformDirectory(os);
-            String deviceId = udid.getDevice().getUdid();
+            String deviceId = udid.getUdid();
             File file = new File(
                     System.getProperty(USER_DIR)
                             + FileLocations.SCREENSHOTS_DIRECTORY

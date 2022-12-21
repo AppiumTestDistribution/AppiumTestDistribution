@@ -9,12 +9,13 @@ import java.util.List;
 public class RunnerWeb {
 
 
-    @Test public void runWebTests() throws Exception {
+    @Test
+    public void runWebTests() throws Exception {
         List<String> tests = new ArrayList<>();
         ATDRunner atdRunner = new ATDRunner();
 
         tests.add("LoginFailureTest");
-        boolean hasFailures = atdRunner.runner("com.appium.webtest",tests);
+        boolean hasFailures = atdRunner.runner("com.appium.webtest", tests);
 
     }
 }

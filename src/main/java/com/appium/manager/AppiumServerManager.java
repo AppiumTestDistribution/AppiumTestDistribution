@@ -1,7 +1,5 @@
 package com.appium.manager;
 
-import com.appium.device.DevicesByHost;
-import com.appium.device.HostMachineDeviceManager;
 import io.appium.java_client.service.local.flags.ServerArgument;
 
 /**
@@ -11,11 +9,6 @@ import io.appium.java_client.service.local.flags.ServerArgument;
  */
 public class AppiumServerManager {
 
-    private DevicesByHost devicesByHost;
-
-    public AppiumServerManager() {
-        devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
-    }
 
     /**
      * start appium with auto generated ports : appium port, chrome port,
@@ -43,15 +36,11 @@ public class AppiumServerManager {
 
 
     public void startAppiumServer() throws Exception {
-        for (String host : devicesByHost.getAllHosts()) {
-            startAppiumServerSingleSession(host);
-        }
+        startAppiumServerSingleSession("127.0.0.1");
     }
 
     public void stopAppiumServer() throws Exception {
-        for ( String host: devicesByHost.getAllHosts()) {
-            IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
-            appiumManager.destroyAppiumNode(host);
-        }
+        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager("127.0.0.1");
+        appiumManager.destroyAppiumNode("127.0.0.1");
     }
 }

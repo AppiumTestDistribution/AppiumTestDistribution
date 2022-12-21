@@ -1,6 +1,5 @@
 package com.appium.executor;
 
-import com.appium.manager.AppiumDevice;
 import com.github.device.Device;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
@@ -19,7 +18,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.apache.commons.io.IOUtils.toInputStream;
@@ -29,7 +27,6 @@ import static org.testng.Assert.assertTrue;
 public class ATDExecutorTest {
     ATDExecutor ATDExecutor;
     Device deviceAllocationManager;
-    List<AppiumDevice> appiumDeviceList;
     DocumentBuilder db;
     Set<Method> methods;
     String SUITE_NAME = "TestNG Forum";
@@ -37,15 +34,13 @@ public class ATDExecutorTest {
 
     @BeforeSuite
     public void setUp() {
-        appiumDeviceList = new ArrayList<>();
         String cloudName = "Local";
+        /*appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
         appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
         appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
-        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
-        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
+        appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));*/
 
         deviceAllocationManager = Mockito.mock(Device.class);
-        when(deviceAllocationManager).thenReturn((Device) appiumDeviceList);
         // ATDExecutor = new ATDExecutor(deviceAllocationManager);
     }
 

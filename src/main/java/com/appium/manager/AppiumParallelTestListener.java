@@ -3,12 +3,9 @@ package com.appium.manager;
 
 import com.annotation.values.SkipIf;
 import com.appium.capabilities.Capabilities;
-import com.appium.device.DevicesByHost;
 import com.appium.utils.Helpers;
-import com.appium.device.HostMachineDeviceManager;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
-import org.json.JSONObject;
 
 import org.testng.IClassListener;
 import org.testng.IInvokedMethod;
@@ -23,7 +20,6 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.ITestNGListener;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.List;
 
@@ -31,10 +27,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 
 public final class AppiumParallelTestListener extends Helpers
-    implements IClassListener, IInvokedMethodListener, ISuiteListener, ITestListener {
+        implements IClassListener, IInvokedMethodListener, ISuiteListener, ITestListener {
 
     private TestLogger testLogger;
-    private DeviceAllocationManager deviceAllocationManager;
     private AppiumServerManager appiumServerManager;
     private AppiumDriverManager appiumDriverManager;
     private Optional<String> atdHost;
@@ -45,12 +40,11 @@ public final class AppiumParallelTestListener extends Helpers
     public AppiumParallelTestListener() throws Exception {
         testLogger = new TestLogger();
         appiumServerManager = new AppiumServerManager();
-        deviceAllocationManager = DeviceAllocationManager.getInstance();
         appiumDriverManager = new AppiumDriverManager();
         atdHost = Optional.ofNullable(Capabilities.getInstance()
-            .getMongoDbHostAndPort().get("atdHost"));
+                .getMongoDbHostAndPort().get("atdHost"));
         atdPort = Optional.ofNullable(Capabilities.getInstance()
-            .getMongoDbHostAndPort().get("atdPort"));
+                .getMongoDbHostAndPort().get("atdPort"));
         iTestNGListeners = initialiseListeners();
     }
 
@@ -63,18 +57,18 @@ public final class AppiumParallelTestListener extends Helpers
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult testResult) {
         currentMethods.set(iInvokedMethod.getTestMethod());
         SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
-            .getAnnotation(SkipIf.class);
+                .getAnnotation(SkipIf.class);
         if (annotation != null && AppiumDriverManager.getDriver().getCapabilities()
                 .getCapability("platformName")
                 .toString().equalsIgnoreCase(annotation.platform())) {
             throw new SkipException("Skipped because property was set to :::"
-                + annotation.platform());
+                    + annotation.platform());
         }
         TestExecutionContext testExecutionContext =
                 new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
-        testExecutionContext.addTestState("appiumDriver",AppiumDriverManager.getDriver());
+        testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
-                AppiumDeviceManager.getAppiumDevice().getDevice().getUdid());
+                AppiumDeviceManager.getAppiumDevice().getUdid());
         queueBeforeInvocationListeners(iInvokedMethod, testResult, iTestNGListeners);
     }
 
@@ -119,11 +113,10 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onBeforeClass(ITestClass testClass) {
         try {
-            String device = testClass.getXmlClass().getAllParameters().get("device");
+            /*String device = testClass.getXmlClass().getAllParameters().get("device");
             String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
-            DevicesByHost devicesByHost = HostMachineDeviceManager.getInstance().getDevicesByHost();
             AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
-            deviceAllocationManager.allocateDevice(appiumDevice);
+            deviceAllocationManager.allocateDevice(appiumDevice);*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,7 +127,7 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void onAfterClass(ITestClass iTestClass) {
-        deviceAllocationManager.freeDevice();
+        // deviceAllocationManager.freeDevice();
     }
 
     /*
@@ -203,7 +196,7 @@ public final class AppiumParallelTestListener extends Helpers
 
     public static ITestNGMethod getTestMethod() {
         return checkNotNull(currentMethods.get(),
-            "Did you forget to register the %s listener?",
-            AppiumParallelMethodTestListener.class.getName());
+                "Did you forget to register the %s listener?",
+                AppiumParallelMethodTestListener.class.getName());
     }
 }

@@ -13,8 +13,6 @@ import static java.util.Collections.addAll;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.appium.device.Device;
-import com.appium.manager.AppiumDevice;
-import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.ConfigFileManager;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;

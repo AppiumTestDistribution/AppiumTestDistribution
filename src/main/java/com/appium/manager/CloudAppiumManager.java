@@ -1,13 +1,11 @@
 package com.appium.manager;
 
-import com.appium.utils.OverriddenVariable;
 import com.github.device.Device;
 import org.apache.log4j.Logger;
 
 import java.util.List;
 
 import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
-import static java.lang.System.getenv;
 import static java.text.MessageFormat.format;
 
 public class CloudAppiumManager implements IAppiumManager {
@@ -54,13 +52,4 @@ public class CloudAppiumManager implements IAppiumManager {
         return 0;
     }
 
-    @Override
-    public int startIOSWebKitProxy(String host) {
-        return 0;
-    }
-
-    @Override
-    public void destoryIOSWebKitProxy(String host) {
-
-    }
 }

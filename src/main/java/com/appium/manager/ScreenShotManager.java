@@ -1,14 +1,9 @@
 package com.appium.manager;
 
-import com.appium.android.AndroidDeviceConfiguration;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
-import com.appium.manager.AppiumDeviceManager;
-import com.appium.manager.AppiumDriverManager;
-import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.utils.Helpers;
 import com.appium.utils.ImageUtils;
-import com.epam.reportportal.service.ReportPortal;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.im4java.core.IM4JavaException;
@@ -16,14 +11,12 @@ import org.openqa.selenium.OutputType;
 import org.testng.ITestResult;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Date;
 import java.util.Locale;
 
 import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
@@ -99,32 +92,6 @@ public class ScreenShotManager extends Helpers {
         return getDeviceModel;
     }
 
-    public void captureScreenShot(String screenShotName) throws IOException {
-        String className = getCurrentTestClassName();
-        String methodName = getCurrentTestMethodName();
-        String deviceModel = null;
-        MobilePlatform mobilePlatform = getMobilePlatform();
-        switch (mobilePlatform) {
-            case IOS:
-                deviceModel = AppiumDeviceManager.getAppiumDevice()
-                                      .getDevice().getDeviceModel();
-                break;
-            case ANDROID:
-                deviceModel = new AndroidDeviceConfiguration().getDeviceModel();
-                break;
-            case WINDOWS:
-                deviceModel = AppiumDeviceManager
-                        .getAppiumDevice()
-                        .getDevice()
-                        .getDeviceModel();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + mobilePlatform);
-        }
-        captureScreenShot(1, className, screenShotName, methodName, deviceModel);
-    }
-
-
     private String currentDateAndTime() {
         LocalDateTime rightNow = LocalDateTime.now();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(
@@ -137,7 +104,7 @@ public class ScreenShotManager extends Helpers {
                                     String className, String model,
                                     String platform, String deviceModel,
                                     String screenShotName) {
-        String udid = AppiumDeviceManager.getAppiumDevice().getDevice().getUdid();
+        String udid = AppiumDeviceManager.getAppiumDevice().getUdid();
         setFailedScreen(
                 "screenshot/" + platform + "/" + udid
                         + "/" + className + "/"

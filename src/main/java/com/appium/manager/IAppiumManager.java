@@ -19,8 +19,6 @@ public interface IAppiumManager {
 
     int getAvailablePort(String hostMachine) throws Exception;
 
-    int startIOSWebKitProxy(String host) throws Exception;
 
-    void destoryIOSWebKitProxy(String host) throws Exception;
 
 }

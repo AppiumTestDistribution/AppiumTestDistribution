@@ -10,6 +10,7 @@ import java.net.URL;
 public class PluginCliRequest {
 
     Api api;
+
     public PluginCliRequest() {
         api = new Api();
     }
@@ -18,6 +19,7 @@ public class PluginCliRequest {
         LocalAppiumManager localAppiumManager = new LocalAppiumManager();
         String remoteWDHubIP = localAppiumManager.getRemoteWDHubIP("127.0.0.1");
         URL url = new URL(remoteWDHubIP);
-        return api.requestBuilderWithBearerToken(url.getProtocol()+ "://" + url.getHost() + ":"+ url.getPort() + "/device-farm/api/cliArgs");
+        return api.requestBuilderWithBearerToken(url.getProtocol() + "://" + url.getHost()
+                + ":" + url.getPort() + "/device-farm/api/cliArgs");
     }
 }
