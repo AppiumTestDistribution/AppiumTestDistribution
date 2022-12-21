@@ -118,7 +118,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         {
             try {
-                if (!isCloudExecution() && !isRetry(iTestResult)) {
+                if (!isCloudExecution() && !isRetry(iTestResult)
+                        && AppiumDriverManager.getDriver() != null) {
                     HashMap<String, String> logs = testLogger.endLogging(iTestResult,
                             AppiumDeviceManager.getAppiumDevice().getUdid());
                     new FileFilterParser()
