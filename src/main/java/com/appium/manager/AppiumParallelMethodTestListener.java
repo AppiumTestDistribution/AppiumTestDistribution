@@ -116,15 +116,11 @@ public final class AppiumParallelMethodTestListener extends Helpers
      */
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
-        if (AppiumDriverManager.getDriver() == null) {
-            throw new RuntimeException("Failed to Create Driver Session");
-        }
         {
             try {
                 if (!isCloudExecution() && !isRetry(iTestResult)) {
                     HashMap<String, String> logs = testLogger.endLogging(iTestResult,
-                            AppiumDriverManager.getDriver().getCapabilities()
-                                        .getCapability("appium:udid").toString());
+                            AppiumDeviceManager.getAppiumDevice().getUdid());
                     new FileFilterParser()
                             .getScreenShotPaths(AppiumDeviceManager.getAppiumDevice()
                                     .getUdid(), iTestResult);
