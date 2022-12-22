@@ -118,7 +118,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         {
             try {
-                LOGGER.info("Driver Session exissts" + (AppiumDeviceManager.getAppiumDevice() != null)
+                LOGGER.info("Driver Session exissts"
+                        + (AppiumDeviceManager.getAppiumDevice() != null)
                         + AppiumDeviceManager.getAppiumDevice());
                 if (!isCloudExecution() && !isRetry(iTestResult)
                         && AppiumDeviceManager.getAppiumDevice() != null) {

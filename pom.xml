@@ -139,11 +139,6 @@
             <version>1.78</version>
         </dependency>
         <dependency>
-            <groupId>com.github.AppiumTestDistribution</groupId>
-            <artifactId>DeviceManager</artifactId>
-            <version>4cddf8dd45</version>
-        </dependency>
-        <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.9.0</version>
