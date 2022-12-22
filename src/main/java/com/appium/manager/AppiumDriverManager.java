@@ -122,16 +122,6 @@ public class AppiumDriverManager {
     }
 
     public void stopAppiumDriver() throws Exception {
-        String OS = System.getProperty("os.name").toLowerCase();
-        String command;
-        DriverSession appiumDevice = AppiumDeviceManager.getAppiumDevice();
-        if (Integer.parseInt(appiumDevice.getChromeDriverPort()) > 0) {
-            if (OS.contains("mac")) {
-                command = "kill -9 $(lsof -ti tcp:"
-                        + appiumDevice.getChromeDriverPort() + ")";
-                new CommandPrompt().runCommand(command);
-            }
-        }
         if (AppiumDriverManager.getDriver() != null
                 && AppiumDriverManager.getDriver().getSessionId() != null) {
             LOGGER.info("Session Deleting ---- "

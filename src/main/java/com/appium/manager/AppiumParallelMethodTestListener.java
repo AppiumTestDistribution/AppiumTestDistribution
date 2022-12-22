@@ -9,6 +9,7 @@ import com.appium.utils.Helpers;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
+import lombok.SneakyThrows;
 import org.apache.log4j.Logger;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -112,13 +113,14 @@ public final class AppiumParallelMethodTestListener extends Helpers
      * De-allocates device after each test method execution
      * Terminate logs getting captured after each test method execution
      */
+    @SneakyThrows
     @Override
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         {
             try {
                 LOGGER.info("Driver Session exissts" + (AppiumDeviceManager.getAppiumDevice() != null)
                         + AppiumDeviceManager.getAppiumDevice());
-                if (!isRetry(iTestResult)
+                if (!isCloudExecution() && !isRetry(iTestResult)
                         && AppiumDeviceManager.getAppiumDevice() != null) {
                     HashMap<String, String> logs = testLogger.endLogging(iTestResult,
                             AppiumDeviceManager.getAppiumDevice().getUdid());
@@ -128,9 +130,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     testResults.set(logs);
                 }
                 if (iInvokedMethod.isTestMethod()) {
-                    if (AppiumDriverManager.getDriver() != null) {
-                        AppiumDriverManager.getDriver().quit();
-                    }
                     appiumDriverManager.stopAppiumDriver();
                 }
             } catch (Exception e) {
