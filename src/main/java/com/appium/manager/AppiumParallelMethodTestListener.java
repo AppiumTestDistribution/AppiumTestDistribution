@@ -34,8 +34,6 @@ public final class AppiumParallelMethodTestListener extends Helpers
     private TestLogger testLogger;
     private AppiumServerManager appiumServerManager;
     private AppiumDriverManager appiumDriverManager;
-    private Optional<String> atdHost;
-    private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
     private static ThreadLocal<HashMap<String, String>> testResults = new ThreadLocal<>();
     private List<ITestNGListener> listeners;
@@ -74,23 +72,25 @@ public final class AppiumParallelMethodTestListener extends Helpers
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         String testMethodName = iInvokedMethod.getTestMethod().getMethodName();
         allocateDeviceAndStartDriver(testMethodName, iTestResult);
-        LOGGER.info("Driver Session created!");
-        currentMethods.set(iInvokedMethod.getTestMethod());
-        SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
-                .getAnnotation(SkipIf.class);
-        if (annotation != null && AppiumDriverManager.getDriver().getCapabilities()
-                .getCapability("platformName")
-                .toString().equalsIgnoreCase(annotation.platform())) {
-            throw new SkipException("Skipped because property was set to :::"
-                    + annotation.platform());
-        }
-        TestExecutionContext testExecutionContext =
-                new TestExecutionContext(testMethodName);
-        testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());
-        testExecutionContext.addTestState("deviceId",
-                AppiumDeviceManager.getAppiumDevice().getUdid());
+        if (AppiumDeviceManager.getAppiumDevice() != null) {
+            LOGGER.info("Driver Session created!");
+            currentMethods.set(iInvokedMethod.getTestMethod());
+            SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(SkipIf.class);
+            if (annotation != null && AppiumDriverManager.getDriver().getCapabilities()
+                    .getCapability("platformName")
+                    .toString().equalsIgnoreCase(annotation.platform())) {
+                throw new SkipException("Skipped because property was set to :::"
+                        + annotation.platform());
+            }
+            TestExecutionContext testExecutionContext =
+                    new TestExecutionContext(testMethodName);
+            testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());
+            testExecutionContext.addTestState("deviceId",
+                    AppiumDeviceManager.getAppiumDevice().getUdid());
 
-        queueBeforeInvocationListeners(iInvokedMethod, iTestResult, listeners);
+            queueBeforeInvocationListeners(iInvokedMethod, iTestResult, listeners);
+        }
     }
 
     private void allocateDeviceAndStartDriver(String testMethodName, ITestResult iTestResult) {
@@ -116,9 +116,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         {
             try {
-                LOGGER.info("Driver Session exissts" + AppiumDriverManager.getDriver() != null);
+                LOGGER.info("Driver Session exissts" + AppiumDeviceManager.getAppiumDevice() != null);
                 if (!isCloudExecution() && !isRetry(iTestResult)
-                        && AppiumDriverManager.getDriver() != null) {
+                        && AppiumDeviceManager.getAppiumDevice() != null) {
                     HashMap<String, String> logs = testLogger.endLogging(iTestResult,
                             AppiumDeviceManager.getAppiumDevice().getUdid());
                     new FileFilterParser()
