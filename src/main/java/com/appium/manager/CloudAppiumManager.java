@@ -1,9 +1,7 @@
 package com.appium.manager;
 
-import com.github.device.Device;
 import org.apache.log4j.Logger;
 
-import java.util.List;
 
 import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 import static java.text.MessageFormat.format;
@@ -35,16 +33,6 @@ public class CloudAppiumManager implements IAppiumManager {
     @Override
     public void startAppiumServer(String host) {
 
-    }
-
-    @Override
-    public List<Device> getDevices(String machineIP, String platform) {
-        return null;
-    }
-
-    @Override
-    public Device getSimulator(String machineIP, String deviceName, String os) {
-        return null;
     }
 
     @Override

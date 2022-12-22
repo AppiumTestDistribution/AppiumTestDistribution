@@ -1,13 +1,6 @@
 package com.appium.manager;
-
-import com.appium.exceptions.LocalConnectionException;
 import com.appium.filelocations.FileLocations;
 import com.appium.capabilities.Capabilities;
-import com.appium.utils.OSType;
-import com.github.android.AndroidManager;
-import com.github.device.Device;
-import com.github.device.SimulatorManager;
-import com.github.iOS.IOSManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -18,8 +11,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LocalAppiumManager implements IAppiumManager {
 
@@ -81,16 +72,7 @@ public class LocalAppiumManager implements IAppiumManager {
         setAppiumDriverLocalService(appiumDriverLocalService);
     }
 
-    @Override
-    public List<Device> getDevices(String machineIP, String platform) {
-        List<Device> devices = new ArrayList<>();
-        getAndroidDevices(platform, devices);
-        getIOSDevices(platform, devices);
-        getWindowsDevice(platform, devices);
-        return devices;
-    }
-
-    private void getWindowsDevice(String platform, List<Device> devices) {
+    /*private void getWindowsDevice(String platform, List<Device> devices) {
         if (platform.equalsIgnoreCase(OSType.WINDOWS.name())
                 && Capabilities.getInstance().isWindowsApp()) {
             Device device = new Device();
@@ -103,49 +85,7 @@ public class LocalAppiumManager implements IAppiumManager {
             deviceList.add(device);
             devices.addAll(deviceList);
         }
-    }
-
-    private void getIOSDevices(String platform, List<Device> devices) {
-        if (platform.equalsIgnoreCase(OSType.iOS.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            if (Capabilities.getInstance().isApp()) {
-                if (Capabilities.getInstance().isSimulatorAppPresentInCapsJson()) {
-                    try {
-                        devices.addAll(new SimulatorManager()
-                                .getAllBootedSimulators(OSType.iOS.name()));
-                    } catch (InterruptedException | IOException e) {
-                        throw new LocalConnectionException(
-                                "Exception getting booted simulators", e);
-                    }
-                }
-                if (Capabilities.getInstance().isRealDeviceAppPresentInCapsJson()) {
-                    devices.addAll(new IOSManager().getDevices());
-                }
-            } else {
-                devices.addAll(new IOSManager().getDevices());
-            }
-        }
-    }
-
-    private void getAndroidDevices(String platform, List<Device> devices) {
-        if (platform.equalsIgnoreCase(OSType.ANDROID.name())
-                || platform.equalsIgnoreCase(OSType.BOTH.name())) {
-            try {
-                devices.addAll(new AndroidManager().getDevices());
-            } catch (Exception e) {
-                throw new LocalConnectionException("Exception getting devices", e);
-            }
-        }
-    }
-
-    @Override
-    public Device getSimulator(String machineIP, String deviceName, String os) {
-        try {
-            return new SimulatorManager().getDevice(deviceName, os, OSType.iOS.name());
-        } catch (InterruptedException | IOException e) {
-            throw new LocalConnectionException("Exception getting simulators", e);
-        }
-    }
+    }*/
 
     @Override
     public int getAvailablePort(String hostMachine) throws IOException {

@@ -1,6 +1,5 @@
 package com.appium.executor;
 
-import com.github.device.Device;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -26,7 +25,6 @@ import static org.testng.Assert.assertTrue;
 
 public class ATDExecutorTest {
     ATDExecutor ATDExecutor;
-    Device deviceAllocationManager;
     DocumentBuilder db;
     Set<Method> methods;
     String SUITE_NAME = "TestNG Forum";
@@ -40,7 +38,7 @@ public class ATDExecutorTest {
         appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));
         appiumDeviceList.add(new AppiumDevice(new Device(), "10.10.10.10", cloudName));*/
 
-        deviceAllocationManager = Mockito.mock(Device.class);
+        //deviceAllocationManager = Mockito.mock(Device.class);
         // ATDExecutor = new ATDExecutor(deviceAllocationManager);
     }
 
