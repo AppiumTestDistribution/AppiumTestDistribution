@@ -1,4 +1,5 @@
 package com.appium.manager;
+
 import com.appium.filelocations.FileLocations;
 import com.appium.capabilities.Capabilities;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
