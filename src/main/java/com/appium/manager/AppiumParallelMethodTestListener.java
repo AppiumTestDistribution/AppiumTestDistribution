@@ -74,6 +74,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     public void beforeInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         String testMethodName = iInvokedMethod.getTestMethod().getMethodName();
         allocateDeviceAndStartDriver(testMethodName, iTestResult);
+        LOGGER.info("Driver Session created!");
         currentMethods.set(iInvokedMethod.getTestMethod());
         SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
@@ -115,6 +116,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     public void afterInvocation(IInvokedMethod iInvokedMethod, ITestResult iTestResult) {
         {
             try {
+                LOGGER.info("Driver Session exissts" + AppiumDriverManager.getDriver() != null);
                 if (!isCloudExecution() && !isRetry(iTestResult)
                         && AppiumDriverManager.getDriver() != null) {
                     HashMap<String, String> logs = testLogger.endLogging(iTestResult,
@@ -125,12 +127,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     testResults.set(logs);
                 }
                 if (iInvokedMethod.isTestMethod()) {
-                    if (AppiumDriverManager.getDriver() != null) {
-                        AppiumDriverManager.getDriver().quit();
-                    }
-                    if (!isCloudExecution()) {
-                        appiumDriverManager.stopAppiumDriver();
-                    }
+                    AppiumDriverManager.getDriver().quit();
+                    appiumDriverManager.stopAppiumDriver();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
