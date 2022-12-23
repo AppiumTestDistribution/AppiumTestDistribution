@@ -70,6 +70,11 @@ public class PluginClI {
         return getPlugin().getDeviceFarm().getRemote().get(0).has("cloudName");
     }
 
+    public String getCloudName() {
+        return PluginClI.getInstance().getPlugin()
+                .getDeviceFarm().getRemote().get(0).get("cloudName").textValue();
+    }
+
     private static PluginClI instance;
 
     @SneakyThrows
