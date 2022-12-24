@@ -5,7 +5,7 @@ import io.cucumber.testng.CucumberOptions;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-@Test(groups = { "end-to-end-test" })
+@Test(groups = {"end-to-end-test"})
 @CucumberOptions(
         plugin = {
                 "com.cucumber.listener.CucumberScenarioReporterListener",
@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
                 "classpath:features/Sample.feature",
                 "classpath:features/Sample1.feature"
         }
-        )
+)
 public class RunCukes extends AbstractTestNGCucumberTests {
 
     public RunCukes() {
