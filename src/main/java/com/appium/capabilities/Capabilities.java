@@ -126,6 +126,16 @@ public class Capabilities {
         currentPath.delete(currentPath.lastIndexOf("_") + 1, currentPath.length());
     }
 
+    private void processStringInArrayItem(String objectToUpdate,
+                                          JSONArray arrayValues, StringBuilder currentPath,
+                                          int arrayIndex) {
+        currentPath.append(arrayIndex);
+        String getFromEnv = getOverriddenStringValue(currentPath.toString());
+        objectToUpdate = (null == getFromEnv) ? objectToUpdate : getFromEnv;
+        arrayValues.put(arrayIndex, objectToUpdate);
+        currentPath.delete(currentPath.lastIndexOf("_") + 1, currentPath.length());
+    }
+
     private void processJSONArray(JSONObject objectToUpdate,
                                   Map<String, Object> allATDOverrideEnvVars,
                                   StringBuilder currentPath,
@@ -149,14 +159,19 @@ public class Capabilities {
                                       JSONArray jsonArray,
                                       JSONArray arrayValues,
                                       int arrIndex) {
-        JSONObject arrayItem = (JSONObject) arrayValues.get(arrIndex);
-        JSONObject jsonObject = new JSONObject();
-        jsonArray.put(jsonObject);
+        Object arrayItem = arrayValues.get(arrIndex);
         currentPath.append(arrIndex).append("_");
-        loadAndOverrideFromEnvVars((JSONObject) arrayItem,
-                jsonObject,
-                allATDOverrideEnvVars,
-                currentPath);
+        if (arrayItem instanceof JSONObject) {
+            JSONObject jsonObject = new JSONObject();
+            jsonArray.put(jsonObject);
+            loadAndOverrideFromEnvVars((JSONObject) arrayItem,
+                    jsonObject,
+                    allATDOverrideEnvVars,
+                    currentPath);
+        } else if (arrayItem instanceof String) {
+            processStringInArrayItem(arrayItem.toString(), arrayValues, currentPath, arrIndex);
+            jsonArray.put(arrayValues.get(arrIndex));
+        }
         currentPath.delete(currentPath.lastIndexOf(String.valueOf(arrIndex)), currentPath.length());
     }
 
@@ -309,6 +324,7 @@ public class Capabilities {
     public void validateCapabilitySchema(JSONObject loadedCapabilities) {
         try {
             isPlatformInEnv();
+            LOGGER.debug("Validating capabilities schema: " + loadedCapabilities);
             InputStream inputStream = getClass().getResourceAsStream(getPlatform());
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
