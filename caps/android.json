@@ -8,8 +8,20 @@
     "app": {
       "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk"
     },
-    "deviceName": "Pixel_3a_API_30_x86",
+    "deviceName": "android",
     "noSign": true
+  },
+  "serverConfig" : {
+    "server": {
+      "port": 31337,
+      "use-plugin": ["device-farm"],
+      "plugin": {
+        "device-farm": {
+          "platform": "android",
+          "skipChromeDownload": true
+        }
+      }
+    }
   },
   "hostMachines": [
     {
