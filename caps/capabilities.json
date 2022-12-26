@@ -25,7 +25,7 @@
   },
   "serverConfig" : {
     "server": {
-      "port": 31337,
+      "use-plugins": ["device-farm", "element-wait"],
       "plugin": {
         "device-farm": {
           "platform": "android",

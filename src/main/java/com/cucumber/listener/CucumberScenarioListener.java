@@ -1,6 +1,5 @@
 package com.cucumber.listener;
 
-import com.appium.device.Device;
 import com.appium.filelocations.FileLocations;
 import com.appium.manager.ATDRunner;
 import com.appium.manager.AppiumDeviceManager;
@@ -283,7 +282,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(String.format("ThreadID: %d: afterSuite: %n",
                 Thread.currentThread().getId()));
         try {
-            appiumServerManager.stopAppiumServer();
+            appiumServerManager.destroyAppiumNode();
             SessionContext.setReportPortalLaunchURL();
         } catch (Exception e) {
             e.printStackTrace();

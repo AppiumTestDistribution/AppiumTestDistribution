@@ -147,7 +147,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     @Override
     public void onFinish(ISuite iSuite) {
         try {
-            appiumServerManager.stopAppiumServer();
+            appiumServerManager.destroyAppiumNode();
         } catch (Exception e) {
             e.printStackTrace();
         }

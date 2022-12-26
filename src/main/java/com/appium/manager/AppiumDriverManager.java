@@ -44,8 +44,8 @@ public class AppiumDriverManager {
         LOGGER.info("Initialise Driver with Capabilities: ");
         desiredCapabilities.getCapabilityNames().forEach(key -> LOGGER.info("\t" + key
                 + ":: " + desiredCapabilities.getCapability(key)));
-        LocalAppiumManager localAppiumManager = new LocalAppiumManager();
-        String remoteWDHubIP = localAppiumManager.getRemoteWDHubIP("127.0.0.1");
+        AppiumServerManager appiumServerManager = new AppiumServerManager();
+        String remoteWDHubIP = appiumServerManager.getRemoteWDHubIP();
         return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
 
@@ -106,15 +106,14 @@ public class AppiumDriverManager {
         LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
                 testMethodName, capabilityFilePath));
         return startAppiumDriverInstance(
-                Optional.ofNullable(buildDesiredCapabilities(testMethodName, capabilityFilePath)));
+                Optional.ofNullable(buildDesiredCapabilities(capabilityFilePath)));
     }
 
-    private DesiredCapabilities buildDesiredCapabilities(String testMethodName,
-                                                         String capabilityFilePath)
+    private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath)
             throws Exception {
         if (new File(capabilityFilePath).exists()) {
             return new DesiredCapabilityBuilder()
-                    .buildDesiredCapability(testMethodName, capabilityFilePath);
+                    .buildDesiredCapability(capabilityFilePath);
         } else {
             throw new RuntimeException("Capability file not found");
         }

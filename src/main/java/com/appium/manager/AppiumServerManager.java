@@ -1,46 +1,116 @@
 package com.appium.manager;
 
-import io.appium.java_client.service.local.flags.ServerArgument;
+import com.appium.filelocations.FileLocations;
+import com.appium.capabilities.Capabilities;
+import com.appium.plugin.PluginClI;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import org.apache.log4j.Logger;
 
-/**
- * Appium Manager - this class contains method to start and stops appium server
- * To execute the tests from eclipse, you need to set PATH as
- * /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin in run configuration
- */
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.URL;
+import java.time.Duration;
+
 public class AppiumServerManager {
 
+    private static AppiumDriverLocalService appiumDriverLocalService;
 
-    /**
-     * start appium with auto generated ports : appium port, chrome port,
-     * bootstrap port and device UDID
-     * @param host
-     */
-
-    private void startAppiumServerSingleSession(String host)
-            throws Exception {
-        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager(host);
-        appiumManager.startAppiumServer(host);
+    private static AppiumDriverLocalService getAppiumDriverLocalService() {
+        return appiumDriverLocalService;
     }
 
-    /**
-     * start appium with auto generated ports : appium port, chrome port,
-     * bootstrap port and device UDID
-     */
-    ServerArgument webKitProxy = new ServerArgument() {
-        @Override
-        public String getArgument() {
-            return "--webkit-debug-proxy-port";
+    private static final Logger LOGGER = Logger.getLogger(AppiumServerManager.class.getName());
+
+    private static void setAppiumDriverLocalService(
+            AppiumDriverLocalService appiumDriverLocalService) {
+        AppiumServerManager.appiumDriverLocalService = appiumDriverLocalService;
+    }
+
+    private URL getAppiumUrl() {
+        return getAppiumDriverLocalService().getUrl();
+    }
+
+    public void destroyAppiumNode() {
+        LOGGER.info("Shutting down Appium Server");
+        getAppiumDriverLocalService().stop();
+        if (getAppiumDriverLocalService().isRunning()) {
+            LOGGER.info("AppiumServer didn't shut... Trying to quit again....");
+            getAppiumDriverLocalService().stop();
         }
-    };
-
-
-
-    public void startAppiumServer() throws Exception {
-        startAppiumServerSingleSession("127.0.0.1");
     }
 
-    public void stopAppiumServer() throws Exception {
-        IAppiumManager appiumManager = AppiumManagerFactory.getAppiumManager("127.0.0.1");
-        appiumManager.destroyAppiumNode("127.0.0.1");
+    public String getRemoteWDHubIP() {
+        return getAppiumUrl().toString();
     }
+
+    public void startAppiumServer(String host) throws Exception {
+        LOGGER.info(LOGGER.getName() + "Starting Appium Server on Localhost");
+        AppiumDriverLocalService appiumDriverLocalService;
+        AppiumServiceBuilder builder =
+                getAppiumServerBuilder(host)
+                        .withLogFile(new File(
+                                System.getProperty("user.dir")
+                                        + FileLocations.APPIUM_LOGS_DIRECTORY
+                                        + "appium_logs.txt"))
+                        .withIPAddress(host)
+                        .withTimeout(Duration.ofSeconds(60))
+                        .withArgument(GeneralServerFlag.BASEPATH, "/wd/hub")
+                        .withArgument(() -> "--config", System.getProperty("user.dir")
+                                + FileLocations.SERVER_CONFIG)
+//                        .withArgument(GeneralServerFlag.USE_PLUGINS, )
+                        .withArgument(GeneralServerFlag.RELAXED_SECURITY)
+                        .usingAnyFreePort();
+        appiumDriverLocalService = builder.build();
+        appiumDriverLocalService.start();
+        LOGGER.info(LOGGER.getName() + "Appium Server Started at......"
+                + appiumDriverLocalService.getUrl());
+        setAppiumDriverLocalService(appiumDriverLocalService);
+    }
+
+    /*private void getWindowsDevice(String platform, List<Device> devices) {
+        if (platform.equalsIgnoreCase(OSType.WINDOWS.name())
+                && Capabilities.getInstance().isWindowsApp()) {
+            Device device = new Device();
+            device.setName("windows");
+            device.setOs("windows");
+            device.setName("windows");
+            device.setUdid("win-123");
+            device.setDevice(true);
+            List<Device> deviceList = new ArrayList<>();
+            deviceList.add(device);
+            devices.addAll(deviceList);
+        }
+    }*/
+
+    public int getAvailablePort(String hostMachine) throws IOException {
+        ServerSocket socket = new ServerSocket(0);
+        socket.setReuseAddress(true);
+        int port = socket.getLocalPort();
+        socket.close();
+        return port;
+    }
+
+    private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {
+        if (Capabilities.getInstance().getAppiumServerPath(host) == null) {
+            LOGGER.info("Picking Default Path for AppiumServiceBuilder");
+            return getAppiumServiceBuilderWithDefaultPath();
+        } else {
+            LOGGER.info("Picking UserSpecified Path for AppiumServiceBuilder");
+            return getAppiumServiceBuilderWithUserAppiumPath(host);
+        }
+    }
+
+    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host)
+            throws Exception {
+        return new AppiumServiceBuilder().withAppiumJS(
+                new File(Capabilities.getInstance().getAppiumServerPath(host)));
+    }
+
+    private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath() {
+        return new AppiumServiceBuilder();
+    }
+
 }

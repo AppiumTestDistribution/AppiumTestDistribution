@@ -5,9 +5,6 @@ import com.appium.device.Device;
 import com.appium.device.Devices;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -33,21 +30,15 @@ public class ATDRunner {
     private final ATDExecutor ATDExecutor;
     private final Capabilities capabilities;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
-    private FileWriter file;
 
     List<Device> deviceList;
 
     public ATDRunner() throws Exception {
         capabilities = Capabilities.getInstance();
         writeServiceConfig();
-        LocalAppiumManager localAppiumManager = new LocalAppiumManager();
-        localAppiumManager.startAppiumServer("127.0.0.1"); //Needs to be removed
-        Devices devices = new Devices();
-        Response connectedDevices = devices.getDevices();
-        ObjectMapper mapper = new ObjectMapper();
-        deviceList = mapper.readValue(connectedDevices.body().string(),
-                new TypeReference<List<Device>>() {
-                });
+        AppiumServerManager appiumServerManager = new AppiumServerManager();
+        appiumServerManager.startAppiumServer("127.0.0.1"); //Needs to be removed
+        deviceList = new Devices().getDevices();
         ATDExecutor = new ATDExecutor(deviceList);
         createOutputDirectoryIfNotExist();
     }

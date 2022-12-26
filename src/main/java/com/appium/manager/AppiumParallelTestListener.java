@@ -32,19 +32,13 @@ public final class AppiumParallelTestListener extends Helpers
     private TestLogger testLogger;
     private AppiumServerManager appiumServerManager;
     private AppiumDriverManager appiumDriverManager;
-    private Optional<String> atdHost;
-    private Optional<String> atdPort;
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
     List<ITestNGListener> iTestNGListeners;
 
-    public AppiumParallelTestListener() throws Exception {
+    public AppiumParallelTestListener() {
         testLogger = new TestLogger();
         appiumServerManager = new AppiumServerManager();
         appiumDriverManager = new AppiumDriverManager();
-        atdHost = Optional.ofNullable(Capabilities.getInstance()
-                .getMongoDbHostAndPort().get("atdHost"));
-        atdPort = Optional.ofNullable(Capabilities.getInstance()
-                .getMongoDbHostAndPort().get("atdPort"));
         iTestNGListeners = initialiseListeners();
     }
 
@@ -89,7 +83,7 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onStart(ISuite iSuite) {
         try {
-            appiumServerManager.startAppiumServer();
+            appiumServerManager.startAppiumServer("127.0.0.1");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,7 +95,7 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onFinish(ISuite iSuite) {
         try {
-            appiumServerManager.stopAppiumServer();
+            appiumServerManager.destroyAppiumNode();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,9 +159,7 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
-        if (atdHost.isPresent() && atdPort.isPresent()) {
-            String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
-        }
+
     }
 
     /*
