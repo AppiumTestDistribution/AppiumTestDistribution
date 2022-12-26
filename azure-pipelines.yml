@@ -74,10 +74,14 @@ jobs:
 
         displayName: "Run Distribute on Android"
 
-      - task: PublishPipelineArtifact@1
+      - task: CopyFiles@2
         inputs:
-          targetPath: '$(Pipeline.Workspace)/target'
-          publishLocation: 'pipeline'
+          SourceFolder: '$(build.sourcesdirectory)'
+          TargetFolder: '$(build.artifactstagingdirectory)'
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          publishLocation: Container
 
   - job: Distribute_on_BrowserStack
     pool:
