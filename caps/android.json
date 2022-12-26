@@ -14,7 +14,7 @@
   "serverConfig" : {
     "server": {
       "port": 31337,
-      "use-plugin": ["device-farm"],
+      "use-plugins": ["device-farm"],
       "plugin": {
         "device-farm": {
           "platform": "android",
