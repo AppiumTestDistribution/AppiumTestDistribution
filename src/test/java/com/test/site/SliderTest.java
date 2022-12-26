@@ -1,13 +1,15 @@
 package com.test.site;
 
+import org.openqa.selenium.remote.SessionId;
 import org.testng.annotations.Test;
+
+import static org.testng.AssertJUnit.assertNotNull;
 
 @Test(groups = { "end-to-end-test" })
 public class SliderTest extends UserBaseTest {
     @Test
     public void dragNDrop() {
-        waitForElement("login").click();
-        waitForElement("dragAndDrop").click();
-        waitForElement("dragMe");
+        SessionId sessionId = getDriver().getSessionId();
+        assertNotNull(sessionId);
     }
 }
