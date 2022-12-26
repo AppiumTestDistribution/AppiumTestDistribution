@@ -1,21 +1,14 @@
 package com.cucumber.listener;
 
-import com.appium.ios.IOSDeviceConfiguration;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
-import com.appium.utils.ImageUtils;
-import com.appium.windows.WindowsDeviceConfiguration;
 import com.epam.reportportal.cucumber.ScenarioReporter;
 import com.epam.reportportal.utils.MemoizingSupplier;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import com.video.recorder.XpathXML;
-import io.appium.java_client.AppiumDriver;
-import io.cucumber.core.gherkin.Step;
 import org.apache.log4j.Logger;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class CucumberScenarioReporterListener extends ScenarioReporter {
@@ -24,15 +17,8 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
             CucumberScenarioReporterListener.class.getName());
     private static final String DUMMY_ROOT_SUITE_NAME = "My Tests";
     private static final String RP_STORY_TYPE = "SUITE";
-    private WindowsDeviceConfiguration windowsDevice;
     public AppiumServerManager appiumServerManager;
     public AppiumDriverManager appiumDriverManager;
-    public LinkedList<Step> testSteps;
-    public AppiumDriver appium_driver;
-    private IOSDeviceConfiguration iosDevice;
-    public String deviceModel;
-    public ImageUtils imageUtils = new ImageUtils();
-    public XpathXML xpathXML = new XpathXML();
     private String CI_BASE_URI = null;
 
     private static final Map<String, String> MIME_TYPES_EXTENSIONS =
@@ -51,8 +37,6 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
         LOGGER.info("CucumberScenarioReporterListener");
         appiumServerManager = new AppiumServerManager();
         appiumDriverManager = new AppiumDriverManager();
-        iosDevice = new IOSDeviceConfiguration();
-        windowsDevice = new WindowsDeviceConfiguration();
     }
 
     @Override

@@ -73,8 +73,16 @@ jobs:
           Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: "Run Distribute on Android"
-      - publish: $(System.DefaultWorkingDirectory)/target/screenshot
-        artifact: Screenshot
+
+      - task: CopyFiles@2
+        inputs:
+          sourceFolder: '$(Build.SourcesDirectory)'
+          contents: '**/$(BuildConfiguration)/target/**/*'
+          targetFolder: '$(Build.ArtifactStagingDirectory)'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathToPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: drop
 
   - job: Distribute_on_BrowserStack
     pool:
