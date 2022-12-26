@@ -73,6 +73,8 @@ jobs:
           Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: "Run Distribute on Android"
+      - publish: $(System.DefaultWorkingDirectory)/target/screenshot
+        artifact: Screenshot
 
   - job: Distribute_on_BrowserStack
     pool:
