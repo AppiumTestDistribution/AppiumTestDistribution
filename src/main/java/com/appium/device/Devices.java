@@ -24,7 +24,8 @@ public class Devices {
         URL url = new URL(remoteWDHubIP);
         Response response = api.requestBuilderWithBearerToken(url.getProtocol()
                 + "://" + url.getHost() + ":" + url.getPort() + "/device-farm/api/devices");
-        return Arrays.asList(new ObjectMapper().readValue(Objects.requireNonNull(response.body()).string(),
+        return Arrays.asList(new ObjectMapper().readValue(Objects.requireNonNull(
+                response.body()).string(),
                 Device[].class));
     }
 }

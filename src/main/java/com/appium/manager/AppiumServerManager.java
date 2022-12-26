@@ -2,7 +2,6 @@ package com.appium.manager;
 
 import com.appium.filelocations.FileLocations;
 import com.appium.capabilities.Capabilities;
-import com.appium.plugin.PluginClI;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -60,7 +59,6 @@ public class AppiumServerManager {
                         .withArgument(GeneralServerFlag.BASEPATH, "/wd/hub")
                         .withArgument(() -> "--config", System.getProperty("user.dir")
                                 + FileLocations.SERVER_CONFIG)
-//                        .withArgument(GeneralServerFlag.USE_PLUGINS, )
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .usingAnyFreePort();
         appiumDriverLocalService = builder.build();
