@@ -5,7 +5,7 @@ jobs:
     machine:
       image: android:202102-01
     # To optimize build times, we recommend "large" and above for Android-related jobs
-    resource_class: large
+    resource_class: xlarge
     steps:
       - checkout
       - run:
@@ -37,6 +37,7 @@ jobs:
       - run:
           name: Run UI tests (with retry)
           command: |
+            sleep 20
             adb devices
 workflows:
   build:
