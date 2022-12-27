@@ -17,18 +17,9 @@ jobs:
       - run:
           name: Launch emulator
           command: |
-            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim > /dev/null 2>&1 & adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
           background: true
-      - run:
-          name: Wait for emulator to start
-          command: |
-            circle-android wait-for-boot
-      - run:
-          name: Disable emulator animations
-          command: |
-            adb shell settings put global window_animation_scale 0.0
-            adb shell settings put global transition_animation_scale 0.0
-            adb shell settings put global animator_duration_scale 0.0
+      
       - run:
           name: Run UI tests (with retry)
           command: |
