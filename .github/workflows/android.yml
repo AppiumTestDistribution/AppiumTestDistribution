@@ -1,4 +1,4 @@
-name: Appium CI
+name: ATD CI
 
 on:
   repository_dispatch:
