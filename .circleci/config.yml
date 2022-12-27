@@ -1,26 +1,39 @@
+# .circleci/config.yml
 version: 2.1
-orbs:
-  android: circleci/android@2.0
 jobs:
-  test:
-    executor:
-      name: android/android-machine
-      resource-class: large
-      tag: 2021.10.1
+  build:
+    machine:
+      image: android:202102-01
+    # To optimize build times, we recommend "large" and above for Android-related jobs
+    resource_class: large
     steps:
       - checkout
-      - android/create-avd:
-          avd-name: myavd
-          install: true
-          system-image: system-images;android-29;default;x86
-      - android/start-emulator:
-          avd-name: myavd
-          no-window: true
       - run:
-          name : Booted Emulators.
-          command : |
-            adb devices    
+          name: Create avd
+          command: |
+            SYSTEM_IMAGES="system-images;android-29;default;x86"
+            sdkmanager "$SYSTEM_IMAGES"
+            echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
+      - run:
+          name: Launch emulator
+          command: |
+            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          background: true
+      - run:
+          name: Wait for emulator to start
+          command: |
+            circle-android wait-for-boot
+      - run:
+          name: Disable emulator animations
+          command: |
+            adb shell settings put global window_animation_scale 0.0
+            adb shell settings put global transition_animation_scale 0.0
+            adb shell settings put global animator_duration_scale 0.0
+      - run:
+          name: Run UI tests (with retry)
+          command: |
+            echo 'Running Test'
 workflows:
-  test:
+  build:
     jobs:
-      - test
+      - build
