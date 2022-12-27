@@ -47,6 +47,7 @@ jobs:
           cat "$emulator_config"
           fi
           
+          if false; then
           emulator_config1=~/.android/avd/Pixel_API_29_AOSP1.avd/config.ini
           # The following madness is to support empty OR populated config.ini files,
           # the state of which is dependant on the version of the emulator used (which we don't control),
