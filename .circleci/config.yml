@@ -21,7 +21,7 @@ jobs:
             appium plugin install --source npm appium-device-farm
             appium plugin list
             appium driver list
-            Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+            Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' $MAVEN_HOME/bin/mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   Android:
     machine:
