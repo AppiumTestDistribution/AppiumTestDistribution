@@ -1,0 +1,33 @@
+{
+  "iOS": {
+    "platformName": "iOS",
+    "app": "https://github.com/saikrishna321/AppiumTestDistribution/blob/master/apps/VodQAReactNative.zip?raw=true",
+    "deviceName": "iPhone",
+    "wdaLaunchTimeout": 80000,
+    "wdaConnectionTimeout": 80000,
+    "preventWDAAttachments": true,
+    "clearSystemFiles": true,
+    "shouldUseSingletonTestManager": false,
+    "simpleIsVisibleCheck": true,
+    "wdaStartupRetries": 10,
+    "wdaStartupRetryInterval": 100,
+    "maxTypingFrequency": 10,
+    "automationName": "XCUITest"
+  },
+  "serverConfig" : {
+    "server": {
+      "use-plugins": ["device-farm", "element-wait"],
+      "plugin": {
+        "device-farm": {
+          "platform": "iOS",
+          "skipChromeDownload": true
+        }
+      }
+    }
+  },
+  "hostMachines": [
+    {
+      "machineIP": "127.0.0.1"
+    }
+  ]
+}
