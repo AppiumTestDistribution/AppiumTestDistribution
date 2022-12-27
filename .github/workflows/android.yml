@@ -15,7 +15,7 @@ jobs:
           $ANDROID_HOME/tools/bin/sdkmanager --list
        - name: Create Android emulator
          run: |
-          brew install intel-haxm
+        
           # Install AVD files
           echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;default;x86_64'
           echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
@@ -79,10 +79,11 @@ jobs:
           nohup $ANDROID_HOME/tools/emulator -avd Pixel_API_29_AOSP1 -gpu host -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
           echo "Emulator has finished booting"
-          $ANDROID_HOME/platform-tools/adb devices
+          
           
        - name: install recorder and record session
          run: |
+          $ANDROID_HOME/platform-tools/adb devices
           brew install ffmpeg
           ffmpeg -f avfoundation -i 0 -t 120 out.mov
       # node -e "const exec = require('child_process'); exec.exec('ffmpeg -f avfoundation -i 0 -t 120 out.mov'); exec.exec('$ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_5_API_31 &');"
