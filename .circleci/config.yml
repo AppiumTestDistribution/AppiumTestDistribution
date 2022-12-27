@@ -23,6 +23,7 @@ jobs:
         name: Install Appium and Run iOS Test
         command: |
            nvm install v16.18.1 && nvm alias default 16.18.1 
+           brew install maven
            node -v 
            npm install -g appium@next
            appium -v
