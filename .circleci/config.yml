@@ -1,28 +1,34 @@
 # .circleci/config.yml
 version: 2.1
+orbs:
+  macos: circleci/macos@2
+
 jobs:
-  iOS: # your job name
-    macos:
-      xcode: 14.1.0 # indicate our selected version of Xcode
-    steps: # a series of commands to run
-      - checkout  # pull down code from your version control system.
-      - run:
-          name: Node Version
-          command: | 
+  iOS:
+   macos:
+      xcode: 14.1.0
+   steps:
+     - checkout
+     - macos/preboot-simulator:
+        version: "16.1"
+        platform: "iOS"
+        device: "iPhone X"
+     - run:
+        name: Node Version
+        command: | 
             nvm install v16.18.1 && nvm alias default 16.18.1
-      - run:
-          name: Install Appium and Run iOS Test
-          command: |
-            brew install maven
-            nvm install v16.18.1 && nvm alias default 16.18.1 
-            node -v 
-            npm install -g appium@next
-            appium -v
-            appium driver install xcuitest
-            appium plugin install --source npm appium-device-farm
-            appium plugin list
-            appium driver list
-            Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+     - run:
+        name: Install Appium and Run iOS Test
+        command: |
+           nvm install v16.18.1 && nvm alias default 16.18.1 
+           node -v 
+           npm install -g appium@next
+           appium -v
+           appium driver install xcuitest
+           appium plugin install --source npm appium-device-farm
+           appium plugin list
+           appium driver list
+           Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   Android:
     machine:
