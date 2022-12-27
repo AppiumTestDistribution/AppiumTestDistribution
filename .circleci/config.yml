@@ -9,12 +9,12 @@ jobs:
       xcode: 14.1.0
    steps:
      - checkout
-     - run: 
-        command: xcrun simctl list -j
-     - macos/preboot-simulator:
-        version: "16.1"
-        platform: "iOS"
-        device: "iPhone 11"
+     - run: |
+          xcrun simctl create TestiPhoneX com.apple.CoreSimulator.SimDeviceType.iPhone-X com.apple.CoreSimulator.SimRuntime.iOS-16-1 > deviceid.txt 
+     - run:
+          name: Starting simulator in background
+          command: DEVICEUUID=`cat deviceid.txt` && echo $DEVICEUUID && xcrun simctl boot $DEVICEUUID
+          background: true
      - run:
         name: Node Version
         command: | 
