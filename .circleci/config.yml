@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     machine:
-      image: android-default
+      image: android:202102-01
     # To optimize build times, we recommend "large" and above for Android-related jobs
     resource_class: large
     steps:
@@ -23,17 +23,8 @@ jobs:
           
       - run:
           name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'
-      - run:
-          name: Launch emulator 2
-          command: |
-            emulator -avd test1 -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          background: true
-          
-      - run:
-          name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'    
-
+          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'          
+   
       - run:
           name: Install Appium
           command: |
