@@ -47,6 +47,28 @@ jobs:
           cat "$emulator_config"
           fi
           
+          emulator_config1=~/.android/avd/Pixel_API_29_AOSP1.avd/config.ini
+          # The following madness is to support empty OR populated config.ini files,
+          # the state of which is dependant on the version of the emulator used (which we don't control),
+          # so let's be defensive to be safe.
+          # Replace existing config (NOTE we're on MacOS so sed works differently!)
+          sed -i .bak 's/hw.lcd.density=.*/hw.lcd.density=420/' "$emulator_config1"
+          sed -i .bak 's/hw.lcd.height=.*/hw.lcd.height=1920/' "$emulator_config1"
+          sed -i .bak 's/hw.lcd.width=.*/hw.lcd.width=1080/' "$emulator_config1"
+          # Or, add new config
+          if ! grep -q "hw.lcd.density" "$emulator_config"; then
+            echo "hw.lcd.density=420" >> "$emulator_config1"
+          fi
+          if ! grep -q "hw.lcd.height" "$emulator_config"; then
+            echo "hw.lcd.height=1920" >> "$emulator_config1"
+          fi
+          if ! grep -q "hw.lcd.width" "$emulator_config"; then
+            echo "hw.lcd.width=1080" >> "$emulator_config1"
+          fi
+          echo "Emulator settings ($emulator_config1)"
+          cat "$emulator_config1"
+          fi
+          
        - name: Start Android emulator
          run: |
           echo "Starting emulator and waiting for boot to complete...."
@@ -57,17 +79,16 @@ jobs:
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
           echo "Emulator has finished booting"
           $ANDROID_HOME/platform-tools/adb devices
-          sleep 10
-          screencapture screenshot.jpg
-          $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator.png
-          #osascript click.as
           
-       - uses: actions/upload-artifact@v3
+       - name: install recorder and record session
+         run: |
+          brew install ffmpeg
+          ffmpeg -f avfoundation -i 0 -t 120 out.mov
+      # node -e "const exec = require('child_process'); exec.exec('ffmpeg -f avfoundation -i 0 -t 120 out.mov'); exec.exec('$ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_5_API_31 &');"
+         env:
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+       - name: upload video
+         uses: actions/upload-artifact@master
          with:
-          name: screenshot.jpg
-          path: screenshot.jpg
-          
-       - uses: actions/upload-artifact@v3
-         with:
-          name: emulator.png
-          path: emulator.png
+          name: out
+          path: out.mov
