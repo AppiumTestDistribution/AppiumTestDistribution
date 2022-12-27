@@ -18,6 +18,7 @@ jobs:
          run: |
           brew install intel-haxm
           # Install AVD files
+          sdkmanager --list
           echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;default;x86_64'
           echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
           
