@@ -35,14 +35,11 @@ jobs:
           
       - run:
           name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'  
-      - run:
-          name: Node Version
-          command: | 
-            nvm install v16.18.1 && nvm alias default 16.18.1        
+          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'        
       - run:
           name: Install Appium and Run Android Test
           command: |
+            nvm install v16.18.1 && nvm alias default 16.18.1 
             node -v 
             npm install -g appium@next
             appium -v
