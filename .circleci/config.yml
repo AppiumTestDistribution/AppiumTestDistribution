@@ -9,6 +9,8 @@ jobs:
       xcode: 14.1.0
    steps:
      - checkout
+     - run: 
+        command: xcrun simctl list -j
      - macos/preboot-simulator:
         version: "16.1"
         platform: "iOS"
