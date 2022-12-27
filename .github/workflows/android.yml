@@ -22,6 +22,7 @@ jobs:
           
           # Create emulator
           $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_29_AOSP -d pixel --package 'system-images;android-27;default;x86_64'
+          $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_29_AOSP1 -d pixel --package 'system-images;android-27;default;x86_64'
           $ANDROID_HOME/emulator/emulator -list-avds
           if false; then
           emulator_config=~/.android/avd/Pixel_API_29_AOSP.avd/config.ini
@@ -52,25 +53,14 @@ jobs:
           ls -la $ANDROID_HOME/emulator
           nohup $ANDROID_HOME/tools/emulator -avd Pixel_API_29_AOSP -gpu host -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
+          nohup $ANDROID_HOME/tools/emulator -avd Pixel_API_29_AOSP1 -gpu host -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
           echo "Emulator has finished booting"
           $ANDROID_HOME/platform-tools/adb devices
-          sleep 30
+          sleep 10
           screencapture screenshot.jpg
           $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator.png
           #osascript click.as
-       - name: install recorder and record session
-         run: |
-          brew install ffmpeg
-          $ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_API_29_AOSP &
-          ffmpeg -f avfoundation -i 0 -t 120 out.mov
-      # node -e "const exec = require('child_process'); exec.exec('ffmpeg -f avfoundation -i 0 -t 120 out.mov'); exec.exec('$ANDROID_HOME/tools/emulator -port 18725 -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_5_API_31 &');"
-         env:
-          HOMEBREW_NO_INSTALL_CLEANUP: 1
-       - name: upload video
-         uses: actions/upload-artifact@master
-         with:
-          name: out
-          path: out.mov
           
        - uses: actions/upload-artifact@v3
          with:
