@@ -14,7 +14,7 @@ jobs:
             SYSTEM_IMAGES="system-images;android-29;default;x86"
             sdkmanager "$SYSTEM_IMAGES"
             echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
-            echo "no" | avdmanager --verbose create avd1 -n test -k "$SYSTEM_IMAGES"
+            echo "no" | avdmanager --verbose create avd -n test1 -k "$SYSTEM_IMAGES"
       - run:
           name: Launch emulator 1
           command: |
@@ -27,7 +27,7 @@ jobs:
       - run:
           name: Launch emulator 2
           command: |
-            emulator -avd1 test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+            emulator -avd test1 -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           background: true
           
       - run:
