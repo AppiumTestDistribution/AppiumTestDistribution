@@ -12,7 +12,7 @@ jobs:
     steps: 
        - name: SDK
          run: |
-          sdkmanager --list
+          $ANDROID_HOME/tools/bin/sdkmanager --list
        - name: Create Android emulator
          run: |
           brew install intel-haxm
