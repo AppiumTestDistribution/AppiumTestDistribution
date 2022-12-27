@@ -43,9 +43,8 @@ jobs:
             appium plugin install --source npm appium-device-farm
             appium plugin list
             appium driver list
-      - run:
-          name: Run Test
-          command: mvn clean
+            adb devices
+            mvn clean
             
 workflows:
   build:
