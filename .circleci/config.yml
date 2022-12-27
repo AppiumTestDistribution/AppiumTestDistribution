@@ -7,6 +7,8 @@ jobs:
   iOS:
    macos:
       xcode: 14.1.0
+   environment:
+      JAVA_HOME: /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
    steps:
      - checkout
      - run: |
@@ -22,7 +24,9 @@ jobs:
      - run:
         name: Install Appium and Run iOS Test
         command: |
-           nvm install v16.18.1 && nvm alias default 16.18.1 
+           nvm install v16.18.1 && nvm alias default 16.18.1
+           brew install --cask homebrew/cask-versions/adoptopenjdk8
+           export PATH=$JAVA_HOME/bin:$PATH 
            brew install maven
            node -v 
            npm install -g appium@next
