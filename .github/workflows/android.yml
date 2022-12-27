@@ -1,0 +1,43 @@
+name: Appium CI
+
+on:
+  repository_dispatch:
+    types: [ kubernetes_deploy_mobile ]
+
+jobs:
+  build:
+    runs-on: macos-latest # the machine type
+    strategy: # we are using strategy if we need to run on parallel with different devices and version
+      matrix:
+        api-level: [ 29 ] #Google api level for example [25,23,28]
+        target: [ default ]
+    steps:
+      - uses: actions/checkout@v2 #checkout the code
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Install and Run Appium Server
+        run: |
+          echo 'Appium Server install'
+      - name: EMU_1
+        uses: ReactiveCircus/android-emulator-runner@v2 # install and create the Emulator
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: x86_64
+          profile: Nexus 6
+          avd-name: 1st_Pixel_4_XL_API_30
+          script: nohup emulator -avd 1st_Pixel_4_XL_API_30 -skin 1080x2400 -no-audio -no-boot-anim -no-snapshot > /dev/null 2>&1 & adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+      - name: EMU_2
+        uses: ReactiveCircus/android-emulator-runner@v2 # install and create the Emulator
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: x86_64
+          profile: Nexus 6
+          avd-name: 2nd_Pixel_4_XL_API_30
+          script: nohup emulator -avd 2nd_Pixel_4_XL_API_30 -skin 1080x2400 -no-audio -no-boot-anim -no-snapshot > /dev/null 2>&1 & adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+     
+      - name: Run Appium Tests
+        run: adb devices
