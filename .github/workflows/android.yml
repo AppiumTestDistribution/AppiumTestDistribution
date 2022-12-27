@@ -1,8 +1,6 @@
 name: ATD CI
 
-on:
-  repository_dispatch:
-    types: [ kubernetes_deploy_mobile ]
+on: [push, pull_request]
 
 jobs:
   build:
