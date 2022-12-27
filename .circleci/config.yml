@@ -35,10 +35,10 @@ jobs:
           command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'    
 
       - run:
-          name: Run UI tests (with retry)
+          name: Install Appium
           command: |
-            sleep 20
             adb devices
+            node -v
 workflows:
   build:
     jobs:
