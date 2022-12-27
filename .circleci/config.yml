@@ -24,7 +24,7 @@ jobs:
           name: wait for emulator
           command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'          
       - run:
-          name: Swap node versions
+          name: Swap node versions and Install Appium
           command: |
             set +e
             wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
@@ -36,11 +36,8 @@ jobs:
 
             echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      - run:
-          name: Install Appium
-          command: |
-            adb devices
-            node -v
+            node -v 
+            npm install -g appium@next
 workflows:
   build:
     jobs:
