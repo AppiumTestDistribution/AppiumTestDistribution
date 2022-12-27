@@ -17,16 +17,14 @@ jobs:
       - run:
           name: Launch emulator 1
           command: |
-            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot 
--noaudio -no-boot-anim
+            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           background: true
           
       - run:
           name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; 
-done;'          
+          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'          
       - run:
-          name: Install Appium
+          name: Install Appium and Run Android Test
           command: |
             set +e
             wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
@@ -44,9 +42,8 @@ done;'
             appium plugin install --source npm appium-device-farm
             appium plugin list
             appium driver list
-      - run:
-          name: Run Test
-          command: mvn clean
+            Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+
             
 workflows:
   build:
