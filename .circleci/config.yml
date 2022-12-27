@@ -38,6 +38,14 @@ jobs:
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
             node -v 
             npm install -g appium@next
+      - run:
+          name: Install Appium Dependencies
+          command: |
+            appium -v
+            appium driver install uiautomator2
+            appium plugin install --source npm appium-device-farm
+            appium plugin list
+            appium driver list
 workflows:
   build:
     jobs:
