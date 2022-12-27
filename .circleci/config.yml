@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     machine:
-      image: android:202102-01
+      image: android-default
     # To optimize build times, we recommend "large" and above for Android-related jobs
     resource_class: large
     steps:
