@@ -1,7 +1,20 @@
 # .circleci/config.yml
 version: 2.1
 jobs:
-  build:
+  iOS: # your job name
+    macos:
+      xcode: 14.1.0 # indicate our selected version of Xcode
+    steps: # a series of commands to run
+      - checkout  # pull down code from your version control system.
+      - run:
+          name: Node Version
+          command: | 
+            nvm install v16.18.1 && nvm alias default 16.18.1
+      - run: 
+          name: Simulators
+          command: xcrun simctl list
+
+  Android:
     machine:
       image: android:202102-01
     # To optimize build times, we recommend "large" and above for Android-related jobs
@@ -48,4 +61,5 @@ jobs:
 workflows:
   build:
     jobs:
-      - build
+      - iOS
+      - Android
