@@ -9,6 +9,21 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Create avd
+          command: |
+            SYSTEM_IMAGES="system-images;android-29;default;x86"
+            sdkmanager "$SYSTEM_IMAGES"
+            echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
+      - run:
+          name: Launch emulator 1
+          command: |
+            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          background: true
+          
+      - run:
+          name: wait for emulator
+          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'          
+      - run:
           name: Swap node versions
           command: |
             set +e
@@ -21,23 +36,6 @@ jobs:
 
             echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      - run:
-          name: Create avd
-          command: |
-            SYSTEM_IMAGES="system-images;android-29;default;x86"
-            sdkmanager "$SYSTEM_IMAGES"
-            echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
-            echo "no" | avdmanager --verbose create avd -n test1 -k "$SYSTEM_IMAGES"
-      - run:
-          name: Launch emulator 1
-          command: |
-            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-          background: true
-          
-      - run:
-          name: wait for emulator
-          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'          
-   
       - run:
           name: Install Appium
           command: |
