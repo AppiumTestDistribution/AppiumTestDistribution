@@ -1,97 +1,10 @@
-# Xcode
-# Build, test, and archive an Xcode workspace on macOS.
-# Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
-
-jobs:
-  - job: CheckStyle
-    pool:
-      vmImage: "macos-latest"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "17.5.0"
-
-      - script: |
-          mvn clean install -Dmaven.test.skip=true -Dgpg.skip
-
-        displayName: "Checkstyle"
-
-  - job: Distribute_between_iOS_Devices
-    pool:
-      vmImage: "macOS-12"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "18.12.1"
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: '8'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
-      - script: |
-          brew outdated xctool || brew upgrade xctool
-          xcrun simctl list
-          xcrun simctl create iPhone1 com.apple.CoreSimulator.SimDeviceType.iPhone-11
-          xcrun simctl create iPhone2 com.apple.CoreSimulator.SimDeviceType.iPhone-11
-          xcrun simctl boot iPhone1
-          xcrun simctl boot iPhone2
-        displayName: "iOS Sim Versions"
-
-      - script: |
-          node -v
-          java -version
-          npm install -g appium@next
-          appium -v
-          appium driver install xcuitest
-          appium plugin install --source npm appium-device-farm
-        displayName: "Install Appium"
-
-      - script: |
-          Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-        displayName: "Run Distribute on iOS"
-
-      - task: CopyFiles@2
-        inputs:
-          SourceFolder: '$(build.sourcesdirectory)'
-          contents: '**/*'
-          TargetFolder: '$(build.artifactstagingdirectory)'
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          publishLocation: Container
-
-  - job: Distribute_on_BrowserStack
-    pool:
-      vmImage: "macos-latest"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "18.12.1"
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: '8'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
-      - script: |
-          node -v
-          java -version
-          npm install -g appium@next
-          appium -v
-          appium driver install uiautomator2
-          appium plugin install --source npm appium-device-farm
-        displayName: "Install Appium"
-
-      - script: |
-          Platform='android' BS_USERNAME=$(user_bs) BS_PASSWORD=$(pass_bs) CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
-        displayName: "Run Distribute on Android"
-
-#  - job: Parallel
+## Xcode
+## Build, test, and archive an Xcode workspace on macOS.
+## Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
+## https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
+#
+#jobs:
+#  - job: CheckStyle
 #    pool:
 #      vmImage: "macos-latest"
 #
@@ -99,140 +12,227 @@ jobs:
 #      - task: NodeTool@0
 #        inputs:
 #          versionSpec: "17.5.0"
+#
+#      - script: |
+#          mvn clean install -Dmaven.test.skip=true -Dgpg.skip
+#
+#        displayName: "Checkstyle"
+#
+#  - job: Distribute_between_iOS_Devices
+#    pool:
+#      vmImage: "macOS-12"
+#
+#    steps:
+#      - task: NodeTool@0
+#        inputs:
+#          versionSpec: "18.12.1"
+#      - task: JavaToolInstaller@0
+#        inputs:
+#          versionSpec: '8'
+#          jdkArchitectureOption: 'x64'
+#          jdkSourceOption: 'PreInstalled'
 #      - script: |
 #          brew outdated xctool || brew upgrade xctool
 #          xcrun simctl list
+#          xcrun simctl create iPhone1 com.apple.CoreSimulator.SimDeviceType.iPhone-11
+#          xcrun simctl create iPhone2 com.apple.CoreSimulator.SimDeviceType.iPhone-11
+#          xcrun simctl boot iPhone1
+#          xcrun simctl boot iPhone2
 #        displayName: "iOS Sim Versions"
 #
 #      - script: |
 #          node -v
+#          java -version
 #          npm install -g appium@next
-#          appium driver install uiautomator2
+#          appium -v
 #          appium driver install xcuitest
-#          appium -v
+#          appium plugin install --source npm appium-device-farm
 #        displayName: "Install Appium"
 #
-#      - bash: |
-#          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
-#        displayName: "install Android image"
 #      - script: |
-#          $ANDROID_HOME/emulator/emulator -list-avds
-#          echo '---'
-#          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
-#          echo '---'
-#          $ANDROID_HOME/emulator/emulator -list-avds
-#        displayName: "create AVD"
+#          Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 #
-#      - script: |
-#          $ANDROID_HOME/platform-tools/adb devices
-#          echo '---'
-#          nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
-#          echo '---'
-#          $ANDROID_HOME/platform-tools/adb devices
-#        displayName: "start Android emulator"
+#        displayName: "Run Distribute on iOS"
 #
-#      - script: |
-#          Platform='both' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+#      - task: CopyFiles@2
+#        inputs:
+#          SourceFolder: '$(build.sourcesdirectory)'
+#          contents: '**/*'
+#          TargetFolder: '$(build.artifactstagingdirectory)'
 #
-#        displayName: "Run Parallel on iOS and Android"
+#      - task: PublishBuildArtifacts@1
+#        inputs:
+#          publishLocation: Container
 #
-#  - job: SauceLabs
+#  - job: Distribute_on_BrowserStack
 #    pool:
 #      vmImage: "macos-latest"
 #
 #    steps:
 #      - task: NodeTool@0
 #        inputs:
-#          versionSpec: "17.5.0"
-#
-#      - script: |
-#          Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-#
-#        displayName: "Run Test on Sauce on iOS and Android"
-#
-#  - job: SauceLabs_iOS
-#    pool:
-#      vmImage: "macos-latest"
-#
-#    steps:
-#      - task: NodeTool@0
+#          versionSpec: "18.12.1"
+#      - task: JavaToolInstaller@0
 #        inputs:
-#          versionSpec: "17.5.0"
-#
-#      - script: |
-#          Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-#
-#        displayName: "Run Test on Sauce on iOS and Android"
-
-#  - job: Windows
-#    pool:
-#      vmImage: "windows-latest"
-#
-#    steps:
-#      - task: NodeTool@0
-#        inputs:
-#          versionSpec: "17.5.0"
-#
+#          versionSpec: '8'
+#          jdkArchitectureOption: 'x64'
+#          jdkSourceOption: 'PreInstalled'
 #      - script: |
 #          node -v
+#          java -version
 #          npm install -g appium@next
 #          appium -v
-#          appium driver install windows
+#          appium driver install uiautomator2
+#          appium plugin install --source npm appium-device-farm
 #        displayName: "Install Appium"
 #
 #      - script: |
-#          mvn clean -Dtest=WindowsRunner test -Dcheckstyle.skip -DPlatform="windows"
-#    displayName: "Run windows app"
+#          Platform='android' BS_USERNAME=$(user_bs) BS_PASSWORD=$(pass_bs) CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 #
-#  - job: Windows_Cucumber
-#    pool:
-#      vmImage: "windows-latest"
+#        displayName: "Run Distribute on Android"
 #
-#    variables:
-#      - name: CONFIG_FILE
-#        value: "./configs/windowsCucumberConfig.properties"
+##  - job: Parallel
+##    pool:
+##      vmImage: "macos-latest"
+##
+##    steps:
+##      - task: NodeTool@0
+##        inputs:
+##          versionSpec: "17.5.0"
+##      - script: |
+##          brew outdated xctool || brew upgrade xctool
+##          xcrun simctl list
+##        displayName: "iOS Sim Versions"
+##
+##      - script: |
+##          node -v
+##          npm install -g appium@next
+##          appium driver install uiautomator2
+##          appium driver install xcuitest
+##          appium -v
+##        displayName: "Install Appium"
+##
+##      - bash: |
+##          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install 'system-images;android-27;google_apis;x86'
+##        displayName: "install Android image"
+##      - script: |
+##          $ANDROID_HOME/emulator/emulator -list-avds
+##          echo '---'
+##          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n test_android_emulator -k 'system-images;android-27;google_apis;x86' --force
+##          echo '---'
+##          $ANDROID_HOME/emulator/emulator -list-avds
+##        displayName: "create AVD"
+##
+##      - script: |
+##          $ANDROID_HOME/platform-tools/adb devices
+##          echo '---'
+##          nohup $ANDROID_HOME/emulator/emulator -avd test_android_emulator -no-snapshot > /dev/null 2>&1 & $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+##          echo '---'
+##          $ANDROID_HOME/platform-tools/adb devices
+##        displayName: "start Android emulator"
+##
+##      - script: |
+##          Platform='both' RUNNER_LEVEL="parallel" CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+##
+##        displayName: "Run Parallel on iOS and Android"
+##
+##  - job: SauceLabs
+##    pool:
+##      vmImage: "macos-latest"
+##
+##    steps:
+##      - task: NodeTool@0
+##        inputs:
+##          versionSpec: "17.5.0"
+##
+##      - script: |
+##          Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+##
+##        displayName: "Run Test on Sauce on iOS and Android"
+##
+##  - job: SauceLabs_iOS
+##    pool:
+##      vmImage: "macos-latest"
+##
+##    steps:
+##      - task: NodeTool@0
+##        inputs:
+##          versionSpec: "17.5.0"
+##
+##      - script: |
+##          Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+##
+##        displayName: "Run Test on Sauce on iOS and Android"
 #
-#    steps:
-#      - task: NodeTool@0
-#        inputs:
-#          versionSpec: "17.5.0"
+##  - job: Windows
+##    pool:
+##      vmImage: "windows-latest"
+##
+##    steps:
+##      - task: NodeTool@0
+##        inputs:
+##          versionSpec: "17.5.0"
+##
+##      - script: |
+##          node -v
+##          npm install -g appium@next
+##          appium -v
+##          appium driver install windows
+##        displayName: "Install Appium"
+##
+##      - script: |
+##          mvn clean -Dtest=WindowsRunner test -Dcheckstyle.skip -DPlatform="windows"
+##    displayName: "Run windows app"
+##
+##  - job: Windows_Cucumber
+##    pool:
+##      vmImage: "windows-latest"
+##
+##    variables:
+##      - name: CONFIG_FILE
+##        value: "./configs/windowsCucumberConfig.properties"
+##
+##    steps:
+##      - task: NodeTool@0
+##        inputs:
+##          versionSpec: "17.5.0"
+##
+##      - script: |
+##          node -v
+##          npm install -g appium@next
+##          appium -v
+##          appium driver install windows
+##        displayName: "Install Appium"
+##
+##      - script: |
+##          mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip
+##    displayName: "Run windows app - Cucumber"
 #
-#      - script: |
-#          node -v
-#          npm install -g appium@next
-#          appium -v
-#          appium driver install windows
-#        displayName: "Install Appium"
-#
-#      - script: |
-#          mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip
-#    displayName: "Run windows app - Cucumber"
-
-#  - job: Genymotion
-#    pool:
-#      vmImage: 'macos-10.15'
-#
-#
-#    steps:
-#    - task: NodeTool@0
-#      inputs:
-#        versionSpec: '8.12.0'
-#
-#    - script: |
-#        node -v
-#        npm install -g appium@beta
-#        appium -v
-#      displayName: 'Install Appium'
-#
-#    - bash: |
-#        pip3 install gmsaas
-#      displayName: 'Download Genymotion Installer'
-#
-#    - bash: |
-#        gmsaas config set android-sdk-path $ANDROID_HOME
-#      displayName: 'Set Android Sdk Path'
-#
-#    - script: |
-#         Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='./configs/gm_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-#
-#      displayName: 'Run Test on Genymotion Android'
+##  - job: Genymotion
+##    pool:
+##      vmImage: 'macos-10.15'
+##
+##
+##    steps:
+##    - task: NodeTool@0
+##      inputs:
+##        versionSpec: '8.12.0'
+##
+##    - script: |
+##        node -v
+##        npm install -g appium@beta
+##        appium -v
+##      displayName: 'Install Appium'
+##
+##    - bash: |
+##        pip3 install gmsaas
+##      displayName: 'Download Genymotion Installer'
+##
+##    - bash: |
+##        gmsaas config set android-sdk-path $ANDROID_HOME
+##      displayName: 'Set Android Sdk Path'
+##
+##    - script: |
+##         Platform='android' CLOUD_USER=$(user_gm) CLOUD_KEY=$(pass_gm) CONFIG_FILE='./configs/gm_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+##
+##      displayName: 'Run Test on Genymotion Android'
