@@ -4,39 +4,6 @@ orbs:
   macos: circleci/macos@2
 
 jobs:
-  iOS:
-   macos:
-      xcode: 14.1.0
-   environment:
-      JAVA_HOME: /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
-   steps:
-     - checkout
-     - run: |
-          xcrun simctl create TestiPhoneX com.apple.CoreSimulator.SimDeviceType.iPhone-X com.apple.CoreSimulator.SimRuntime.iOS-16-1 > deviceid.txt 
-     - run:
-          name: Starting simulator in background
-          command: DEVICEUUID=`cat deviceid.txt` && echo $DEVICEUUID && xcrun simctl boot $DEVICEUUID
-          background: true
-     - run:
-        name: Node Version
-        command: | 
-            nvm install v16.18.1 && nvm alias default 16.18.1
-     - run:
-        name: Install Appium and Run iOS Test
-        command: |
-           nvm install v16.18.1 && nvm alias default 16.18.1
-           brew install --cask homebrew/cask-versions/adoptopenjdk8
-           export PATH=$JAVA_HOME/bin:$PATH 
-           brew install maven
-           node -v 
-           npm install -g appium@next
-           appium -v
-           appium driver install xcuitest
-           appium plugin install --source npm appium-device-farm
-           appium plugin list
-           appium driver list
-           Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
-
   Android:
     machine:
       image: android:202102-01
@@ -76,5 +43,4 @@ jobs:
 workflows:
   build:
     jobs:
-      - iOS
       - Android
