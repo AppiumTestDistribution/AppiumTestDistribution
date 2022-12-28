@@ -20,7 +20,7 @@ jobs:
 
   - job: Distribute_between_iOS_Devices
     pool:
-      vmImage: "macos-latest"
+      vmImage: "macOS-12"
 
     steps:
       - task: NodeTool@0
