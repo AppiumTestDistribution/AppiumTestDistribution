@@ -10,22 +10,42 @@
     "pCloudy_EnableVideo": "true",
     "pCloudy_EnablePerformanceData": "true",
     "pCloudy_EnableDeviceLogs": "true",
-    "app": {
-      "local": "./apps/TheApp-VR-v1.apk"
-    }
+    "pCloudy_ApplicationName": "pCloudy_Appium_Demo.apk",
+    "appPackage": "com.pcloudy.appiumdemo",
+    "appActivity": "com.ba.mobile.LaunchActivity"
   },
-  "cloud": {
-    "android": [
-      {
-        "osVersion": "10.0.0"
+  "serverConfig": {
+    "server": {
+      "use-plugins": ["device-farm"],
+      "port": 31337,
+      "plugin": {
+        "device-farm": {
+          "platform": "android",
+          "remote": [
+            {
+              "cloudName": "pCloudy",
+              "url": "https://device.pcloudy.com/appiumcloud/wd/hub",
+              "devices": [
+                {
+                  "pCloudy_DeviceManufacturer": "SAMSUNG",
+                  "pCloudy_DeviceVersion": "13.0.0",
+                  "platform": "android"
+                },
+                {
+                  "pCloudy_DeviceManufacturer": "APPLE",
+                  "pCloudy_DeviceVersion": "15.1",
+                  "platform": "ios"
+                }
+              ]
+            }
+          ]
+        }
       }
-    ]
+    }
   },
   "hostMachines": [
     {
-      "machineIP": "device.pcloudy.com/appiumcloud",
-      "isCloud": true,
-      "cloudName": "pCloudy"
+      "machineIP": "device.pcloudy.com/appiumcloud"
     }
   ]
 }
