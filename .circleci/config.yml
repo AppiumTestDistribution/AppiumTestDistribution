@@ -80,4 +80,4 @@ workflows:
       - iOS
       - Android
       - maven/test:
-            command: 'install -Dmaven.test.skip=true -Dgpg.skip'
+            command: 'compile'
