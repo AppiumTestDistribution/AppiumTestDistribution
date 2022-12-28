@@ -179,9 +179,9 @@
             <version>2.10</version>
         </dependency>
         <dependency>
-            <groupId>com.github.everit-org.json-schema</groupId>
+            <groupId>org.everit.json</groupId>
             <artifactId>org.everit.json.schema</artifactId>
-            <version>1.12.1</version>
+            <version>1.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
