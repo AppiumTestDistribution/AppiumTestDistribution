@@ -80,4 +80,4 @@ workflows:
       - iOS
       - Android
       - maven/test:
-            command: 'clean install -Dmaven.test.skip=true -Dgpg.skip'
+            command: 'install -Dmaven.test.skip=true -Dgpg.skip'
