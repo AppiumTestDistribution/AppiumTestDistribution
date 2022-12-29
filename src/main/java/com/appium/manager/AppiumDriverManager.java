@@ -10,14 +10,12 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.windows.WindowsDriver;
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 
 import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
@@ -38,7 +36,6 @@ public class AppiumDriverManager {
         appiumDriver.set(driver);
     }
 
-
     private AppiumDriver initialiseDriver(DesiredCapabilities desiredCapabilities)
             throws Exception {
         LOGGER.info("Initialise Driver with Capabilities: ");
@@ -49,7 +46,6 @@ public class AppiumDriverManager {
         return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
 
-    @NotNull
     private AppiumDriver createAppiumDriver(DesiredCapabilities desiredCapabilities,
                                             String remoteWDHubIP)
             throws IOException {
@@ -75,42 +71,24 @@ public class AppiumDriverManager {
                 + AppiumDeviceManager.getMobilePlatform().name()
                 + "\n\tSession Id: " + currentDriverSession.getSessionId()
                 + "\n\tUDID: " + currentDriverSession.getCapabilities().getCapability("udid"));
-        ObjectMapper mapper = new ObjectMapper();
-        Gson gson = new Gson();
-        String json = gson.toJson(currentDriverSession.getCapabilities().asMap());
-        DriverSession driverSessions = (mapper.readValue(json, DriverSession.class));
+        String json = new Gson().toJson(currentDriverSession.getCapabilities().asMap());
+        DriverSession driverSessions = (new ObjectMapper().readValue(json, DriverSession.class));
         AppiumDeviceManager.setDevice(driverSessions);
         return currentDriverSession;
     }
 
-    private AppiumDriver startAppiumDriverInstance(
-            Optional<DesiredCapabilities> desiredCapabilities)
-            throws Exception {
-        LOGGER.info("startAppiumDriverInstance");
-        AppiumDriver currentDriverSession =
-                initialiseDriver(desiredCapabilities.get());
-        AppiumDriverManager.setDriver(currentDriverSession);
-        return currentDriverSession;
-    }
-
     // Should be used by Cucumber as well
-    public AppiumDriver startAppiumDriverInstance(String testMethodName)
-            throws Exception {
-        return startAppiumDriverInstance(testMethodName, CAPS.get());
-    }
-
-    // Should be used by Cucumber as well
-    public AppiumDriver startAppiumDriverInstance(String testMethodName,
-                                                  String capabilityFilePath)
+    public void startAppiumDriverInstance(String testMethodName)
             throws Exception {
         LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
-                testMethodName, capabilityFilePath));
-        return startAppiumDriverInstance(
-                Optional.ofNullable(buildDesiredCapabilities(capabilityFilePath)));
+                testMethodName, CAPS.get()));
+        LOGGER.info("startAppiumDriverInstance");
+        AppiumDriver currentDriverSession =
+                initialiseDriver(buildDesiredCapabilities(CAPS.get()));
+        AppiumDriverManager.setDriver(currentDriverSession);
     }
 
-    private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath)
-            throws Exception {
+    private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath) {
         if (new File(capabilityFilePath).exists()) {
             return new DesiredCapabilityBuilder()
                     .buildDesiredCapability(capabilityFilePath);
@@ -119,7 +97,7 @@ public class AppiumDriverManager {
         }
     }
 
-    public void stopAppiumDriver() throws Exception {
+    public void stopAppiumDriver() {
         if (AppiumDriverManager.getDriver() != null
                 && AppiumDriverManager.getDriver().getSessionId() != null) {
             LOGGER.info("Session Deleting ---- "

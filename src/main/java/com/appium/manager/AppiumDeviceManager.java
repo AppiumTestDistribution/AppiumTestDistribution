@@ -23,7 +23,7 @@ public class AppiumDeviceManager {
     }
 
 
-    public static MobilePlatform getMobilePlatform() throws IOException {
+    public static MobilePlatform getMobilePlatform() {
         return MobilePlatform.valueOf(PluginClI.getInstance().getPlatFormName().toUpperCase());
     }
 

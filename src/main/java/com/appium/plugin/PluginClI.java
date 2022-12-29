@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import okhttp3.Response;
 
 import java.util.ArrayList;
 
@@ -81,10 +79,7 @@ public class PluginClI {
     public static PluginClI getInstance() {
         if (instance == null) {
             PluginCliRequest plugin = new PluginCliRequest();
-            Response cliArgs = plugin.getCliArgs();
-            ObjectMapper mapper = new ObjectMapper();
-            PluginClI[] pluginClIS = mapper.readValue(cliArgs.body().string(), PluginClI[].class);
-            instance = pluginClIS[0];
+            instance = plugin.getCliArgs();
         }
         return instance;
     }

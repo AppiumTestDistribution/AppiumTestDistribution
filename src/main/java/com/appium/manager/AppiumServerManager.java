@@ -101,8 +101,7 @@ public class AppiumServerManager {
         }
     }
 
-    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host)
-            throws Exception {
+    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host) {
         return new AppiumServiceBuilder().withAppiumJS(
                 new File(Capabilities.getInstance().getAppiumServerPath(host)));
     }

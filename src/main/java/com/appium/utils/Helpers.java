@@ -120,17 +120,6 @@ public class Helpers {
         }
     }
 
-    protected static String getAppiumServerVersion() throws IOException {
-        String appiumVersion = null;
-        try {
-            appiumVersion = new CommandPrompt().runCommand("appium -v")
-                .replaceAll("\n", "");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return appiumVersion;
-    }
-
     public boolean isRetry(ITestResult iTestResult) {
         if (iTestResult.getMethod().getRetryAnalyzer(iTestResult) != null) {
             return iTestResult.getMethod().getRetryAnalyzer(iTestResult).retry(iTestResult);

@@ -19,7 +19,6 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.openqa.selenium.logging.LogEntries;
 
@@ -268,7 +267,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         return reportLink;
     }
 
-    @NotNull
     static String getCurlProxyCommand() {
         String curlProxyCommand = "";
         if (null != OverriddenVariable.getOverriddenStringValue("PROXY_URL")) {

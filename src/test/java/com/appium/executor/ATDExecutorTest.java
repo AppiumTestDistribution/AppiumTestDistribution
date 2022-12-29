@@ -1,6 +1,5 @@
 package com.appium.executor;
 
-import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -20,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.apache.commons.io.IOUtils.toInputStream;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertTrue;
 
 public class ATDExecutorTest {

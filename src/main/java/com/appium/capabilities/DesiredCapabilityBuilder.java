@@ -17,26 +17,9 @@ import static com.appium.utils.ConfigFileManager.CAPS;
 public class DesiredCapabilityBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(DesiredCapabilityBuilder.class.getName());
-    public static final String APP_PACKAGE = "APP_PACKAGE";
-
-    public DesiredCapabilityBuilder() {
-        super();
-    }
 
     public DesiredCapabilities buildDesiredCapability(String capabilityFilePath) {
         String platform = PluginClI.getInstance().getPlatFormName();
-        return desiredCapabilityForLocalAndRemoteATD(
-                platform,
-                capabilityFilePath);
-    }
-
-    private DesiredCapabilities desiredCapabilityForLocalAndRemoteATD(String platform,
-                                                                      String capabilityFilePath) {
-        return updateCapabilities(platform, capabilityFilePath);
-    }
-
-    private DesiredCapabilities updateCapabilities(String platform,
-                                                   String capabilityFilePath) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         JSONObject platFormCapabilities;
         JSONObject fullCapabilities;

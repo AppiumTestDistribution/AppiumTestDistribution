@@ -1,7 +1,5 @@
 package com.appium.manager;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.annotation.values.SkipIf;
 import com.appium.plugin.PluginClI;
 import com.appium.utils.FileFilterParser;
@@ -11,21 +9,13 @@ import com.context.TestExecutionContext;
 import io.appium.java_client.AppiumDriver;
 import lombok.SneakyThrows;
 import org.apache.log4j.Logger;
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ISuite;
-import org.testng.ISuiteListener;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
-import org.testng.ITestNGListener;
-import org.testng.ITestNGMethod;
-import org.testng.ITestResult;
-import org.testng.SkipException;
+import org.testng.*;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class AppiumParallelMethodTestListener extends Helpers
         implements ITestListener, IInvokedMethodListener, ISuiteListener {

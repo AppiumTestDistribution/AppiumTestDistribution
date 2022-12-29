@@ -1,10 +1,7 @@
 package com.appium.device;
 
-import com.appium.capabilities.DriverSession;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter

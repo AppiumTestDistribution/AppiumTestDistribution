@@ -2,7 +2,6 @@ package com.appium.manager;
 
 
 import com.annotation.values.SkipIf;
-import com.appium.capabilities.Capabilities;
 import com.appium.utils.Helpers;
 import com.context.SessionContext;
 import com.context.TestExecutionContext;
@@ -20,7 +19,6 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.ITestNGListener;
 
-import java.util.Optional;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;

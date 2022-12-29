@@ -39,11 +39,6 @@ public class Capabilities {
         capabilities = createInstance(getCapabilityLocation());
     }
 
-    public Capabilities(String capabilitiesJson, AtdEnvironment atdEnvironment) {
-        this.atdEnvironment = atdEnvironment;
-        capabilities = createInstance(capabilitiesJson);
-    }
-
     public JSONObject createInstance(String capabilitiesJson) {
         String fileName = FilenameUtils.removeExtension(new File(capabilitiesJson).getName());
         JSONObject capabilitiesJsonObject = new JsonParser(capabilitiesJson).getObjectFromJSON();
@@ -263,7 +258,7 @@ public class Capabilities {
         return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("device");
     }
 
-    public String getAppiumServerPath(String host) throws Exception {
+    public String getAppiumServerPath(String host) {
         try {
             return appiumServerProp(host, "appiumServerPath");
         } catch (Exception e) {
@@ -287,7 +282,7 @@ public class Capabilities {
         }
     }
 
-    private <T> T appiumServerProp(String host, String arg) throws Exception {
+    private <T> T appiumServerProp(String host, String arg) {
         JSONArray hostMachineObject = Capabilities.getInstance().getHostMachineObject();
         List<Object> hostIP = hostMachineObject.toList();
         Object machineIP = hostIP.stream().filter(object -> ((Map) object).get("machineIP")
@@ -368,32 +363,6 @@ public class Capabilities {
         if (atdEnvironment.get("Platform") == null) {
             throw new IllegalArgumentException("Please execute with Platform environment"
                     + ":: Platform=android/ios/both/windows mvn clean -Dtest=Runner test");
-        }
-    }
-
-    private void validateRemoteHosts(JSONObject loadedCapabilities) {
-        try {
-            if (!hasHostMachines(loadedCapabilities)) {
-                return;
-            }
-            JSONArray hostMachines = getHostMachineObject(loadedCapabilities);
-            for (Object hostMachine : hostMachines) {
-                JSONObject hostMachineJson = ((JSONObject) hostMachine);
-                boolean isCloud = hostMachineJson.has("isCloud");
-                if (isCloud) {
-                    isCloud = hostMachineJson.getBoolean("isCloud");
-                }
-                String machineIP = (String) hostMachineJson.get("machineIP");
-                if (isCloud
-                        || InetAddress.getByName(machineIP).isReachable(5000)) {
-                    LOGGER.info("ATD is Running on " + machineIP);
-                } else {
-                    FigletHelper.figlet("Unable to connect to Remote Host " + machineIP);
-                    throw new ConnectException();
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Provide hostMachine in Caps.json for execution");
         }
     }
 }
