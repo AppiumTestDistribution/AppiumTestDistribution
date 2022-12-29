@@ -6,7 +6,7 @@
   "title": "The Root Schema",
   "required": [
     "android",
-    "hostMachines"
+    "serverConfig"
   ],
   "properties": {
     "android": {

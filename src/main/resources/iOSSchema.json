@@ -6,7 +6,7 @@
   "title": "The Root Schema",
   "required": [
     "iOS",
-    "hostMachines"
+    "serverConfig"
   ],
   "properties": {
     "iOS": {

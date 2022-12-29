@@ -347,9 +347,6 @@ public class Capabilities {
         String platform = atdEnvironment.get("Platform");
         String schema = null;
         switch (platform.toLowerCase()) {
-            case "both":
-                schema = "/androidAndiOSSchema.json";
-                break;
             case "android":
                 schema = "/androidSchema.json";
                 break;
