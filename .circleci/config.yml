@@ -74,13 +74,13 @@ jobs:
             Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   BrowserStack:
-    machine:
-    image: android:202102-01
+      machine:
+       image: android:202102-01
     # To optimize build times, we recommend "large" and above for Android-related jobs
-    resource_class: large
-    steps:
-      - checkout
-      - run:
+      resource_class: large
+      steps:
+       - checkout
+       - run:
           name: Install Appium and Run Android Test
           command: |
             nvm install v16.18.1 && nvm alias default 16.18.1 
