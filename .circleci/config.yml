@@ -73,11 +73,30 @@ jobs:
             appium driver list
             Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
+  BrowserStack:
+    machine:
+    image: android:202102-01
+    # To optimize build times, we recommend "large" and above for Android-related jobs
+    resource_class: large
+    steps:
+      - checkout
+      - run:
+          name: Install Appium and Run Android Test
+          command: |
+            nvm install v16.18.1 && nvm alias default 16.18.1 
+            node -v 
+            npm install -g appium@next
+            appium -v
+            appium plugin install --source npm appium-device-farm
+            appium plugin list
+            appium driver list
+            Platform='android' BS_USERNAME=$user_bs BS_PASSWORD=$pass_bs CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
 workflows:
   build:
     jobs:
       - iOS
       - Android
+      - BrowserStack
       - maven/test:
             command: 'compile'

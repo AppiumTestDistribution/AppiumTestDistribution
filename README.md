@@ -79,16 +79,12 @@ Add the below dependencies in your pom.xml (Master)
 ## [Tips](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Tips)
 
 ## Video log Prerequisites
-* Install flick
-    * ```$ gem install flick```
 
 * Install ffmpeg. [OSX](https://trac.ffmpeg.org/wiki/CompilationGuide/MacOSX)
 	* ```$ brew update```
 	* ```$ brew install ffmpeg```
-* Install mp4box. [OSX](http://hunterford.me/compiling-mp4box-on-mac-os-x/)
-	* ```$ brew install mp4box```
+    * `
 * Install ffmpeg. [windows]( https://ffmpeg.org/download.html#build-windows)
-* Install mp4box. [windows] (https://gpac.wp.mines-telecom.fr/downloads/)
 
 ## Runner
     Videos will be logged for failure tests

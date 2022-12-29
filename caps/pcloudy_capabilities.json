@@ -42,10 +42,5 @@
         }
       }
     }
-  },
-  "hostMachines": [
-    {
-      "machineIP": "device.pcloudy.com/appiumcloud"
-    }
-  ]
+  }
 }

@@ -12,12 +12,7 @@
         "app": {
           "local": "./temp/app.exe"
         }
-      },
-      "hostMachines": [
-        {
-          "machineIP": "127.0.0.1"
-        }
-      ]
+      }
     }
   ],
   "required": [

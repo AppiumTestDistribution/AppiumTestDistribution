@@ -33,12 +33,5 @@
         "osVersion": "12.2"
       }
     ]
-  },
-  "hostMachines": [
-    {
-      "isCloud": true,
-      "machineIP": "ondemand.eu-central-1.saucelabs.com",
-      "cloudName": "sauce"
-    }
-  ]
+  }
 }

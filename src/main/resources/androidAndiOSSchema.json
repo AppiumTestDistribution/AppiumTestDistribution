@@ -34,31 +34,6 @@
       "$id": "#/properties/iOS",
       "type": "object",
       "title": "The Ios Schema"
-    },
-    "hostMachines": {
-      "$id": "#/properties/hostMachines",
-      "type": "array",
-      "title": "The Hostmachines Schema",
-      "items": {
-        "$id": "#/properties/hostMachines/items",
-        "type": "object",
-        "title": "The Items Schema",
-        "required": [
-          "machineIP"
-        ],
-        "properties": {
-          "machineIP": {
-            "$id": "#/properties/hostMachines/items/properties/machineIP",
-            "type": ["array", "string"],
-            "title": "The Machineip Schema",
-            "default": "",
-            "examples": [
-              "127.0.0.1"
-            ],
-            "pattern": "^(.*)$"
-          }
-        }
-      }
     }
   }
 }
