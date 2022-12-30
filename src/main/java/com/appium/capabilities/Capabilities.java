@@ -1,8 +1,6 @@
 package com.appium.capabilities;
 
 import com.appium.device.AtdEnvironment;
-import com.appium.utils.FigletHelper;
-import com.appium.utils.JsonParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.everit.json.schema.Schema;
@@ -13,11 +11,12 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.InetAddress;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,13 @@ public class Capabilities {
 
     public JSONObject createInstance(String capabilitiesJson) {
         String fileName = FilenameUtils.removeExtension(new File(capabilitiesJson).getName());
-        JSONObject capabilitiesJsonObject = new JsonParser(capabilitiesJson).getObjectFromJSON();
+        byte[] fileContent;
+        try {
+            fileContent = Files.readAllBytes(Paths.get(capabilitiesJson));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        JSONObject capabilitiesJsonObject = new JSONObject(new String(fileContent));
         String defaultFileName = FilenameUtils.removeExtension(new File(CAPS.get()).getName());
         StringBuilder varParsing = new StringBuilder(200);
         if (!fileName.equals(defaultFileName)) {
