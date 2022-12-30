@@ -76,6 +76,7 @@ jobs:
   AndroidUBUNTU:
     machine:
       image: ubuntu-2004:2022.07.1
+    resource_class: large
     steps:
       - checkout
       - run: apt list --installed
@@ -83,6 +84,8 @@ jobs:
       - run: java -version
       - run: node --version
       - run: npm --version
+      - run: echo $ANDROID_HOME
+      - run: adb devices
   BrowserStack:
       machine:
        image: android:202102-01
@@ -105,9 +108,4 @@ jobs:
 workflows:
   build:
     jobs:
-      - iOS
-      - Android
       - AndroidUBUNTU
-      - BrowserStack
-      - maven/test:
-            command: 'compile'
