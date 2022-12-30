@@ -107,6 +107,7 @@ workflows:
     jobs:
       - iOS
       - Android
+      - AndroidUBUNTU
       - BrowserStack
       - maven/test:
             command: 'compile'
