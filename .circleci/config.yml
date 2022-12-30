@@ -73,6 +73,16 @@ jobs:
             appium driver list
             Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
+  AndroidUBUNTU:
+    machine:
+      image: ubuntu-2004:2022.07.1
+    steps:
+      - checkout
+      - run: apt list --installed
+      - run: mvn --version
+      - run: java -version
+      - run: node --version
+      - run: npm --version
   BrowserStack:
       machine:
        image: android:202102-01
