@@ -73,49 +73,6 @@ jobs:
             appium driver list
             Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
-  AndroidUBUNTU:
-    machine:
-      image: ubuntu-2004:2022.07.1
-    resource_class: large
-    environment:
-      ANDROID_HOME: /home/circleci/android-sdk
-      ANDROID_SDK_ROOT: $ANDROID_HOME
-      CMDLINE_TOOLS_ROOT: ${ANDROID_HOME}/cmdline-tools/latest/bin
-      ADB_INSTALL_TIMEOUT: 120
-      PATH: ${ANDROID_HOME}/emulator:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${PATH}
-    steps:
-      - checkout
-      - run: apt list --installed
-      - run: mvn --version
-      - run: java -version
-      - run: node --version
-      - run: npm --version
-      - run:
-          name: Install Android stuffs
-          command: |
-            SDK_TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-9123335_latest.zip" && \
-            mkdir -p ${ANDROID_HOME}/cmdline-tools && \
-            mkdir ${ANDROID_HOME}/platforms && \
-            mkdir ${ANDROID_HOME}/ndk && \
-            wget -O /tmp/cmdline-tools.zip -t 5 "${SDK_TOOLS_URL}" && \
-            unzip -q /tmp/cmdline-tools.zip -d ${ANDROID_HOME}/cmdline-tools && \
-            rm /tmp/cmdline-tools.zip && \
-            mv ${ANDROID_HOME}/cmdline-tools/cmdline-tools ${ANDROID_HOME}/cmdline-tools/latest
-
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "tools" && \
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "platform-tools" && \
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "build-tools;33.0.1"
-
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "platforms;android-33" && \
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "platforms;android-32"
-
-            # Install some useful packages
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "extras;android;m2repository" && \
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "extras;google;m2repository" && \
-            echo y | ${CMDLINE_TOOLS_ROOT}/sdkmanager "extras;google;google_play_services" && \
-            sudo gem install fastlane --version 2.208.0 --no-document
-      - run: echo $ANDROID_HOME
-      - run: adb devices
   BrowserStack:
       machine:
        image: android:202102-01
@@ -138,4 +95,8 @@ jobs:
 workflows:
   build:
     jobs:
-      - AndroidUBUNTU
+      - iOS
+      - Android
+      - BrowserStack
+      - maven/test:
+            command: 'compile'
