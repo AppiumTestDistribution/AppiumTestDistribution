@@ -33,6 +33,8 @@ public final class AppiumParallelTestListener extends Helpers
     private static ThreadLocal<ITestNGMethod> currentMethods = new ThreadLocal<>();
     List<ITestNGListener> iTestNGListeners;
 
+    private static ThreadLocal<String> currentDeviceID = new ThreadLocal<>();
+
     public AppiumParallelTestListener() {
         testLogger = new TestLogger();
         appiumServerManager = new AppiumServerManager();
@@ -100,10 +102,8 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onBeforeClass(ITestClass testClass) {
         try {
-            /*String device = testClass.getXmlClass().getAllParameters().get("device");
-            String hostName = testClass.getXmlClass().getAllParameters().get("hostName");
-            AppiumDevice appiumDevice = devicesByHost.getAppiumDevice(device, hostName);
-            deviceAllocationManager.allocateDevice(appiumDevice);*/
+            String device = testClass.getXmlClass().getAllParameters().get("device");
+            currentDeviceID.set(device);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,7 +124,8 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            appiumDriverManager.startAppiumDriverInstanceWithUDID(iTestResult.getTestName(), "");
+            appiumDriverManager.startAppiumDriverInstanceWithUDID(
+                    iTestResult.getTestName(), currentDeviceID.get());
             testLogger.startLogging(iTestResult);
         } catch (Exception e) {
             e.printStackTrace();

@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterTest;
 
 import java.time.Duration;
 
@@ -24,5 +25,10 @@ public class UserBaseTest {
     public WebElement waitForElement(String locator) {
         return new WebDriverWait(getDriver(), Duration.ofSeconds(30)).until(ExpectedConditions
                 .elementToBeClickable(AppiumBy.accessibilityId(locator)));
+    }
+
+    @AfterTest
+    public void tearDown() {
+        getDriver().quit();
     }
 }
