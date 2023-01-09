@@ -88,6 +88,19 @@ public class AppiumDriverManager {
         AppiumDriverManager.setDriver(currentDriverSession);
     }
 
+    public void startAppiumDriverInstanceWithUDID(String testMethodName,
+                                                  String deviceUDID)
+            throws Exception {
+        LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
+                testMethodName, CAPS.get()));
+        LOGGER.info("startAppiumDriverInstance");
+        DesiredCapabilities desiredCapabilities = buildDesiredCapabilities(CAPS.get());
+        desiredCapabilities.setCapability("appium:udids", deviceUDID);
+        AppiumDriver currentDriverSession =
+                initialiseDriver(desiredCapabilities);
+        AppiumDriverManager.setDriver(currentDriverSession);
+    }
+
     private DesiredCapabilities buildDesiredCapabilities(String capabilityFilePath) {
         if (new File(capabilityFilePath).exists()) {
             return new DesiredCapabilityBuilder()

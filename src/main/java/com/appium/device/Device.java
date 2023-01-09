@@ -17,6 +17,7 @@ public class Device {
     public boolean busy;
     public boolean realDevice;
     public String deviceType;
+    public Object capability;
     public String host;
     public int totalUtilizationTimeMilliSec;
     public String derivedDataPath;

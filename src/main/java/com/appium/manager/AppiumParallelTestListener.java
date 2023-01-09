@@ -80,11 +80,6 @@ public final class AppiumParallelTestListener extends Helpers
      */
     @Override
     public void onStart(ISuite iSuite) {
-        try {
-            appiumServerManager.startAppiumServer("127.0.0.1");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /*
@@ -129,7 +124,7 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            appiumDriverManager.startAppiumDriverInstance(iTestResult.getTestName());
+            appiumDriverManager.startAppiumDriverInstanceWithUDID(iTestResult.getTestName(), "");
             testLogger.startLogging(iTestResult);
         } catch (Exception e) {
             e.printStackTrace();
