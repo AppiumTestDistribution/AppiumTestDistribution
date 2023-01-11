@@ -14,6 +14,7 @@ jobs:
     steps:
       - checkout
       - run: |
+          find ~/Library/Developer/Xcode/DerivedData
           xcrun simctl create TestiPhoneX com.apple.CoreSimulator.SimDeviceType.iPhone-X com.apple.CoreSimulator.SimRuntime.iOS-16-1 > deviceid.txt
       - run:
           name: Starting simulator in background

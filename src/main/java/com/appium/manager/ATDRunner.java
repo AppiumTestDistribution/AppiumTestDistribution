@@ -39,8 +39,6 @@ public class ATDRunner {
         writeServiceConfig();
         AppiumServerManager appiumServerManager = new AppiumServerManager();
         appiumServerManager.startAppiumServer("127.0.0.1"); //Needs to be removed
-        PluginClI.getInstance().getPlugin().getDeviceFarm().getDerivedDataPath()
-                .get(0);
         deviceList = new Devices().getDevices();
         ATDExecutor = new ATDExecutor(deviceList);
         createOutputDirectoryIfNotExist();
