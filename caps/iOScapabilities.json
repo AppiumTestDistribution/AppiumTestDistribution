@@ -9,7 +9,8 @@
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10,
     "automationName": "XCUITest",
-    "usePrebuiltWDA": true
+    "usePrebuiltWDA": true,
+    "appium:iPhoneOnly": true
   },
   "serverConfig" : {
     "server": {
