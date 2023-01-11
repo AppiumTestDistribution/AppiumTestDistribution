@@ -10,6 +10,7 @@ jobs:
       xcode: 14.1.0
     environment:
       JAVA_HOME: /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
+      atd_serverConfig_server_plugin_device-farm_derivedDataPath_simulator: /Users/distiller/project/apps/WebDriverAgent-Test
     steps:
       - checkout
       - run: |

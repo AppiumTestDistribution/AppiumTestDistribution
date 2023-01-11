@@ -45,6 +45,7 @@ public class PluginClI {
         public String deviceTypes;
         public JsonNode remote;
         public boolean skipChromeDownload;
+        public JsonNode derivedDataPath;
     }
 
     public static class Meta {

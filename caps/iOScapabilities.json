@@ -8,7 +8,8 @@
     "shouldUseSingletonTestManager": false,
     "simpleIsVisibleCheck": true,
     "maxTypingFrequency": 10,
-    "automationName": "XCUITest"
+    "automationName": "XCUITest",
+    "usePrebuiltWDA": true
   },
   "serverConfig" : {
     "server": {
@@ -16,9 +17,13 @@
       "plugin": {
         "device-farm": {
           "platform": "iOS",
-          "skipChromeDownload": true
+          "skipChromeDownload": true,
+          "derivedDataPath": {
+            "simulator": ""
+          }
         }
       }
     }
   }
 }
+
