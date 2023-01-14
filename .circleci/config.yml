@@ -115,5 +115,8 @@ workflows:
   build:
     jobs:
       - iOS
+      - LambdaTest
+      - BrowserStack
+      - Android
       - maven/test:
             command: 'compile'
