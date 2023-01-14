@@ -18,6 +18,8 @@ public class Device {
     public boolean realDevice;
     public String deviceType;
     public Object capability;
+    public String platformVersion;
+    public String deviceName;
     public String host;
     public int totalUtilizationTimeMilliSec;
     public String derivedDataPath;
