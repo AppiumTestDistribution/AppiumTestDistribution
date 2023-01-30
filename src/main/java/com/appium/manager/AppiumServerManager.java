@@ -102,7 +102,8 @@ public class AppiumServerManager {
         }
     }
 
-    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String appiumServerPath) {
+    private AppiumServiceBuilder
+            getAppiumServiceBuilderWithUserAppiumPath(String appiumServerPath) {
         return new AppiumServiceBuilder().withAppiumJS(
                 new File(appiumServerPath));
     }
