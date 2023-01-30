@@ -237,54 +237,12 @@ public class Capabilities {
         return getCapabilitiesArrayFromKey("hostMachines", capabilities);
     }
 
-    private JSONArray getHostMachineObject(JSONObject loadedCapabilities) {
-        return getCapabilitiesArrayFromKey("hostMachines", loadedCapabilities);
-    }
-
-    public Boolean shouldExcludeLocalDevices() {
-        return getCapabilityBoolean("excludeLocalDevices", getCapabilities());
-    }
-
-    public boolean isSimulatorAppPresentInCapsJson() {
-        boolean hasApp = getCapabilityObjectFromKey("iOS").has("app");
-        return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("simulator");
-    }
-
     public boolean isApp() {
         return getCapabilityObjectFromKey("iOS").has("app");
     }
 
     public boolean isWindowsApp() {
         return getCapabilityObjectFromKey("windows").has("app");
-    }
-
-    public boolean isRealDeviceAppPresentInCapsJson() {
-        boolean hasApp = getCapabilityObjectFromKey("iOS").has("app");
-        return hasApp && getCapabilityObjectFromKey("iOS").getJSONObject("app").has("device");
-    }
-
-    public String getAppiumServerPath(String host) {
-        try {
-            return appiumServerProp(host, "appiumServerPath");
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public boolean isCloud(String host) {
-        try {
-            return appiumServerProp(host, "isCloud");
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public String getCloudName(String host) {
-        try {
-            return appiumServerProp(host, "cloudName");
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     private <T> T appiumServerProp(String host, String arg) {
@@ -297,10 +255,6 @@ public class Capabilities {
         return (T) ((Map) machineIP).get(arg);
     }
 
-    public String getAppiumServerPort(String host) throws Exception {
-        return appiumServerProp(host, "appiumPort");
-    }
-
     public String getRemoteAppiumManangerPort(String host) {
         try {
             return appiumServerProp(host, "remoteAppiumManagerPort");
@@ -311,14 +265,6 @@ public class Capabilities {
 
     public JSONObject getCapabilities() {
         return capabilities;
-    }
-
-    public boolean hasHostMachines() {
-        return getCapabilities().has("hostMachines");
-    }
-
-    private boolean hasHostMachines(JSONObject loadedCapabilities) {
-        return loadedCapabilities.has("hostMachines");
     }
 
     public void validateCapabilitySchema(JSONObject loadedCapabilities) {
