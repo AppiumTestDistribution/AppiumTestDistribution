@@ -70,9 +70,7 @@ Add the below dependencies in your pom.xml (Master)
 
 ## [Configure-tests-for-Browserstack](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-BrowserStack-cloud)
 
-## [Configure-tests-for-GenyMotionCloud](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-Genymotion-cloud)
-
-## [Configure-tests-for-HeadSpin](caps/headspin_capabilities.json)
+## [Configure-tests-for-LambdaTest](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-LambdaTest-cloud)
 
 ## [Customize Tests](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Customize-Tests)
 
@@ -140,15 +138,15 @@ A. Yes, with a valid provisioning profile, this app can be installed on your dev
 
 ThoughtWorks             |  CeX                      |  Travelstart
 :-------------------------:|:-------------------------:|:-------------------------:
-[![ThoughtWorks](https://static1.squarespace.com/static/5914a98815cf7d683358255d/t/5914b14d17bffc60d36cf2a7/1494531166569/)](https://www.thoughtworks.com)  |  [![Cex](https://in.webuy.com/images/logos/CeX_Logo_Rich_black_RGB-01.png)](https://in.webuy.com/)  |  [![Travelstart](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRahsNjFIF2pQGOxKoinf4Au1gGjyMUQEArL8Mv_gyCl1Aaxuu-)](http://www.travelstart.com/)
+[![ThoughtWorks](https://www.thoughtworks.com/etc.clientlibs/thoughtworks/clientlibs/clientlib-site/resources/images/thoughtworks-logo.svg)](https://www.thoughtworks.com)  |  [![Cex](https://in.webuy.com/images/logos/CeX_Logo_Rich_black_RGB-01.png)](https://in.webuy.com/)  |  [![Travelstart](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRahsNjFIF2pQGOxKoinf4Au1gGjyMUQEArL8Mv_gyCl1Aaxuu-)](http://www.travelstart.com/)
 
 Jio India             |  M800 | Reward Gateway
 :-:|:-:|:-:
-[![Jio](http://images.indianexpress.com/2016/07/reliancejio_newlogo_1.jpg)](https://www.jio.com/)  |  [![M800](https://i.stack.imgur.com/nY9CC.jpg)](http://www.m800.com/) | [![Reward](http://www.greathillpartners.com/wp-content/uploads/2016/01/reward-gateway-logo-horizontal-tagline-on-white-1.png)](https://www.rewardgateway.com/)
+[![Jio](http://images.indianexpress.com/2016/07/reliancejio_newlogo_1.jpg)](https://www.jio.com/)  |  [![M800](https://i.stack.imgur.com/nY9CC.jpg)](http://www.m800.com/) | [![Reward](https://www.rewardgateway.com/hs-fs/hubfs/rg_logo_horizontal.png?width=1156&name=rg_logo_horizontal.png)](https://www.rewardgateway.com/)
 
 dahmakan|
 :-------------------------:|
-[<img src='https://s2-cdn.greenhouse.io/external_greenhouse_job_boards/logos/400/066/300/original/dahmakan-og-logo.jpg?1519124252' width='300' height='150'/>](https://www.dahmakan.com/)
+[<img src='https://d2wu471yepgs9e.cloudfront.net/new-website/common/popmeals+purple+logo.svg' width='300' height='150'/>](https://www.dahmakan.com/)
 ## License
 
 AppiumTestDistribution is released under [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
