@@ -151,5 +151,6 @@ dahmakan|
 [<img src='https://s2-cdn.greenhouse.io/external_greenhouse_job_boards/logos/400/066/300/original/dahmakan-og-logo.jpg?1519124252' width='300' height='150'/>](https://www.dahmakan.com/)
 ## License
 
-![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)
-AppiumTestDistribution is released under [GNU Public License version 3.0](http://www.gnu.org/licenses/gpl-3.0.txt)
+AppiumTestDistribution is released under [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Copyright (c) 2023 AppiumTestDistribution
