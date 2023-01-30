@@ -9,8 +9,7 @@
 # Appium Parallel Execution for Android and iOS on Real Devices
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/saikrishna321/AppiumTestDistribution)
 [![Join the chat at https://gitter.im/saikrishna321/AppiumTestDistribution](https://badges.gitter.im/saikrishna321/AppiumTestDistribution.svg)](https://gitter.im/saikrishna321/AppiumTestDistribution?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://dev.azure.com/saikrishna321/ATD/_apis/build/status/AppiumTestDistribution.AppiumTestDistribution)](https://dev.azure.com/saikrishna321/ATD/_build/latest?definitionId=2)
-[![GitActionsBuild](https://github.com/AppiumTestDistribution/AppiumTestDistribution/actions/workflows/maven.yml/badge.svg)](https://github.com/AppiumTestDistribution/AppiumTestDistribution/actions/workflows/maven.yml)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/AppiumTestDistribution/AppiumTestDistribution/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/AppiumTestDistribution/AppiumTestDistribution/tree/main)
 [![GitHub stars](https://img.shields.io/github/stars/saikrishna321/AppiumTestDistribution.svg?style=flat)](https://github.com/saikrishna321/AppiumTestDistribution/stargazers)
 [ ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat )](https://github.com/saikrishna321/AppiumTestDistribution/pulls)
 [![GitHub forks](https://img.shields.io/github/forks/saikrishna321/AppiumTestDistribution.svg?style=social&label=Fork)](https://github.com/kirankalyan5/AppiumTestDistribution/network)
@@ -18,13 +17,14 @@
 ## Thanks for support 
 <h3>
 	<a href= "https://saucelabs.com"><img src="image/Powered by Sauce Labs badges red.svg" alt="ATD" width="45%" align="top"></a>
-	<a href= "https://www.browserstack.com"><img src="https://p14.zdusercontent.com/attachment/1015988/j4BFTOujCnXKj0HBcxYt78Bc7?token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..LGh31Nv7MQwbhepdV4ZYCA.6tyNmOnWvHjz6iZFtQg3kTj6-CLsKxtdWtOOYxHzOcEuxM-DBMOi4XWJKiSo6M70a9M3eOSK4zkbUAx9Zk7n0W-D6SWMbdCdwBn2bzu6J9JzdQ_LReqAVdpU_5jSNQti4zOPST__hShBNvipQPYVbNl5OMukCQJvB9pnLEm_KXZDmUxWdsvaNJWVpUzV_k1QZn6Bgle-xKkhQoIQMLVEwmed_j0uhoGAKVS4iv3NBEeBmcJfyW8f3XmIk-BRFJBKWWhV6AenD3svBL0LmhMFojX0JvA7CbNx0h9s99qY8J4.jss6MlHMDhpeBbQYvDzjqw" alt="ATD" width="45%" align="top"></a>
-</h3><h3 align="left">
-	<a href= "https://www.genymotion.com/"><img src="image/genymotion.png" alt="ATDGM" width="50%"></a>
+<a href= "https://www.browserstack.com"><img src="https://maddyness-uk.twic.pics/2021/06/Screenshot-2021-06-21-at-20.14.46.png?twic=v1/resize=630" alt="ATD" width="45%" align="top"></a>
+     
+   <a href= "https://www.lambdatest.com"><img src="https://raw.githubusercontent.com/AppiumTestDistribution/appium-device-farm/main/assets/lt.png?twic=v1/resize=630" alt="ATD" width="45%" align="top"></a>
 </h3>
 
 Add the below dependencies in your pom.xml (Master)
 
+### Please make sure you have installed Appium v2.0 and [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm) plugin
 ```
 <dependency>
     <groupId>com.github.AppiumTestDistribution</groupId>
