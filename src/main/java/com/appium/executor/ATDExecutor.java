@@ -83,7 +83,6 @@ public class ATDExecutor {
                                                        int deviceCount) {
         ArrayList<String> listeners = new ArrayList<>();
         listeners.add("com.appium.manager.AppiumParallelTestListener");
-        listeners.add("com.appium.utils.RetryListener");
         include(listeners, LISTENERS);
         include(groupsInclude, INCLUDE_GROUPS);
         include(groupsExclude, EXCLUDE_GROUPS);
@@ -119,7 +118,6 @@ public class ATDExecutor {
         suite.setParallel(ParallelMode.CLASSES);
         suite.setVerbose(2);
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
-        listeners.add("com.appium.utils.RetryListener");
         include(listeners, LISTENERS);
         suite.setListeners(listeners);
         XmlTest test = new XmlTest(suite);
@@ -147,7 +145,6 @@ public class ATDExecutor {
         suite.setVerbose(2);
         suite.setParallel(ParallelMode.METHODS);
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
-        listeners.add("com.appium.utils.RetryListener");
         include(listeners, LISTENERS);
         suite.setListeners(listeners);
         CreateGroups createGroups = new CreateGroups(tests, methods, category, suite).invoke();
