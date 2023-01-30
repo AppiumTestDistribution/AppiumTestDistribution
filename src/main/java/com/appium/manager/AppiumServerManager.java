@@ -92,18 +92,19 @@ public class AppiumServerManager {
     }
 
     private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {
-        if (Capabilities.getInstance().getAppiumServerPath(host) == null) {
-            LOGGER.info("Picking Default Path for AppiumServiceBuilder");
-            return getAppiumServiceBuilderWithDefaultPath();
-        } else {
+        if (Capabilities.getInstance().getCapabilities().has("appiumServerPath")) {
             LOGGER.info("Picking UserSpecified Path for AppiumServiceBuilder");
             return getAppiumServiceBuilderWithUserAppiumPath(host);
+        } else {
+            LOGGER.info("Picking Default Path for AppiumServiceBuilder");
+            return getAppiumServiceBuilderWithDefaultPath();
+
         }
     }
 
-    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String host) {
+    private AppiumServiceBuilder getAppiumServiceBuilderWithUserAppiumPath(String appiumServerPath) {
         return new AppiumServiceBuilder().withAppiumJS(
-                new File(Capabilities.getInstance().getAppiumServerPath(host)));
+                new File(appiumServerPath));
     }
 
     private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath() {
