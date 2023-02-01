@@ -42,7 +42,8 @@ public class PluginClI {
     @Getter
     public static class DeviceFarm {
         public String platform;
-        public String deviceTypes;
+        public String androidDeviceType;
+        public String iosDeviceType;
         public JsonNode remote;
         public boolean skipChromeDownload;
         public JsonNode derivedDataPath;
