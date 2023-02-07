@@ -120,7 +120,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
                 LOGGER.info("Driver Session exissts"
                         + (AppiumDeviceManager.getAppiumDevice() != null)
                         + AppiumDeviceManager.getAppiumDevice());
-                if (!isCloudExecution() && !isRetry(iTestResult)
+                if (!isCloudExecution()
                         && AppiumDeviceManager.getAppiumDevice() != null) {
                     HashMap<String, String> logs = testLogger.endLogging(iTestResult,
                             AppiumDeviceManager.getAppiumDevice().getUdid());
