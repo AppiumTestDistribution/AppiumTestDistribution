@@ -5,7 +5,6 @@ import com.appium.device.Device;
 import com.appium.device.Devices;
 import com.appium.executor.ATDExecutor;
 import com.appium.filelocations.FileLocations;
-import com.appium.plugin.PluginClI;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -32,15 +31,14 @@ public class ATDRunner {
     private final Capabilities capabilities;
     private static final Logger LOGGER = Logger.getLogger(ATDRunner.class.getName());
 
-    List<Device> deviceList;
 
     public ATDRunner() throws Exception {
         capabilities = Capabilities.getInstance();
         writeServiceConfig();
         AppiumServerManager appiumServerManager = new AppiumServerManager();
         appiumServerManager.startAppiumServer("127.0.0.1"); //Needs to be removed
-        deviceList = new Devices().getDevices();
-        ATDExecutor = new ATDExecutor(deviceList);
+        List<Device> devices = Devices.getConnectedDevices();
+        ATDExecutor = new ATDExecutor(devices);
         createOutputDirectoryIfNotExist();
     }
 
@@ -73,7 +71,7 @@ public class ATDRunner {
     }
 
     private boolean parallelExecution(String pack, List<String> tests) throws Exception {
-        int deviceCount = deviceList.size();
+        int deviceCount = Devices.getConnectedDevices().size();
 
         if (deviceCount == 0) {
             figlet("No Devices Connected");
@@ -130,7 +128,7 @@ public class ATDRunner {
     }
 
     private void createSnapshotDirectoryFor() {
-        List<Device> udids = deviceList;
+        List<Device> udids = Devices.getConnectedDevices();
         for (Device udid : udids) {
             String os = udid.getPlatform().equalsIgnoreCase(IOS) ? "iOS" : "Android";
             createPlatformDirectory(os);
