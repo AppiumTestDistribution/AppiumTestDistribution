@@ -176,6 +176,7 @@ public class ATDExecutor {
                 List<XmlInclude> includedMethodsList = null;
                 for (Method methodName : mapElement.getValue()) {
                     if (methodName.getName().equalsIgnoreCase(testName)) {
+                        includedMethodsList = new ArrayList<>();
                         XmlInclude includedTestMethod = new XmlInclude(testName);
                         includedMethodsList.add(includedTestMethod);
 
