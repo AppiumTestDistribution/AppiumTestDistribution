@@ -171,7 +171,6 @@ public class ATDExecutor {
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
         include(listeners, LISTENERS);
         suite.setListeners(listeners);
-
         for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
             XmlClass xmlClass = new XmlClass(mapElement.getKey());
             for (String testName : testCases) {
