@@ -24,9 +24,7 @@ public enum ConfigFileManager {
     MAX_RETRY_COUNT("0"),
     CAPS("./caps/capabilities.json"),
     RUNNER_LEVEL("methods"),
-    RUNNER("distribute"),
-    TEST_NAMES("");
-
+    RUNNER("distribute");
 
     private static final Properties PROPERTIES;
     private static final Logger LOGGER = Logger.getLogger(ConfigFileManager.class.getName());

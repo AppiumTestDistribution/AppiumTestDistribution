@@ -2,7 +2,6 @@ package com.appium.executor;
 
 import static com.appium.filelocations.FileLocations.PARALLEL_XML_LOCATION;
 import static com.appium.utils.ConfigFileManager.*;
-import static com.appium.utils.ConfigFileManager.TEST_NAMES;
 import static com.appium.utils.FigletHelper.figlet;
 import static java.lang.System.getProperty;
 import static java.util.Collections.addAll;
@@ -51,19 +50,13 @@ public class ATDExecutor {
         String categoryName = CATEGORY.get();
         Set<Method> setOfMethods = getMethods(pack);
         String runnerLevel = RUNNER_LEVEL.get();
-        String testNames = TEST_NAMES.get();
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForClassLevelDistributionRunner(test, getTestMethods(setOfMethods),
                         suiteName, categoryName, deviceCount);
-            } else if(testNames!=null && !testNames.isEmpty()){
-                if(testNames.contains(",")){
-                    List<String> tests = Arrays.asList(testNames.split(","));
-                    constructXmlAndExecuteTestCaseAtRuntime(tests, getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
-                }else {
-                    constructXmlAndExecuteTestCaseAtRuntime(new ArrayList<>(Arrays.asList(testNames.split(""))), getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
-                }
+            } else if(test!=null && !test.isEmpty()){
+                    constructXmlAndExecuteTestCaseAtRuntime(test, getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
             }else {
                 constructXmlSuiteForMethodLevelDistributionRunner(test,
                         getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
@@ -176,7 +169,6 @@ public class ATDExecutor {
         suite.setVerbose(2);
         suite.setParallel(ParallelMode.METHODS);
         listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
-        listeners.add("com.appium.utils.RetryListener");
         include(listeners, LISTENERS);
         suite.setListeners(listeners);
 
