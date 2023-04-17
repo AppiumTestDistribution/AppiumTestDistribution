@@ -175,12 +175,15 @@ public class ATDExecutor {
         for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
             XmlClass xmlClass = new XmlClass(mapElement.getKey());
             for (String testName : testCases) {
-                if (mapElement.getValue().contains(testName)) {
-                    XmlInclude includedTestMethod = new XmlInclude(testName);
-                    includedMethodsList.add(includedTestMethod);
-                    xmlClass.setIncludedMethods(includedMethodsList);
-                    classes.add(xmlClass);
+                for(Method methodName:mapElement.getValue()){
+                    if (methodName.getName().equalsIgnoreCase(testName)) {
+                        XmlInclude includedTestMethod = new XmlInclude(testName);
+                        includedMethodsList.add(includedTestMethod);
+                        xmlClass.setIncludedMethods(includedMethodsList);
+                        classes.add(xmlClass);
+                    }
                 }
+
             }
         }
 
