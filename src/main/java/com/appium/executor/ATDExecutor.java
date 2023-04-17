@@ -1,12 +1,8 @@
 package com.appium.executor;
 
 import static com.appium.filelocations.FileLocations.PARALLEL_XML_LOCATION;
-import static com.appium.utils.ConfigFileManager.CATEGORY;
-import static com.appium.utils.ConfigFileManager.EXCLUDE_GROUPS;
-import static com.appium.utils.ConfigFileManager.INCLUDE_GROUPS;
-import static com.appium.utils.ConfigFileManager.LISTENERS;
-import static com.appium.utils.ConfigFileManager.RUNNER_LEVEL;
-import static com.appium.utils.ConfigFileManager.SUITE_NAME;
+import static com.appium.utils.ConfigFileManager.*;
+import static com.appium.utils.ConfigFileManager.TEST_NAMES;
 import static com.appium.utils.FigletHelper.figlet;
 import static java.lang.System.getProperty;
 import static java.util.Collections.addAll;
@@ -23,6 +19,7 @@ import org.testng.TestNG;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
+import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
@@ -33,13 +30,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ATDExecutor {
     private final DeviceAllocationManager deviceAllocationManager;
@@ -60,12 +51,20 @@ public class ATDExecutor {
         String categoryName = CATEGORY.get();
         Set<Method> setOfMethods = getMethods(pack);
         String runnerLevel = RUNNER_LEVEL.get();
+        String testNames = TEST_NAMES.get();
 
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForClassLevelDistributionRunner(test, getTestMethods(setOfMethods),
                         suiteName, categoryName, deviceCount);
-            } else {
+            } else if(testNames!=null && !testNames.isEmpty()){
+                if(testNames.contains(",")){
+                    List<String> tests = Arrays.asList(testNames.split(","));
+                    constructXmlAndExecuteTestCaseAtRuntime(tests, getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
+                }else {
+                    constructXmlAndExecuteTestCaseAtRuntime(new ArrayList<>(Arrays.asList(testNames.split(""))), getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
+                }
+            }else {
                 constructXmlSuiteForMethodLevelDistributionRunner(test,
                         getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
             }
@@ -112,8 +111,8 @@ public class ATDExecutor {
     }
 
     public XmlSuite constructXmlSuiteForClassLevelDistributionRunner(List<String> tests,
-                   Map<String, List<Method>> methods,
-                   String suiteName, String categoryName, int deviceCount) {
+                                                                     Map<String, List<Method>> methods,
+                                                                     String suiteName, String categoryName, int deviceCount) {
         XmlSuite suite = new XmlSuite();
         suite.setName(suiteName);
         suite.setThreadCount(deviceCount);
@@ -138,8 +137,8 @@ public class ATDExecutor {
 
 
     public XmlSuite constructXmlSuiteForMethodLevelDistributionRunner(List<String> tests,
-                             Map<String, List<Method>> methods, String suiteName,
-                             String category, int deviceCount) {
+                                                                      Map<String, List<Method>> methods, String suiteName,
+                                                                      String category, int deviceCount) {
         include(groupsInclude, INCLUDE_GROUPS);
         XmlSuite suite = new XmlSuite();
         suite.setName(suiteName);
@@ -161,6 +160,42 @@ public class ATDExecutor {
         }
         writeTestNGFile(suite);
         return suite;
+    }
+
+    public XmlSuite constructXmlAndExecuteTestCaseAtRuntime(List<String> testCases,
+                                                            Map<String, List<Method>> methods, String suiteName, String category, int deviceCount) {
+
+        List<XmlClass> classes = new ArrayList<>(); // equivalent of <classes> tag
+        List<XmlInclude> includedMethodsList = new ArrayList<>();
+        XmlSuite suite = new XmlSuite();
+        suite.setName(suiteName);
+        XmlTest test = new XmlTest(suite);
+        test.setName("regression");
+        suite.setThreadCount(deviceCount);
+        suite.setDataProviderThreadCount(deviceCount);
+        suite.setVerbose(2);
+        suite.setParallel(ParallelMode.METHODS);
+        listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
+        listeners.add("com.appium.utils.RetryListener");
+        include(listeners, LISTENERS);
+        suite.setListeners(listeners);
+
+        for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
+            XmlClass xmlClass = new XmlClass(mapElement.getKey());
+            for (String testName : testCases) {
+                if (mapElement.getValue().contains(testName)) {
+                    XmlInclude includedTestMethod = new XmlInclude(testName);
+                    includedMethodsList.add(includedTestMethod);
+                    xmlClass.setIncludedMethods(includedMethodsList);
+                    classes.add(xmlClass);
+                }
+            }
+        }
+
+        test.setXmlClasses(classes);
+        writeTestNGFile(suite);
+        return suite;
+
     }
 
     public boolean testNGParallelRunner() {
@@ -194,7 +229,7 @@ public class ATDExecutor {
             a++;
         }
         Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(newUrls)
-            .setScanners(new MethodAnnotationsScanner()));
+                .setScanners(new MethodAnnotationsScanner()));
         return reflections.getMethodsAnnotatedWith(Test.class);
     }
 
@@ -224,7 +259,7 @@ public class ATDExecutor {
 
     private void writeTestNGFile(XmlSuite suite) {
         try (FileWriter writer = new FileWriter(new File(
-            getProperty("user.dir") + PARALLEL_XML_LOCATION))) {
+                getProperty("user.dir") + PARALLEL_XML_LOCATION))) {
             writer.write(suite.toXml());
             writer.flush();
         } catch (IOException e) {
@@ -243,9 +278,9 @@ public class ATDExecutor {
         Map<String, List<Method>> listOfMethods = new HashMap<>();
         methods.forEach(method -> {
             List<Method> methodsList = listOfMethods.computeIfAbsent(
-                method.getDeclaringClass().getPackage().getName()
-                    + "." + method.getDeclaringClass()
-                    .getSimpleName(), k -> new ArrayList<>());
+                    method.getDeclaringClass().getPackage().getName()
+                            + "." + method.getDeclaringClass()
+                            .getSimpleName(), k -> new ArrayList<>());
             methodsList.add(method);
         });
         return listOfMethods;
