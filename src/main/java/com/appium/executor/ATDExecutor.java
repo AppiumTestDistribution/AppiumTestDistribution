@@ -179,11 +179,11 @@ public class ATDExecutor {
                         includedMethodsList = new ArrayList<>();
                         XmlInclude includedTestMethod = new XmlInclude(testName);
                         includedMethodsList.add(includedTestMethod);
-
+                        xmlClass.setIncludedMethods(includedMethodsList);
+                        classes.add(xmlClass);
                     }
                 }
-                xmlClass.setIncludedMethods(includedMethodsList);
-                classes.add(xmlClass);
+
 
             }
         }
