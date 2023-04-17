@@ -173,18 +173,15 @@ public class ATDExecutor {
         for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
             XmlClass xmlClass = new XmlClass(mapElement.getKey());
             for (String testName : testCases) {
-                List<XmlInclude> includedMethodsList = null;
                 for (Method methodName : mapElement.getValue()) {
                     if (methodName.getName().equalsIgnoreCase(testName)) {
-                        includedMethodsList = new ArrayList<>();
+                        List<XmlInclude> includedMethodsList = new ArrayList<>();
                         XmlInclude includedTestMethod = new XmlInclude(testName);
                         includedMethodsList.add(includedTestMethod);
                         xmlClass.setIncludedMethods(includedMethodsList);
                         classes.add(xmlClass);
                     }
                 }
-
-
             }
         }
 
