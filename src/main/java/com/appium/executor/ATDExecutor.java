@@ -159,7 +159,6 @@ public class ATDExecutor {
                                                             Map<String, List<Method>> methods, String suiteName, String category, int deviceCount) {
 
         List<XmlClass> classes = new ArrayList<>(); // equivalent of <classes> tag
-        List<XmlInclude> includedMethodsList = new ArrayList<>();
         XmlSuite suite = new XmlSuite();
         suite.setName(suiteName);
         XmlTest test = new XmlTest(suite);
@@ -174,14 +173,16 @@ public class ATDExecutor {
         for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
             XmlClass xmlClass = new XmlClass(mapElement.getKey());
             for (String testName : testCases) {
-                for(Method methodName:mapElement.getValue()){
+                List<XmlInclude> includedMethodsList = null;
+                for (Method methodName : mapElement.getValue()) {
                     if (methodName.getName().equalsIgnoreCase(testName)) {
                         XmlInclude includedTestMethod = new XmlInclude(testName);
                         includedMethodsList.add(includedTestMethod);
-                        xmlClass.setIncludedMethods(includedMethodsList);
-                        classes.add(xmlClass);
+
                     }
                 }
+                xmlClass.setIncludedMethods(includedMethodsList);
+                classes.add(xmlClass);
 
             }
         }
