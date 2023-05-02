@@ -182,7 +182,7 @@ public class ATDExecutor {
                     }
                 }
             }
-            if(includedMethodsList!=null) {
+            if(!includedMethodsList.isEmpty()) {
                 xmlClass.setIncludedMethods(includedMethodsList);
                 classes.add(xmlClass);
             }
