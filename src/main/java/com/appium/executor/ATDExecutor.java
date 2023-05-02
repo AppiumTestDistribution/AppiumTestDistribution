@@ -172,11 +172,10 @@ public class ATDExecutor {
         suite.setListeners(listeners);
         for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
             XmlClass xmlClass = new XmlClass(mapElement.getKey());
-            List<XmlInclude> includedMethodsList = null;
+            List<XmlInclude> includedMethodsList = new ArrayList<>();
             for (Method methodName : mapElement.getValue()) {
                 for(String testCase: testCases){
                     if (methodName.getName().equalsIgnoreCase(testCase)) {
-                        includedMethodsList = new ArrayList<>();
                         XmlInclude includedTestMethod = new XmlInclude(testCase);
                         includedMethodsList.add(includedTestMethod);
                         break;
