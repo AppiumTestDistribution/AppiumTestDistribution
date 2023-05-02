@@ -182,10 +182,11 @@ public class ATDExecutor {
                     }
                 }
             }
-            xmlClass.setIncludedMethods(includedMethodsList);
-            if(includedMethodsList!=null)
+            if(includedMethodsList!=null) {
+                xmlClass.setIncludedMethods(includedMethodsList);
                 classes.add(xmlClass);
             }
+        }
         test.setXmlClasses(classes);
         writeTestNGFile(suite);
         return suite;
