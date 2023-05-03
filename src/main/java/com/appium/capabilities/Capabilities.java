@@ -3,6 +3,7 @@ package com.appium.capabilities;
 import com.appium.device.AtdEnvironment;
 import com.appium.utils.FigletHelper;
 import com.appium.utils.JsonParser;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
@@ -11,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -34,25 +36,31 @@ public class Capabilities {
 
     private Capabilities() {
         atdEnvironment = new AtdEnvironment();
-        String capabilitiesFilePath = getCapabilityLocation();
-        JsonParser jsonParser = new JsonParser(capabilitiesFilePath);
-        createInstance(jsonParser.getObjectFromJSON());
+        capabilities = createInstance(getCapabilityLocation());
     }
 
     public Capabilities(String capabilitiesJson, AtdEnvironment atdEnvironment) {
         this.atdEnvironment = atdEnvironment;
-        createInstance(new JsonParser().getObjectFromJSONString(capabilitiesJson));
+        capabilities = createInstance(capabilitiesJson);
     }
 
-    private void createInstance(JSONObject capabilitiesJsonObject) {
+    public JSONObject createInstance(String capabilitiesJson) {
+        String fileName = FilenameUtils.removeExtension(new File(capabilitiesJson).getName());
+        JSONObject capabilitiesJsonObject = new JsonParser(capabilitiesJson).getObjectFromJSON();
+        String defaultFileName = FilenameUtils.removeExtension(new File(CAPS.get()).getName());
         StringBuilder varParsing = new StringBuilder(200);
-        varParsing.append("atd").append("_");
-        capabilities = loadAndOverrideFromEnvVars(
+        if (!fileName.equals(defaultFileName)) {
+            varParsing.append("atd_" + fileName).append("_");
+        } else {
+            varParsing.append("atd").append("_");
+        }
+        JSONObject loadedCapabilities = loadAndOverrideFromEnvVars(
                 capabilitiesJsonObject,
                 new JSONObject(),
                 getAllATDOverrideEnvVars(),
                 varParsing);
-        validateCapabilitySchema();
+        validateCapabilitySchema(loadedCapabilities);
+        return loadedCapabilities;
     }
 
     public static Capabilities getInstance() {
@@ -182,40 +190,44 @@ public class Capabilities {
 
 
     public JSONObject getCapabilityObjectFromKey(String key) {
-        boolean hasKey = capabilities.has(key);
+        boolean hasKey = getCapabilities().has(key);
         if (hasKey) {
-            return (JSONObject) capabilities.get(key);
+            return (JSONObject) getCapabilities().get(key);
         }
         return null;
     }
 
-    public JSONArray getCapabilitiesArrayFromKey(String key) {
-        return capabilities.getJSONArray(key);
+    private JSONArray getCapabilitiesArrayFromKey(String key, JSONObject loadedCapabilities) {
+        return loadedCapabilities.getJSONArray(key);
     }
 
-    public Boolean getCapabilityBoolean(String key) {
+    private Boolean getCapabilityBoolean(String key, JSONObject capabilities) {
         if (capabilities.has(key)) {
-            return (Boolean) capabilities.get(key);
+            return capabilities.getBoolean(key);
         }
         return false;
     }
 
     public HashMap<String, String> getMongoDbHostAndPort() {
         HashMap<String, String> params = new HashMap<>();
-        if (capabilities.has("ATDServiceHost")
-                && capabilities.has("ATDServicePort")) {
-            params.put("atdHost", (String) capabilities.get("ATDServiceHost"));
-            params.put("atdPort", (String) capabilities.get("ATDServicePort"));
+        if (getCapabilities().has("ATDServiceHost")
+                && getCapabilities().has("ATDServicePort")) {
+            params.put("atdHost", getCapabilities().getString("ATDServiceHost"));
+            params.put("atdPort", getCapabilities().getString("ATDServicePort"));
         }
         return params;
     }
 
     public JSONArray getHostMachineObject() {
-        return getCapabilitiesArrayFromKey("hostMachines");
+        return getCapabilitiesArrayFromKey("hostMachines", capabilities);
+    }
+
+    private JSONArray getHostMachineObject(JSONObject loadedCapabilities) {
+        return getCapabilitiesArrayFromKey("hostMachines", loadedCapabilities);
     }
 
     public Boolean shouldExcludeLocalDevices() {
-        return getCapabilityBoolean("excludeLocalDevices");
+        return getCapabilityBoolean("excludeLocalDevices", getCapabilities());
     }
 
     public boolean isSimulatorAppPresentInCapsJson() {
@@ -290,14 +302,18 @@ public class Capabilities {
         return getCapabilities().has("hostMachines");
     }
 
-    public void validateCapabilitySchema() {
+    private boolean hasHostMachines(JSONObject loadedCapabilities) {
+        return loadedCapabilities.has("hostMachines");
+    }
+
+    public void validateCapabilitySchema(JSONObject loadedCapabilities) {
         try {
             isPlatformInEnv();
             InputStream inputStream = getClass().getResourceAsStream(getPlatform());
             JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             Schema schema = SchemaLoader.load(rawSchema);
-            schema.validate(new JSONObject(getCapabilities().toString()));
-            validateRemoteHosts();
+            schema.validate(loadedCapabilities);
+            validateRemoteHosts(loadedCapabilities);
         } catch (ValidationException e) {
             if (e.getCausingExceptions().size() > 1) {
                 e.getCausingExceptions().stream()
@@ -342,12 +358,12 @@ public class Capabilities {
         }
     }
 
-    private void validateRemoteHosts() {
+    private void validateRemoteHosts(JSONObject loadedCapabilities) {
         try {
-            if (!hasHostMachines()) {
+            if (!hasHostMachines(loadedCapabilities)) {
                 return;
             }
-            JSONArray hostMachines = getHostMachineObject();
+            JSONArray hostMachines = getHostMachineObject(loadedCapabilities);
             for (Object hostMachine : hostMachines) {
                 JSONObject hostMachineJson = ((JSONObject) hostMachine);
                 boolean isCloud = hostMachineJson.has("isCloud");

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.saikrishna321</groupId>
     <artifactId>AppiumTestDistribution</artifactId>
-    <version>12.0.2</version>
+    <version>12.1.0</version>
     <packaging>jar</packaging>
     <name>AppiumTestDistribution</name>
     <description>A tool run Android and iOS test in parallel across devices</description>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>7.4.1</version>
+            <version>8.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
@@ -172,7 +172,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

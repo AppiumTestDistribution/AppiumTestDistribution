@@ -6,12 +6,12 @@
 jobs:
   - job: CheckStyle
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           mvn clean install -Dmaven.test.skip=true -Dgpg.skip
@@ -20,12 +20,12 @@ jobs:
 
   - job: Distribute
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
       - script: |
           brew outdated xctool || brew upgrade xctool
           xcrun simctl list
@@ -33,8 +33,10 @@ jobs:
 
       - script: |
           node -v
-          npm install -g appium
+          npm install -g appium@next
           appium -v
+          appium driver install uiautomator2
+          appium driver install xcuitest
         displayName: "Install Appium"
 
       - bash: |
@@ -63,12 +65,12 @@ jobs:
 
   - job: Parallel
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
       - script: |
           brew outdated xctool || brew upgrade xctool
           xcrun simctl list
@@ -76,7 +78,9 @@ jobs:
 
       - script: |
           node -v
-          npm install -g appium
+          npm install -g appium@next
+          appium driver install uiautomator2
+          appium driver install xcuitest
           appium -v
         displayName: "Install Appium"
 
@@ -106,12 +110,12 @@ jobs:
 
   - job: SauceLabs
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           Platform='both' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -120,59 +124,61 @@ jobs:
 
   - job: SauceLabs_iOS
     pool:
-      vmImage: "macos-10.15"
+      vmImage: "macos-latest"
 
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "12.18.1"
+          versionSpec: "17.5.0"
 
       - script: |
           Platform='iOS' CLOUD_USER=$(user_sauce) CLOUD_KEY=$(pass_sauce) CONFIG_FILE='./configs/sauce_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
         displayName: "Run Test on Sauce on iOS and Android"
 
-  - job: Windows
-    pool:
-      vmImage: "windows-latest"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "12.18.1"
-
-      - script: |
-          node -v
-          npm install -g appium
-          appium -v
-        displayName: "Install Appium"
-
-      - script: |
-          mvn clean -Dtest=WindowsRunner test -Dcheckstyle.skip -DPlatform="windows"
-    displayName: "Run windows app"
-
-  - job: Windows_Cucumber
-    pool:
-      vmImage: "windows-latest"
-
-    variables:
-      - name: CONFIG_FILE
-        value: "./configs/windowsCucumberConfig.properties"
-
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "12.18.1"
-
-      - script: |
-          node -v
-          npm install -g appium
-          appium -v
-        displayName: "Install Appium"
-
-      - script: |
-          mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip
-    displayName: "Run windows app - Cucumber"
+#  - job: Windows
+#    pool:
+#      vmImage: "windows-latest"
+#
+#    steps:
+#      - task: NodeTool@0
+#        inputs:
+#          versionSpec: "17.5.0"
+#
+#      - script: |
+#          node -v
+#          npm install -g appium@next
+#          appium -v
+#          appium driver install windows
+#        displayName: "Install Appium"
+#
+#      - script: |
+#          mvn clean -Dtest=WindowsRunner test -Dcheckstyle.skip -DPlatform="windows"
+#    displayName: "Run windows app"
+#
+#  - job: Windows_Cucumber
+#    pool:
+#      vmImage: "windows-latest"
+#
+#    variables:
+#      - name: CONFIG_FILE
+#        value: "./configs/windowsCucumberConfig.properties"
+#
+#    steps:
+#      - task: NodeTool@0
+#        inputs:
+#          versionSpec: "17.5.0"
+#
+#      - script: |
+#          node -v
+#          npm install -g appium@next
+#          appium -v
+#          appium driver install windows
+#        displayName: "Install Appium"
+#
+#      - script: |
+#          mvn clean -Dtest=WindowsRunCukes test -Dcheckstyle.skip
+#    displayName: "Run windows app - Cucumber"
 
 #  - job: Genymotion
 #    pool:

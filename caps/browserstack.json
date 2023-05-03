@@ -4,7 +4,7 @@
     "project": "ATD",
     "app": {
       "local": "https://github.com/shridharkalagi/AppiumSample/raw/master/VodQA.apk",
-      "cloud": "bs://9fc49eb030bbf201001e71bc7b283ce2ba1db4a7"
+      "cloud": "bs://b82b336385049a9aab8ae3f994ee01e7645282ac"
     },
     "noSign": true
   },

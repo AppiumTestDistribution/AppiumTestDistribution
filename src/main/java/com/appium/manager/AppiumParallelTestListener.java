@@ -64,8 +64,9 @@ public final class AppiumParallelTestListener extends Helpers
         currentMethods.set(iInvokedMethod.getTestMethod());
         SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
             .getAnnotation(SkipIf.class);
-        if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
-            .equalsIgnoreCase(annotation.platform())) {
+        if (annotation != null && AppiumDriverManager.getDriver().getCapabilities()
+                .getCapability("platformName")
+                .toString().equalsIgnoreCase(annotation.platform())) {
             throw new SkipException("Skipped because property was set to :::"
                 + annotation.platform());
         }

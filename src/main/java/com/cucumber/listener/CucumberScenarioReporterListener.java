@@ -14,7 +14,6 @@ import com.epam.reportportal.utils.MemoizingSupplier;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.video.recorder.XpathXML;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.cucumber.core.gherkin.Step;
 import org.apache.log4j.Logger;
 import rp.com.google.common.base.Suppliers;
@@ -36,7 +35,7 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
     public AppiumDriverManager appiumDriverManager;
     public DeviceSingleton deviceSingleton;
     public LinkedList<Step> testSteps;
-    public AppiumDriver<MobileElement> appium_driver;
+    public AppiumDriver appium_driver;
     private AndroidDeviceConfiguration androidDevice;
     private IOSDeviceConfiguration iosDevice;
     public String deviceModel;

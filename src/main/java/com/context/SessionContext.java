@@ -70,20 +70,28 @@ public class SessionContext {
                 .getListeners().toArray()).filter(x ->
                 x.equals("com.epam.reportportal.testng.ReportPortalTestNGListener"))
                 .findFirst();
-        boolean isReportPortalEnabledInProperties =
-                (null == reportPortalProperties.getProperty("rp.enable")
-                || (reportPortalProperties.getProperty("rp.enable").equalsIgnoreCase("true")));
-        if (reportPortalListener.isPresent() && isReportPortalEnabledInProperties) {
-            reportPortalLaunchURL = String.format("%s/ui/#%s/launches/all/%s",
-                    reportPortalProperties.getProperty("rp.endpoint"),
-                    reportPortalProperties.getProperty("rp.project"),
-                    System.getProperty("rp.launch.id"));
-            LOGGER.info(String.format(
-                    "**** ReportPortal URL - %s ****", reportPortalLaunchURL));
+        if (reportPortalListener.isPresent()) {
+            setReportPortalLaunchURL();
         }
     }
 
     public static String getReportPortalLaunchURL() {
         return reportPortalLaunchURL;
+    }
+
+    public static void setReportPortalLaunchURL() {
+        boolean isReportPortalEnabledInProperties =
+                (null == reportPortalProperties.getProperty("rp.enable")
+                 || (reportPortalProperties.getProperty("rp.enable")
+                                           .equalsIgnoreCase("true")));
+        if (isReportPortalEnabledInProperties) {
+            reportPortalLaunchURL = String.format("%s/ui/#%s/launches/all/%s",
+                                                  reportPortalProperties.getProperty("rp.endpoint"),
+                                                  reportPortalProperties.getProperty("rp.project"),
+                                                  System.getProperty("rp.launch.id"));
+            LOGGER.info(String.format(
+                    "**** ReportPortal URL - %s ****",
+                    reportPortalLaunchURL));
+        }
     }
 }

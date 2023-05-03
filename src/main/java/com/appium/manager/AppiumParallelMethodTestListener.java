@@ -100,8 +100,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
             currentMethods.set(iInvokedMethod.getTestMethod());
             SkipIf annotation = iInvokedMethod.getTestMethod().getConstructorOrMethod().getMethod()
                 .getAnnotation(SkipIf.class);
-            if (annotation != null && AppiumDriverManager.getDriver().getPlatformName()
-                .equalsIgnoreCase(annotation.platform())) {
+            if (annotation != null && AppiumDriverManager.getDriver().getCapabilities()
+                    .getCapability("platformName")
+                    .toString().equalsIgnoreCase(annotation.platform())) {
                 if (atdHost.isPresent() && atdPort.isPresent()) {
                     HashMap<String, String> logs = new HashMap<>();
                     String url = "http://" + atdHost.get() + ":" + atdPort.get() + "/testresults";
@@ -162,10 +163,8 @@ public final class AppiumParallelMethodTestListener extends Helpers
                     }
                 }
                 if (iInvokedMethod.isTestMethod()) {
-                   System.out.println("Releasing the Device");
                     deviceAllocationManager.freeDevice();
                     AppiumDriverManager.getDriver().quit();
-                    System.out.println("Releasing the Device Done");
                     if (!isCloudExecution()) {
                         appiumDriverManager.stopAppiumDriver();
                     }
