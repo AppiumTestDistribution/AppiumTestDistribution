@@ -52,7 +52,6 @@ public class AppiumDriverManager {
     private AppiumDriver createAppiumDriver(DesiredCapabilities desiredCapabilities,
                                              String remoteWDHubIP)
             throws MalformedURLException {
-                System.out.println("inside createAppiumDriver");
         AppiumDriver currentDriverSession;
         MobilePlatform mobilePlatform = getMobilePlatform();
         switch (mobilePlatform) {
