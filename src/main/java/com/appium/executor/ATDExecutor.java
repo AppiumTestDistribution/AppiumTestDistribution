@@ -252,7 +252,7 @@ public class ATDExecutor {
 
     private void writeTestNGFile(XmlSuite suite) {
         try (FileWriter writer = new FileWriter(new File(
-                getProperty("user.dir") + PARALLEL_XML_LOCATION))) {
+            getProperty("user.dir") + PARALLEL_XML_LOCATION))) {
             writer.write(suite.toXml());
             writer.flush();
         } catch (IOException e) {
@@ -271,9 +271,9 @@ public class ATDExecutor {
         Map<String, List<Method>> listOfMethods = new HashMap<>();
         methods.forEach(method -> {
             List<Method> methodsList = listOfMethods.computeIfAbsent(
-                    method.getDeclaringClass().getPackage().getName()
-                            + "." + method.getDeclaringClass()
-                            .getSimpleName(), k -> new ArrayList<>());
+        method.getDeclaringClass().getPackage().getName()
+            + "." + method.getDeclaringClass()
+            .getSimpleName(), k -> new ArrayList<>());
             methodsList.add(method);
         });
         return listOfMethods;
