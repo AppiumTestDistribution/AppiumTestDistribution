@@ -162,7 +162,7 @@ public class ATDExecutor {
         XmlSuite suite = new XmlSuite();
         suite.setName(suiteName);
         XmlTest test = new XmlTest(suite);
-        test.setName("regression");
+        test.setName(category);
         suite.setThreadCount(deviceCount);
         suite.setDataProviderThreadCount(deviceCount);
         suite.setVerbose(2);
@@ -172,19 +172,21 @@ public class ATDExecutor {
         suite.setListeners(listeners);
         for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
             XmlClass xmlClass = new XmlClass(mapElement.getKey());
-            for (String testName : testCases) {
-                for (Method methodName : mapElement.getValue()) {
-                    if (methodName.getName().equalsIgnoreCase(testName)) {
-                        List<XmlInclude> includedMethodsList = new ArrayList<>();
-                        XmlInclude includedTestMethod = new XmlInclude(testName);
+            List<XmlInclude> includedMethodsList = new ArrayList<>();
+            for (Method methodName : mapElement.getValue()) {
+                for(String testCase: testCases){
+                    if (methodName.getName().equalsIgnoreCase(testCase)) {
+                        XmlInclude includedTestMethod = new XmlInclude(testCase);
                         includedMethodsList.add(includedTestMethod);
-                        xmlClass.setIncludedMethods(includedMethodsList);
-                        classes.add(xmlClass);
+                        break;
                     }
                 }
             }
+            if(!includedMethodsList.isEmpty()) {
+                xmlClass.setIncludedMethods(includedMethodsList);
+                classes.add(xmlClass);
+            }
         }
-
         test.setXmlClasses(classes);
         writeTestNGFile(suite);
         return suite;
