@@ -35,6 +35,7 @@ jobs:
             appium -v
             appium driver install xcuitest
             appium plugin install --source npm appium-device-farm
+            appium plugin install --source npm appium-wait-plugin
             appium plugin list
             appium driver list
             Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -70,6 +71,7 @@ jobs:
             appium -v
             appium driver install uiautomator2
             appium plugin install --source npm appium-device-farm
+            appium plugin install --source npm appium-wait-plugin
             appium plugin list
             appium driver list
             Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -89,6 +91,7 @@ jobs:
             npm install -g appium@next
             appium -v
             appium plugin install --source npm appium-device-farm
+            appium plugin install --source npm appium-wait-plugin
             appium plugin list
             appium driver list
             Platform='android' BS_USERNAME=$user_bs BS_PASSWORD=$pass_bs CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
@@ -108,6 +111,7 @@ jobs:
             npm install -g appium@next
             appium -v
             appium plugin install --source npm appium-device-farm
+            appium plugin install --source npm appium-wait-plugin
             appium plugin list
             appium driver list
             Platform='android' LT_USERNAME=$user_lt LT_PASSWORD=$pass_lt CONFIG_FILE='./configs/lambdaTest_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip

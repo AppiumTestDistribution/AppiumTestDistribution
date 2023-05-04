@@ -58,11 +58,6 @@ public final class AppiumParallelTestListener extends Helpers
             throw new SkipException("Skipped because property was set to :::"
                     + annotation.platform());
         }
-        TestExecutionContext testExecutionContext =
-                new TestExecutionContext(iInvokedMethod.getTestMethod().getMethodName());
-        testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());
-        testExecutionContext.addTestState("deviceId",
-                AppiumDeviceManager.getAppiumDevice().getUdid());
         queueBeforeInvocationListeners(iInvokedMethod, testResult, iTestNGListeners);
     }
 
@@ -127,6 +122,11 @@ public final class AppiumParallelTestListener extends Helpers
             appiumDriverManager.startAppiumDriverInstanceWithUDID(
                     iTestResult.getTestName(), currentDeviceID.get());
             testLogger.startLogging(iTestResult);
+            TestExecutionContext testExecutionContext =
+                    new TestExecutionContext(iTestResult.getTestName());
+            testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());
+            testExecutionContext.addTestState("deviceId",
+                    AppiumDeviceManager.getAppiumDevice().getUdid());
         } catch (Exception e) {
             e.printStackTrace();
         }

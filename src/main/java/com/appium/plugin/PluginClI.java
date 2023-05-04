@@ -39,6 +39,7 @@ public class PluginClI {
     public Meta meta;
     public int $loki;
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @Getter
     public static class DeviceFarm {
         public String platform;
@@ -67,7 +68,10 @@ public class PluginClI {
     }
 
     public boolean isCloud() {
-        return getPlugin().getDeviceFarm().getRemote().get(0).has("cloudName");
+        if (getPlugin().getDeviceFarm().getRemote() != null) {
+            return getPlugin().getDeviceFarm().getRemote().get(0).has("cloudName");
+        }
+        return false;
     }
 
     public String getCloudName() {
