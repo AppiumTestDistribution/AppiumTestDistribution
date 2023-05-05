@@ -50,8 +50,7 @@ public class DeviceAllocationManager {
             Thread t = Thread.currentThread();
             t.setName("Thread_" + i);
             i++;
-            boolean flag =device.isAvailable();
-            if (flag) {
+            if (device.isAvailable()) {
                 device.blockDevice();
                 return device;
             }
