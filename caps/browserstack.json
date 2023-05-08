@@ -1,7 +1,7 @@
 {
   "android": {
     "automationName": "UIAutomator2",
-    "app": "bs://0e16d8783f4879cc11678b99a4800e8ec4970b6c",
+    "app": "bs://baeeffd2d8c3d760cd37337cf062824345e4ed37",
     "noSign": true,
     "browserstack.appium_version": "2.0.0",
     "project": "First TestNg Android Project",

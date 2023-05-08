@@ -11,7 +11,6 @@ public class SliderTest extends UserBaseTest {
     public void dragNDrop() {
         login("login").click();
         waitForElement("dragAndDrop").click();
-        getDriver().findElement(AppiumBy.accessibilityId("dragAndDrop")).click();
-        getDriver().findElement(AppiumBy.accessibilityId("dragMe")).click();
+        waitForElement("dragMe").click();
     }
 }

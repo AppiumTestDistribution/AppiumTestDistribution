@@ -69,7 +69,7 @@ public class PluginClI {
 
     public boolean isCloudExecution() {
         if (getPlugin().getDeviceFarm().getCloud() != null) {
-            return getPlugin().getDeviceFarm().getCloud().get(0).has("cloudName");
+            return getPlugin().getDeviceFarm().getCloud().get("devices").has("cloudName");
         }
         return false;
     }
