@@ -97,7 +97,9 @@ public final class AppiumParallelMethodTestListener extends Helpers
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
             if (driver == null || driver.getSessionId() == null) {
-                appiumDriverManager.startAppiumDriverInstance(testMethodName);
+                if (!testMethodName.equalsIgnoreCase("tearDown")) {
+                    appiumDriverManager.startAppiumDriverInstance(testMethodName);
+                }
                 if (!isCloudExecution()) {
                     startReportLogging(iTestResult);
                 }

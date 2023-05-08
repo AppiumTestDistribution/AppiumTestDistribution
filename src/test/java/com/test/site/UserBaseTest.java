@@ -26,9 +26,4 @@ public class UserBaseTest {
         return new WebDriverWait(getDriver(), Duration.ofSeconds(30)).until(ExpectedConditions
                 .elementToBeClickable(AppiumBy.accessibilityId(locator)));
     }
-
-    @AfterTest
-    public void tearDown() {
-        getDriver().quit();
-    }
 }
