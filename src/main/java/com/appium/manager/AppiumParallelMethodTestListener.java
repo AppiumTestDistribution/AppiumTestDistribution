@@ -57,7 +57,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
     }
 
     private boolean isCloudExecution() {
-        return PluginClI.getInstance().isCloud();
+        return PluginClI.getInstance().isCloudExecution();
     }
 
     private void startReportLogging(ITestResult iTestResult) throws IOException,

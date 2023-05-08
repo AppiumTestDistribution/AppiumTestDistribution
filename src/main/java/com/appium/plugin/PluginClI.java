@@ -45,7 +45,7 @@ public class PluginClI {
         public String platform;
         public String androidDeviceType;
         public String iosDeviceType;
-        public JsonNode remote;
+        public JsonNode cloud;
         public boolean skipChromeDownload;
         public JsonNode derivedDataPath;
     }
@@ -67,16 +67,16 @@ public class PluginClI {
         return getPlugin().getDeviceFarm().getPlatform();
     }
 
-    public boolean isCloud() {
-        if (getPlugin().getDeviceFarm().getRemote() != null) {
-            return getPlugin().getDeviceFarm().getRemote().get(0).has("cloudName");
+    public boolean isCloudExecution() {
+        if (getPlugin().getDeviceFarm().getCloud() != null) {
+            return getPlugin().getDeviceFarm().getCloud().get(0).has("cloudName");
         }
         return false;
     }
 
     public String getCloudName() {
         return PluginClI.getInstance().getPlugin()
-                .getDeviceFarm().getRemote().get(0).get("cloudName").textValue();
+                .getDeviceFarm().getCloud().get(0).get("cloudName").textValue();
     }
 
     private static PluginClI instance;

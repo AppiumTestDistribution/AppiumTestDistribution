@@ -47,7 +47,7 @@ public class DesiredCapabilityBuilder {
         String appPath = null;
         if (fullCapabilities.getJSONObject(platform).has("app")) {
             Object app = fullCapabilities.getJSONObject(platform).get("app");
-            if (!(PluginClI.getInstance().isCloud())
+            if ((PluginClI.getInstance().getPlugin().getDeviceFarm().getCloud() == null)
                     && !(new UrlValidator()).isValid(app.toString())) {
                 Path path = FileSystems.getDefault().getPath(app.toString());
                 appPath = path.normalize().toAbsolutePath().toString();
