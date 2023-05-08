@@ -20,7 +20,7 @@
       "plugin": {
         "device-farm": {
           "platform": "android",
-          "remote": [
+          "cloud": [
             {
               "cloudName": "lambdatest",
               "url": "https://mobile-hub.lambdatest.com/wd/hub",

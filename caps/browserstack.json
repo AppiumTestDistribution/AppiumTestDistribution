@@ -30,7 +30,7 @@
         "device-farm": {
           "platform": "android",
           "skipChromeDownload": true,
-          "remote": [
+          "cloud": [
             {
               "cloudName": "browserstack",
               "url": "http://hub-cloud.browserstack.com",
