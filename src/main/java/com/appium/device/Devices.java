@@ -15,6 +15,7 @@ public class Devices {
     private Devices() {
 
     }
+
     @SneakyThrows
     public static List<Device> getConnectedDevices() {
         if (instance == null) {
