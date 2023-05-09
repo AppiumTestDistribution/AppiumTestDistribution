@@ -70,6 +70,28 @@
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
             <version>8.4.0</version>
+            <exclusions>
+
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-remote-driver</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-support</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.8.2</version>
         </dependency>
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
