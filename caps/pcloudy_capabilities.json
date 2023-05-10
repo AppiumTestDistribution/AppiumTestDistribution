@@ -21,7 +21,7 @@
       "plugin": {
         "device-farm": {
           "platform": "android",
-          "remote": [
+          "cloud":
             {
               "cloudName": "pCloudy",
               "url": "https://device.pcloudy.com/appiumcloud/wd/hub",
@@ -38,7 +38,6 @@
                 }
               ]
             }
-          ]
         }
       }
     }
