@@ -55,9 +55,9 @@ public class ATDExecutor {
             if (runnerLevel != null && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForClassLevelDistributionRunner(test, getTestMethods(setOfMethods),
                         suiteName, categoryName, deviceCount);
-            } else if(test!=null && !test.isEmpty()){
-                    constructXmlAndExecuteTestCaseAtRuntime(test, getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
-            }else {
+            } else if (test != null && !test.isEmpty()) {
+                constructXmlAndExecuteTestCaseAtRuntime(test, getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
+            } else {
                 constructXmlSuiteForMethodLevelDistributionRunner(test,
                         getTestMethods(setOfMethods), suiteName, categoryName, deviceCount);
             }
@@ -174,7 +174,7 @@ public class ATDExecutor {
             XmlClass xmlClass = new XmlClass(mapElement.getKey());
             List<XmlInclude> includedMethodsList = new ArrayList<>();
             for (Method methodName : mapElement.getValue()) {
-                for(String testCase: testCases){
+                for (String testCase : testCases) {
                     if (methodName.getName().equalsIgnoreCase(testCase)) {
                         XmlInclude includedTestMethod = new XmlInclude(testCase);
                         includedMethodsList.add(includedTestMethod);
@@ -182,7 +182,7 @@ public class ATDExecutor {
                     }
                 }
             }
-            if(!includedMethodsList.isEmpty()) {
+            if (!includedMethodsList.isEmpty()) {
                 xmlClass.setIncludedMethods(includedMethodsList);
                 classes.add(xmlClass);
             }
@@ -254,7 +254,7 @@ public class ATDExecutor {
 
     private void writeTestNGFile(XmlSuite suite) {
         try (FileWriter writer = new FileWriter(new File(
-            getProperty("user.dir") + PARALLEL_XML_LOCATION))) {
+                getProperty("user.dir") + PARALLEL_XML_LOCATION))) {
             writer.write(suite.toXml());
             writer.flush();
         } catch (IOException e) {
@@ -273,9 +273,9 @@ public class ATDExecutor {
         Map<String, List<Method>> listOfMethods = new HashMap<>();
         methods.forEach(method -> {
             List<Method> methodsList = listOfMethods.computeIfAbsent(
-        method.getDeclaringClass().getPackage().getName()
-            + "." + method.getDeclaringClass()
-            .getSimpleName(), k -> new ArrayList<>());
+                    method.getDeclaringClass().getPackage().getName()
+                            + "." + method.getDeclaringClass()
+                            .getSimpleName(), k -> new ArrayList<>());
             methodsList.add(method);
         });
         return listOfMethods;
