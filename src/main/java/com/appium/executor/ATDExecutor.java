@@ -1,12 +1,5 @@
 package com.appium.executor;
 
-import static com.appium.filelocations.FileLocations.PARALLEL_XML_LOCATION;
-import static com.appium.utils.ConfigFileManager.*;
-import static com.appium.utils.FigletHelper.figlet;
-import static java.lang.System.getProperty;
-import static java.util.Collections.addAll;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
 import com.appium.manager.AppiumDevice;
 import com.appium.manager.DeviceAllocationManager;
 import com.appium.utils.ConfigFileManager;
@@ -30,6 +23,13 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
+import static com.appium.filelocations.FileLocations.PARALLEL_XML_LOCATION;
+import static com.appium.utils.ConfigFileManager.*;
+import static com.appium.utils.FigletHelper.figlet;
+import static java.lang.System.getProperty;
+import static java.util.Collections.addAll;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class ATDExecutor {
     private final DeviceAllocationManager deviceAllocationManager;
