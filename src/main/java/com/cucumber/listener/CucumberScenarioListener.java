@@ -5,6 +5,7 @@ import com.appium.manager.ATDRunner;
 import com.appium.manager.AppiumDeviceManager;
 import com.appium.manager.AppiumDriverManager;
 import com.appium.manager.AppiumServerManager;
+import com.appium.manager.TestLogger;
 import com.appium.plugin.PluginClI;
 import com.appium.utils.CommandPrompt;
 import com.appium.utils.OverriddenVariable;
@@ -20,15 +21,11 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.openqa.selenium.logging.LogEntries;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.StreamSupport;
 
 import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
@@ -47,15 +44,23 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         appiumDriverManager = new AppiumDriverManager();
     }
 
-    private void allocateDeviceAndStartDriver(String testMethodName) {
+    private void allocateDeviceAndStartDriver(String scenarioName, String normalisedScenarioName) {
         try {
             AppiumDriver driver = AppiumDriverManager.getDriver();
             if (driver == null || driver.getSessionId() == null) {
-                appiumDriverManager.startAppiumDriverInstance(testMethodName);
+                appiumDriverManager.startAppiumDriverInstance(scenarioName);
+                if (!PluginClI.getInstance().isCloudExecution()) {
+                    String logDirectory = FileLocations.REPORTS_DIRECTORY
+                                             + scenarioName
+                                             + File.separator
+                                             + FileLocations.DEVICE_LOGS_DIRECTORY;
+                    new TestLogger().startDeviceLogAndVideoCapture(logDirectory,
+                            normalisedScenarioName);
+                }
             }
         } catch (Exception e) {
             LOGGER.error(String.format("Error creating / allocating a driver for test: '%s'%n%s",
-                    testMethodName, e));
+                    scenarioName, e));
             e.printStackTrace();
             LOGGER.info("Releasing the device that was allocated");
             throw new RuntimeException(e);
@@ -97,33 +102,6 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         return logFile;
     }
 
-    private String startDataCapture(String scenarioName,
-                                    Integer scenarioRunCount)
-            throws IOException {
-        String fileName = String.format("/run-%s", scenarioRunCount);
-        if (AppiumDeviceManager.getAppiumDevice().getPlatformName().equalsIgnoreCase("android")) {
-            String udid =
-                    fileName = String.format("/%s-run-%s",
-                            AppiumDeviceManager.getAppiumDevice().getUdid(), scenarioRunCount);
-            File logFile = createFile(FileLocations.REPORTS_DIRECTORY
-                            + scenarioName
-                            + File.separator
-                            + FileLocations.DEVICE_LOGS_DIRECTORY,
-                    fileName);
-            fileName = logFile.getAbsolutePath();
-            PrintStream logFileStream = new PrintStream(logFile);
-            try {
-                LogEntries logcatOutput = AppiumDriverManager.getDriver()
-                        .manage().logs().get("logcat");
-                StreamSupport.stream(logcatOutput.spliterator(), false)
-                        .forEach(logFileStream::println);
-            } catch (Exception e) {
-                LOGGER.info("ERROR in getting logcat. Skipping logcat capture");
-            }
-        }
-        return fileName;
-    }
-
     private void caseStartedHandler(TestCaseStarted event) {
         String scenarioName = event.getTestCase().getName();
         LOGGER.info("$$$$$   TEST-CASE  -- " + scenarioName + "  STARTED   $$$$$");
@@ -133,22 +111,14 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info(
                 String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
                         Thread.currentThread().getId(), scenarioName));
-        allocateDeviceAndStartDriver(scenarioName);
-        String deviceLogFileName = null;
-
-        try {
-            deviceLogFileName = startDataCapture(normalisedScenarioName, scenarioRunCount);
-        } catch (IOException e) {
-            LOGGER.info("Error in starting data capture: " + e.getMessage());
-            e.printStackTrace();
-        }
+        allocateDeviceAndStartDriver(scenarioName,
+                String.format("%s-%d", normalisedScenarioName, scenarioRunCount));
 
         TestExecutionContext testExecutionContext = new TestExecutionContext(scenarioName);
         testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());
         testExecutionContext.addTestState("deviceId",
                 AppiumDeviceManager.getAppiumDevice().getUdid());
         testExecutionContext.addTestState("deviceInfo", AppiumDeviceManager.getAppiumDevice());
-        testExecutionContext.addTestState("deviceLog", deviceLogFileName);
         testExecutionContext.addTestState("scenarioRunCount", scenarioRunCount);
         testExecutionContext.addTestState("normalisedScenarioName", normalisedScenarioName);
         testExecutionContext.addTestState("scenarioDirectory", FileLocations.REPORTS_DIRECTORY

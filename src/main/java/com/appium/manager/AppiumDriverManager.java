@@ -67,25 +67,38 @@ public class AppiumDriverManager {
             default:
                 throw new IllegalStateException("Unexpected value: " + mobilePlatform);
         }
+        Capabilities currentDriverSessionCapabilities = currentDriverSession.getCapabilities();
         LOGGER.info("Session Created for "
                 + AppiumDeviceManager.getMobilePlatform().name()
                 + "\n\tSession Id: " + currentDriverSession.getSessionId()
-                + "\n\tUDID: " + currentDriverSession.getCapabilities().getCapability("udid"));
-        String json = new Gson().toJson(currentDriverSession.getCapabilities().asMap());
+                + "\n\tUDID: " + currentDriverSessionCapabilities.getCapability("udid"));
+        String json = new Gson().toJson(currentDriverSessionCapabilities.asMap());
         DriverSession driverSessions = (new ObjectMapper().readValue(json, DriverSession.class));
         AppiumDeviceManager.setDevice(driverSessions);
         return currentDriverSession;
     }
 
     // Should be used by Cucumber as well
-    public void startAppiumDriverInstance(String testMethodName)
+    public AppiumDriver startAppiumDriverInstance(String testMethodName)
             throws Exception {
+        return startAppiumDriverInstance(testMethodName, buildDesiredCapabilities(CAPS.get()));
+    }
+
+    public AppiumDriver startAppiumDriverInstance(String testMethodName, String capabilityFilePath)
+            throws Exception {
+        return startAppiumDriverInstance(testMethodName,
+                buildDesiredCapabilities(capabilityFilePath));
+    }
+
+    public AppiumDriver startAppiumDriverInstance(String testMethodName,
+                                     DesiredCapabilities desiredCapabilities) throws Exception {
         LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
                 testMethodName, CAPS.get()));
         LOGGER.info("startAppiumDriverInstance");
         AppiumDriver currentDriverSession =
-                initialiseDriver(buildDesiredCapabilities(CAPS.get()));
+                initialiseDriver(desiredCapabilities);
         AppiumDriverManager.setDriver(currentDriverSession);
+        return currentDriverSession;
     }
 
     public void startAppiumDriverInstanceWithUDID(String testMethodName,

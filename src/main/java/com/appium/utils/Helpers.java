@@ -5,6 +5,7 @@ import static com.appium.utils.ConfigFileManager.RUNNER;
 import com.appium.capabilities.Capabilities;
 import com.appium.manager.AppiumParallelMethodTestListener;
 import com.appium.manager.AppiumParallelTestListener;
+import org.apache.log4j.Logger;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestNGListener;
@@ -16,9 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class Helpers {
     private static final Logger LOGGER = Logger.getLogger(Helpers.class.getName());
@@ -111,8 +112,13 @@ public class Helpers {
         }
     }
 
-    public String getHostMachineIpAddress() throws IOException {
-        String localHost = InetAddress.getLocalHost().toString();
+    public String getHostMachineIpAddress() {
+        String localHost = null;
+        try {
+            localHost = InetAddress.getLocalHost().toString();
+        } catch (UnknownHostException e) {
+            LOGGER.error("Unable to get IP address of host", e);
+        }
         if (localHost.contains("/")) {
             return localHost.split("/")[1].trim();
         } else {

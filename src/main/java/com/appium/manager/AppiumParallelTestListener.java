@@ -121,7 +121,7 @@ public final class AppiumParallelTestListener extends Helpers
         try {
             appiumDriverManager.startAppiumDriverInstanceWithUDID(
                     iTestResult.getTestName(), currentDeviceID.get());
-            testLogger.startLogging(iTestResult);
+            testLogger.startDeviceLogAndVideoCapture(iTestResult);
             TestExecutionContext testExecutionContext =
                     new TestExecutionContext(iTestResult.getTestName());
             testExecutionContext.addTestState("appiumDriver", AppiumDriverManager.getDriver());

@@ -62,7 +62,7 @@ public final class AppiumParallelMethodTestListener extends Helpers
 
     private void startReportLogging(ITestResult iTestResult) throws IOException,
             InterruptedException {
-        testLogger.startLogging(iTestResult);
+        testLogger.startDeviceLogAndVideoCapture(iTestResult);
     }
 
     /*

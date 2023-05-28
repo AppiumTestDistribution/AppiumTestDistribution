@@ -9,6 +9,7 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidStartScreenRecordingOptions;
 import io.appium.java_client.ios.IOSDriver;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,10 +17,11 @@ import java.time.Duration;
 import java.util.Base64;
 
 public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
+    private static final Logger LOGGER = Logger.getLogger(AppiumScreenRecorder.class.getName());
 
     @Override
     public void stopVideoRecording(String className, String methodName,
-                                   String videoFileName) throws IOException {
+                                   String videoFileName) {
         String videoPath = System.getProperty("user.dir");
         if (AppiumDeviceManager.getMobilePlatform()
             .equals(MobilePlatform.IOS)) {
@@ -43,15 +45,18 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
         }
     }
 
-    private void saveVideo(String base64, String videoLocation) throws IOException {
+    private void saveVideo(String base64, String videoLocation) {
         byte[] decode = Base64.getDecoder().decode(base64);
-        FileUtils.writeByteArrayToFile(new File(videoLocation),
-            decode);
+        try {
+            FileUtils.writeByteArrayToFile(new File(videoLocation),
+                decode);
+        } catch (IOException e) {
+            LOGGER.error("Unable to save video", e);
+        }
     }
 
     @Override
-    public void startVideoRecording(String className, String methodName,
-                                    String videoFileName) throws IOException {
+    public void startVideoRecording() {
         if (AppiumDeviceManager.getMobilePlatform()
             .equals(MobilePlatform.IOS)) {
             ((IOSDriver) AppiumDriverManager.getDriver()).startRecordingScreen();
@@ -60,6 +65,5 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
                 .startRecordingScreen(new AndroidStartScreenRecordingOptions()
                 .withTimeLimit(Duration.ofSeconds(1800)));
         }
-
     }
 }
