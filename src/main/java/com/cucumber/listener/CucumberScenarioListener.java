@@ -49,14 +49,12 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
             AppiumDriver driver = AppiumDriverManager.getDriver();
             if (driver == null || driver.getSessionId() == null) {
                 appiumDriverManager.startAppiumDriverInstance(scenarioName);
-                if (!PluginClI.getInstance().isCloudExecution()) {
-                    String logDirectory = FileLocations.REPORTS_DIRECTORY
-                                             + scenarioName
-                                             + File.separator
-                                             + FileLocations.DEVICE_LOGS_DIRECTORY;
-                    new TestLogger().startDeviceLogAndVideoCapture(logDirectory,
-                            normalisedScenarioName);
-                }
+                String logDirectory = FileLocations.REPORTS_DIRECTORY
+                                              + scenarioName
+                                              + File.separator
+                                              + FileLocations.DEVICE_LOGS_DIRECTORY;
+                new TestLogger().startDeviceLogAndVideoCapture(logDirectory,
+                        normalisedScenarioName);
             }
         } catch (Exception e) {
             LOGGER.error(String.format("Error creating / allocating a driver for test: '%s'%n%s",
