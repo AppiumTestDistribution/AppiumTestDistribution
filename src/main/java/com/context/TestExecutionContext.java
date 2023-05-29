@@ -3,6 +3,7 @@ package com.context;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TestExecutionContext {
     private final String testName;
@@ -32,5 +33,9 @@ public class TestExecutionContext {
 
     public String getTestStateAsString(String key) {
         return (String) testExecutionState.get(key);
+    }
+
+    public HashMap<String, Object> getAllTestState() {
+        return testExecutionState;
     }
 }

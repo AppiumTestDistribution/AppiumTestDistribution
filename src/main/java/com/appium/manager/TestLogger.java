@@ -47,6 +47,7 @@ public class TestLogger extends Helpers {
         String methodName = iTestResult.getMethod().getMethodName();
         String logDirectory = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY;
         startDeviceLogAndVideoCapture(logDirectory, methodName);
+        startVideoRecording();
         // setDescription(iTestResult); Needs a fix
     }
 
