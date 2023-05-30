@@ -168,7 +168,9 @@ public class TestLogger extends Helpers {
                 log_file_writer.get().println(logEntry);
             });
             log_file_writer.get().close();
-            ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(adbPath));
+            File adbLogFile = new File(adbPath);
+            ReportPortal.emitLog(String.format("ADB Logs - %s", adbLogFile.getName()),
+                    "DEBUG", new Date(), adbLogFile);
         }
     }
 
