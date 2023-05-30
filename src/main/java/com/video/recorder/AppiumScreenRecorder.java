@@ -33,7 +33,7 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
                     + "/" + getCurrentTestMethodName() + ".mp4";
             String base64 = ((IOSDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
             saveVideo(base64, videoLocationIOS);
-        } else {
+        } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             String videoLocationAndroid =
                 videoPath + FileLocations.ANDROID_SCREENSHOTS_DIRECTORY
                     + AppiumDeviceManager.getAppiumDevice().getUdid()
@@ -42,6 +42,9 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
                     + "/" + getCurrentTestMethodName() + ".mp4";
             String base64 = ((AndroidDriver) AppiumDriverManager.getDriver()).stopRecordingScreen();
             saveVideo(base64, videoLocationAndroid);
+        } else {
+            LOGGER.error("Video recording not supported for platform: "
+                                 + AppiumDeviceManager.getMobilePlatform().platformName);
         }
     }
 
@@ -60,10 +63,13 @@ public class AppiumScreenRecorder extends Helpers implements IScreenRecord {
         if (AppiumDeviceManager.getMobilePlatform()
             .equals(MobilePlatform.IOS)) {
             ((IOSDriver) AppiumDriverManager.getDriver()).startRecordingScreen();
-        } else {
+        } else if (AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)) {
             ((AndroidDriver) AppiumDriverManager.getDriver())
                 .startRecordingScreen(new AndroidStartScreenRecordingOptions()
                 .withTimeLimit(Duration.ofSeconds(1800)));
+        } else {
+            LOGGER.error("Video recording not supported for platform: "
+                             + AppiumDeviceManager.getMobilePlatform().platformName);
         }
     }
 }

@@ -9,6 +9,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.windows.WindowsDriver;
+import lombok.SneakyThrows;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -36,8 +37,7 @@ public class AppiumDriverManager {
         appiumDriver.set(driver);
     }
 
-    private AppiumDriver initialiseDriver(DesiredCapabilities desiredCapabilities)
-            throws Exception {
+    private AppiumDriver initialiseDriver(DesiredCapabilities desiredCapabilities) {
         LOGGER.info("Initialise Driver with Capabilities: ");
         desiredCapabilities.getCapabilityNames().forEach(key -> LOGGER.info("\t" + key
                 + ":: " + desiredCapabilities.getCapability(key)));
@@ -46,9 +46,9 @@ public class AppiumDriverManager {
         return createAppiumDriver(desiredCapabilities, remoteWDHubIP);
     }
 
+    @SneakyThrows
     private AppiumDriver createAppiumDriver(DesiredCapabilities desiredCapabilities,
-                                            String remoteWDHubIP)
-            throws IOException {
+                                            String remoteWDHubIP) {
         AppiumDriver currentDriverSession;
         MobilePlatform mobilePlatform = getMobilePlatform();
         switch (mobilePlatform) {
@@ -79,19 +79,18 @@ public class AppiumDriverManager {
     }
 
     // Should be used by Cucumber as well
-    public AppiumDriver startAppiumDriverInstance(String testMethodName)
-            throws Exception {
+    public AppiumDriver startAppiumDriverInstance(String testMethodName) {
         return startAppiumDriverInstance(testMethodName, buildDesiredCapabilities(CAPS.get()));
     }
 
-    public AppiumDriver startAppiumDriverInstance(String testMethodName, String capabilityFilePath)
-            throws Exception {
+    public AppiumDriver startAppiumDriverInstance(String testMethodName,
+                                                  String capabilityFilePath) {
         return startAppiumDriverInstance(testMethodName,
                 buildDesiredCapabilities(capabilityFilePath));
     }
 
     public AppiumDriver startAppiumDriverInstance(String testMethodName,
-                                     DesiredCapabilities desiredCapabilities) throws Exception {
+                                     DesiredCapabilities desiredCapabilities) {
         LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
                 testMethodName, CAPS.get()));
         LOGGER.info("startAppiumDriverInstance");
@@ -102,8 +101,7 @@ public class AppiumDriverManager {
     }
 
     public void startAppiumDriverInstanceWithUDID(String testMethodName,
-                                                  String deviceUDID)
-            throws Exception {
+                                                  String deviceUDID) {
         LOGGER.info(String.format("startAppiumDriverInstance for %s using capability file: %s",
                 testMethodName, CAPS.get()));
         LOGGER.info("startAppiumDriverInstance");
