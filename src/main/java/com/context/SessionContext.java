@@ -92,7 +92,8 @@ public class SessionContext {
                                                   reportPortalProperties.getProperty("rp.project"),
                     rpLaunchId);
             LOGGER.info("SessionContext: rp.launch.id: " + rpLaunchId);
-            LOGGER.info("CucumberScenarioReporterListener.launchUUID: " + CucumberScenarioReporterListener.launchUUID);
+            LOGGER.info("CucumberScenarioReporterListener.launchUUID: "
+                                + CucumberScenarioReporterListener.launchUUID);
             LOGGER.info(String.format(
                     "**** ReportPortal URL - %s ****",
                     reportPortalLaunchURL));
