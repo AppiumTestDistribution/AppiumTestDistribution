@@ -149,6 +149,11 @@
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-testng</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
             <artifactId>client-java</artifactId>
             <version>5.1.18</version>
         </dependency>
