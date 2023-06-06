@@ -1,5 +1,6 @@
 package com.context;
 
+import com.cucumber.listener.CucumberScenarioReporterListener;
 import org.apache.log4j.Logger;
 import org.testng.ITestContext;
 
@@ -85,10 +86,13 @@ public class SessionContext {
                  || (reportPortalProperties.getProperty("rp.enable")
                                            .equalsIgnoreCase("true")));
         if (isReportPortalEnabledInProperties) {
+            String rpLaunchId = System.getProperty("rp.launch.id");
             reportPortalLaunchURL = String.format("%s/ui/#%s/launches/all/%s",
                                                   reportPortalProperties.getProperty("rp.endpoint"),
                                                   reportPortalProperties.getProperty("rp.project"),
-                                                  System.getProperty("rp.launch.id"));
+                    rpLaunchId);
+            LOGGER.info("SessionContext: rp.launch.id: " + rpLaunchId);
+            LOGGER.info("CucumberScenarioReporterListener.launchUUID: " + CucumberScenarioReporterListener.launchUUID);
             LOGGER.info(String.format(
                     "**** ReportPortal URL - %s ****",
                     reportPortalLaunchURL));

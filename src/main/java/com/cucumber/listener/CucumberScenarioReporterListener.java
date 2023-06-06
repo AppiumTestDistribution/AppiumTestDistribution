@@ -19,7 +19,7 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
     private static final String RP_STORY_TYPE = "SUITE";
     public AppiumServerManager appiumServerManager;
     public AppiumDriverManager appiumDriverManager;
-    private String CI_BASE_URI = null;
+    public static String launchUUID;
 
     private static final Map<String, String> MIME_TYPES_EXTENSIONS =
         new HashMap() {
@@ -46,6 +46,8 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
             rq.setName(DUMMY_ROOT_SUITE_NAME);
             rq.setStartTime(Calendar.getInstance().getTime());
             rq.setType(RP_STORY_TYPE);
+            launchUUID = rq.getLaunchUuid();
+            LOGGER.info("CucumberScenarioReporterListener: rp.getLaunchUuid: " + launchUUID);
             return this.getLaunch().startTestItem(rq);
         });
     }
