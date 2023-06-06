@@ -46,10 +46,9 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
             rq.setName(DUMMY_ROOT_SUITE_NAME);
             rq.setStartTime(Calendar.getInstance().getTime());
             rq.setType(RP_STORY_TYPE);
-            launchUUID = rq.getLaunchUuid();
-            LOGGER.info("CucumberScenarioReporterListener: rp.getLaunchUuid: " + launchUUID);
+            launchUUID = this.getItemTree().getLaunchId().blockingGet();
+            LOGGER.info("CucumberScenarioReporterListener: launchUUID: " + launchUUID);
             return this.getLaunch().startTestItem(rq);
         });
     }
-
 }

@@ -275,7 +275,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
                 Thread.currentThread().getId()));
         try {
             appiumServerManager.destroyAppiumNode();
-            SessionContext.setReportPortalLaunchURL();
+            SessionContext.setReportPortalLaunchURL(CucumberScenarioReporterListener.launchUUID);
         } catch (Exception e) {
             e.printStackTrace();
         }
