@@ -72,7 +72,7 @@ public class SessionContext {
                 x.equals("com.epam.reportportal.testng.ReportPortalTestNGListener"))
                 .findFirst();
         if (reportPortalListener.isPresent()) {
-            setReportPortalLaunchURL(CucumberScenarioReporterListener.launchUUID);
+            setReportPortalLaunchURL();
         }
     }
 
@@ -80,19 +80,15 @@ public class SessionContext {
         return reportPortalLaunchURL;
     }
 
-    public static void setReportPortalLaunchURL(String launchUUID) {
+    public static void setReportPortalLaunchURL() {
         boolean isReportPortalEnabledInProperties =
                 (null == reportPortalProperties.getProperty("rp.enable")
                  || (reportPortalProperties.getProperty("rp.enable")
                                            .equalsIgnoreCase("true")));
         if (isReportPortalEnabledInProperties) {
-            LOGGER.debug(String.format("Cucumber listener: launchUUID: %s", launchUUID));
             String rpLaunchId = System.getProperty("rp.launch.id");
             LOGGER.debug(String.format("System property: rp.launch.id: '%s'",
                     rpLaunchId));
-            if (null == rpLaunchId || rpLaunchId.trim().isEmpty()) {
-                rpLaunchId = CucumberScenarioReporterListener.launchUUID;
-            }
             reportPortalLaunchURL = String.format("%s/ui/#%s/launches/all/%s",
                                                   reportPortalProperties.getProperty("rp.endpoint"),
                                                   reportPortalProperties.getProperty("rp.project"),
