@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class AppiumScreenRecordFactory {
 
-    public static IScreenRecord recordScreen() throws IOException, InterruptedException {
+    public static IScreenRecord recordScreen() {
         return new AppiumScreenRecorder();
     }
 }

@@ -19,7 +19,6 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
     private static final String RP_STORY_TYPE = "SUITE";
     public AppiumServerManager appiumServerManager;
     public AppiumDriverManager appiumDriverManager;
-    private String CI_BASE_URI = null;
 
     private static final Map<String, String> MIME_TYPES_EXTENSIONS =
         new HashMap() {
@@ -49,5 +48,4 @@ public class CucumberScenarioReporterListener extends ScenarioReporter {
             return this.getLaunch().startTestItem(rq);
         });
     }
-
 }

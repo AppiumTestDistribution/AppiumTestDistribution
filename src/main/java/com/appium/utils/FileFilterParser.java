@@ -2,6 +2,7 @@ package com.appium.utils;
 
 
 import com.appium.capabilities.Capabilities;
+import com.appium.filelocations.FileLocations;
 import com.epam.reportportal.service.ReportPortal;
 import org.json.simple.JSONObject;
 import org.testng.ITestResult;
@@ -70,7 +71,8 @@ public class FileFilterParser extends Helpers {
     }
 
     public JSONObject getScreenShotPaths(String udid, ITestResult iTestResult) {
-        String directoryLocation = System.getProperty("user.dir") + "/target/screenshot";
+        String directoryLocation = System.getProperty("user.dir")
+                                           + FileLocations.SCREENSHOTS_DIRECTORY;
         String[] fileTypes = {"png", "jpeg", "mov"};
 
         FileFilterParser fileFilterParser = new FileFilterParser();

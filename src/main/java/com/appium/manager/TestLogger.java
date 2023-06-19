@@ -7,17 +7,17 @@ import com.appium.utils.Helpers;
 import com.epam.reportportal.service.ReportPortal;
 import com.video.recorder.AppiumScreenRecordFactory;
 import com.video.recorder.IScreenRecord;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 
 import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
 
@@ -25,13 +25,11 @@ import static com.appium.utils.OverriddenVariable.getOverriddenStringValue;
  * Created by saikrisv on 24/01/17.
  */
 public class TestLogger extends Helpers {
-
-    private File logFile;
     private ThreadLocal<List<LogEntry>> logEntries = new ThreadLocal<>();
     private ThreadLocal<PrintWriter> log_file_writer = new ThreadLocal<>();
     private ScreenShotManager screenShotManager;
     private String videoPath;
-
+    private static final Logger LOGGER = Logger.getLogger(TestLogger.class.getName());
 
     private String getVideoPath() {
         return videoPath;
@@ -45,30 +43,45 @@ public class TestLogger extends Helpers {
         screenShotManager = new ScreenShotManager();
     }
 
-    protected void startLogging(ITestResult iTestResult)
-            throws IOException, InterruptedException {
+    public void startDeviceLogAndVideoCapture(ITestResult iTestResult) {
         String methodName = iTestResult.getMethod().getMethodName();
-        String className = iTestResult.getTestClass()
-                .getRealClass().getSimpleName();
-
-        if (isNativeAndroid()) {
-            String udid = AppiumDriverManager.getDriver().getCapabilities()
-                            .getCapability("appium:udid").toString();
-            List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
-                    .logs().get("logcat").getAll();
-            logEntries.set(logcat);
-            logFile = new File(System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
-                    + udid + "__" + methodName + ".txt");
-            log_file_writer.set(new PrintWriter(logFile));
-        }
-        if ("true".equalsIgnoreCase(getOverriddenStringValue("VIDEO_LOGS"))) {
-            IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
-            videoRecording.startVideoRecording(className, methodName, methodName);
-        }
+        String logDirectory = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY;
+        startDeviceLogAndVideoCapture(logDirectory, methodName);
         // setDescription(iTestResult); Needs a fix
     }
 
-    private void setDescription(ITestResult iTestResult) throws IOException {
+    public void startDeviceLogAndVideoCapture(String logDirectory, String methodName) {
+        startDeviceLogCapture(logDirectory, methodName);
+        startVideoRecording();
+    }
+
+    private void startDeviceLogCapture(String logDirectory, String testMethodName) {
+        File logFile;
+        if (isNativeAndroid()) {
+            String udid = AppiumDriverManager.getDriver().getCapabilities()
+                            .getCapability("appium:udid").toString();
+
+            String logFileName = logDirectory + udid + "__" + testMethodName + ".txt";
+            List<LogEntry> logcat = AppiumDriverManager.getDriver().manage()
+                    .logs().get("logcat").getAll();
+            logEntries.set(logcat);
+            logFile = new File(logFileName);
+            try {
+                log_file_writer.set(new PrintWriter(logFile));
+            } catch (FileNotFoundException e) {
+                LOGGER.error("Unable to start device log capture", e);
+            }
+        }
+    }
+
+    private static void startVideoRecording() {
+        if ("true".equalsIgnoreCase(getOverriddenStringValue("VIDEO_LOGS"))) {
+            IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
+            videoRecording.startVideoRecording();
+        }
+    }
+
+    private void setDescription(ITestResult iTestResult) {
         Optional<String> originalDescription = Optional.ofNullable(iTestResult
                 .getMethod().getDescription());
         String description = "Platform: " + AppiumDeviceManager.getMobilePlatform()
@@ -90,23 +103,11 @@ public class TestLogger extends Helpers {
         }
     }
 
-    protected HashMap<String, String> endLogging(ITestResult result, String deviceModel)
-            throws Exception {
+    protected HashMap<String, String> endLogging(ITestResult result, String deviceModel) {
         HashMap<String, String> logs = new HashMap<>();
         String className = result.getInstance().getClass().getSimpleName();
-        stopViewRecording(result, className);
-        if (isNativeAndroid()) {
-            String adbPath = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
-                    + AppiumDriverManager.getDriver().getCapabilities()
-                        .getCapability("appium:udid").toString()
-                    + "__" + result.getMethod().getMethodName() + ".txt";
-            logs.put("adbLogs", adbPath);
-            logEntries.get().forEach(logEntry -> {
-                log_file_writer.get().println(logEntry);
-            });
-            log_file_writer.get().close();
-            ReportPortal.emitLog("ADB Logs", "DEBUG", new Date(), new File(adbPath));
-        }
+        stopVideoRecording(result, className);
+        stopDeviceLogCapture(result, logs);
         /*
          * Failure Block
          */
@@ -156,14 +157,30 @@ public class TestLogger extends Helpers {
         return logs;
     }
 
-    private boolean isNativeAndroid() throws IOException {
+    private void stopDeviceLogCapture(ITestResult result, HashMap<String, String> logs) {
+        if (isNativeAndroid()) {
+            String adbPath = System.getProperty("user.dir") + FileLocations.ADB_LOGS_DIRECTORY
+                    + AppiumDriverManager.getDriver().getCapabilities()
+                        .getCapability("appium:udid").toString()
+                    + "__" + result.getMethod().getMethodName() + ".txt";
+            logs.put("adbLogs", adbPath);
+            logEntries.get().forEach(logEntry -> {
+                log_file_writer.get().println(logEntry);
+            });
+            log_file_writer.get().close();
+            File adbLogFile = new File(adbPath);
+            ReportPortal.emitLog(String.format("ADB Logs - %s", adbLogFile.getName()),
+                    "DEBUG", new Date(), adbLogFile);
+        }
+    }
+
+    private boolean isNativeAndroid() {
         return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
                 && AppiumDriverManager.getDriver().getCapabilities()
                 .getCapability("browserName") == null;
     }
 
-    private void stopViewRecording(ITestResult result, String className)
-            throws IOException, InterruptedException {
+    private void stopVideoRecording(ITestResult result, String className) {
         if ("true".equalsIgnoreCase(getOverriddenStringValue("VIDEO_LOGS"))) {
             IScreenRecord videoRecording = AppiumScreenRecordFactory.recordScreen();
             videoRecording.stopVideoRecording(className, result.getMethod()
@@ -189,7 +206,7 @@ public class TestLogger extends Helpers {
     }
 
     private void handleTestFailure(ITestResult result, String className,
-                                   String deviceModel) throws IOException {
+                                   String deviceModel) {
         if (result.getStatus() == ITestResult.FAILURE) {
             String screenShotNameWithTimeStamp = screenShotManager
                     .captureScreenShot(result.getStatus(),
