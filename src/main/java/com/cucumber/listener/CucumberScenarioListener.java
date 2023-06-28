@@ -241,7 +241,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private static String getReportLinkFromBrowserStack(String sessionId) {
         String reportLink = "";
-        String cloudUser = getOverriddenStringValue("CLOUD_USER");
+        String cloudUser = getOverriddenStringValue("CLOUD_USERNAME");
         String cloudPassword = getOverriddenStringValue("CLOUD_KEY");
         String curlCommand = "curl --insecure " + getCurlProxyCommand() + " -u \"" + cloudUser + ":" + cloudPassword + "\" -X GET \"https://api-cloud.browserstack.com/app-automate/sessions/" + sessionId + ".json\"";
         LOGGER.debug(String.format("Curl command: '%s'", curlCommand));
