@@ -34,7 +34,7 @@ jobs:
             npm install -g appium@next
             appium -v
             appium driver install xcuitest
-            ls /Users/distiller/.cache/
+            mkdir -p /Users/distiller/.cache/appium-device-farm/goIOS
             appium plugin install --source npm appium-device-farm
             appium plugin list
             appium driver list
