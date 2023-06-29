@@ -37,6 +37,7 @@ jobs:
             appium plugin install --source npm appium-device-farm
             appium plugin list
             appium driver list
+            appium plugin run device-farm install-go-ios 
             Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   Android:
