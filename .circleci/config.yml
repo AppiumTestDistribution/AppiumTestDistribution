@@ -22,11 +22,11 @@ jobs:
       - run:
           name: Node Version
           command: |
-            nvm install v16.18.1 && nvm alias default 16.18.1
+            nvm install v19.0.0 && nvm alias default 19.0.0
       - run:
           name: Install Appium and Run iOS Test
           command: |
-            nvm install v16.18.1 && nvm alias default 16.18.1
+            nvm install v19.0.0 && nvm alias default 19.0.0
             HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask homebrew/cask-versions/adoptopenjdk8
             export PATH=$JAVA_HOME/bin:$PATH 
             HOMEBREW_NO_AUTO_UPDATE=1 brew install maven
@@ -64,7 +64,7 @@ jobs:
       - run:
           name: Install Appium and Run Android Test
           command: |
-            nvm install v16.18.1 && nvm alias default 16.18.1 
+            nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
             npm install -g appium@next
             appium -v
@@ -84,14 +84,14 @@ jobs:
        - run:
           name: Install Appium and Run Android Test
           command: |
-            nvm install v16.18.1 && nvm alias default 16.18.1 
+            nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
             npm install -g appium@next
             appium -v
             appium plugin install --source npm appium-device-farm
             appium plugin list
             appium driver list
-            Platform='android' BS_USERNAME=$user_bs BS_PASSWORD=$pass_bs CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+            Platform='android' CLOUD_USERNAME=$user_bs CLOUD_KEY=$pass_bs CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   LambdaTest:
     machine:
@@ -103,14 +103,14 @@ jobs:
       - run:
           name: Install Appium and Run Android Test
           command: |
-            nvm install v16.18.1 && nvm alias default 16.18.1 
+            nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
             npm install -g appium@next
             appium -v
             appium plugin install --source npm appium-device-farm
             appium plugin list
             appium driver list
-            Platform='android' LT_USERNAME=$user_lt LT_PASSWORD=$pass_lt CONFIG_FILE='./configs/lambdaTest_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
+            Platform='android' CLOUD_USERNAME=$user_lt CLOUD_KEY=$pass_lt CONFIG_FILE='./configs/lambdaTest_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 workflows:
   build:
     jobs:
