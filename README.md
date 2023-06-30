@@ -14,6 +14,8 @@
 [ ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat )](https://github.com/saikrishna321/AppiumTestDistribution/pulls)
 [![GitHub forks](https://img.shields.io/github/forks/saikrishna321/AppiumTestDistribution.svg?style=social&label=Fork)](https://github.com/kirankalyan5/AppiumTestDistribution/network)
 
+[![CircleCI](https://dl.circleci.com/insights-snapshot/gh/AppiumTestDistribution/AppiumTestDistribution/main/build/badge.svg?window=24h)](https://app.circleci.com/insights/github/AppiumTestDistribution/AppiumTestDistribution/workflows/build/overview?branch=main&reporting-window=last-24-hours&insights-snapshot=true)
+
 ## Thanks for support 
 <h3>
 	<a href= "https://saucelabs.com"><img src="image/Powered by Sauce Labs badges red.svg" alt="ATD" width="45%" align="top"></a>
