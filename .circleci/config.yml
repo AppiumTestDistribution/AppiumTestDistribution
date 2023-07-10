@@ -31,14 +31,12 @@ jobs:
             export PATH=$JAVA_HOME/bin:$PATH 
             HOMEBREW_NO_AUTO_UPDATE=1 brew install maven
             node -v 
-            npm install -g appium@next
-            appium -v
-            appium driver install xcuitest
+            npm install
+            ./node_modules/.bin/appium -v
             mkdir -p /Users/distiller/.cache/appium-device-farm/goIOS
-            appium plugin install --source npm appium-device-farm
-            appium plugin list
-            appium driver list
-            appium plugin run device-farm install-go-ios 
+            ./node_modules/.bin/appium plugin list
+            ./node_modules/.bin/appium driver list
+            ./node_modules/.bin/appium plugin run device-farm install-go-ios 
             Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   Android:
@@ -68,12 +66,10 @@ jobs:
           command: |
             nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
-            npm install -g appium@next
-            appium -v
-            appium driver install uiautomator2
-            appium plugin install --source npm appium-device-farm
-            appium plugin list
-            appium driver list
+            npm install
+            ./node_modules/.bin/appium -v
+            ./node_modules/.bin/appium plugin list
+            ./node_modules/.bin/appium driver list
             Platform='android' CONFIG_FILE='./configs/config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   BrowserStack:
@@ -88,11 +84,10 @@ jobs:
           command: |
             nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
-            npm install -g appium@next
-            appium -v
-            appium plugin install --source npm appium-device-farm
-            appium plugin list
-            appium driver list
+            npm install
+            ./node_modules/.bin/appium -v
+            ./node_modules/.bin/appium plugin list
+            ./node_modules/.bin/appium driver list
             Platform='android' CLOUD_USERNAME=$user_bs CLOUD_KEY=$pass_bs CONFIG_FILE='./configs/bs_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   LambdaTest:
@@ -107,11 +102,10 @@ jobs:
           command: |
             nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
-            npm install -g appium@next
-            appium -v
-            appium plugin install --source npm appium-device-farm
-            appium plugin list
-            appium driver list
+            npm install
+            ./node_modules/.bin/appium -v
+            ./node_modules/.bin/appium plugin list
+            ./node_modules/.bin/appium driver list
             Platform='android' CLOUD_USERNAME=$user_lt CLOUD_KEY=$pass_lt CONFIG_FILE='./configs/lambdaTest_config.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 workflows:
   build:

@@ -8,6 +8,7 @@ test-output/*
 target/*
 report.json
 testng.xml
+node_modules
 *.json
 *.html
 *.iml

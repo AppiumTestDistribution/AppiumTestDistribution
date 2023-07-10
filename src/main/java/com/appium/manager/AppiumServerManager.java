@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.time.Duration;
 
 public class AppiumServerManager {
@@ -93,8 +95,11 @@ public class AppiumServerManager {
 
     private AppiumServiceBuilder getAppiumServerBuilder(String host) throws Exception {
         if (Capabilities.getInstance().getCapabilities().has("appiumServerPath")) {
+            Path path = FileSystems.getDefault().getPath(Capabilities.getInstance()
+                    .getCapabilities().get("appiumServerPath").toString());
+            String serverPath = path.normalize().toAbsolutePath().toString();
             LOGGER.info("Picking UserSpecified Path for AppiumServiceBuilder");
-            return getAppiumServiceBuilderWithUserAppiumPath(host);
+            return getAppiumServiceBuilderWithUserAppiumPath(serverPath);
         } else {
             LOGGER.info("Picking Default Path for AppiumServiceBuilder");
             return getAppiumServiceBuilderWithDefaultPath();
