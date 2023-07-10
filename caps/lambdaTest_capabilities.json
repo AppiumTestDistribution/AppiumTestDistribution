@@ -26,14 +26,14 @@
               "url": "https://mobile-hub.lambdatest.com/wd/hub",
               "devices": [
                 {
-                  "platformVersion": "11",
-                  "deviceName": "Pixel 3a",
+                  "platformVersion": "13",
+                  "deviceName": "Pixel 7",
                   "platform": "android"
                 },
                 {
                   "platform": "android",
-                  "deviceName": "Pixel 4a",
-                  "platformVersion": "12"
+                  "deviceName": "Pixel 6",
+                  "platformVersion": "13"
                 }
               ]
             }

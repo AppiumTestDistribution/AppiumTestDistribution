@@ -36,7 +36,7 @@ jobs:
             mkdir -p /Users/distiller/.cache/appium-device-farm/goIOS
             ./node_modules/.bin/appium plugin list
             ./node_modules/.bin/appium driver list
-            appium plugin run device-farm install-go-ios 
+            ./node_modules/.bin/appium plugin run device-farm install-go-ios 
             Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   Android:
