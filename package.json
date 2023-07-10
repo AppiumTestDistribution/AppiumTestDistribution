@@ -1,0 +1,28 @@
+{
+  "name": "appiumtestdistribution",
+  "version": "1.0.0",
+  "description": "<h1 align=\"center\"> \t<br> \t<img src=\"image/ATD-Logo1.png\" alt=\"ATD\"> \t<br> \t<br> \t<br> </h1>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AppiumTestDistribution/AppiumTestDistribution.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AppiumTestDistribution/AppiumTestDistribution/issues"
+  },
+  "homepage": "https://github.com/AppiumTestDistribution/AppiumTestDistribution#readme",
+  "dependencies": {
+    "appium": "^2.0.0"
+  },
+  "devDependencies": {
+    "appium-device-farm": "^8.2.1",
+    "appium-uiautomator2-driver": "^2.29.2",
+    "appium-xcuitest-driver": "^4.32.19"
+  }
+}

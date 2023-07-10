@@ -40,5 +40,6 @@
         }
       }
     }
-  }
+  },
+  "appiumServerPath": "./node_modules/appium/build/lib/main.js"
 }

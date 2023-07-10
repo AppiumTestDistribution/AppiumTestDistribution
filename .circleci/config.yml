@@ -31,7 +31,7 @@ jobs:
             export PATH=$JAVA_HOME/bin:$PATH 
             HOMEBREW_NO_AUTO_UPDATE=1 brew install maven
             node -v 
-            npm install -g appium@next
+            npm install
             appium -v
             appium driver install xcuitest
             mkdir -p /Users/distiller/.cache/appium-device-farm/goIOS
@@ -68,7 +68,7 @@ jobs:
           command: |
             nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
-            npm install -g appium@next
+            npm install
             appium -v
             appium driver install uiautomator2
             appium plugin install --source npm appium-device-farm
@@ -88,7 +88,7 @@ jobs:
           command: |
             nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
-            npm install -g appium@next
+            npm install
             appium -v
             appium plugin install --source npm appium-device-farm
             appium plugin list
@@ -107,7 +107,7 @@ jobs:
           command: |
             nvm install v19.0.0 && nvm alias default 19.0.0 
             node -v 
-            npm install -g appium@next
+            npm install
             appium -v
             appium plugin install --source npm appium-device-farm
             appium plugin list
