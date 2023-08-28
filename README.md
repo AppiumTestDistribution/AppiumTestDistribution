@@ -66,7 +66,7 @@ Add the below dependencies in your pom.xml (Master)
 
 ## [Configure-tests-for-TestNG](https://github.com/saikrishna321/AppiumTestDistribution/wiki/Configure-tests-for-TestNG)
 
-## [Configure-tests-for-Cucumber](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Implementing-and-running-cucumber%E2%80%90jvm-tests,-using-teswiz)
+## [Configure-tests-for-Cucumber, using teswiz](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure%E2%80%90tests%E2%80%90for%E2%80%90Cucumber,-using-teswiz)
 
 ## [Configure-tests-for-Sauce](https://github.com/AppiumTestDistribution/AppiumTestDistribution/wiki/Configure-test-for-Cloud-Sauce)
 
