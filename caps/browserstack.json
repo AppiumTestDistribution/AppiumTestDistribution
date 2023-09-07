@@ -11,9 +11,7 @@
   },
   "iOS": {
     "platformName": "iOS",
-    "app": {
-      "simulator": "https://github.com/saikrishna321/AppiumTestDistribution/blob/master/apps/VodQAReactNative.zip?raw=true"
-    },
+    "app": "bs://efba7654ed367932162a175b16910035eb284e26",
     "deviceName": "iPhone",
     "wdaLaunchTimeout": 80000,
     "wdaConnectionTimeout": 80000,
@@ -28,8 +26,9 @@
       "use-plugins": ["device-farm"],
       "plugin": {
         "device-farm": {
-          "platform": "android",
+          "platform": "iOS",
           "skipChromeDownload": true,
+          "iosDeviceType": "real",
           "cloud":
             {
               "cloudName": "browserstack",

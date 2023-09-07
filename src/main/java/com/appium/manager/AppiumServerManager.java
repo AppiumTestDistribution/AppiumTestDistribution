@@ -49,6 +49,10 @@ public class AppiumServerManager {
 
     public void startAppiumServer(String host) throws Exception {
         LOGGER.info(LOGGER.getName() + "Starting Appium Server on Localhost");
+        new File(
+                System.getProperty("user.dir")
+                        + FileLocations.APPIUM_LOGS_DIRECTORY
+                        + "appium_logs.txt").getParentFile().mkdirs();
         AppiumDriverLocalService appiumDriverLocalService;
         AppiumServiceBuilder builder =
                 getAppiumServerBuilder(host)
