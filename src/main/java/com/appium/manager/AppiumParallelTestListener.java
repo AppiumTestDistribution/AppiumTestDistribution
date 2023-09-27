@@ -59,6 +59,11 @@ public final class AppiumParallelTestListener extends Helpers
                     + annotation.platform());
         }
         queueBeforeInvocationListeners(iInvokedMethod, testResult, iTestNGListeners);
+        if (!iInvokedMethod.isTestMethod() && AppiumDriverManager.getDriver() == null) {
+            appiumDriverManager.startAppiumDriverInstanceWithUDID(
+                    iInvokedMethod.getTestMethod().getMethodName(), currentDeviceID.get());
+        }
+
     }
 
     /*
@@ -119,8 +124,6 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onTestStart(ITestResult iTestResult) {
         try {
-            appiumDriverManager.startAppiumDriverInstanceWithUDID(
-                    iTestResult.getTestName(), currentDeviceID.get());
             testLogger.startDeviceLogAndVideoCapture(iTestResult);
             TestExecutionContext testExecutionContext =
                     new TestExecutionContext(iTestResult.getTestName());
@@ -178,6 +181,8 @@ public final class AppiumParallelTestListener extends Helpers
     @Override
     public void onFinish(ITestContext iTestContext) {
         SessionContext.setReportPortalLaunchURL(iTestContext);
+        appiumDriverManager.stopAppiumDriver();
+
     }
 
     public static ITestNGMethod getTestMethod() {
