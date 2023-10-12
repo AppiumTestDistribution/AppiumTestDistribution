@@ -61,7 +61,7 @@ public class AppiumServerManager {
                                         + FileLocations.APPIUM_LOGS_DIRECTORY
                                         + "appium_logs.txt"))
                         .withIPAddress(host)
-                        .withTimeout(Duration.ofSeconds(60))
+                        .withTimeout(Duration.ofSeconds(160))
                         .withArgument(GeneralServerFlag.BASEPATH, "/wd/hub")
                         .withArgument(() -> "--config", System.getProperty("user.dir")
                                 + FileLocations.SERVER_CONFIG)
