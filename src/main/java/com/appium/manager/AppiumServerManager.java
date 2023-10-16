@@ -5,6 +5,7 @@ import com.appium.capabilities.Capabilities;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -67,7 +68,11 @@ public class AppiumServerManager {
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .usingAnyFreePort();
         if (Capabilities.getInstance().getCapabilities().has("basePath")) {
-            builder.withArgument(GeneralServerFlag.BASEPATH,getBasePath());
+            if (!StringUtils.isBlank(getBasePath())) {
+                builder.withArgument(GeneralServerFlag.BASEPATH,getBasePath());
+            }
+        } else {
+            builder.withArgument(GeneralServerFlag.BASEPATH,"/wd/hub");
         }
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
