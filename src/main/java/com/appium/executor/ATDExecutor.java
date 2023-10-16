@@ -22,6 +22,7 @@ import org.testng.TestNG;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 import org.testng.xml.XmlClass;
+import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlSuite.ParallelMode;
 import org.testng.xml.XmlTest;
@@ -63,6 +64,9 @@ public class ATDExecutor {
         if (executionType.equalsIgnoreCase("distribute")) {
             if (runnerLevel != null && runnerLevel.equalsIgnoreCase("class")) {
                 constructXmlSuiteForClassLevelDistributionRunner(test, getTestMethods(setOfMethods),
+                        suiteName, categoryName, deviceCount);
+            }  else if (test != null && !test.isEmpty()) {
+                constructXmlSuiteWithSpecificMethodForDistributionRunner(test, getTestMethods(setOfMethods),
                         suiteName, categoryName, deviceCount);
             } else {
                 constructXmlSuiteForMethodLevelDistributionRunner(test,
@@ -157,6 +161,44 @@ public class ATDExecutor {
         }
         writeTestNGFile(suite);
         return suite;
+    }
+
+    public XmlSuite constructXmlSuiteWithSpecificMethodForDistributionRunner(List<String> testCases,
+                                                            Map<String, List<Method>> methods, String suiteName,
+                                                            String category, int deviceCount) {
+        List<XmlClass> classes = new ArrayList<>();
+        XmlSuite suite = new XmlSuite();
+        suite.setName(suiteName);
+        XmlTest test = new XmlTest(suite);
+        test.setName(category);
+        suite.setThreadCount(deviceCount);
+        suite.setDataProviderThreadCount(deviceCount);
+        suite.setVerbose(2);
+        suite.setParallel(ParallelMode.METHODS);
+        listeners.add("com.appium.manager.AppiumParallelMethodTestListener");
+        include(listeners, LISTENERS);
+        suite.setListeners(listeners);
+        for (Map.Entry<String, List<Method>> mapElement : methods.entrySet()) {
+            XmlClass xmlClass = new XmlClass(mapElement.getKey());
+            List<XmlInclude> includedMethodsList = new ArrayList<>();
+            for (Method methodName : mapElement.getValue()) {
+                for (String testCase : testCases) {
+                    if (methodName.getName().equalsIgnoreCase(testCase)) {
+                        XmlInclude includedTestMethod = new XmlInclude(testCase);
+                        includedMethodsList.add(includedTestMethod);
+                        break;
+                    }
+                }
+            }
+            if (!includedMethodsList.isEmpty()) {
+                xmlClass.setIncludedMethods(includedMethodsList);
+                classes.add(xmlClass);
+            }
+        }
+        test.setXmlClasses(classes);
+        writeTestNGFile(suite);
+        return suite;
+
     }
 
     public boolean testNGParallelRunner() {
