@@ -20,5 +20,5 @@
     }
   },
   "appiumServerPath": "./node_modules/appium/build/lib/main.js",
-  "appiumBasePath": "/wd/hub"
+  "basePath": "/wd/hub"
 }
