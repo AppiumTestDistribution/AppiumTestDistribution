@@ -67,7 +67,7 @@ public class AppiumServerManager {
                                 + FileLocations.SERVER_CONFIG)
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .usingAnyFreePort();
-        if (Capabilities.getInstance().getCapabilities().has("basePath")) {
+        if (Capabilities.getInstance().getCapabilities().has("appiumBasePath")) {
             if (!StringUtils.isBlank(getBasePath())) {
                 builder.withArgument(GeneralServerFlag.BASEPATH,getBasePath());
             }
@@ -130,7 +130,7 @@ public class AppiumServerManager {
 
     private String getBasePath() {
         Path path = FileSystems.getDefault().getPath(Capabilities.getInstance()
-                .getCapabilities().get("basePath").toString());
+                .getCapabilities().get("appiumBasePath").toString());
         String basePath = path.normalize().toAbsolutePath().toString();
         LOGGER.info("Picking UserSpecified Base Path");
         return basePath;
