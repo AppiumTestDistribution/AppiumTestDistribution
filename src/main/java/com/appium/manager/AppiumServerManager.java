@@ -62,11 +62,13 @@ public class AppiumServerManager {
                                         + "appium_logs.txt"))
                         .withIPAddress(host)
                         .withTimeout(Duration.ofSeconds(60))
-                        .withArgument(GeneralServerFlag.BASEPATH, "/wd/hub")
                         .withArgument(() -> "--config", System.getProperty("user.dir")
                                 + FileLocations.SERVER_CONFIG)
                         .withArgument(GeneralServerFlag.RELAXED_SECURITY)
                         .usingAnyFreePort();
+        if (Capabilities.getInstance().getCapabilities().has("basePath")) {
+            builder.withArgument(GeneralServerFlag.BASEPATH,getBasePath());
+        }
         appiumDriverLocalService = builder.build();
         appiumDriverLocalService.start();
         LOGGER.info(LOGGER.getName() + "Appium Server Started at......"
@@ -112,13 +114,21 @@ public class AppiumServerManager {
     }
 
     private AppiumServiceBuilder
-            getAppiumServiceBuilderWithUserAppiumPath(String appiumServerPath) {
+    getAppiumServiceBuilderWithUserAppiumPath(String appiumServerPath) {
         return new AppiumServiceBuilder().withAppiumJS(
                 new File(appiumServerPath));
     }
 
     private AppiumServiceBuilder getAppiumServiceBuilderWithDefaultPath() {
         return new AppiumServiceBuilder();
+    }
+
+    private String getBasePath() {
+        Path path = FileSystems.getDefault().getPath(Capabilities.getInstance()
+                .getCapabilities().get("basePath").toString());
+        String basePath = path.normalize().toAbsolutePath().toString();
+        LOGGER.info("Picking UserSpecified Base Path");
+        return basePath;
     }
 
 }
