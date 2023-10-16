@@ -26,7 +26,7 @@
       "use-plugins": ["device-farm"],
       "plugin": {
         "device-farm": {
-          "platform": "iOS",
+          "platform": "android",
           "skipChromeDownload": true,
           "iosDeviceType": "real",
           "cloud":
