@@ -1,6 +1,7 @@
 package com.appium.manager;
 
 import com.annotation.values.Author;
+import com.appium.capabilities.Capabilities;
 import com.appium.entities.MobilePlatform;
 import com.appium.filelocations.FileLocations;
 import com.appium.utils.Helpers;
@@ -176,8 +177,8 @@ public class TestLogger extends Helpers {
 
     private boolean isNativeAndroid() {
         return AppiumDeviceManager.getMobilePlatform().equals(MobilePlatform.ANDROID)
-                && AppiumDriverManager.getDriver().getCapabilities()
-                .getCapability("browserName") == null;
+                && Capabilities.getInstance()
+                .getCapabilities().getJSONObject("android").get("browserName") == null;
     }
 
     private void stopVideoRecording(ITestResult result, String className) {
