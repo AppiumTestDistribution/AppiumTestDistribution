@@ -40,7 +40,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private Map<String, Integer> scenarioRunCounts = new HashMap<String, Integer>();
 
     public CucumberScenarioListener() throws Exception {
-        LOGGER.info(String.format("ThreadID: %d: CucumberScenarioListener\n",
+        LOGGER.info(String.format("ThreadID: %d: CucumberScenarioListener%n",
                 Thread.currentThread().getId()));
         new ATDRunner();
         appiumServerManager = new AppiumServerManager();
@@ -71,7 +71,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
 
     private void runStartedHandler(TestRunStarted event) {
         LOGGER.info("runStartedHandler");
-        LOGGER.info(String.format("ThreadID: %d: beforeSuite: \n",
+        LOGGER.info(String.format("ThreadID: %d: beforeSuite: %n",
                 Thread.currentThread().getId()));
     }
 
@@ -98,7 +98,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         Integer scenarioRunCount = getScenarioRunCount(scenarioName);
         String normalisedScenarioName = normaliseScenarioName(scenarioName);
         LOGGER.info(
-                String.format("ThreadID: %d: beforeScenario: for scenario: %s\n",
+                String.format("ThreadID: %d: beforeScenario: for scenario: %s%n",
                         Thread.currentThread().getId(), scenarioName));
         String scenarioReportDirectory = FileLocations.REPORTS_DIRECTORY
                                                  + normalisedScenarioName + File.separator;
@@ -189,7 +189,7 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
         LOGGER.info("caseFinishedHandler Name: " + scenarioName);
         long threadId = Thread.currentThread().getId();
         LOGGER.info(
-                String.format("ThreadID: %d: afterScenario: for scenario: %s\n",
+                String.format("ThreadID: %d: afterScenario: for scenario: %s%n",
                         threadId, event.getTestCase().toString()));
 
         TestExecutionContext testExecutionContext =
