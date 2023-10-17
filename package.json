@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "appium-device-farm": "^8.2.3",
-    "appium-uiautomator2-driver": "^2.29.5",
+    "appium-uiautomator2-driver": "^2.32.0",
     "appium-xcuitest-driver": "^5.0.0"
   }
 }
