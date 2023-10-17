@@ -129,11 +129,9 @@ public class AppiumServerManager {
     }
 
     private String getBasePath() {
-        Path path = FileSystems.getDefault().getPath(Capabilities.getInstance()
-                .getCapabilities().get("basePath").toString());
-        String basePath = path.normalize().toAbsolutePath().toString();
         LOGGER.info("Picking UserSpecified Base Path");
-        return basePath;
+        return Capabilities.getInstance()
+                .getCapabilities().get("basePath").toString();
     }
 
 }
