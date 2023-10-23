@@ -1,7 +1,7 @@
 {
   "android": {
     "automationName": "UIAutomator2",
-    "app": "bs://6b27ca8387cbd29e429f5fea9595edf8460eff60",
+    "app": "bs://b2b262df44bcb0b73d734b3a7529e38fe2fcb429",
     "noSign": true,
     "browserstack.appium_version": "2.0.0",
     "project": "First TestNg Android Project",
@@ -26,7 +26,7 @@
       "use-plugins": ["device-farm"],
       "plugin": {
         "device-farm": {
-          "platform": "iOS",
+          "platform": "android",
           "skipChromeDownload": true,
           "iosDeviceType": "real",
           "cloud":
