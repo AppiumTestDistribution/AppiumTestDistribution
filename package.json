@@ -23,6 +23,6 @@
   "devDependencies": {
     "appium-device-farm": "AppiumTestDistribution/appium-device-farm#fix-ios-installer",
     "appium-uiautomator2-driver": "^2.29.5",
-    "appium-xcuitest-driver": "^5.8.0"
+    "appium-xcuitest-driver": "^5.8.1"
   }
 }
