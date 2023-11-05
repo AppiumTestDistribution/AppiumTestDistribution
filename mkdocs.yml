@@ -1,7 +1,7 @@
 INHERIT: ./node_modules/@appium/docutils/base-mkdocs.yml
 site_name: Appium Device Farm
-repo_url: https://github.com/AppiumTestDistribution/AppiumTestDistribution
-repo_name: AppiumTestDistribution/AppiumTestDistribution
+repo_url: https://github.com/AppiumTestDistribution/appium-device-farm
+repo_name: AppiumTestDistribution/appium-device-farm
 site_url: https://appium-device-farm-eight.vercel.app/
 edit_uri: edit/master/docs
 site_description: Documentation for the Appium Device Farm plugin

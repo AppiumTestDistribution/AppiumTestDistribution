@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:docs": "appium-docs build --reference=false",
+    "build:docs": "appium-docs build --reference=false --log-level debug",
     "publish:docs": "appium-docs build --deploy --push -b docs-site -m 'docs: auto-build docs for AppiumTestDistribution@%s' --alias latest",
     "install-docs-deps": "appium-docs init --no-mkdocs -e lib/index.js"
   },
