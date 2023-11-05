@@ -1,0 +1,34 @@
+INHERIT: ./node_modules/@appium/docutils/base-mkdocs.yml
+site_name: Appium Device Farm
+repo_url: https://github.com/AppiumTestDistribution/AppiumTestDistribution
+repo_name: AppiumTestDistribution/AppiumTestDistribution
+site_url: https://appium-device-farm-eight.vercel.app/
+edit_uri: edit/master/docs
+site_description: Documentation for the Appium Device Farm plugin
+docs_dir: docs
+site_dir: site
+theme:
+  logo: assets/images/appium-logo-white.png
+  favicon: assets/images/appium-logo.png
+  custom_dir: docs/overrides
+  features:
+    - navigation.tabs
+extra_css:
+  - assets/stylesheets/extra.css
+extra:
+  homepage: /
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/twitter
+nav:
+  - index.md
+  - setup.md
+  - cucumber.md
+  - troubleshooting.md
+  - cloud.md
+  - testng.md
+  - remote-execution.md
+  - Reference:
+      - capabilities.md
+      - reference/commands/sample.md
