@@ -6,7 +6,7 @@ hide:
 
 ## Prerequisite
 
-Appium version 2.0.X
+Appium version 2.X.X
 
 ## Installation - Server
 
@@ -16,13 +16,10 @@ Install the plugin using Appium's plugin CLI, either as a named plugin or via NP
 appium plugin install --source=npm appium-device-farm
 ```
 
-## Installation - Client
-
-No special action is needed to make things work on the client side.
-
-Add the below dependencies in your pom.xml (Master)
-
 ### Please make sure you have installed Appium v2.0 and [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm) plugin
+
+## Maven Dependency 
+Add the below dependencies in your pom.xml (Master) if you want to use the latest commit from the master branch.
 
 ```
 <dependency>

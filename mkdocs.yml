@@ -25,9 +25,11 @@ nav:
   - index.md
   - setup.md
   - cucumber.md
-  - troubleshooting.md
-  - cloud.md
   - testng.md
+  - bscloud.md
+  - ltcloud.md
   - remote-execution.md
+  - context.md
+  - troubleshooting.md
   - Reference:
       - reference/commands/sample.md
