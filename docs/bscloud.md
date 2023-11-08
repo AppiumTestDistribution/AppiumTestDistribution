@@ -4,8 +4,6 @@ hide:
   - navigation
 ---
 
-### BrowserStack
-
 No changes to the existing test or ATD implementation. The only change you need to do is set username and password for cloud service as below
 
 ```
