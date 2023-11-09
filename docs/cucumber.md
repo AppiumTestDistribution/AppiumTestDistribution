@@ -4,8 +4,6 @@ hide:
   - navigation
 ---
 
-### Cucumber
-
 [teswiz](https://github.com/znsio/teswiz) uses ATD to manage Appium, and the devices (android, iOS, Windows applications). It helps you automate tests for Android & iOS apps, specified using cucumber-jvm and intelligently run them against
 
 - Android apks
