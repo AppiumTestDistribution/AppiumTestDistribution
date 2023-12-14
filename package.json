@@ -27,7 +27,7 @@
     "entryPoint": "lib/index.js"
   },
   "devDependencies": {
-    "vite": "^4.5.0",
+    "vite": "^5.0.9",
     "@appium/docutils": "^0.4.11",
     "appium-device-farm": "^8.3.14",
     "appium-uiautomator2-driver": "^2.29.5",
