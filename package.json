@@ -4,7 +4,10 @@
   "description": "<h1 align=\"center\"> \t<br> \t<img src=\"image/ATD-Logo1.png\" alt=\"ATD\"> \t<br> \t<br> \t<br> </h1>",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:docs": "appium-docs build --reference=false --log-level debug",
+    "publish:docs": "appium-docs build --deploy --push -b docs-site -m 'docs: auto-build docs for AppiumTestDistribution@%s' --alias latest",
+    "install-docs-deps": "appium-docs init --no-mkdocs -e lib/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,11 +21,16 @@
   },
   "homepage": "https://github.com/AppiumTestDistribution/AppiumTestDistribution#readme",
   "dependencies": {
-    "appium": "^2.1.3"
+    "appium": "^2.2.1"
+  },
+  "typedoc": {
+    "entryPoint": "lib/index.js"
   },
   "devDependencies": {
-    "appium-device-farm": "^8.2.3",
+    "vite": "^4.5.0",
+    "@appium/docutils": "^0.4.11",
+    "appium-device-farm": "^8.3.14",
     "appium-uiautomator2-driver": "^2.29.5",
-    "appium-xcuitest-driver": "^5.0.0"
+    "appium-xcuitest-driver": "^5.8.2"
   }
 }

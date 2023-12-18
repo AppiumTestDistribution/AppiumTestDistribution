@@ -15,8 +15,8 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+import java.util.stream.Collectors;
 
 import static com.appium.manager.AppiumDeviceManager.getMobilePlatform;
 import static com.appium.utils.ConfigFileManager.CAPS;
@@ -30,17 +30,23 @@ public class AppiumDriverManager {
     }
 
     protected static void setDriver(AppiumDriver driver) {
-        LOGGER.info("AppiumDriverManager: Created AppiumDriver with capabilities: ");
-        Capabilities capabilities = driver.getCapabilities();
-        capabilities.getCapabilityNames().forEach(key -> LOGGER.info("\t" + key
-                + ":: " + capabilities.getCapability(key)));
+        String allCapabilities = driver.getCapabilities().getCapabilityNames().stream()
+                .map(key -> String.format("%n\t%s:: %s", key,
+                        driver.getCapabilities().getCapability(key)))
+                .collect(Collectors.joining(""));
+        LOGGER.info(String.format("AppiumDriverManager: Created AppiumDriver with capabilities: %s",
+                allCapabilities));
         appiumDriver.set(driver);
     }
 
     private AppiumDriver initialiseDriver(DesiredCapabilities desiredCapabilities) {
-        LOGGER.info("Initialise Driver with Capabilities: ");
-        desiredCapabilities.getCapabilityNames().forEach(key -> LOGGER.info("\t" + key
-                + ":: " + desiredCapabilities.getCapability(key)));
+        String allCapabilities = desiredCapabilities.getCapabilityNames().stream()
+                .map(key -> String.format("%n\t%s:: %s", key,
+                        desiredCapabilities.getCapability(key)))
+                .collect(Collectors.joining(""));
+
+        LOGGER.info(String.format("Initialise Driver with Capabilities: %s",
+                allCapabilities));
         AppiumServerManager appiumServerManager = new AppiumServerManager();
         String remoteWDHubIP = appiumServerManager.getRemoteWDHubIP();
         return createAppiumDriver(desiredCapabilities, remoteWDHubIP);

@@ -1,0 +1,35 @@
+INHERIT: ./node_modules/@appium/docutils/base-mkdocs.yml
+site_name: AppiumTestDistribution
+repo_url: https://github.com/AppiumTestDistribution/AppiumTestDistribution
+repo_name: AppiumTestDistribution/AppiumTestDistribution
+site_url: https://appium-test-distribution.vercel.app/
+edit_uri: edit/master/docs
+site_description: Documentation for the AppiumTestDistribution
+docs_dir: docs
+site_dir: site
+theme:
+  logo: assets/images/appium-logo-white.png
+  favicon: assets/images/appium-logo.png
+  custom_dir: docs/overrides
+  features:
+    - navigation.tabs
+extra_css:
+  - assets/stylesheets/extra.css
+extra:
+  homepage: /
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/twitter
+nav:
+  - index.md
+  - setup.md
+  - cucumber.md
+  - testng.md
+  - bscloud.md
+  - ltcloud.md
+  - remote-execution.md
+  - context.md
+  - troubleshooting.md
+  - Reference:
+      - reference/commands/sample.md
