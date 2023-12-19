@@ -5,36 +5,38 @@ title: TestNG
 ### Main Runnerclass should look as below:
 
 ```java
-/** Run lists of tests from package **/
+/** Run the test based on groups **/
 public class Runner {
 
-    @Test
-    public void testApp() throws Exception {
-        ATDRunner atdRunner = new ATDRunner();
-        //atdRunner.runner(package_name_where_test_located);
-        atdRunner.runner("com.paralle.tests");
-    }
+   @Test
+   public void testApp() throws Exception {
+      ATDRunner atdRunner = new ATDRunner();
+      //atdRunner.runner(package_name_where_test_located);
+      atdRunner.runner("com.parallel.tests");
+   }
 }
 
-/** Run lists of tests **/
+/** Run specific list of test cases present in different test classes **/
+In the below example, testcase 'verifyHeaderAndFooter' present in HomePage class and testcase 'verfiyMyProfileDetails' present in ProfilePage class has been included for execution. Here testCase is a argument passed through system property.
+
 @Test
 public void testApp() throws Exception {
-  ATDRunner parallelThread = new ATDRunner();
-  List<String> tests = new ArrayList<>();
-  tests add("HomePageTest2");
-  tests add("HomePageTest3");
-  parallelThread.runner("com.test.site",tests);
-}
+        ATDRunner parallelThread = new ATDRunner();
+        List<String> testCases = new ArrayList<>();
+        testCases.add("verifyHeaderAndFooter");
+        testCases.add("verfiyProfileDetails");
+        parallelThread.runner("com.test.site",tests);
+        }
 
 /** Run lists of tests from mulitple packages **/
 @Test
 public void testApp() throws Exception {
-  ATDRunner parallelThread = new ATDRunner();
-  List<String> tests = new ArrayList<>();
-  tests.add("HomePageTest2");
-  tests.add("HomePageTest3");
-  parallelThread.runner("com.test.site,com.ios.test",tests);
-}
+        ATDRunner parallelThread = new ATDRunner();
+        List<String> tests = new ArrayList<>();
+        tests.add("HomePageTest2");
+        tests.add("HomePageTest3");
+        parallelThread.runner("com.test.site,com.ios.test",tests);
+        }
 
 ```
 
