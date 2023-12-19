@@ -130,7 +130,8 @@ public class AppiumServerManager {
 
     private String getBasePath() {
         LOGGER.info("Picking UserSpecified Base Path");
-        return Capabilities.getInstance().getCapabilities().get("basePath").toString();
+        return Capabilities.getInstance()
+                .getCapabilities().get("basePath").toString();
     }
 
 }

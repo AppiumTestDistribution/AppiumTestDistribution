@@ -16,16 +16,6 @@ import java.time.Duration;
 public class UserBaseTest {
     public AppiumDriver driver;
 
-    @BeforeTest
-    public void setUp() {
-        System.out.println("In Before Method");
-    }
-
-    @AfterTest
-    public void tearDown() {
-        System.out.println("After Method");
-    }
-
     public AppiumDriver getDriver() {
         driver = AppiumDriverManager.getDriver();
         return driver;

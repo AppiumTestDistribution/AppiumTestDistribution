@@ -9,7 +9,6 @@ jobs:
     macos:
       xcode: 14.1.0
     environment:
-      JAVA_HOME: /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
       atd_serverConfig_server_plugin_device-farm_derivedDataPath_simulator: /Users/distiller/project/apps/WebDriverAgent-Test
     steps:
       - checkout
@@ -35,8 +34,8 @@ jobs:
             ./node_modules/.bin/appium -v
             mkdir -p /Users/distiller/.cache/appium-device-farm/goIOS
             ./node_modules/.bin/appium plugin list
+            ./node_modules/.bin/appium plugin run device-farm install-go-ios
             ./node_modules/.bin/appium driver list
-            ./node_modules/.bin/appium plugin run device-farm install-go-ios 
             Platform='iOS' CONFIG_FILE='./configs/iOSConfig.properties' mvn clean -Dtest=Runner test -Dcheckstyle.skip
 
   Android:
