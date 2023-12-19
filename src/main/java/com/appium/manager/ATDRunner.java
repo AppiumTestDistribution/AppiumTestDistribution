@@ -44,6 +44,7 @@ public class ATDRunner {
     }
 
     private void setLog4jCompatibility() {
+        // Migrating from Log4j 1.x to 2.x - https://logging.apache.org/log4j/2.x/manual/migration.html
         System.setProperty("log4j1.compatibility", "true");
     }
 
