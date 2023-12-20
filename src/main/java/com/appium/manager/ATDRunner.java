@@ -33,6 +33,7 @@ public class ATDRunner {
 
 
     public ATDRunner() throws Exception {
+        setLog4jCompatibility();
         capabilities = Capabilities.getInstance();
         writeServiceConfig();
         AppiumServerManager appiumServerManager = new AppiumServerManager();
@@ -41,6 +42,12 @@ public class ATDRunner {
         ATDExecutor = new ATDExecutor(devices);
         createOutputDirectoryIfNotExist();
     }
+
+    private void setLog4jCompatibility() {
+        // Migrating from Log4j 1.x to 2.x - https://logging.apache.org/log4j/2.x/manual/migration.html
+        System.setProperty("log4j1.compatibility", "true");
+    }
+
 
     private void writeServiceConfig() {
         JSONObject serverConfig = Capabilities.getInstance()
