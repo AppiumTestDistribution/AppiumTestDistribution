@@ -91,7 +91,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>7.7.0</version>
+            <version>7.5</version>
         </dependency>
         <dependency>
             <groupId>org.im4java</groupId>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>7.15.0</version>
+            <version>7.11.2</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -131,12 +131,12 @@
         <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.12.6</version>
+            <version>8.38</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20231013</version>
+            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -146,22 +146,22 @@
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>agent-java-cucumber6</artifactId>
-            <version>5.1.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.epam.reportportal</groupId>
-            <artifactId>agent-java-testng</artifactId>
             <version>5.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-testng</artifactId>
+            <version>5.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
             <artifactId>client-java</artifactId>
-            <version>5.1.18</version>
+            <version>5.1.26</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>commons-model</artifactId>
-            <version>5.8.1</version>
+            <version>5.11.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
