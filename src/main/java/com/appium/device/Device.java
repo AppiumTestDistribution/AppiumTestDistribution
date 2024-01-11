@@ -30,5 +30,6 @@ public class Device {
         public int revision;
         public long created;
         public int version;
+        public long updated;
     }
 }

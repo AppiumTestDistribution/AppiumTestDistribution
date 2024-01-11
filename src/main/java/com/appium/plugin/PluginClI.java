@@ -54,6 +54,7 @@ public class PluginClI {
         public int revision;
         public long created;
         public int version;
+        public long updated;
     }
 
     public static class Plugin {
