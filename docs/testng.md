@@ -40,6 +40,36 @@ public void testApp() throws Exception {
 
 ```
 
+**Normal Case (run the test based on groups ):**
+
+    runStatus = parallelThread.runner(testPackageName);
+
+
+**Running specific cases or failed cases:**
+    
+    runStatus = parallelThread.runner(testPackageName, testCases);
+
+
+
+**Details :**
+
+        CASE 1:
+        
+        Here testCaseName is a system prop which we are taking from users to provide,
+
+        For example : test1,test2,test3 // user can pass different test method names seperated by comma in the arguments
+
+
+        else if(testCaseName != null && !testCaseName.trim().isEmpty() )
+            
+            {
+
+                testCases.addAll(Arrays.asList(testCaseName.replaceAll("\\s", "").split(",")));
+
+                runStatus = parallelThread.runner(testPackageName, testCases);
+
+            }
+
 ### Set config properties
 
 Create `config.properties` file under your test directory, which should have below properties.
