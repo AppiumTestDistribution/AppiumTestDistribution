@@ -24,7 +24,7 @@ public class Devices {
             String remoteWDHubIP = appiumServerManager.getRemoteWDHubIP();
             URL url = new URL(remoteWDHubIP);
             String response = new Api().getResponse(url.getProtocol()
-                    + "://" + url.getHost() + ":" + url.getPort() + "/device-farm/api/devices");
+                    + "://" + url.getHost() + ":" + url.getPort() + "/device-farm/api/device");
             instance =  Arrays.asList(new ObjectMapper().readValue(response, Device[].class));
         }
         return instance;

@@ -1,6 +1,9 @@
 package com.appium.utils;
 
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.remote.http.HttpClient;
 import org.openqa.selenium.remote.http.HttpMethod;
@@ -18,13 +21,14 @@ public class Api extends Helpers {
     public String getResponse(String url) {
         String body;
         try {
-            HttpClient client = HttpClient.Factory.createDefault().createClient(new URL(url));
-            HttpRequest request = new HttpRequest(HttpMethod.GET, url);
-            request.addHeader("Content-Type", "application/json");
-            HttpResponse response = client.execute(request);
-            final Supplier<InputStream> content = response.getContent();
-            body = IOUtils.toString(content.get(), StandardCharsets.UTF_8);
-            client.close();
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = client.newCall(request).execute();
+            body = response.body().string();
+            response.close();
+
         } catch (Exception e) {
             throw new RuntimeException("unable to call device farm endpoints " + e.getMessage());
         }
