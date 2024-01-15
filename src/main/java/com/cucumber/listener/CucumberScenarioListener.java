@@ -221,19 +221,19 @@ public class CucumberScenarioListener implements ConcurrentEventListener {
     private void attachCloudExecutionReportLinkToReportPortal(AppiumDriver driver) {
         if ((PluginClI.getInstance().isCloudExecution()) && isRunningOnpCloudy()) {
             String link = (String) driver.executeScript("pCloudy_getReportLink");
-            String message = "pCloudy Report link available here: " + link;
+            String message = "pCloudy Report is available here: " + link;
             LOGGER.info(message);
             ReportPortal.emitLog(message, "DEBUG", new Date());
         } else if ((PluginClI.getInstance().isCloudExecution()) && isRunningOnHeadspin()) {
             String sessionId = driver.getSessionId().toString();
             String link = "https://ui-dev.headspin.io/sessions/" + sessionId + "/waterfall";
-            String message = "Headspin Report link available here: " + link;
+            String message = "Headspin Report is available here: " + link;
             LOGGER.info(message);
             ReportPortal.emitLog(message, "DEBUG", new Date());
         } else if ((PluginClI.getInstance().isCloudExecution()) && isRunningOnBrowserStack()) {
             String sessionId = driver.getSessionId().toString();
             String link = getReportLinkFromBrowserStack(sessionId);
-            String message = "BrowserStack Report link available here: " + link;
+            String message = "BrowserStack Report is available here: " + link;
             LOGGER.info(message);
             ReportPortal.emitLog(message, "DEBUG", new Date());
         }
