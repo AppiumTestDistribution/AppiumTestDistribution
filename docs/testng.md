@@ -5,38 +5,70 @@ title: TestNG
 ### Main Runnerclass should look as below:
 
 ```java
-/** Run lists of tests from package **/
+/** Run the test based on groups **/
 public class Runner {
 
-    @Test
-    public void testApp() throws Exception {
-        ATDRunner atdRunner = new ATDRunner();
-        //atdRunner.runner(package_name_where_test_located);
-        atdRunner.runner("com.paralle.tests");
-    }
+   @Test
+   public void testApp() throws Exception {
+      ATDRunner atdRunner = new ATDRunner();
+      //atdRunner.runner(package_name_where_test_located);
+      atdRunner.runner("com.parallel.tests");
+   }
 }
 
-/** Run lists of tests **/
+/** Run specific list of test cases present in different test classes **/
+In the below example, testcase 'verifyHeaderAndFooter' present in HomePage class and testcase 'verfiyMyProfileDetails' present in ProfilePage class has been included for execution. Here testCase is a argument passed through system property.
+
 @Test
 public void testApp() throws Exception {
-  ATDRunner parallelThread = new ATDRunner();
-  List<String> tests = new ArrayList<>();
-  tests add("HomePageTest2");
-  tests add("HomePageTest3");
-  parallelThread.runner("com.test.site",tests);
-}
+        ATDRunner parallelThread = new ATDRunner();
+        List<String> testCases = new ArrayList<>();
+        testCases.add("verifyHeaderAndFooter");
+        testCases.add("verfiyProfileDetails");
+        parallelThread.runner("com.test.site",tests);
+        }
 
 /** Run lists of tests from mulitple packages **/
 @Test
 public void testApp() throws Exception {
-  ATDRunner parallelThread = new ATDRunner();
-  List<String> tests = new ArrayList<>();
-  tests.add("HomePageTest2");
-  tests.add("HomePageTest3");
-  parallelThread.runner("com.test.site,com.ios.test",tests);
-}
+        ATDRunner parallelThread = new ATDRunner();
+        List<String> tests = new ArrayList<>();
+        tests.add("HomePageTest2");
+        tests.add("HomePageTest3");
+        parallelThread.runner("com.test.site,com.ios.test",tests);
+        }
 
 ```
+
+**Normal Case (run the test based on groups ):**
+
+    runStatus = parallelThread.runner(testPackageName);
+
+
+**Running specific cases or failed cases:**
+    
+    runStatus = parallelThread.runner(testPackageName, testCases);
+
+
+
+**Details :**
+
+        CASE 1:
+        
+        Here testCaseName is a system prop which we are taking from users to provide,
+
+        For example : test1,test2,test3 // user can pass different test method names seperated by comma in the arguments
+
+
+        else if(testCaseName != null && !testCaseName.trim().isEmpty() )
+            
+            {
+
+                testCases.addAll(Arrays.asList(testCaseName.replaceAll("\\s", "").split(",")));
+
+                runStatus = parallelThread.runner(testPackageName, testCases);
+
+            }
 
 ### Set config properties
 
@@ -57,7 +89,7 @@ Create `config.properties` file under your test directory, which should have bel
 
 ### Set capabilities
 If you want to specify android/iOS capabilities
-   (https://github.com/saikrishna321/PageObjectPatternAppium/tree/master/caps)
+(https://github.com/saikrishna321/PageObjectPatternAppium/tree/master/caps)
 
 ### Run Test from CommandLine
 
