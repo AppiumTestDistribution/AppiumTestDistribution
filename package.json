@@ -30,7 +30,7 @@
     "vite": "^4.5.0",
     "@appium/docutils": "^0.4.11",
     "appium-device-farm": "^8.4.7-rc.1",
-    "appium-uiautomator2-driver": "^2.29.5",
+    "appium-uiautomator2-driver": "^2.45.0",
     "appium-xcuitest-driver": "^5.8.2"
   }
 }
