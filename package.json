@@ -31,6 +31,6 @@
     "@appium/docutils": "^0.4.11",
     "appium-device-farm": "^8.4.7-rc.1",
     "appium-uiautomator2-driver": "^2.29.5",
-    "appium-xcuitest-driver": "^5.8.2"
+    "appium-xcuitest-driver": "^7.0.0"
   }
 }
