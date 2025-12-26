@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/AppiumTestDistribution/AppiumTestDistribution#readme",
   "dependencies": {
-    "appium": "^2.2.1"
+    "appium": "^2.19.0"
   },
   "typedoc": {
     "entryPoint": "lib/index.js"
